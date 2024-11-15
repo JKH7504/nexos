@@ -1,0 +1,59 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01041P0
+    프로그램명         : 메뉴복사 팝업
+    프로그램설명       : 메뉴복사 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01041P0.css" /> -->
+<script src="js/CSC01041P0.js"></script>
+</head>
+<body>
+    <div id="divLeftView" class="ctrLeft" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_FromMenuGrp" class="lblTitle">기준 메뉴그룹정보</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblQMenu_Grp_F" class="lblKey" style="min-width: 60px;">메뉴그룹</div>
+                <input id="edtQMenu_Grp_F" class="edtDisplay" type="text" disabled="disabled" style="width: 190px;" />
+            </div>
+        </div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_ToMenuGrp" class="lblTitle">대상 메뉴그룹정보</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblQMenu_Grp_F" class="lblKey" style="min-width: 60px;">메뉴그룹</div>
+                <select id="cboMenu_Grp" class="cboKey" style="width: 190px;"></select>
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnOk" class="btnNormal" type="button" value="복사" style="width: 75px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

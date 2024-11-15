@@ -1,0 +1,16 @@
+package nexos.dao.lc;
+
+import java.util.Map;
+
+public interface LCC08010E0DAO {
+
+    /**
+     * 리적재 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    String callStockPalletReload(Map<String, Object> params) throws Exception;
+
+}

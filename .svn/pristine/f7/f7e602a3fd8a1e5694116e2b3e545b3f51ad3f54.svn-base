@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LOM_WAYBILL" pageWidth="566" pageHeight="283" orientation="Landscape" columnWidth="566" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="da653a23-3e4e-40db-96d3-c459e3f38269">
+	<property name="ireport.zoom" value="1.3636363636363638"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\workspace_nexos\\022_153_2017\\022_153_2017\\src\\main\\webapp\\WEB-INF\\reports\\lo\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_DATE" class="java.lang.String"/>
+	<parameter name="P_POLICY_LO450" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT L2.OUTBOUND_NO
+      ,L2.WB_NO
+      ,L2.BOX_NO
+      ,WB.DSP_WB_NO(L2.WB_NO, '01')                                                  AS WB_NO1
+      ,L2.SHIPPER_NM
+      ,L2.SHIPPER_NM1
+      ,NVL(L2.SHIPPER_TEL ,L2.SHIPPER_HP)                                            AS SHIPPER_TEL
+      ,NVL(DECODE(L2.SHIPPER_TEL ,NULL ,NULL ,L2.SHIPPER_TEL1)
+          ,DECODE(L2.SHIPPER_HP ,NULL ,NULL ,L2.SHIPPER_HP1)
+          )                                                                          AS SHIPPER_TEL1
+      ,L2.SHIPPER_HP
+      ,DECODE(L2.SHIPPER_HP ,NULL ,NULL ,L2.SHIPPER_HP1)                             AS SHIPPER_HP1
+      ,WF.DSP_ADDRESS(L2.SHIPPER_ADDR_BASIC ,L2.SHIPPER_ADDR_DETAIL)                 AS SHIPPER_ADDR
+      ,L2.SHIPPER_ADDR_BASIC
+      ,L2.SHIPPER_ADDR_DETAIL
+      ,L2.ORDERER_MSG
+      ,L2.LT_ARR_ADDR2
+      ,L2.LT_ARR_ADDR3
+      ,L2.LT_ZIP_CD
+      ,L2.LT_TML_CD
+      ,L2.LT_TML_NM
+      ,TO_NUMBER(L2.LT_ARR_CD)                                                       AS LT_ARR_CD
+      ,L2.LT_ARR_SHOP_NM
+      ,L2.CUST_FULL_NM
+      ,L2.NM
+      ,L2.ADDRESS
+      ,L2.TEL_NO
+      ,L2.CHARGE_NM
+      ,L2.ITEM_ORDER_DIV
+      ,L2.TOTAL_AMT
+      ,L2.TO_DAY
+      ,L2.BOX_TYPE
+      ,TO_CHAR(L2.PAGE_NUM)                                                          AS PAGE_NUM
+      ,'1'                                                                           AS BOX_QTY
+  FROM (
+        SELECT L1.OUTBOUND_NO
+              ,L1.WB_NO
+              ,L1.BOX_NO
+              ,M2.SHIPPER_NM
+              ,RPAD(SUBSTR(M2.SHIPPER_NM ,1 ,2) ,LENGTH(M2.SHIPPER_NM) ,'*')                                  AS SHIPPER_NM1
+              ,WF.GET_DECSTR(M2.SHIPPER_TEL)                                                                  AS SHIPPER_TEL
+              ,WF.GET_DECSTR(M2.SHIPPER_HP)                                                                   AS SHIPPER_HP
+              ,SUBSTR(WF.GET_DECSTR(M2.SHIPPER_TEL) ,1 ,LENGTH(WF.GET_DECSTR(M2.SHIPPER_TEL)) - 4) || '****'  AS SHIPPER_TEL1
+              ,SUBSTR(WF.GET_DECSTR(M2.SHIPPER_HP) ,1 ,LENGTH(WF.GET_DECSTR(M2.SHIPPER_HP)) - 4) || '****'    AS SHIPPER_HP1
+              ,WF.GET_DECSTR(M2.SHIPPER_ADDR_BASIC)                                                           AS SHIPPER_ADDR_BASIC
+              ,WF.GET_DECSTR(M2.SHIPPER_ADDR_DETAIL)                                                          AS SHIPPER_ADDR_DETAIL
+              ,M2.ORDERER_MSG
+              ,WF.GET_DECSTR(M2.LT_ARR_ADDR2)	                                                              AS LT_ARR_ADDR2
+              ,WF.GET_DECSTR(M2.LT_ARR_ADDR3)                                                                 AS LT_ARR_ADDR3
+              ,M2.LT_ZIP_CD
+              ,M2.LT_TML_CD
+              ,M2.LT_TML_NM
+              ,M2.LT_ARR_CD
+              ,M2.LT_ARR_SHOP_NM
+              ,C2.CUST_FULL_NM
+              ,DECODE($P{P_POLICY_LO450} ,'1' ,C2.CUST_NM
+                                         ,'2' ,B1.BU_NM
+                                         ,'3' ,B2.BRAND_NM
+                                         ,'새빛스태프')                                                       AS NM
+              ,DECODE($P{P_POLICY_LO450} ,'1' ,C2.CHARGE_TEL
+                                         ,'2' ,B1.TEL_NO
+                                         ,'3' ,B2.TEL_NO
+                                         ,'031-460-2561')                                                     AS TEL_NO
+              ,DECODE($P{P_POLICY_LO450} ,'1' ,C2.CHARGE_NM
+                                         ,'2' ,B1.CHARGE_NM
+                                         ,'3' ,B2.CHARGE_NM)                                                  AS CHARGE_NM
+              ,DECODE($P{P_POLICY_LO450} ,'1' ,WF.DSP_ADDRESS(C2.ADDR_BASIC ,C2.ADDR_DETAIL)
+                                         ,'2' ,WF.DSP_ADDRESS(B1.ADDR_BASIC ,B1.ADDR_DETAIL)
+                                         ,'3' ,WF.DSP_ADDRESS(B2.ADDR_BASIC ,B2.ADDR_DETAIL)
+                                         ,'경기도 군포시 부곡동 번영로 82, 엔동 서관 10층(부곡동, 한국복합물류㈜) [부곡동 451]')                     AS ADDRESS
+              ,'신용'                                                                                         AS ITEM_ORDER_DIV
+              ,'0'                                                                                            AS TOTAL_AMT
+              ,TO_CHAR(SYSDATE, 'YYYY.MM.DD')                                                                 AS TO_DAY
+              ,'극소' || ' B'                                                                                 AS BOX_TYPE
+              ,L1.PAGE_NUM
+          FROM (
+                SELECT L0.CENTER_CD
+                      ,L0.BU_CD
+                      ,L0.OUTBOUND_DATE
+                      ,L0.OUTBOUND_NO
+                      ,L0.WB_NO
+                      ,L0.BOX_NO
+                      ,L0.BRAND_CD
+                      ,N1.NO          AS PAGE_NUM
+                  FROM (
+                        SELECT M1.CENTER_CD
+                              ,M1.BU_CD
+                              ,M1.OUTBOUND_DATE
+                              ,M1.OUTBOUND_NO
+                              ,M1.WB_NO
+                              ,M1.BOX_NO
+                              ,MIN(M1.BRAND_CD) AS BRAND_CD
+                              ,CEIL(
+                                    (SELECT COUNT(DISTINCT S1.ITEM_CD)
+                                       FROM LO020NT S1
+                                      WHERE S1.CENTER_CD     = M1.CENTER_CD
+                                        AND S1.BU_CD         = M1.BU_CD
+                                        AND S1.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                                        AND S1.OUTBOUND_NO   = M1.OUTBOUND_NO
+                                        AND S1.BOX_NO        = M1.BOX_NO
+                                    )
+                                / 6 ) AS PAGE_NUM
+                          FROM LO020NT M1
+                         WHERE M1.CENTER_CD     = $P{P_CENTER_CD}
+                           AND M1.BU_CD         = $P{P_BU_CD}
+                           AND M1.OUTBOUND_DATE = $P{P_OUTBOUND_DATE}
+                           AND (M1.OUTBOUND_NO ,M1.BOX_NO)
+                            IN (
+                                SELECT WF.GET_SPLITSTR(CHECK_VALUE ,1)
+                                      ,WF.GET_SPLITSTR(CHECK_VALUE ,2)
+                                  FROM CTCHECKVALUE
+                               )
+                         GROUP BY M1.CENTER_CD
+                                 ,M1.BU_CD
+                                 ,M1.OUTBOUND_DATE
+                                 ,M1.OUTBOUND_NO
+                                 ,M1.WB_NO
+                                 ,M1.BOX_NO
+                       ) L0
+                       JOIN CSNO N1 ON N1.NO <= L0.PAGE_NUM
+               ) L1
+               JOIN LO020PM M2 ON M2.CENTER_CD     = L1.CENTER_CD
+                              AND M2.BU_CD         = L1.BU_CD
+                              AND M2.OUTBOUND_DATE = L1.OUTBOUND_DATE
+                              AND M2.OUTBOUND_NO   = L1.OUTBOUND_NO
+               JOIN LO020NM M3 ON M3.CENTER_CD     = L1.CENTER_CD
+                              AND M3.BU_CD         = L1.BU_CD
+                              AND M3.OUTBOUND_DATE = L1.OUTBOUND_DATE
+                              AND M3.OUTBOUND_NO   = L1.OUTBOUND_NO
+               JOIN CMCUST  C2 ON C2.CUST_CD       = M3.CUST_CD
+               JOIN CMBU    B1 ON B1.BU_CD         = L1.BU_CD
+               JOIN CMBRAND B2 ON B2.BRAND_CD      = L1.BRAND_CD
+       ) L2
+ ORDER BY WB_NO
+         ,BOX_NO
+         ,PAGE_NUM]]>
+	</queryString>
+	<field name="OUTBOUND_NO" class="java.lang.String"/>
+	<field name="WB_NO" class="java.lang.String"/>
+	<field name="BOX_NO" class="java.math.BigDecimal"/>
+	<field name="WB_NO1" class="java.lang.String"/>
+	<field name="SHIPPER_NM" class="java.lang.String"/>
+	<field name="SHIPPER_NM1" class="java.lang.String"/>
+	<field name="SHIPPER_TEL" class="java.lang.String"/>
+	<field name="SHIPPER_TEL1" class="java.lang.String"/>
+	<field name="SHIPPER_HP" class="java.lang.String"/>
+	<field name="SHIPPER_HP1" class="java.lang.String"/>
+	<field name="SHIPPER_ADDR" class="java.lang.String"/>
+	<field name="SHIPPER_ADDR_BASIC" class="java.lang.String"/>
+	<field name="SHIPPER_ADDR_DETAIL" class="java.lang.String"/>
+	<field name="ORDERER_MSG" class="java.lang.String"/>
+	<field name="LT_ARR_ADDR2" class="java.lang.String"/>
+	<field name="LT_ARR_ADDR3" class="java.lang.String"/>
+	<field name="LT_ZIP_CD" class="java.lang.String"/>
+	<field name="LT_TML_CD" class="java.lang.String"/>
+	<field name="LT_TML_NM" class="java.lang.String"/>
+	<field name="LT_ARR_CD" class="java.math.BigDecimal"/>
+	<field name="LT_ARR_SHOP_NM" class="java.lang.String"/>
+	<field name="CUST_FULL_NM" class="java.lang.String"/>
+	<field name="NM" class="java.lang.String"/>
+	<field name="ADDRESS" class="java.lang.String"/>
+	<field name="TEL_NO" class="java.lang.String"/>
+	<field name="CHARGE_NM" class="java.lang.String"/>
+	<field name="ITEM_ORDER_DIV" class="java.lang.String"/>
+	<field name="TOTAL_AMT" class="java.lang.String"/>
+	<field name="TO_DAY" class="java.lang.String"/>
+	<field name="BOX_TYPE" class="java.lang.String"/>
+	<field name="PAGE_NUM" class="java.lang.String"/>
+	<field name="BOX_QTY" class="java.lang.String"/>
+	<detail>
+		<band height="283" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="296" y="4" width="130" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a6f36307-b769-459d-af67-72fdcdf12c55"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="477" y="4" width="68" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f0acff9d-d17c-4909-9734-c3b35b9b32db"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TO_DAY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="5" y="2" width="60" height="55" forecolor="#000000" backcolor="#FFFFFF" uuid="ccd46e8d-a62d-47de-96c7-853eaab95dca"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="45" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LT_TML_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="128" y="5" width="116" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="94ef2684-fe28-42eb-8814-52cb12d8c63f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LT_ARR_ADDR2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="263" y="170" width="86" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="7c322c0f-f7d4-489a-a54c-e75b8ec65dd2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="466" y="170" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="bbc018e2-6c8f-4b6e-8453-00fd04cb462f">
+					<printWhenExpression><![CDATA[$F{SHIPPER_TEL1}.length() > 2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="349" y="170" width="105" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="b4058edc-e73d-416a-b68f-c1db13a21341"/>
+				<box rightPadding="10"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_HP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="265" y="234" width="145" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="a8f2dfdc-64a8-471e-add9-0a6f8c37d8aa"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="263" y="21" width="96" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6f79a354-cd0a-48c9-88ae-01092a0a8bbc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="459" y="21" width="83" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f89d2cb7-7881-4b8d-b35a-4c37ccc5ed0e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="363" y="21" width="83" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="a7bee2d2-cdad-4ff7-af21-096e68d10ee4"/>
+				<box rightPadding="10"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_HP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="62" y="201" width="182" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="e33a19f2-89f8-4d26-a8ff-8873a70d319a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="263" y="74" width="279" height="28" forecolor="#000000" backcolor="#FFFFFF" uuid="9582f11b-3c80-4240-a99f-8cba5c401ff4"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="411" y="234" width="145" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="b8ea2acd-55c2-45d6-98ab-fcf3b91ec41d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="265" y="250" width="291" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="a9c31e46-f953-426e-854e-651174edbced"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_ORDER_DIV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="363" y="61" width="82" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="4712fd2a-0c15-4f19-9b33-ccccc4b158b2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="263" y="34" width="279" height="28" forecolor="#000000" backcolor="#FFFFFF" uuid="dacc375e-f70a-4424-9b35-e6804c87a464"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="426" y="4" width="47" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7ea433d5-4cd1-468e-ba87-282602053292"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_ORDER_DIV}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="false">
+				<reportElement x="9" y="106" width="235" height="84" uuid="4c9240e5-4bd6-4d4d-8d32-e5d4fb417a7a"/>
+				<subreportParameter name="P_OUTBOUND_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_OUTBOUND_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_OUTBOUND_NO">
+					<subreportParameterExpression><![CDATA[$F{OUTBOUND_NO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BOX_NO">
+					<subreportParameterExpression><![CDATA[$F{BOX_NO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_PAGE_NUM">
+					<subreportParameterExpression><![CDATA[$F{PAGE_NUM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lo/LABEL_LOM_WAYBILL02_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="265" y="265" width="291" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="8592098d-c8e4-4195-84b7-67d66ed63bf4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERER_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="65" y="2" width="60" height="55" forecolor="#000000" backcolor="#FFFFFF" uuid="0ff5a381-12ab-4ce1-8490-9913674865cd"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="45" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LT_TML_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="128" y="29" width="116" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="4987cd0e-b137-47a4-8a4d-bdefbe8c01b6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LT_ARR_ADDR3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="17" y="59" width="110" height="35" forecolor="#000000" backcolor="#FFFFFF" uuid="894cdef9-0ed8-4820-a22c-d72b68459516"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="15" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LT_ARR_SHOP_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="73" y="191" width="171" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="36a457de-37e9-4f19-beaf-a4819a24559b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="9" y="191" width="65" height="11" uuid="ce5d91f1-ab68-4536-b7e7-c3257bd37d26"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[운송장번호 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="201" width="53" height="11" uuid="9fcbcbc7-53a9-4f81-b3c7-739faf463c2d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[보내는분 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="211" width="43" height="11" uuid="1bad3db8-9349-425d-94cb-8a40baf5f726"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[받는분 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="221" width="39" height="11" uuid="ff445b09-a7b7-4782-b24e-67326a9797a3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[주 소 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="242" width="39" height="11" uuid="252baa92-d5f0-4eaa-b0ec-228be6290d87"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[운 임 :]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="158" y="211" width="86" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="6ae47df6-8b37-4a7f-ba54-12b84d53fe59">
+					<printWhenExpression><![CDATA[$F{SHIPPER_TEL1}.length() > 2]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_HP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="51" y="211" width="95" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="853665a5-92b0-4135-a693-dff2b23ce69e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="146" y="211" width="13" height="11" uuid="e779d086-0cd7-42f8-8a12-77e382db244d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="48" y="221" width="196" height="22" forecolor="#000000" backcolor="#FFFFFF" uuid="19a1b26c-1316-4713-a420-dd3f462264d9"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="48" y="242" width="98" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="ad0457a7-5eb9-42fe-b968-45319e7db4e9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_ORDER_DIV}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="446" y="21" width="13" height="14" uuid="cdff1a16-3e18-42c8-bd32-6073aa4a180c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="263" y="61" width="96" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="586bdf2b-45b6-475a-b33c-ddbe049fd5ac"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="263" y="186" width="293" height="42" forecolor="#000000" backcolor="#FFFFFF" uuid="f5ef3d63-3612-4a27-9edb-624247d463d1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="455" y="170" width="10" height="16" uuid="7934caac-be7b-4a05-ac4c-b78a4346983a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[/]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="290" y="129" width="116" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="ec407a95-e7b8-42b7-befe-e8b7c41cdc6e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="406" y="102" width="159" height="34" uuid="713ac887-f1de-45e6-a180-706aa33f83b1">
+					<printWhenExpression><![CDATA[$F{PAGE_NUM}.equals("1")]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Int2of5" drawText="false" checksumRequired="false" barWidth="1" barHeight="30">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement mode="Transparent" x="268" y="147" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="d86ec194-c97d-4f3e-b525-007e3895fd06"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_ORDER_DIV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="359" y="147" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="93b82564-87f0-4f96-a3d0-c618649c2e3b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOX_QTY}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="126" y="58" width="135" height="30" uuid="04e9af2a-bbfe-47bc-b5a3-37e8f53c96e8">
+					<printWhenExpression><![CDATA[$F{PAGE_NUM}.equals("1")]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{LT_ARR_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="407" y="146" width="160" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7bd3efaf-8b97-46a3-9092-e428f0924352"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["★일반출고★" + "   " + $F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="406" y="114" width="161" height="34" uuid="c7eac93e-2ff0-468a-89a8-34e26cc0b438">
+					<printWhenExpression><![CDATA[$F{PAGE_NUM}.equals("1")]]></printWhenExpression>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Int2of5" drawText="false" checksumRequired="false" barWidth="1" barHeight="30">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

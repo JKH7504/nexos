@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 출고작업[B2C] 화면
+  // Author : ASETEC
+  // Date : 2023-05-30
+  // Description
+  // 출고작업[B2C] 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('LOM02010E0' ,NULL ,NULL ,'N' ,NULL ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="LOM02010E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="LOM02010E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - LOM02010E0.RS_T1A_MASTER -->
+  <select id="RS_T1A_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T1A_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_STATE_PRE_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_CUR_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T1A_MASTER -->
+
+
+  <!-- [S] - LOM02010E0.RS_T1A_DETAIL -->
+  <select id="RS_T1A_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T1A_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T1A_DETAIL -->
+
+
+  <!-- [S] - LOM02010E0.RS_T1B_MASTER -->
+  <select id="RS_T1B_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T1B_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T1B_MASTER -->
+
+
+  <!-- [S] - LOM02010E0.RS_T1B_DETAIL -->
+  <select id="RS_T1B_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T1B_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T1B_DETAIL -->
+
+
+  <!-- [S] - LOM02010E0.RS_T1B_SUB1 -->
+  <select id="RS_T1B_SUB1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T1B_SUB1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T1B_SUB1 -->
+
+
+  <!-- [S] - LOM02010E0.RS_T2_MASTER -->
+  <select id="RS_T2_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T2_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_STATE_PRE_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_CUR_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CNT_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CNT1               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_CNT2               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TOT_ITEM_QTY1           ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TOT_ITEM_QTY2           ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T2_MASTER -->
+
+
+  <!-- [S] - LOM02010E0.RS_T2_DETAIL -->
+  <select id="RS_T2_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T2_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T2_DETAIL -->
+
+
+  <!-- [S] - LOM02010E0.RS_T3_MASTER -->
+  <select id="RS_T3_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T3_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_STATE_PRE_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_CUR_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T3_MASTER -->
+
+
+  <!-- [S] - LOM02010E0.RS_T3_DETAIL -->
+  <select id="RS_T3_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T3_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T3_DETAIL -->
+
+
+  <!-- [S] - LOM02010E0.RS_T3_SUB1 -->
+  <select id="RS_T3_SUB1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T3_SUB1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T3_SUB1 -->
+
+
+  <!-- [S] - LOM02010E0.RS_T4_MASTER -->
+  <select id="RS_T4_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T4_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_STATE_PRE_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_CUR_YN            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T4_MASTER -->
+
+
+  <!-- [S] - LOM02010E0.RS_T4_DETAIL -->
+  <select id="RS_T4_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_T4_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_T4_DETAIL -->
+
+
+  <!-- [S] - LOM02010E0.RS_MASTER -->
+  <select id="RS_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SO_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_MASTER -->
+
+
+  <!-- [S] - LOM02010E0.RS_SUB1 -->
+  <select id="RS_SUB1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_SUB1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_SUB1 -->
+
+
+  <!-- [S] - LOM02010E0.RS_SUB3 -->
+  <select id="RS_SUB3" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_SUB3
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_SUB3 -->
+
+
+  <!-- [S] - LOM02010E0.RS_SUB4 -->
+  <select id="RS_SUB4" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_SUB4
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_EQUIP_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_SUB4 -->
+
+
+  <!-- [S] - LOM02010E0.RS_REF1 -->
+  <select id="RS_REF1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LOM02010E0_VIRTUALMAP} = call LOM02010E0.RS_REF1
+      (#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOM02010E0.RS_REF1 -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+
+
+</mapper>

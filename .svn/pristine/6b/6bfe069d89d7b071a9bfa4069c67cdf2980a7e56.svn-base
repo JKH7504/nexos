@@ -1,0 +1,110 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOB03080Q1
+    프로그램명         : 당일거래명세서출력
+    프로그램설명       : 당일거래명세서출력 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-07-29
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-07-29    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOB03080Q1.css" /> -->
+<script src="js/LOB03080Q1.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td style="min-width: 320px;">
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblQOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQPopup_Delivery_Cd" class="lblCondition">매장</div>
+                    <input id="edtQDelivery_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQDelivery_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQEquip_Div" class="lblCondition">작업구분</div>
+                    <select id="cboQEquip_Div" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQDelivery_Div" class="lblCondition">매장구분</div>
+                    <select id="cboQDelivery_Div" class="cboNormal" style="width: 150px;"></select>
+                </td>
+            </tr>
+        </table>
+        <!-- 추가조회조건 -->
+        <table id="ctrAdditionalConditionView" class="ctrAdditionalCondition">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_State" class="lblCondition">상품상태</div>
+                    <select id="cboQItem_State" class="cboNormal" style="width: 210px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQOutbound_Batch" class="lblCondition">출고차수</div>
+                    <div class="ctrGroupBox" style="width: 115px;">
+                        <input id="rgbQOutbound_Batch1" name="rgbOutboundBatch" class="rgbNormal" type="radio" value="1" checked="checked" />
+                        통합
+                        <input id="rgbQOutbound_Batch2" name="rgbOutboundBatch" class="rgbNormal" type="radio" value="2" />
+                        차수
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td id="tdViewOutbound_Batch">
+                    <div id="lblQOutbound_Batch" class="lblCondition">출고차수</div>
+                    <select id="cboQOutbound_Batch" class="cboKey" style="width: 150px;"></select>
+                    <input id="btnQOutbound_Batch" class="btnIcoRefresh" type="button" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">거래명세서내역</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

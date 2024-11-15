@@ -1,0 +1,118 @@
+package nexos.dao.cm;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: WCDAOImpl<br>
+ * Description: CMC05020E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("CMC05020E0DAO")
+public class CMC05020E0DAOImpl extends DaoSupport implements CMC05020E0DAO {
+
+    final String PRORAM_ID               = "CMC05020E0";
+
+    final String TABLE_NM_CMLOCATIONRTN  = "CMLOCATIONRTN";
+    final String INSERT_ID_CMLOCATIONRTN = PRORAM_ID + ".INSERT_" + TABLE_NM_CMLOCATIONRTN;
+    final String UPDATE_ID_CMLOCATIONRTN = PRORAM_ID + ".UPDATE_" + TABLE_NM_CMLOCATIONRTN;
+    final String DELETE_ID_CMLOCATIONRTN = PRORAM_ID + ".DELETE_" + TABLE_NM_CMLOCATIONRTN;
+
+    final String SP_ID_CHK_LOCATION      = "WF.CHK_LOCATION_02";
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void save(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        int dsCnt = dsSave.size();
+        String location;
+        Map<String, Object> newParams;
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                // 1: 존-행-열-단
+                if (rowData.get("P_DSP_LOCATION_POLICY").equals("1")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 2: 존-행-열단
+                } else if (rowData.get("P_DSP_LOCATION_POLICY").equals("2")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 3: 존-행열-단
+                } else if (rowData.get("P_DSP_LOCATION_POLICY").equals("3")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 4: 존행-열-단
+                } else if (rowData.get("P_DSP_LOCATION_POLICY").equals("4")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 5: 존-행열단
+                } else if (rowData.get("P_DSP_LOCATION_POLICY").equals("5")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 6: 존행-열단
+                } else if (rowData.get("P_DSP_LOCATION_POLICY").equals("6")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 7: 존행열-단
+                } else if (rowData.get("P_DSP_LOCATION_POLICY").equals("7")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 8: 존행열단
+                } else {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                }
+                // LOCATION_CD 컬럼값 교체
+                rowData.put("P_LOCATION_CD", location);
+
+                // 로케이션 체크
+                newParams = new HashMap<String, Object>();
+                newParams.put("P_CENTER_CD", rowData.get("P_CENTER_CD"));
+                newParams.put("P_ZONE_CD", rowData.get("P_ZONE_CD"));
+                newParams.put("P_BANK_CD", rowData.get("P_BANK_CD"));
+                newParams.put("P_BAY_CD", rowData.get("P_BAY_CD"));
+                newParams.put("P_LEV_CD", rowData.get("P_LEV_CD"));
+
+                Map<String, Object> resultMap = callProcedure(SP_ID_CHK_LOCATION, newParams);
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CMLOCATIONRTN, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_CMLOCATIONRTN, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                deleteSql(DELETE_ID_CMLOCATIONRTN, rowData);
+            }
+        }
+    }
+
+}

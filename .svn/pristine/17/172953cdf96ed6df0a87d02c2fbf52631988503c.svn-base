@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CARD_LOM_MSG" pageWidth="595" pageHeight="842" columnWidth="290" leftMargin="155" rightMargin="150" topMargin="198" bottomMargin="455" uuid="2026c8f0-0156-448a-9f98-536a902cf1b2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="192"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CARD_MSG
+        ,CARD_FROM
+        ,CARD_TO
+    FROM LO020PM
+   WHERE CENTER_CD     = 'E1'
+     AND BU_CD         = '3100'
+     AND OUTBOUND_DATE = '2014-04-29'
+     AND OUTBOUND_NO   = '0002']]>
+	</queryString>
+	<field name="CARD_MSG" class="java.lang.String"/>
+	<field name="CARD_FROM" class="java.lang.String"/>
+	<field name="CARD_TO" class="java.lang.String"/>
+	<columnHeader>
+		<band height="164">
+			<staticText>
+				<reportElement mode="Transparent" x="5" y="4" width="23" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="427216cc-0d3e-41d0-b697-1f7699343259"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[TO.]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="28" y="4" width="135" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="1901af7c-4b49-4f45-9840-f04d543f4f80"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARD_TO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="6" y="32" width="269" height="85" forecolor="#000000" backcolor="#FFFFFF" uuid="ea2f0570-2c59-4a64-98d1-f74265e59851"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARD_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="140" y="127" width="130" height="36" forecolor="#000000" backcolor="#FFFFFF" uuid="55314820-c550-427d-8d33-ddae5d89a143"/>
+				<textElement verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARD_FROM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="105" y="123" width="35" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="b0e3b6d0-6bcb-4219-99d0-20456253438b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[From.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+</jasperReport>

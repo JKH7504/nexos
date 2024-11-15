@@ -1,0 +1,68 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC04010E0
+    프로그램명         : 상품그룹관리
+    프로그램설명       : 상품그룹관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC04010E0.css" /> -->
+<script src="js/CMC04010E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Cust_Cd" class="lblCondition">고객사</div>
+                    <input id="edtQCust_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQCust_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 160px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">대분류</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divDetailView" class="ctrMiddle">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">중분류</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="divSubView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdSub" class="lblTitle">소분류</td>
+                <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdSub"></div>
+    </div>
+</body>
+</html>

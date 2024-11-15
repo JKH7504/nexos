@@ -1,0 +1,94 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LIC05061P0
+    프로그램명         : 수동라벨발행(사이트) 팝업
+    프로그램설명       : 수동라벨발행(사이트) 팝업 화면 HTML
+                         제조번호, 유통기한 수정가능
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2020-12-04
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2020-12-04    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LIC05061P0.css" /> -->
+<script src="js/LIC05061P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblDept_Cd" class="lblNormal">부서</div>
+                <input id="edtDept_Cd" class="edtDisplay" type="text" style="width: 70px;" />
+                <input id="edtDept_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblItem_Cd" class="lblNormal">상품코드</div>
+                <input id="edtItem_Cd" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblItem_Nm" class="lblNormal">상품명</div>
+                <input id="edtItem_Nm" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblItem_Spec" class="lblNormal">상품규격</div>
+                <input id="edtItem_Spec" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblItem_State" class="lblNormal">상품상태</div>
+                <input id="edtItem_State" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblIBox_In_Plt" class="lblNormal">파렛트입수</div>
+                <input id="edtBox_In_Plt" class="edtNormal" type="text" maxlength="10" style="width: 110px;" />
+                <div class="lblDisplay">Box</div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblBatch_No" class="lblNormal">제조번호</div>
+                <input id="edtBatch_No" class="edtNormal" type="text" style="width: 110px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblValid_Date" class="lblNormal">유통기한</div>
+                <input id="dtpValid_Date" class="edtNormal" type="text" style="width: 110px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblPlt_Place" class="lblNormal">면박스수</div>
+                <input id="edtPlt_Place" class="edtDisplay" type="text" style="width: 110px;" />
+                <div class="lblDisplay">Box</div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblPlt_Stair" class="lblNormal">단수</div>
+                <input id="edtPlt_Stair" class="edtDisplay" type="text" style="width: 110px;" />
+                <div class="lblDisplay">Box</div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblOrder_Info" class="lblNormal">지시량</div>
+                <input id="edtOrder_Box" class="edtDisplay" type="text" style="width: 38px;" />
+                <div class="lblDisplay">BOX</div>
+                <input id="edtOrder_Ea" class="edtDisplay" type="text" style="width: 38px;" />
+                <div class="lblDisplay">EA</div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblPlt_Cnt" class="lblNormal">파렛트매수</div>
+                <input id="edtPlt_Cnt" class="edtNormal" type="text" maxlength="10" style="width: 110px;" />
+                <div class="lblDisplay"></div>
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnPrint" class="btnNormal" type="button" value="라벨인쇄" style="width: 100px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

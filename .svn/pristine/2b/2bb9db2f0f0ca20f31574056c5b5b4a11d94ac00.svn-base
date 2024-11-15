@@ -1,0 +1,616 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 출고검수[일반] 화면
+  // Author : ASETEC
+  // Date : 2022-11-30
+  // Description
+  // 출고검수[일반] 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('SCAN_LOB03010E0' ,NULL ,NULL ,'Y' ,NULL ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="SCAN_LOB03010E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="SCAN_LOB03010E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - SCAN_LOB03010E0.RS_MASTER -->
+  <select id="RS_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_MASTER -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T1_MASTER -->
+  <select id="RS_P1_T1_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T1_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T1_MASTER -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T2_MASTER -->
+  <select id="RS_P1_T2_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T2_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T2_MASTER -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T3_MASTER -->
+  <select id="RS_P1_T3_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T3_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T3_MASTER -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P3_MASTER -->
+  <select id="RS_P3_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P3_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_NM             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P3_MASTER -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_DETAIL -->
+  <select id="RS_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_DETAIL -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T1_DETAIL -->
+  <select id="RS_P1_T1_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T1_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T1_DETAIL -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T2_DETAIL -->
+  <select id="RS_P1_T2_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T2_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T2_DETAIL -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T3_DETAIL -->
+  <select id="RS_P1_T3_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T3_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T3_DETAIL -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P3_DETAIL -->
+  <select id="RS_P3_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P3_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P3_DETAIL -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T1_SUB -->
+  <select id="RS_P1_T1_SUB" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T1_SUB
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T1_SUB -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T2_SUB -->
+  <select id="RS_P1_T2_SUB" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T2_SUB
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T2_SUB -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.RS_P1_T3_SUB -->
+  <select id="RS_P1_T3_SUB" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=SCAN_LOB03010E0_VIRTUALMAP} = call SCAN_LOB03010E0.RS_P1_T3_SUB
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.RS_P1_T3_SUB -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.GET_ADDRESS_ERROR_CD -->
+  <select id="GET_ADDRESS_ERROR_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.GET_ADDRESS_ERROR_CD
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ERROR_CD                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ERROR_MSG               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.GET_ADDRESS_ERROR_CD -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.GET_ITEM_INFO -->
+  <select id="GET_ITEM_INFO" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.GET_ITEM_INFO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_BAR_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_COLUMN_NM               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_BRAND_CD                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ITEM_CD                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ITEM_BAR_CD             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_BOX_BAR_CD              ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_CASE_BAR_CD             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ITEM_QTY                ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.GET_ITEM_INFO -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.GET_WB_INFO -->
+  <select id="GET_WB_INFO" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.GET_WB_INFO
+      (#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_WB_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ORDER_BAR_CD            ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.GET_WB_INFO -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_BW_SCAN_CONFIRM -->
+  <select id="LO_BW_SCAN_CONFIRM" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_BW_SCAN_CONFIRM
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_BW_SCAN_CONFIRM -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_CREATE_DATA -->
+  <select id="LO_CREATE_DATA" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_CREATE_DATA
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ERROR_CD                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_CREATE_DATA -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_FW_SCAN_CONFIRM -->
+  <select id="LO_FW_SCAN_CONFIRM" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_FW_SCAN_CONFIRM
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_FW_SCAN_CONFIRM -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_BOX_COMPLETE -->
+  <select id="LO_SCAN_BOX_COMPLETE" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_BOX_COMPLETE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_SIZE_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_HDC_CUST_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_HDC_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_WB_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_BOX_COMPLETE -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_BOX_DELETE -->
+  <select id="LO_SCAN_BOX_DELETE" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_BOX_DELETE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_BOX_DELETE -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_BOX_MERGE -->
+  <select id="LO_SCAN_BOX_MERGE" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_BOX_MERGE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO_TO               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_NO_FROM             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_BOX_MERGE -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_BOX_SAVE_T1 -->
+  <select id="LO_SCAN_BOX_SAVE_T1" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_BOX_SAVE_T1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CONFIRM_QTY             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SAVE_TYPE               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_BOX_SAVE_T1 -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_BOX_SAVE_T2 -->
+  <select id="LO_SCAN_BOX_SAVE_T2" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_BOX_SAVE_T2
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CONFIRM_QTY             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SAVE_TYPE               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_BOX_SAVE_T2 -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_BOX_TOTAL_INSPECTION -->
+  <select id="LO_SCAN_BOX_TOTAL_INSPECTION" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_BOX_TOTAL_INSPECTION
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_HDC_CUST_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_HDC_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_BOX_TOTAL_INSPECTION -->
+
+
+  <!-- [S] - SCAN_LOB03010E0.LO_SCAN_SAVE_SERIAL -->
+  <select id="LO_SCAN_SAVE_SERIAL" statementType="CALLABLE" parameterType="hashmap">
+    {  call SCAN_LOB03010E0.LO_SCAN_SAVE_SERIAL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_SERIAL             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SERIAL_DATA_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CONFIRM_QTY             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - SCAN_LOB03010E0.LO_SCAN_SAVE_SERIAL -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - INSERT_LO050NM [출고검수내역] -->
+  <insert id="INSERT_LO050NM" parameterType="hashmap">
+    INSERT INTO LO050NM
+               (
+                CENTER_CD
+               ,BU_CD
+               ,OUTBOUND_DATE
+               ,OUTBOUND_NO
+               ,BOX_NO
+               ,LINE_NO
+               <if test="P_BOXING_YN               != null and P_BOXING_YN               != ''">,BOXING_YN                   </if>
+               <if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">,BRAND_CD                    </if>
+               <if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">,ITEM_CD                     </if>
+               <if test="P_ITEM_STATE              != null and P_ITEM_STATE              != ''">,ITEM_STATE                  </if>
+               <if test="P_ITEM_LOT                != null and P_ITEM_LOT                != ''">,ITEM_LOT                    </if>
+               <if test="P_CONFIRM_QTY             != null and P_CONFIRM_QTY             != ''">,CONFIRM_QTY                 </if>
+               <if test="P_INSPECT_BOX_WEIGHT      != null and P_INSPECT_BOX_WEIGHT      != ''">,INSPECT_BOX_WEIGHT          </if>
+               <if test="P_INSPECT_YN              != null and P_INSPECT_YN              != ''">,INSPECT_YN                  </if>
+               <if test="P_INSPECT_USER_ID         != null and P_INSPECT_USER_ID         != ''">,INSPECT_USER_ID             </if>
+               <if test="P_INSPECT_DATETIME        != null and P_INSPECT_DATETIME        != ''">,INSPECT_DATETIME            </if>
+               <if test="P_CARRIER_CD              != null and P_CARRIER_CD              != ''">,CARRIER_CD                  </if>
+               <if test="P_HDC_CUST_CD             != null and P_HDC_CUST_CD             != ''">,HDC_CUST_CD                 </if>
+               <if test="P_HDC_DIV                 != null and P_HDC_DIV                 != ''">,HDC_DIV                     </if>
+               <if test="P_WB_NO                   != null and P_WB_NO                   != ''">,WB_NO                       </if>
+               <if test="P_WB_DEL_YN               != null and P_WB_DEL_YN               != ''">,WB_DEL_YN                   </if>
+               <if test="P_ADD_YN                  != null and P_ADD_YN                  != ''">,ADD_YN                      </if>
+               <if test="P_WB_BOX_DIV              != null and P_WB_BOX_DIV              != ''">,WB_BOX_DIV                  </if>
+               <if test="P_WB_ADD_AMT              != null and P_WB_ADD_AMT              != ''">,WB_ADD_AMT                  </if>
+               <if test="P_ADJUST_MONTH            != null and P_ADJUST_MONTH            != ''">,ADJUST_MONTH                </if>
+               <if test="P_SHIP_DATE               != null and P_SHIP_DATE               != ''">,SHIP_DATE                   </if>
+               <if test="P_SHIP_ID                 != null and P_SHIP_ID                 != ''">,SHIP_ID                     </if>
+               <if test="P_SHIP_USER_ID            != null and P_SHIP_USER_ID            != ''">,SHIP_USER_ID                </if>
+               <if test="P_SHIP_DATETIME           != null and P_SHIP_DATETIME           != ''">,SHIP_DATETIME               </if>
+               <if test="P_LOAD_YN                 != null and P_LOAD_YN                 != ''">,LOAD_YN                     </if>
+               <if test="P_LOAD_USER_ID            != null and P_LOAD_USER_ID            != ''">,LOAD_USER_ID                </if>
+               <if test="P_LOAD_DATETIME           != null and P_LOAD_DATETIME           != ''">,LOAD_DATETIME               </if>
+               <if test="P_SEND_DATE               != null and P_SEND_DATE               != ''">,SEND_DATE                   </if>
+               <if test="P_SEND_NO                 != null and P_SEND_NO                 != ''">,SEND_NO                     </if>
+               <if test="P_SEND_STATE              != null and P_SEND_STATE              != ''">,SEND_STATE                  </if>
+               <if test="P_SEND_USER_ID            != null and P_SEND_USER_ID            != ''">,SEND_USER_ID                </if>
+               <if test="P_SEND_DATETIME           != null and P_SEND_DATETIME           != ''">,SEND_DATETIME               </if>
+               <if test="P_WB_DELIVERY_YN          != null and P_WB_DELIVERY_YN          != ''">,WB_DELIVERY_YN              </if>
+               <if test="P_WB_RECV_USER_ID         != null and P_WB_RECV_USER_ID         != ''">,WB_RECV_USER_ID             </if>
+               <if test="P_WB_RECV_DATETIME        != null and P_WB_RECV_DATETIME        != ''">,WB_RECV_DATETIME            </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_CENTER_CD}
+               ,#{P_BU_CD}
+               ,#{P_OUTBOUND_DATE}
+               ,#{P_OUTBOUND_NO}
+               ,#{P_BOX_NO}
+               ,#{P_LINE_NO}
+               <if test="P_BOXING_YN               != null and P_BOXING_YN               != ''">,#{P_BOXING_YN}              </if>
+               <if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">,#{P_BRAND_CD}               </if>
+               <if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">,#{P_ITEM_CD}                </if>
+               <if test="P_ITEM_STATE              != null and P_ITEM_STATE              != ''">,#{P_ITEM_STATE}             </if>
+               <if test="P_ITEM_LOT                != null and P_ITEM_LOT                != ''">,#{P_ITEM_LOT}               </if>
+               <if test="P_CONFIRM_QTY             != null and P_CONFIRM_QTY             != ''">,#{P_CONFIRM_QTY}            </if>
+               <if test="P_INSPECT_BOX_WEIGHT      != null and P_INSPECT_BOX_WEIGHT      != ''">,#{P_INSPECT_BOX_WEIGHT}     </if>
+               <if test="P_INSPECT_YN              != null and P_INSPECT_YN              != ''">,#{P_INSPECT_YN}             </if>
+               <if test="P_INSPECT_USER_ID         != null and P_INSPECT_USER_ID         != ''">,#{P_INSPECT_USER_ID}        </if>
+               <if test="P_INSPECT_DATETIME        != null and P_INSPECT_DATETIME        != ''">
+               ,DECODE(#{P_INSPECT_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_INSPECT_DATETIME}))
+               </if>
+               <if test="P_CARRIER_CD              != null and P_CARRIER_CD              != ''">,#{P_CARRIER_CD}             </if>
+               <if test="P_HDC_CUST_CD             != null and P_HDC_CUST_CD             != ''">,#{P_HDC_CUST_CD}            </if>
+               <if test="P_HDC_DIV                 != null and P_HDC_DIV                 != ''">,#{P_HDC_DIV}                </if>
+               <if test="P_WB_NO                   != null and P_WB_NO                   != ''">,#{P_WB_NO}                  </if>
+               <if test="P_WB_DEL_YN               != null and P_WB_DEL_YN               != ''">,#{P_WB_DEL_YN}              </if>
+               <if test="P_ADD_YN                  != null and P_ADD_YN                  != ''">,#{P_ADD_YN}                 </if>
+               <if test="P_WB_BOX_DIV              != null and P_WB_BOX_DIV              != ''">,#{P_WB_BOX_DIV}             </if>
+               <if test="P_WB_ADD_AMT              != null and P_WB_ADD_AMT              != ''">,#{P_WB_ADD_AMT}             </if>
+               <if test="P_ADJUST_MONTH            != null and P_ADJUST_MONTH            != ''">,#{P_ADJUST_MONTH}           </if>
+               <if test="P_SHIP_DATE               != null and P_SHIP_DATE               != ''">,#{P_SHIP_DATE}              </if>
+               <if test="P_SHIP_ID                 != null and P_SHIP_ID                 != ''">,#{P_SHIP_ID}                </if>
+               <if test="P_SHIP_USER_ID            != null and P_SHIP_USER_ID            != ''">,#{P_SHIP_USER_ID}           </if>
+               <if test="P_SHIP_DATETIME           != null and P_SHIP_DATETIME           != ''">
+               ,DECODE(#{P_SHIP_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_SHIP_DATETIME}))
+               </if>
+               <if test="P_LOAD_YN                 != null and P_LOAD_YN                 != ''">,#{P_LOAD_YN}                </if>
+               <if test="P_LOAD_USER_ID            != null and P_LOAD_USER_ID            != ''">,#{P_LOAD_USER_ID}           </if>
+               <if test="P_LOAD_DATETIME           != null and P_LOAD_DATETIME           != ''">
+               ,DECODE(#{P_LOAD_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_LOAD_DATETIME}))
+               </if>
+               <if test="P_SEND_DATE               != null and P_SEND_DATE               != ''">,#{P_SEND_DATE}              </if>
+               <if test="P_SEND_NO                 != null and P_SEND_NO                 != ''">,#{P_SEND_NO}                </if>
+               <if test="P_SEND_STATE              != null and P_SEND_STATE              != ''">,#{P_SEND_STATE}             </if>
+               <if test="P_SEND_USER_ID            != null and P_SEND_USER_ID            != ''">,#{P_SEND_USER_ID}           </if>
+               <if test="P_SEND_DATETIME           != null and P_SEND_DATETIME           != ''">
+               ,DECODE(#{P_SEND_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_SEND_DATETIME}))
+               </if>
+               <if test="P_WB_DELIVERY_YN          != null and P_WB_DELIVERY_YN          != ''">,#{P_WB_DELIVERY_YN}         </if>
+               <if test="P_WB_RECV_USER_ID         != null and P_WB_RECV_USER_ID         != ''">,#{P_WB_RECV_USER_ID}        </if>
+               <if test="P_WB_RECV_DATETIME        != null and P_WB_RECV_DATETIME        != ''">
+               ,DECODE(#{P_WB_RECV_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_WB_RECV_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_LO050NM [출고검수내역] -->
+
+
+  <!-- [S] - UPDATE_LO050NM [출고검수내역] -->
+  <update id="UPDATE_LO050NM" parameterType="hashmap">
+    UPDATE LO050NM
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_BOXING_YN               != null">,BOXING_YN                = #{P_BOXING_YN}              </if>
+          <if test="P_BRAND_CD                != null">,BRAND_CD                 = #{P_BRAND_CD}               </if>
+          <if test="P_ITEM_CD                 != null">,ITEM_CD                  = #{P_ITEM_CD}                </if>
+          <if test="P_ITEM_STATE              != null">,ITEM_STATE               = #{P_ITEM_STATE}             </if>
+          <if test="P_ITEM_LOT                != null">,ITEM_LOT                 = #{P_ITEM_LOT}               </if>
+          <if test="P_CONFIRM_QTY             != null">,CONFIRM_QTY              = #{P_CONFIRM_QTY}            </if>
+          <if test="P_INSPECT_BOX_WEIGHT      != null">,INSPECT_BOX_WEIGHT       = #{P_INSPECT_BOX_WEIGHT}     </if>
+          <if test="P_INSPECT_YN              != null">,INSPECT_YN               = #{P_INSPECT_YN}             </if>
+          <if test="P_INSPECT_USER_ID         != null">,INSPECT_USER_ID          = #{P_INSPECT_USER_ID}        </if>
+          <if test="P_INSPECT_DATETIME        != null">
+          ,INSPECT_DATETIME         = DECODE(#{P_INSPECT_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_INSPECT_DATETIME}))
+          </if>
+          <if test="P_CARRIER_CD              != null">,CARRIER_CD               = #{P_CARRIER_CD}             </if>
+          <if test="P_HDC_CUST_CD             != null">,HDC_CUST_CD              = #{P_HDC_CUST_CD}            </if>
+          <if test="P_HDC_DIV                 != null">,HDC_DIV                  = #{P_HDC_DIV}                </if>
+          <if test="P_WB_NO                   != null">,WB_NO                    = #{P_WB_NO}                  </if>
+          <if test="P_WB_DEL_YN               != null">,WB_DEL_YN                = #{P_WB_DEL_YN}              </if>
+          <if test="P_ADD_YN                  != null">,ADD_YN                   = #{P_ADD_YN}                 </if>
+          <if test="P_WB_BOX_DIV              != null">,WB_BOX_DIV               = #{P_WB_BOX_DIV}             </if>
+          <if test="P_WB_ADD_AMT              != null">,WB_ADD_AMT               = #{P_WB_ADD_AMT}             </if>
+          <if test="P_ADJUST_MONTH            != null">,ADJUST_MONTH             = #{P_ADJUST_MONTH}           </if>
+          <if test="P_SHIP_DATE               != null">,SHIP_DATE                = #{P_SHIP_DATE}              </if>
+          <if test="P_SHIP_ID                 != null">,SHIP_ID                  = #{P_SHIP_ID}                </if>
+          <if test="P_SHIP_USER_ID            != null">,SHIP_USER_ID             = #{P_SHIP_USER_ID}           </if>
+          <if test="P_SHIP_DATETIME           != null">
+          ,SHIP_DATETIME            = DECODE(#{P_SHIP_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_SHIP_DATETIME}))
+          </if>
+          <if test="P_LOAD_YN                 != null">,LOAD_YN                  = #{P_LOAD_YN}                </if>
+          <if test="P_LOAD_USER_ID            != null">,LOAD_USER_ID             = #{P_LOAD_USER_ID}           </if>
+          <if test="P_LOAD_DATETIME           != null">
+          ,LOAD_DATETIME            = DECODE(#{P_LOAD_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_LOAD_DATETIME}))
+          </if>
+          <if test="P_SEND_DATE               != null">,SEND_DATE                = #{P_SEND_DATE}              </if>
+          <if test="P_SEND_NO                 != null">,SEND_NO                  = #{P_SEND_NO}                </if>
+          <if test="P_SEND_STATE              != null">,SEND_STATE               = #{P_SEND_STATE}             </if>
+          <if test="P_SEND_USER_ID            != null">,SEND_USER_ID             = #{P_SEND_USER_ID}           </if>
+          <if test="P_SEND_DATETIME           != null">
+          ,SEND_DATETIME            = DECODE(#{P_SEND_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_SEND_DATETIME}))
+          </if>
+          <if test="P_WB_DELIVERY_YN          != null">,WB_DELIVERY_YN           = #{P_WB_DELIVERY_YN}         </if>
+          <if test="P_WB_RECV_USER_ID         != null">,WB_RECV_USER_ID          = #{P_WB_RECV_USER_ID}        </if>
+          <if test="P_WB_RECV_DATETIME        != null">
+          ,WB_RECV_DATETIME         = DECODE(#{P_WB_RECV_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_WB_RECV_DATETIME}))
+          </if>
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+       AND BU_CD                    = #{P_BU_CD}
+       AND OUTBOUND_DATE            = #{P_OUTBOUND_DATE}
+       AND OUTBOUND_NO              = #{P_OUTBOUND_NO}
+       AND BOX_NO                   = #{P_BOX_NO}
+       AND LINE_NO                  = #{P_LINE_NO}
+  </update>
+  <!-- [E] - UPDATE_LO050NM [출고검수내역] -->
+
+
+  <!-- [S] - DELETE_LO050NM [출고검수내역] -->
+  <delete id="DELETE_LO050NM" parameterType="hashmap">
+    DELETE 
+      FROM LO050NM
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+     <!--<if test="P_BU_CD                   != null and P_BU_CD                   != ''">-->
+       AND BU_CD                    = #{P_BU_CD}
+     <!--</if>-->
+     <!--<if test="P_OUTBOUND_DATE           != null and P_OUTBOUND_DATE           != ''">-->
+       AND OUTBOUND_DATE            = #{P_OUTBOUND_DATE}
+     <!--</if>-->
+     <!--<if test="P_OUTBOUND_NO             != null and P_OUTBOUND_NO             != ''">-->
+       AND OUTBOUND_NO              = #{P_OUTBOUND_NO}
+     <!--</if>-->
+     <!--<if test="P_BOX_NO                  != null and P_BOX_NO                  != ''">-->
+       AND BOX_NO                   = #{P_BOX_NO}
+     <!--</if>-->
+     <!--<if test="P_LINE_NO                 != null and P_LINE_NO                 != ''">-->
+       AND LINE_NO                  = #{P_LINE_NO}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_LO050NM [출고검수내역] -->
+
+
+</mapper>

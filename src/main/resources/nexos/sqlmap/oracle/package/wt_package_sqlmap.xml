@@ -1,0 +1,701 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // WMS Transaction 관련 Package
+  // Author : ASETEC
+  // Date : 2022-11-30
+  // Description
+  // WMS Transaction 관련 Package Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_package_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PACKAGE_MAPPER('WT' ,NULL ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  //====================================================================================================================
+  // ※ Package 호출 관련 Mapper의 Namespace는 "Package명" 으로 처리
+  //====================================================================================================================
+  -->
+<mapper namespace="WT">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="WT_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - WT.CS_DYNAMIC_SELECT -->
+  <select id="CS_DYNAMIC_SELECT" flushCache="true" useCache="false" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WT_VIRTUALMAP} = call WT.CS_DYNAMIC_SELECT
+      (#{P_QUERY_TEXT              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_DYNAMIC_SELECT -->
+
+
+  <!--
+  //====================================================================================================================
+  // PROCEDURE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - WT.CM_INBOUNDSEQ_GETNO -->
+  <select id="CM_INBOUNDSEQ_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_INBOUNDSEQ_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CREATE_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_INBOUND_SEQ             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_INBOUNDSEQ_GETNO -->
+
+
+  <!-- [S] - WT.CM_INOUTNO_GETNO -->
+  <select id="CM_INOUTNO_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_INOUTNO_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_TABLE_NM                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_INOUT_NO                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_INOUTNO_GETNO -->
+
+
+  <!-- [S] - WT.CM_PALLETID_GETNO -->
+  <select id="CM_PALLETID_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_PALLETID_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VENDOR_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CREATE_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_POLICY_LS230            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_PALLET_ID               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_PALLETID_GETNO -->
+
+
+  <!-- [S] - WT.CM_PALLETID_GETNOS -->
+  <select id="CM_PALLETID_GETNOS" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_PALLETID_GETNOS
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VENDOR_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CREATE_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_PALLET_ID_CNT           ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_PALLETID_GETNOS -->
+
+
+  <!-- [S] - WT.CM_SEQ_GETNO -->
+  <select id="CM_SEQ_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_SEQ_GETNO
+      (#{P_SEQ_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_TABLE_NM                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_SEQ_NO                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_SEQ_GETNO -->
+
+
+  <!-- [S] - WT.CM_SHIPID_GETNO -->
+  <select id="CM_SHIPID_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_SHIPID_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CREATE_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_PRINT_ID                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_SHIP_ID                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_PRINT_ID                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_SHIPID_GETNO -->
+
+
+  <!-- [S] - WT.CM_SHIPID_GETNOS -->
+  <select id="CM_SHIPID_GETNOS" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_SHIPID_GETNOS
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CREATE_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_SHIP_ID_CNT             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_SHIP_ID1                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_SHIP_ID2                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_PRINT_ID                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_SHIPID_GETNOS -->
+
+
+  <!-- [S] - WT.CM_UNIQUE_GETID -->
+  <select id="CM_UNIQUE_GETID" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CM_UNIQUE_GETID
+      (#{P_TABLE_NM                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_UNIQUE_ID               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CM_UNIQUE_GETID -->
+
+
+  <!-- [S] - WT.CS_ACTIVITYLOG_WRITE -->
+  <select id="CS_ACTIVITYLOG_WRITE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CS_ACTIVITYLOG_WRITE
+      (#{P_ACTIVITY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ACTIVITY_COMMENT        ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ACTIVITY_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLIENT_IP               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_ACTIVITYLOG_WRITE -->
+
+
+  <!-- [S] - WT.CS_DYNAMIC_UPDATE -->
+  <select id="CS_DYNAMIC_UPDATE" flushCache="true" useCache="false" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CS_DYNAMIC_UPDATE
+      (#{P_QUERY_TEXT              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_DYNAMIC_UPDATE -->
+
+
+  <!-- [S] - WT.CS_LOG_WRITE_01 -->
+  <select id="CS_LOG_WRITE_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CS_LOG_WRITE
+      (#{P_LOG_ID                  ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROC_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOG_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOG_COMMENT             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOG_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_LOG_WRITE_01 -->
+
+
+  <!-- [S] - WT.CS_LOG_WRITE_02 -->
+  <select id="CS_LOG_WRITE_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CS_LOG_WRITE
+      (#{P_LOG_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOG_COMMENT             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOG_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_LOG_WRITE_02 -->
+
+
+  <!-- [S] - WT.CS_NOTICEREPLY_GETNO -->
+  <select id="CS_NOTICEREPLY_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CS_NOTICEREPLY_GETNO
+      (#{P_WRITE_NO                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_REPLY_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_REPLY_NO                ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_NOTICEREPLY_GETNO -->
+
+
+  <!-- [S] - WT.CS_NOTICE_GETNO -->
+  <select id="CS_NOTICE_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.CS_NOTICE_GETNO
+      (#{O_WRITE_NO                ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.CS_NOTICE_GETNO -->
+
+
+  <!-- [S] - WT.ER_RECV_GETNO -->
+  <select id="ER_RECV_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.ER_RECV_GETNO
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_EDI_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_RECV_DATE               ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_RECV_NO                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.ER_RECV_GETNO -->
+
+
+  <!-- [S] - WT.ES_IFKEY_GETNO -->
+  <select id="ES_IFKEY_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.ES_IFKEY_GETNO
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_EDI_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEFINE_NO               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SEND_DATE               ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_IF_KEY_NO               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.ES_IFKEY_GETNO -->
+
+
+  <!-- [S] - WT.ES_SEND_GETNO -->
+  <select id="ES_SEND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.ES_SEND_GETNO
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_EDI_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SEND_DATE               ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_SEND_NO                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.ES_SEND_GETNO -->
+
+
+  <!-- [S] - WT.LC_000ND_GETNO -->
+  <select id="LC_000ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_000ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_000ND_GETNO -->
+
+
+  <!-- [S] - WT.LC_000NM_GETNO -->
+  <select id="LC_000NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_000NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_ORDER_NO                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_000NM_GETNO -->
+
+
+  <!-- [S] - WT.LC_010ND_GETNO -->
+  <select id="LC_010ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_010ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ETC_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ETC_NO                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_010ND_GETNO -->
+
+
+  <!-- [S] - WT.LC_010NM_GETNO -->
+  <select id="LC_010NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_010NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ETC_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_ETC_NO                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_010NM_GETNO -->
+
+
+  <!-- [S] - WT.LC_030NM_GETNO -->
+  <select id="LC_030NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_030NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MOVE_DATE               ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_MOVE_NO                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_030NM_GETNO -->
+
+
+  <!-- [S] - WT.LC_030NM_LINE_GETNO -->
+  <select id="LC_030NM_LINE_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_030NM_LINE_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MOVE_DATE               ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_MOVE_NO                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_030NM_LINE_GETNO -->
+
+
+  <!-- [S] - WT.LC_040ND_GETNO -->
+  <select id="LC_040ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_040ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INVEST_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INVEST_NO               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_040ND_GETNO -->
+
+
+  <!-- [S] - WT.LC_040NM_GETNO -->
+  <select id="LC_040NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_040NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INVEST_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_INVEST_NO               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_040NM_GETNO -->
+
+
+  <!-- [S] - WT.LC_110NM_GETNO -->
+  <select id="LC_110NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LC_110NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESSING_DATE         ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_PROCESSING_NO           ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LC_110NM_GETNO -->
+
+
+  <!-- [S] - WT.LI_010ND_GETNO -->
+  <select id="LI_010ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LI_010ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LI_010ND_GETNO -->
+
+
+  <!-- [S] - WT.LI_010NM_GETNO -->
+  <select id="LI_010NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LI_010NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_ORDER_NO                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LI_010NM_GETNO -->
+
+
+  <!-- [S] - WT.LI_020ND_GETNO -->
+  <select id="LI_020ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LI_020ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LI_020ND_GETNO -->
+
+
+  <!-- [S] - WT.LI_020NM_GETNO -->
+  <select id="LI_020NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LI_020NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_INBOUND_NO              ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LI_020NM_GETNO -->
+
+
+  <!-- [S] - WT.LO_010ND_GETNO -->
+  <select id="LO_010ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_010ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_010ND_GETNO -->
+
+
+  <!-- [S] - WT.LO_010NM_GETNO -->
+  <select id="LO_010NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_010NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_ORDER_NO                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_010NM_GETNO -->
+
+
+  <!-- [S] - WT.LO_020ND_GETNO -->
+  <select id="LO_020ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_020ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_020ND_GETNO -->
+
+
+  <!-- [S] - WT.LO_020NM_GETNO -->
+  <select id="LO_020NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_020NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_OUTBOUND_NO             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_020NM_GETNO -->
+
+
+  <!-- [S] - WT.LO_050NM_BOX_GETNO -->
+  <select id="LO_050NM_BOX_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_050NM_BOX_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_BOX_NO                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_050NM_BOX_GETNO -->
+
+
+  <!-- [S] - WT.LO_DELIVERY_BATCH_GETNO -->
+  <select id="LO_DELIVERY_BATCH_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_DELIVERY_BATCH_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DELIVERY_BATCH_NM       ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_DELIVERY_BATCH          ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_DELIVERY_BATCH_GETNO -->
+
+
+  <!-- [S] - WT.LO_OUTBOUND_BATCH_GETNO -->
+  <select id="LO_OUTBOUND_BATCH_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_OUTBOUND_BATCH_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH_NM       ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_BATCH_DIV      ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_OUTBOUND_BATCH          ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_OUTBOUND_BATCH_NM       ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_OUTBOUND_BATCH_GETNO -->
+
+
+  <!-- [S] - WT.LO_SHELF_GETNO -->
+  <select id="LO_SHELF_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.LO_SHELF_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_SHELF_NO                ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.LO_SHELF_GETNO -->
+
+
+  <!-- [S] - WT.RI_010ND_GETNO -->
+  <select id="RI_010ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RI_010ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RI_010ND_GETNO -->
+
+
+  <!-- [S] - WT.RI_010NM_GETNO -->
+  <select id="RI_010NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RI_010NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_ORDER_NO                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RI_010NM_GETNO -->
+
+
+  <!-- [S] - WT.RI_020ND_GETNO -->
+  <select id="RI_020ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RI_020ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RI_020ND_GETNO -->
+
+
+  <!-- [S] - WT.RI_020NM_GETNO -->
+  <select id="RI_020NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RI_020NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_INBOUND_NO              ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RI_020NM_GETNO -->
+
+
+  <!-- [S] - WT.RO_010ND_GETNO -->
+  <select id="RO_010ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RO_010ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ORDER_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RO_010ND_GETNO -->
+
+
+  <!-- [S] - WT.RO_010NM_GETNO -->
+  <select id="RO_010NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RO_010NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_ORDER_NO                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RO_010NM_GETNO -->
+
+
+  <!-- [S] - WT.RO_020ND_GETNO -->
+  <select id="RO_020ND_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RO_020ND_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LINE_NO                 ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RO_020ND_GETNO -->
+
+
+  <!-- [S] - WT.RO_020NM_GETNO -->
+  <select id="RO_020NM_GETNO" statementType="CALLABLE" parameterType="hashmap">
+    {  call WT.RO_020NM_GETNO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_OUTBOUND_NO             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WT.RO_020NM_GETNO -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+
+
+</mapper>

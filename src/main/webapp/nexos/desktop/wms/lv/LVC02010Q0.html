@@ -1,0 +1,86 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LVC02010Q0
+    프로그램명         : 재고Capa 현황
+    프로그램설명       : 재고Capa 현황 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${c} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<link rel="stylesheet" href="css/LVC02010Q0.css" />
+<script src="js/LVC02010Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <div id="divZoneEmptyLocView" style="position: relative;">
+            <table id="ctrTitle_chtZoneEmptyLocReport" class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_Zone_Empty_Loc" class="lblTitle">공셀 - 존 기준</td>
+                </tr>
+            </table>
+            <div id="chtZoneEmptyLocReport" class="ctrGroup"></div>
+            <div id="chtZoneEmptyLocPerBar" class="ctrPercentBar special"></div>
+            <div id="ctrTitle_chtZoneEmptyLocPerBar" class="lblPercentBarTitle">공셀율</div>
+        </div>
+        <div id="divBankEmptyLocView" style="position: relative;">
+            <div id="divBankEmptyLocReport" class="lblChartTitle"></div>
+            <table id="ctrTitle_chtBankEmptyLocReport" class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_Bank_Empty_Loc" class="lblTitle">공셀 상세 - 행 기준</td>
+                </tr>
+            </table>
+            <div id="chtBankEmptyLocReport" class="ctrGroup"></div>
+            <div id="chtBankEmptyLocPerBar" class="ctrPercentBar special"></div>
+            <div id="ctrTitle_chtBankEmptyLocPerBar" class="lblPercentBarTitle">공셀율</div>
+        </div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="overflow: hidden;">
+        <div id="divZonePutawayView" style="position: relative;">
+            <table id="ctrTitle_chtZonePutawayReport" class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_Zone_Putaway" class="lblTitle">적재율 - 존 기준</td>
+                </tr>
+            </table>
+            <div id="chtZonePutawayReport" class="ctrGroup"></div>
+            <div id="chtZonePutawayPerBar" class="ctrPercentBar special"></div>
+            <div id="ctrTitle_chtZonePutawayPerBar" class="lblPercentBarTitle">적재율</div>
+        </div>
+        <div id="divBankPutawayView" style="position: relative;">
+            <table id="ctrTitle_chtBankPutawayReport" class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_Bank_Putaway" class="lblTitle">적재율 상세 - 행 기준</td>
+                </tr>
+            </table>
+            <div id="divBankPutawayReport" class="lblChartTitle"></div>
+            <div id="chtBankPutawayReport" class="ctrGroup"></div>
+            <div id="chtBankPutawayPerBar" class="ctrPercentBar special"></div>
+            <div id="ctrTitle_chtBankPutawayPerBar" class="lblPercentBarTitle">적재율</div>
+        </div>
+    </div>
+</body>
+</html>

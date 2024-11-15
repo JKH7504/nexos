@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_PALLET01" pageWidth="283" pageHeight="283" orientation="Landscape" whenNoDataType="NoPages" columnWidth="271" leftMargin="6" rightMargin="6" topMargin="6" bottomMargin="6" uuid="58fd38cd-a40b-453e-8a34-1f42f57a405c">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="3.897434200000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="logispot_wms_dev"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="Title" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FSUBTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPRINTTIME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPUSER" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPAGE" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_INBOUND_DATE" class="java.lang.String"/>
+	<parameter name="P_INBOUND_NO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT M1.PALLET_ID
+          ,WF.C_TO_DATE(M1.INBOUND_DATE) AS INBOUND_DATE
+          ,M1.ITEM_CD
+          ,M1.ITEM_LOT
+          ,M2.CONFIRM_QTY as TOTAL_CONFIRM_QTY
+          ,M2.BL_WEIGHT
+          ,M2.ARRIVAL_DATE
+          ,M2.FLIGHT_NO
+          ,M1.BATCH_NO
+          ,M1.CONFIRM_QTY
+          ,M2.SPARE1_NOTE AS IS_DAMAGED
+FROM LI030NM M1
+         JOIN LI020ND M2 ON M2.CENTER_CD    = M1.CENTER_CD
+                                 AND M2.BU_CD        = M1.BU_CD
+                                 AND M2.INBOUND_DATE = M1.INBOUND_DATE
+                                 AND M2.INBOUND_NO   = M1.INBOUND_NO
+	     JOIN CMITEM   T1 ON T1.ITEM_CD           = M1.ITEM_CD
+  LEFT JOIN CMCODE C1 ON C1.COMMON_GRP = WF.GET_COMMON_GRP('IN_UNIT_DIV')
+                                  AND C1.COMMON_CD  = T1.IN_UNIT_CD
+WHERE  M1.CENTER_CD = $P{P_CENTER_CD} 
+	 AND M1.BU_CD = $P{P_BU_CD} 
+	 AND M1.INBOUND_DATE = $P{P_INBOUND_DATE} 
+	 AND M1.INBOUND_NO = $P{P_INBOUND_NO}]]>
+	</queryString>
+	<field name="PALLET_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PALLET_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="PALLET_ID"/>
+	</field>
+	<field name="INBOUND_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INBOUND_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="INBOUND_DATE"/>
+	</field>
+	<field name="ITEM_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_CD"/>
+	</field>
+	<field name="ITEM_LOT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_LOT"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_LOT"/>
+	</field>
+	<field name="TOTAL_CONFIRM_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TOTAL_CONFIRM_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL_CONFIRM_QTY"/>
+	</field>
+	<field name="BL_WEIGHT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BL_WEIGHT"/>
+		<property name="com.jaspersoft.studio.field.label" value="BL_WEIGHT"/>
+	</field>
+	<field name="ARRIVAL_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ARRIVAL_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ARRIVAL_DATE"/>
+	</field>
+	<field name="FLIGHT_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FLIGHT_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="FLIGHT_NO"/>
+	</field>
+	<field name="BATCH_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BATCH_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="BATCH_NO"/>
+	</field>
+	<field name="CONFIRM_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="CONFIRM_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="CONFIRM_QTY"/>
+	</field>
+	<field name="IS_DAMAGED" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="IS_DAMAGED"/>
+		<property name="com.jaspersoft.studio.field.label" value="IS_DAMAGED"/>
+	</field>
+	<background>
+		<band height="6" splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="271" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<frame>
+				<reportElement x="0" y="0" width="271" height="271" uuid="42e99f1b-57d7-469b-ae3b-94c00e8f99f0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.028"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<frame>
+					<reportElement x="0" y="238" width="271" height="32" uuid="081613e2-6c51-4599-a630-422d114c9cca">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box topPadding="4">
+						<pen lineWidth="2.26"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="-3" width="271" height="30" uuid="ee9be684-66ff-4acf-ba78-41c0d17cd4d0">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.28"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="13" isBold="false"/>
+						</textElement>
+						<text><![CDATA[수입화물표]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="0" width="271" height="48" uuid="2dd5cf05-cb70-4395-9a21-c74fb66223ad">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					</reportElement>
+					<box topPadding="8" leftPadding="8" rightPadding="8">
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.13" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textField textAdjust="ScaleFont">
+						<reportElement key="" x="0" y="-8" width="254" height="48" uuid="73ed24a6-b7a1-4ddf-9892-2dc1cfd30edf">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.element.name" value="UCR No."/>
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.8"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.tabStopWidth" value="px"/>
+						</reportElement>
+						<box leftPadding="0"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+							<font fontName="D2Coding" size="26" isBold="true"/>
+							<paragraph lineSpacing="Single" lineSpacingSize="1.0" tabStopWidth="40"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{ITEM_LOT}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="48" width="271" height="82" uuid="96a5d173-9420-47de-9853-8158f163b3f1">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+					</reportElement>
+					<box topPadding="8" leftPadding="8" rightPadding="8">
+						<pen lineWidth="2.014"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<componentElement>
+						<reportElement x="49" y="9" width="160" height="30" uuid="d6f9d0e0-faf0-46eb-8947-8c461e499b40">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.barWidth" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						</reportElement>
+						<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false">
+							<jr:codeExpression><![CDATA[$F{PALLET_ID}]]></jr:codeExpression>
+						</jr:barbecue>
+					</componentElement>
+					<componentElement>
+						<reportElement x="49" y="16" width="160" height="20" uuid="48f26cb4-0288-494e-99a5-54eee894e91a">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.barWidth" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false">
+							<jr:codeExpression><![CDATA[$F{PALLET_ID}]]></jr:codeExpression>
+						</jr:barbecue>
+					</componentElement>
+					<componentElement>
+						<reportElement x="49" y="23" width="160" height="20" uuid="5f829db7-df19-4335-b530-2384a3405ecd">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.barWidth" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false">
+							<jr:codeExpression><![CDATA[$F{PALLET_ID}]]></jr:codeExpression>
+						</jr:barbecue>
+					</componentElement>
+					<componentElement>
+						<reportElement x="49" y="28" width="160" height="20" uuid="c23361fd-dc6b-4802-ab63-d9a4a406adb6">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.barWidth" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false">
+							<jr:codeExpression><![CDATA[$F{PALLET_ID}]]></jr:codeExpression>
+						</jr:barbecue>
+					</componentElement>
+					<textField textAdjust="ScaleFont">
+						<reportElement x="0" y="48" width="254" height="15" uuid="abd7d939-4996-4f30-be26-b287ade64ca4">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="12" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{PALLET_ID}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="1" y="130" width="270" height="35" uuid="f6b8a939-72c3-4ef6-a2c0-4e2a2796eb93">
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.grid.JSSGridBagLayout"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="76" height="35" uuid="c458f501-7fdb-420f-9776-a51ab7c369b1">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.28"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="16" isBold="true"/>
+						</textElement>
+						<text><![CDATA[수량]]></text>
+					</staticText>
+					<textField textAdjust="ScaleFont">
+						<reportElement x="76" y="0" width="30" height="35" uuid="731f03bf-1587-4c56-8827-96f971d7d87a">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.11"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						</reportElement>
+						<box>
+							<pen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="14" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CONFIRM_QTY}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="106" y="0" width="89" height="35" uuid="b7ca4020-f8c8-4355-8a7c-41b1cf7ea1f7">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.33"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="16" isBold="true"/>
+						</textElement>
+						<text><![CDATA[중량]]></text>
+					</staticText>
+					<textField textAdjust="ScaleFont">
+						<reportElement x="195" y="0" width="75" height="35" uuid="97d18323-565b-423e-9048-ca3330ebc3bc">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.28"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="14" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[String.format("%.2f", $F{BL_WEIGHT})]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="1" y="166" width="270" height="35" uuid="531578e5-68ec-4532-a458-7153c42ca70b">
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.grid.JSSGridBagLayout"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="76" height="35" uuid="aa1ed119-d5cd-4795-ac58-f43db223b125">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.28"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="13" isBold="true"/>
+						</textElement>
+						<text><![CDATA[입항 예정일]]></text>
+					</staticText>
+					<textField textAdjust="ScaleFont">
+						<reportElement x="76" y="0" width="119" height="35" uuid="cdc52f30-919b-4533-a418-0193cca289af">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.44"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						</reportElement>
+						<box>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="14" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{ARRIVAL_DATE}]]></textFieldExpression>
+					</textField>
+					<textField textAdjust="ScaleFont">
+						<reportElement x="195" y="0" width="75" height="35" uuid="244d0f53-7f6d-40e2-834d-c365c8afb15a">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.28"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="14" isBold="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FLIGHT_NO}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="1" y="202" width="270" height="35" uuid="7a96c912-9fc3-4504-8e60-3b43166588da">
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.grid.JSSGridBagLayout"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<staticText>
+						<reportElement x="0" y="0" width="76" height="35" uuid="d8648ee2-4ef6-4105-a0d5-00e1d3e4669a">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.28"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<box>
+							<rightPen lineWidth="1.0"/>
+						</box>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="16" isBold="true"/>
+						</textElement>
+						<text><![CDATA[화주]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="76" y="0" width="194" height="35" uuid="2f374c1e-23d0-44c2-92f8-ca04414d8b37">
+							<property name="com.jaspersoft.layout.grid.x" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.y" value="-1"/>
+							<property name="com.jaspersoft.layout.grid.weight.x" value="0.72"/>
+							<property name="com.jaspersoft.layout.grid.weight.y" value="1.0"/>
+							<property name="com.jaspersoft.layout.grid.rowspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.colspan" value="1"/>
+							<property name="com.jaspersoft.layout.grid.weight.fixed" value="false"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.x" value="px"/>
+							<property name="com.jaspersoft.studio.unit.y" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						</reportElement>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="D2Coding" size="14" isBold="true"/>
+						</textElement>
+						<text><![CDATA[SIEMENS LTD. SEOUL]]></text>
+					</staticText>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

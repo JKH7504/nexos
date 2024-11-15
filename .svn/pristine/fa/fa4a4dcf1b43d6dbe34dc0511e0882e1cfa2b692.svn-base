@@ -1,0 +1,219 @@
+﻿/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : LIC05061P0
+ *  프로그램명         : 수동라벨발행(사이트) 팝업
+ *  프로그램설명       : 수동라벨발행(사이트) 팝업 화면 Javascript
+ *                       제조번호, 유통기한 수정가능
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2016-12-14
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2020-12-04    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#ctrPopupView"
+        },
+        // 마스터 데이터
+        masterData: null
+    });
+
+    $NC.setInitDatePicker("#dtpValid_Date");
+    $NC.setEnable("#edtDept_Cd", false);
+    $NC.setEnable("#edtDept_Nm", false);
+    $NC.setEnable("#edtItem_Cd", false);
+    $NC.setEnable("#edtItem_Nm", false);
+    $NC.setEnable("#edtItem_Spec", false);
+    $NC.setEnable("#edtItem_State", false);
+    $NC.setEnable("#edtPlt_Place", false);
+    $NC.setEnable("#edtPlt_Stair", false);
+    $NC.setEnable("#edtOrder_Qty", false);
+    $NC.setEnable("#edtOrder_Box", false);
+    $NC.setEnable("#edtOrder_Ea", false);
+
+    // 버튼 클릭 이벤트 연결
+    $("#btnClose").click(onCancel);
+    $("#btnPrint").click(onWorkPrintLabbel);
+
+    setReportInfo();
+}
+
+/**
+ * 등록팝업 Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    $NC.setValue("#edtDept_Cd", $NC.G_VAR.G_PARAMETER.P_DEPT_CD);
+    $NC.setValue("#edtDept_Nm", $NC.G_VAR.G_PARAMETER.P_DEPT_NM);
+    $NC.setValue("#edtItem_Cd", $NC.G_VAR.G_PARAMETER.P_ITEM_CD);
+    $NC.setValue("#edtItem_Nm", $NC.G_VAR.G_PARAMETER.P_ITEM_NM);
+    $NC.setValue("#edtItem_Spec", $NC.G_VAR.G_PARAMETER.P_ITEM_SPEC);
+    $NC.setValue("#edtItem_State", $NC.G_VAR.G_PARAMETER.P_ITEM_STATE_F);
+    $NC.setValue("#edtBatch_No", $NC.G_VAR.G_PARAMETER.P_BATCH_NO);
+    $NC.setValue("#edtBox_In_Plt", $NC.G_VAR.G_PARAMETER.P_BOX_IN_PLT);
+    $NC.setValue("#dtpValid_Date", $NC.G_VAR.G_PARAMETER.P_VALID_DATE);
+    $NC.setValue("#edtPlt_Place", $NC.G_VAR.G_PARAMETER.P_PLT_PLACE);
+    $NC.setValue("#edtPlt_Stair", $NC.G_VAR.G_PARAMETER.P_PLT_STAIR);
+    $NC.setValue("#edtOrder_Box", $NC.G_VAR.G_PARAMETER.P_ORDER_BOX);
+    $NC.setValue("#edtOrder_Ea", $NC.G_VAR.G_PARAMETER.P_ORDER_EA);
+    $NC.setValue("#edtPlt_Cnt", $NC.G_VAR.G_PARAMETER.P_ORDER_RPLT);
+
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * 닫기,취소버튼 클릭 이벤트
+ */
+function onCancel() {
+
+    $NC.setPopupCloseAction($ND.C_CANCEL);
+    $NC.onPopupClose();
+}
+
+/**
+ * 저장,확인버튼 클릭 이벤트
+ */
+function onClose() {
+
+    $NC.setPopupCloseAction($ND.C_OK);
+    $NC.onPopupClose();
+}
+
+/**
+ * 조회
+ */
+function _Inquiry() {
+
+}
+
+/**
+ * 신규
+ */
+function _New() {
+
+}
+
+/**
+ * 저장
+ */
+function _Save() {
+
+}
+
+/**
+ * 삭제
+ */
+function _Delete() {
+
+}
+
+function onWorkPrintLabbel() {
+
+    var BOX_IN_PLT = $NC.getValue("#edtBox_In_Plt");
+    var BATCH_NO = $NC.getValue("#edtBatch_No");
+    var VALID_DATE = $NC.getValue("#dtpValid_Date");
+    var PLT_CNT = $NC.getValue("#edtPlt_Cnt");
+
+    $NC.serviceCall("/LIC05060E0/onWorkPrintLabel.do", {
+        P_QUERY_ID: "LI_FW_MANUAL_LABEL",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.G_VAR.G_PARAMETER.P_CENTER_CD,
+            P_BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD,
+            P_ORDER_DATE: $NC.G_VAR.G_PARAMETER.P_ORDER_DATE,
+            P_ORDER_NO: $NC.G_VAR.G_PARAMETER.P_ORDER_NO,
+            P_LINE_NO: $NC.G_VAR.G_PARAMETER.P_LINE_NO,
+            P_BOX_IN_PLT: BOX_IN_PLT,
+            P_BATCH_NO: BATCH_NO,
+            P_VALID_DATE: VALID_DATE,
+            P_PLT_CNT: PLT_CNT,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }
+    }, onPrintLabel);
+}
+
+function onPrintLabel(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+    var oMsg = $NC.getOutMessage(resultData);
+    if (oMsg != $ND.C_OK) {
+        alert(oMsg);
+        return;
+    }
+
+    var dsInfo = resultData;
+    doPrint(dsInfo);
+
+    // 미리보기 창이 다 뜬 후 실행하기 위한 setTimeout
+    setTimeout(function() {
+        onClose();
+    }, $ND.C_TIMEOUT_CLOSE_SLOW);
+}
+
+function doPrint(dsInfo) {
+
+    var reportIndex = $NC.getSearchArray($NC.G_VAR.printOptions, {
+        searchKey: "REPORT_CD",
+        searchVal: "LABEL_CMC03" // LABEL_CMC03 - 파렛트ID라벨(단일상품)
+    });
+    if (reportIndex == -1) {
+        alert($NC.getDisplayMsg("JS.LIC05061P0.001", "출력할 레포트 정보를 검색할 수 없습니다. 관리자에게 문의하십시오."));
+        return;
+    }
+    var reportInfo = $NC.G_VAR.printOptions[reportIndex];
+
+    // 출력 파라메터 세팅
+    var printOptions = {
+        reportDoc: reportInfo.REPORT_DOC_URL,
+        reportTitle: reportInfo.REPORT_TITLE_NM,
+        queryId: reportInfo.REPORT_QUERY_ID,
+        queryParams: {
+            P_CENTER_CD: $NC.G_VAR.G_PARAMETER.P_CENTER_CD,
+            P_BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD,
+            P_INBOUND_DATE: dsInfo.O_INBOUND_DATE
+        },
+        internalQueryYn: reportInfo.INTERNAL_QUERY_YN,
+        checkedValue: dsInfo.O_PALLET_ID
+    };
+
+    // 출력 미리보기 호출
+    $NC.showPrintPreview(printOptions);
+
+}
+
+function setReportInfo() {
+
+    // 레포트 세팅
+    $NC.setProgramReportInfo("/WC/getDataSet.do", "WC.GET_CSPROGRAMREPORT", {
+        P_PROGRAM_ID: "LIC05060E0",
+        P_PROGRAM_SUB_CD: $ND.C_NULL,
+        P_BU_CD: $NC.getValue("#edtQBu_Cd")
+    });
+}

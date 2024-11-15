@@ -1,0 +1,255 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01010E0
+    프로그램명         : 사용자관리
+    프로그램설명       : 사용자관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01010E0.css" /> -->
+<script src="js/CSC01010E0.js"></script>
+</head>
+<body>
+    <!-- 조회조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQBu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQCertify_Div" class="lblCondition">사용자구분</div>
+                    <select id="cboQCertify_Div" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td class="styFillArea styRight">
+                    <input id="btnEntryUser" class="btnImgPopup" type="button" value="사용자간편등록" style="width: 120px;" />
+                    <input id="btnDormantUser" class="btnImgPopup" type="button" value="장기미사용자" style="width: 105px;" />
+                    <input id="btnPwdErrorUser" class="btnImgPopup" type="button" value="비밀번호오류사용자" style="width: 145px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQDelete_Yn" class="lblCondition">삭제여부</div>
+                    <select id="cboQDelete_Yn" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQRole_Group_Div" class="lblCondition">권한그룹구분</div>
+                    <select id="cboQRole_Group_Div" class="cboNormal" style="width: 210px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 사용자정보 그리드 Master View -->
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">사용자정보</td>
+                <td>
+                    <input id="btnProgramRole" class="btnImgPopup" type="button" value="프로그램권한설정" style="width: 135px;" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <!-- Detail View -->
+    <div id=divRightView class="ctrRight">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">기본정보</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">관리정보</a></li>
+        </ul>
+        <!-- header -->
+        <!-- 기본정보 -->
+        <div id="divT1TabSheetView" class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblUser_Id" class="lblKey">사용자ID</div>
+                <input id="edtUser_Id" class="edtKey" type="text" autocomplete="off" style="width: 182px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblUser_Nm" class="lblKey">사용자명</div>
+                <input id="edtUser_Nm" class="edtKey" type="text" autocomplete="off" style="width: 182px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblUser_Pwd" class="lblKey">비밀번호</div>
+                <input id="edtUser_Pwd" class="edtKey" type="password" autocomplete="off" style="width: 182px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblSys_Lang" class="lblKey">사용언어</div>
+                <select id="cboSys_Lang" class="cboKey" style="width: 182px;"></select>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblRole_Group_Div" class="lblNormal">권한그룹구분</div>
+                <select id="cboRole_Group_Div" class="cboNormal" style="width: 182px;"></select>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblCertify_Div" class="lblKey">사용자구분</div>
+                <select id="cboCertify_Div" class="cboKey" style="width: 182px;"></select>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="divVendorInfo" style="display: none;">
+                    <div id="lblPopup_Vendor_Cd" class="lblKey">공급처</div>
+                    <input id="edtVendor_Cd" class="edtKey" type="text" style="width: 155px;" />
+                    <input id="btnVendor_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtVendor_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 202px;" />
+                </div>
+                <div id="divCarrierInfo" style="display: none;">
+                    <div id="lblPopup_Carrier_Cd" class="lblKey">운송사</div>
+                    <input id="edtCarrier_Cd" class="edtKey" type="text" style="width: 155px;" />
+                    <input id="btnCarrier_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 202px;" />
+                </div>
+                <div id="divCarInfo" style="display: none;">
+                    <div id="lblPopup_Car_Cd" class="lblKey">차량</div>
+                    <input id="edtCar_Cd" class="edtKey" type="text" style="width: 155px;" />
+                    <input id="btnCar_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtCar_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 202px;" />
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Address" class="lblGroupTitle">사용자부가정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblEmployee_Id" class="lblNormal">사원번호</div>
+                        <input id="edtEmployee_Id" class="edtNormal" type="text" style="width: 375px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblUser_Cust_Cd" class="lblNormal">소속고객사</div>
+                        <input id="edtUser_Cust_Cd" class="edtNormal" type="text" style="width: 150px;" />
+                        <input id="btnUser_Cust_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtUser_Cust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 195px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblUser_Dept_Cd" class="lblNormal">소속부서</div>
+                        <input id="edtUser_Dept_Cd" class="edtNormal" type="text" style="width: 150px;" />
+                        <input id="btnUser_Dept_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtUser_Dept_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 195px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblUser_Email" class="lblNormal">이메일</div>
+                        <input id="edtUser_Email" class="edtNormal" type="text" style="width: 375px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblUser_Work_Div" class="lblNormal">재직구분</div>
+                        <select id="cboUser_Work_Div" class="cboNormal" style="width: 150px;"></select>
+                        <div id="lblUser_Hp" class="lblNormal">휴대전화번호</div>
+                        <input id="edtUser_Hp" class="edtNormal" type="text" style="width: 122px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblEntry_Comment" class="lblNormal">등록사유</div>
+                        <input id="edtEntry_Comment" class="edtNormal" type="text" style="width: 375px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblDelete_Yn" class="lblKey">삭제여부</div>
+                        <input id="chkDelete_Yn" name="chkDelete_Yn" class="chkNormal" type="checkbox" />
+                        <input id="edtDelete_Comment" class="edtNormal" type="text" style="width: 353px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemark1" class="lblNormal">비고</div>
+                        <input id="edtRemark1" class="edtNormal" type="text" style="width: 375px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divT2TabSheetView" class="ctrInner">
+            <div id="divT2DetailInfo" class="ctrGroupRow inContent">
+                <div id="dspTitle_Address" class="lblGroupTitle">사용자관리정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblCenter_Cd_B" class="lblKey">기본물류센터</div>
+                        <input id="edtCenter_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 160px;" />
+                        <input id="edtCenter_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 209px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblBu_Cd_B" class="lblKey">기본사업부</div>
+                        <input id="edtBu_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 160px;" />
+                        <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 209px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Cust_Cd" class="lblKey">고객사</div>
+                        <input id="edtCust_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 160px;" />
+                        <input id="edtCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 209px;" />
+                    </div>
+                </div>
+            </div>
+            <!-- 관리 센터, 브랜드 그리드 View -->
+            <!-- Top -->
+            <div id="divGrdTopView">
+                <div id="divSubView1" class="ctrLeft">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail1" class="lblTitle">관리물류센터</td>
+                            <td>
+                                <input id="btnDeleteCenter" class="btnImgCancel" type="button" value="삭제" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail1" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail1"></div>
+                </div>
+                <div id="divSubView2" class="ctrRight">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail2" class="lblTitle">물류센터</td>
+                            <td>
+                                <input id="btnAddCenter" class="btnImgNormal" type="button" value="등록" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail2" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail2"></div>
+                </div>
+            </div>
+            <!-- Bottom -->
+            <div id="divGrdBottomView" style="margin-top: 5px;">
+                <div id="divSubView3" class="ctrLeft" style="border-width: 1px 1px 0 1px">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail3" class="lblTitle">관리사업부</td>
+                            <td>
+                                <input id="btnDeleteBu" class="btnImgCancel" type="button" value="삭제" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail3" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail3"></div>
+                </div>
+                <div id="divSubView4" class="ctrRight" style="border-width: 1px 1px 0 1px">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail4" class="lblTitle">사업부</td>
+                            <td>
+                                <input id="btnAddBu" class="btnImgNormal" type="button" value="등록" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail4" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

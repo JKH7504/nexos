@@ -1,0 +1,61 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : developerpopup
+    프로그램명         : 개발자메뉴 팝업
+    프로그램설명       : 개발자메뉴 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<script src="../../../framework/js/misc/sha.js"></script>
+<!-- Developer Popup CSS/JS -->
+<link rel="stylesheet" href="css/developerpopup.css" />
+<script src="js/developerpopup.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner styFillArea">
+            <tr>
+                <td class="styFillArea">
+                    <div id="dspReloadSqlMap" class="lblKey">SQLMapper 다시 읽기</div>
+                </td>
+                <td style="width: 100px;">
+                    <input id="btnReloadSqlMap" class="btnNormal" type="button" value="실행" style="width: 80px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="dspReloadMsg" class="lblKey">Javascript 메시지 다시 읽기</div>
+                </td>
+                <td>
+                    <input id="btnReloadMsg" class="btnNormal" type="button" value="실행" style="width: 80px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="dspReloadJavaMsg" class="lblKey">Java/DB 메시지 다시 읽기</div>
+                </td>
+                <td>
+                    <input id="btnReloadJavaMsg" class="btnNormal" type="button" value="실행" style="width: 80px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

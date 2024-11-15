@@ -1,0 +1,494 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 재고실사관리 화면
+  // Author : ASETEC
+  // Date : 2023-05-22
+  // Description
+  // 재고실사관리 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('LCC04010E0' ,'LC040NM;LC040ND' ,NULL ,'N' ,NULL ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="LCC04010E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="LCC04010E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - LCC04010E0.RS_T1_MASTER -->
+  <select id="RS_T1_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_T1_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INVEST_DATE1            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INVEST_DATE2            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_T1_MASTER -->
+
+
+  <!-- [S] - LCC04010E0.RS_T1_DETAIL -->
+  <select id="RS_T1_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_T1_DETAIL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INVEST_DATE             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INVEST_NO               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_T1_DETAIL -->
+
+
+  <!-- [S] - LCC04010E0.RS_T2_MASTER -->
+  <select id="RS_T2_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_T2_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INVEST_DATE1            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INVEST_DATE2            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_GAP_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_T2_MASTER -->
+
+
+  <!-- [S] - LCC04010E0.RS_T3_MASTER -->
+  <select id="RS_T3_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_T3_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INVEST_DATE1            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INVEST_DATE2            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_T3_MASTER -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB1 -->
+  <select id="RS_SUB1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB1 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB11 -->
+  <select id="RS_SUB11" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB11
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB11 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB12 -->
+  <select id="RS_SUB12" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB12
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD1                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD1                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD1                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD1                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD2                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD2                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD2                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD2                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB12 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB13 -->
+  <select id="RS_SUB13" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB13
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB13 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB2 -->
+  <select id="RS_SUB2" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB2
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB2 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB21 -->
+  <select id="RS_SUB21" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB21
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_GRP               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB21 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB22 -->
+  <select id="RS_SUB22" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB22
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_DATE1             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_DATE2             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_GRP               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB22 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB31 -->
+  <select id="RS_SUB31" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB31
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB31 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB41 -->
+  <select id="RS_SUB41" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB41
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_KEEP_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB41 -->
+
+
+  <!-- [S] - LCC04010E0.RS_SUB51 -->
+  <select id="RS_SUB51" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LCC04010E0_VIRTUALMAP} = call LCC04010E0.RS_SUB51
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_RANDOM_RATE             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_DATA_CREATE_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LC110            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LCC04010E0.RS_SUB51 -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - INSERT_LC040NM [재고실사마스터] -->
+  <insert id="INSERT_LC040NM" parameterType="hashmap">
+    INSERT INTO LC040NM
+               (
+                CENTER_CD
+               ,BU_CD
+               ,INVEST_DATE
+               ,INVEST_NO
+               <if test="P_INVEST_DIV              != null and P_INVEST_DIV              != ''">,INVEST_DIV                  </if>
+               <if test="P_DATA_CREATE_DIV         != null and P_DATA_CREATE_DIV         != ''">,DATA_CREATE_DIV             </if>
+               <if test="P_INVEST_START_DATE       != null and P_INVEST_START_DATE       != ''">,INVEST_START_DATE           </if>
+               <if test="P_INVEST_END_DATE         != null and P_INVEST_END_DATE         != ''">,INVEST_END_DATE             </if>
+               <if test="P_MANAGER_ID              != null and P_MANAGER_ID              != ''">,MANAGER_ID                  </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_ENTRY_USER_ID           != null and P_ENTRY_USER_ID           != ''">,ENTRY_USER_ID               </if>
+               <if test="P_ENTRY_DATETIME          != null and P_ENTRY_DATETIME          != ''">,ENTRY_DATETIME              </if>
+               <if test="P_CONFIRM_YN              != null and P_CONFIRM_YN              != ''">,CONFIRM_YN                  </if>
+               <if test="P_CONFIRM_USER_ID         != null and P_CONFIRM_USER_ID         != ''">,CONFIRM_USER_ID             </if>
+               <if test="P_CONFIRM_DATETIME        != null and P_CONFIRM_DATETIME        != ''">,CONFIRM_DATETIME            </if>
+               <if test="P_REFLECT_YN              != null and P_REFLECT_YN              != ''">,REFLECT_YN                  </if>
+               <if test="P_REFLECT_USER_ID         != null and P_REFLECT_USER_ID         != ''">,REFLECT_USER_ID             </if>
+               <if test="P_REFLECT_DATETIME        != null and P_REFLECT_DATETIME        != ''">,REFLECT_DATETIME            </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_CENTER_CD}
+               ,#{P_BU_CD}
+               ,#{P_INVEST_DATE}
+               ,#{P_INVEST_NO}
+               <if test="P_INVEST_DIV              != null and P_INVEST_DIV              != ''">,#{P_INVEST_DIV}             </if>
+               <if test="P_DATA_CREATE_DIV         != null and P_DATA_CREATE_DIV         != ''">,#{P_DATA_CREATE_DIV}        </if>
+               <if test="P_INVEST_START_DATE       != null and P_INVEST_START_DATE       != ''">,#{P_INVEST_START_DATE}      </if>
+               <if test="P_INVEST_END_DATE         != null and P_INVEST_END_DATE         != ''">,#{P_INVEST_END_DATE}        </if>
+               <if test="P_MANAGER_ID              != null and P_MANAGER_ID              != ''">,#{P_MANAGER_ID}             </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_ENTRY_USER_ID           != null and P_ENTRY_USER_ID           != ''">,#{P_ENTRY_USER_ID}          </if>
+               <if test="P_ENTRY_DATETIME          != null and P_ENTRY_DATETIME          != ''">
+               ,DECODE(#{P_ENTRY_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_ENTRY_DATETIME}))
+               </if>
+               <if test="P_CONFIRM_YN              != null and P_CONFIRM_YN              != ''">,#{P_CONFIRM_YN}             </if>
+               <if test="P_CONFIRM_USER_ID         != null and P_CONFIRM_USER_ID         != ''">,#{P_CONFIRM_USER_ID}        </if>
+               <if test="P_CONFIRM_DATETIME        != null and P_CONFIRM_DATETIME        != ''">
+               ,DECODE(#{P_CONFIRM_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_CONFIRM_DATETIME}))
+               </if>
+               <if test="P_REFLECT_YN              != null and P_REFLECT_YN              != ''">,#{P_REFLECT_YN}             </if>
+               <if test="P_REFLECT_USER_ID         != null and P_REFLECT_USER_ID         != ''">,#{P_REFLECT_USER_ID}        </if>
+               <if test="P_REFLECT_DATETIME        != null and P_REFLECT_DATETIME        != ''">
+               ,DECODE(#{P_REFLECT_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REFLECT_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_LC040NM [재고실사마스터] -->
+
+
+  <!-- [S] - UPDATE_LC040NM [재고실사마스터] -->
+  <update id="UPDATE_LC040NM" parameterType="hashmap">
+    UPDATE LC040NM
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_INVEST_DIV              != null">,INVEST_DIV               = #{P_INVEST_DIV}             </if>
+          <if test="P_DATA_CREATE_DIV         != null">,DATA_CREATE_DIV          = #{P_DATA_CREATE_DIV}        </if>
+          <if test="P_INVEST_START_DATE       != null">,INVEST_START_DATE        = #{P_INVEST_START_DATE}      </if>
+          <if test="P_INVEST_END_DATE         != null">,INVEST_END_DATE          = #{P_INVEST_END_DATE}        </if>
+          <if test="P_MANAGER_ID              != null">,MANAGER_ID               = #{P_MANAGER_ID}             </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                </if>
+          <if test="P_ENTRY_USER_ID           != null">,ENTRY_USER_ID            = #{P_ENTRY_USER_ID}          </if>
+          <if test="P_ENTRY_DATETIME          != null">
+          ,ENTRY_DATETIME           = DECODE(#{P_ENTRY_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_ENTRY_DATETIME}))
+          </if>
+          <if test="P_CONFIRM_YN              != null">,CONFIRM_YN               = #{P_CONFIRM_YN}             </if>
+          <if test="P_CONFIRM_USER_ID         != null">,CONFIRM_USER_ID          = #{P_CONFIRM_USER_ID}        </if>
+          <if test="P_CONFIRM_DATETIME        != null">
+          ,CONFIRM_DATETIME         = DECODE(#{P_CONFIRM_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_CONFIRM_DATETIME}))
+          </if>
+          <if test="P_REFLECT_YN              != null">,REFLECT_YN               = #{P_REFLECT_YN}             </if>
+          <if test="P_REFLECT_USER_ID         != null">,REFLECT_USER_ID          = #{P_REFLECT_USER_ID}        </if>
+          <if test="P_REFLECT_DATETIME        != null">
+          ,REFLECT_DATETIME         = DECODE(#{P_REFLECT_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REFLECT_DATETIME}))
+          </if>
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+       AND BU_CD                    = #{P_BU_CD}
+       AND INVEST_DATE              = #{P_INVEST_DATE}
+       AND INVEST_NO                = #{P_INVEST_NO}
+  </update>
+  <!-- [E] - UPDATE_LC040NM [재고실사마스터] -->
+
+
+  <!-- [S] - DELETE_LC040NM [재고실사마스터] -->
+  <delete id="DELETE_LC040NM" parameterType="hashmap">
+    DELETE 
+      FROM LC040NM
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+     <!--<if test="P_BU_CD                   != null and P_BU_CD                   != ''">-->
+       AND BU_CD                    = #{P_BU_CD}
+     <!--</if>-->
+     <!--<if test="P_INVEST_DATE             != null and P_INVEST_DATE             != ''">-->
+       AND INVEST_DATE              = #{P_INVEST_DATE}
+     <!--</if>-->
+     <!--<if test="P_INVEST_NO               != null and P_INVEST_NO               != ''">-->
+       AND INVEST_NO                = #{P_INVEST_NO}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_LC040NM [재고실사마스터] -->
+
+
+  <!-- [S] - INSERT_LC040ND [재고실사디테일] -->
+  <insert id="INSERT_LC040ND" parameterType="hashmap">
+    INSERT INTO LC040ND
+               (
+                CENTER_CD
+               ,BU_CD
+               ,INVEST_DATE
+               ,INVEST_NO
+               ,LINE_NO
+               <if test="P_LOCATION_CD             != null and P_LOCATION_CD             != ''">,LOCATION_CD                 </if>
+               <if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">,BRAND_CD                    </if>
+               <if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">,ITEM_CD                     </if>
+               <if test="P_ITEM_STATE              != null and P_ITEM_STATE              != ''">,ITEM_STATE                  </if>
+               <if test="P_ITEM_LOT                != null and P_ITEM_LOT                != ''">,ITEM_LOT                    </if>
+               <if test="P_VALID_DATE              != null and P_VALID_DATE              != ''">,VALID_DATE                  </if>
+               <if test="P_BATCH_NO                != null and P_BATCH_NO                != ''">,BATCH_NO                    </if>
+               <if test="P_STOCK_QTY               != null and P_STOCK_QTY               != ''">,STOCK_QTY                   </if>
+               <if test="P_INVEST_QTY              != null and P_INVEST_QTY              != ''">,INVEST_QTY                  </if>
+               <if test="P_GAP_DIV                 != null and P_GAP_DIV                 != ''">,GAP_DIV                     </if>
+               <if test="P_GAP_COMMENT             != null and P_GAP_COMMENT             != ''">,GAP_COMMENT                 </if>
+               <if test="P_INSPECT_YN              != null and P_INSPECT_YN              != ''">,INSPECT_YN                  </if>
+               <if test="P_INSPECT_USER_ID         != null and P_INSPECT_USER_ID         != ''">,INSPECT_USER_ID             </if>
+               <if test="P_INSPECT_DATETIME        != null and P_INSPECT_DATETIME        != ''">,INSPECT_DATETIME            </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_CENTER_CD}
+               ,#{P_BU_CD}
+               ,#{P_INVEST_DATE}
+               ,#{P_INVEST_NO}
+               ,#{P_LINE_NO}
+               <if test="P_LOCATION_CD             != null and P_LOCATION_CD             != ''">,#{P_LOCATION_CD}            </if>
+               <if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">,#{P_BRAND_CD}               </if>
+               <if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">,#{P_ITEM_CD}                </if>
+               <if test="P_ITEM_STATE              != null and P_ITEM_STATE              != ''">,#{P_ITEM_STATE}             </if>
+               <if test="P_ITEM_LOT                != null and P_ITEM_LOT                != ''">,#{P_ITEM_LOT}               </if>
+               <if test="P_VALID_DATE              != null and P_VALID_DATE              != ''">,#{P_VALID_DATE}             </if>
+               <if test="P_BATCH_NO                != null and P_BATCH_NO                != ''">,#{P_BATCH_NO}               </if>
+               <if test="P_STOCK_QTY               != null and P_STOCK_QTY               != ''">,#{P_STOCK_QTY}              </if>
+               <if test="P_INVEST_QTY              != null and P_INVEST_QTY              != ''">,#{P_INVEST_QTY}             </if>
+               <if test="P_GAP_DIV                 != null and P_GAP_DIV                 != ''">,#{P_GAP_DIV}                </if>
+               <if test="P_GAP_COMMENT             != null and P_GAP_COMMENT             != ''">,#{P_GAP_COMMENT}            </if>
+               <if test="P_INSPECT_YN              != null and P_INSPECT_YN              != ''">,#{P_INSPECT_YN}             </if>
+               <if test="P_INSPECT_USER_ID         != null and P_INSPECT_USER_ID         != ''">,#{P_INSPECT_USER_ID}        </if>
+               <if test="P_INSPECT_DATETIME        != null and P_INSPECT_DATETIME        != ''">
+               ,DECODE(#{P_INSPECT_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_INSPECT_DATETIME}))
+               </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_LC040ND [재고실사디테일] -->
+
+
+  <!-- [S] - UPDATE_LC040ND [재고실사디테일] -->
+  <update id="UPDATE_LC040ND" parameterType="hashmap">
+    UPDATE LC040ND
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_LOCATION_CD             != null">,LOCATION_CD              = #{P_LOCATION_CD}            </if>
+          <if test="P_BRAND_CD                != null">,BRAND_CD                 = #{P_BRAND_CD}               </if>
+          <if test="P_ITEM_CD                 != null">,ITEM_CD                  = #{P_ITEM_CD}                </if>
+          <if test="P_ITEM_STATE              != null">,ITEM_STATE               = #{P_ITEM_STATE}             </if>
+          <if test="P_ITEM_LOT                != null">,ITEM_LOT                 = #{P_ITEM_LOT}               </if>
+          <if test="P_VALID_DATE              != null">,VALID_DATE               = #{P_VALID_DATE}             </if>
+          <if test="P_BATCH_NO                != null">,BATCH_NO                 = #{P_BATCH_NO}               </if>
+          <if test="P_STOCK_QTY               != null">,STOCK_QTY                = #{P_STOCK_QTY}              </if>
+          <if test="P_INVEST_QTY              != null">,INVEST_QTY               = #{P_INVEST_QTY}             </if>
+          <if test="P_GAP_DIV                 != null">,GAP_DIV                  = #{P_GAP_DIV}                </if>
+          <if test="P_GAP_COMMENT             != null">,GAP_COMMENT              = #{P_GAP_COMMENT}            </if>
+          <if test="P_INSPECT_YN              != null">,INSPECT_YN               = #{P_INSPECT_YN}             </if>
+          <if test="P_INSPECT_USER_ID         != null">,INSPECT_USER_ID          = #{P_INSPECT_USER_ID}        </if>
+          <if test="P_INSPECT_DATETIME        != null">
+          ,INSPECT_DATETIME         = DECODE(#{P_INSPECT_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_INSPECT_DATETIME}))
+          </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+       AND BU_CD                    = #{P_BU_CD}
+       AND INVEST_DATE              = #{P_INVEST_DATE}
+       AND INVEST_NO                = #{P_INVEST_NO}
+       AND LINE_NO                  = #{P_LINE_NO}
+  </update>
+  <!-- [E] - UPDATE_LC040ND [재고실사디테일] -->
+
+
+  <!-- [S] - DELETE_LC040ND [재고실사디테일] -->
+  <delete id="DELETE_LC040ND" parameterType="hashmap">
+    DELETE 
+      FROM LC040ND
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+     <!--<if test="P_BU_CD                   != null and P_BU_CD                   != ''">-->
+       AND BU_CD                    = #{P_BU_CD}
+     <!--</if>-->
+     <!--<if test="P_INVEST_DATE             != null and P_INVEST_DATE             != ''">-->
+       AND INVEST_DATE              = #{P_INVEST_DATE}
+     <!--</if>-->
+     <!--<if test="P_INVEST_NO               != null and P_INVEST_NO               != ''">-->
+       AND INVEST_NO                = #{P_INVEST_NO}
+     <!--</if>-->
+     <!--<if test="P_LINE_NO                 != null and P_LINE_NO                 != ''">-->
+       AND LINE_NO                  = #{P_LINE_NO}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_LC040ND [재고실사디테일] -->
+
+
+</mapper>

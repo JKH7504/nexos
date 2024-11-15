@@ -1,0 +1,77 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC04030E0
+    프로그램명         : 물류센터정책관리
+    프로그램설명       : 물류센터정책관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC04030E0.css" /> -->
+<script src="js/CSC04030E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPolicy_Grp" class="lblCondition">정책그룹</div>
+                    <select id="cboQPolicy_Grp" class="cboNormal" style="width: 150px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <!-- split 상단-->
+        <div id="divSubTopView">
+            <div id="divMaster" class="ctrLeft" style="border-width: 0 1px 0 0;">
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdMaster" class="lblTitle">정책코드</td>
+                        <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdMaster"></div>
+            </div>
+            <div id="divDetail" class="ctrRight" style="border-width: 0 0 0 1px;">
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdDetail" class="lblTitle">정책값 선택</td>
+                        <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdDetail"></div>
+            </div>
+        </div>
+        <!-- split 하단-->
+        <div id="divSubBottomView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdSub" class="lblTitle">물류센터 정책 현황</td>
+                    <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdSub"></div>
+        </div>
+    </div>
+</body>
+</html>

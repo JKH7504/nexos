@@ -1,0 +1,37 @@
+# ======================================================================================================================
+# \uc804\uc5ed \uc124\uc815 \uc815\ubcf4
+# \uba85\uce6d = \uae30\ubcf8\uac12
+#
+# ======================================================================================================================
+# Override \ubd88\uac00\ub2a5
+# ======================================================================================================================
+#
+# ======================================================================================================================
+# Override \uac00\ub2a5 - \uc560\ud50c\ub9ac\ucf00\uc774\uc158 \ub2e8\uc704
+# ======================================================================================================================
+# CLIENT_VERSION = 1.0.00                                       // \ud504\ub85c\uadf8\ub7a8 \ubc84\uc804, \ud074\ub77c\uc774\uc5b8\ud2b8 \uc218\uc815 \ud6c4 \ubc18\uc601\uc2dc \ubc84\uc804 \ubcc0\uacbd
+#
+# SOCKET_BUFFER_SIZE = 8192                                     // \uc1a1\uc218\uc2e0 \ubc84\ud37c \ud06c\uae30
+#
+# RECV_MLEN = 3                                                 // \uc218\uc2e0DATA MASTER 1\ub808\ucf54\ub4dc \uae38\uc774
+# RECV_DLEN = 3                                                 // \uc218\uc2e0DATA DETAIL 1\ub808\ucf54\ub4dc \uae38\uc774
+# RECV_DCNT = 3                                                 // \uc218\uc2e0DATA DETAIL \ub808\ucf54\ub4dc \uac74\uc218
+# SEND_MLEN = 3                                                 // \uc1a1\uc2e0DATA MASTER 1\ub808\ucf54\ub4dc \uae38\uc774
+# SEND_DLEN = 3                                                 // \uc1a1\uc2e0DATA DETAIL 1\ub808\ucf54\ub4dc \uae38\uc774
+# SEND_DCNT = 3                                                 // \uc1a1\uc2e0DATA DETAIL \ub808\ucf54\ub4dc \uac74\uc218
+# SEND_PLEN = 10                                                // \uc1a1\uc2e0DATA \uc778\uc1c4 1\ub808\ucf54\ub4dc \uae38\uc774
+# LEN_MSG = 200                                                 // \uc77c\ubc18 \uba54\uc2dc\uc9c0 \uae38\uc774
+# LEN_RECV_MSG_HEADER = 11                                      // \uc218\uc2e0 \uba54\uc2dc\uc9c0 Header \uae38\uc774
+# ======================================================================================================================
+# ======================================================================================================================
+# Override \uac00\ub2a5 - \ud654\uba74 \ub2e8\uc704
+# \ud504\ub85c\uadf8\ub7a8ID_\uba85\uce6d, ex). PDA_LCC02010E0_SCANNED_INC_QTY
+# ======================================================================================================================
+# SCANNED_INC_QTY = false                                       // \uc0c1\ud488\ubc14\ucf54\ub4dc \uc2a4\uce94 \uc2dc \uc218\ub7c9\uc744 1\uc529 \uc99d\uac00\uc2dc\ud0ac\uc9c0 \uc5ec\ubd80
+# SCANNED_DISPLAY_ITEM_BAR_CD = true                            // \uc0c1\ud488\ubc14\ucf54\ub4dc \uc2a4\uce94 \uc2dc \ubc14\ucf54\ub4dc\uac12 \ud45c\uc2dc \uc5ec\ubd80
+# ======================================================================================================================
+CLIENT_VERSION = 1.0.03
+
+RECV_DCNT = 4
+SEND_DCNT = 4
+LEN_RECV_MSG_HEADER = 12

@@ -1,0 +1,4 @@
+.lblNormal, /*
+*/ .lblKey {
+    width: auto;
+}

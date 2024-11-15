@@ -1,0 +1,308 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOM04050E0
+    프로그램명         : 수동DAS작업
+    프로그램설명       : 수동DAS작업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<link rel="stylesheet" href="css/LOF04050E0.css" />
+<script src="js/LOF04050E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQOutbound_Batch" class="lblCondition">출고차수</div>
+                    <select id="cboQOutbound_Batch" class="cboKey" style="width: 150px;"></select>
+                    <input id="btnQOutbound_Batch" class="btnIcoRefresh" type="button" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrProcessAction" class="ctrInner" style="border-width: 0 1px;">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblProcess_Div" class="lblKey">작업구분</div>
+                    <input id="btnProcessS" class="btnNormal styAction" type="button" value="단일" style="width: 150px;" />
+                    <input id="btnProcessB" class="btnSpecial styAction" type="button" value="일괄" style="width: 150px;" />
+                    <div id="lblItem_Bar_Cd" class="lblKey">상품바코드</div>
+                    <input id="edtItem_Bar_Cd" class="edtKey styScan" type="text" style="width: 400px;" />
+                </td>
+                <td class="styFillArea styRight">
+                    <input id="btnBatchComplete" class="btnNormal styAction" type="button" value="결품처리" style="width: 150px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrProcessS" class="ctrNormal">
+        <div id="ctrLeftView" class="ctrLeft" style="border-width: 0 1px 0 0;">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">출고상세정보</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="ctrAdditional_grdMaster" class="ctrAdditional bottom">
+                <div id="lblDistribute_Rate" class="lblNormal">진행율</div>
+                <div id="ctrProgressBar" class="ctrProgressBar">
+                    <div id="ctrProgressValue" class="ctrProgressValue">0 / 0 [ 0%]</div>
+                    <div id="ctrProgressShape" class="ctrProgressShape"></div>
+                </div>
+                <input id="btnDistributeCancel" class="btnNormal styAction" type="button" value="상품취소" style="font-size: 12pt; width: 110px; height: 34px;" />
+                <input id="btnDistributeCancelBatch" class="btnNormal styAction" type="button" value="전체취소" style="font-size: 12pt; width: 110px; height: 34px;" />
+            </div>
+            <div id="grdMaster"></div>
+        </div>
+        <div id="ctrRightView" class="ctrRight" style="border-width: 0 0 0 1px;">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td class="lblTitle">분배 상품정보</td>
+                </tr>
+            </table>
+            <div id="ctrInfoView" class="ctrInner ctrLargeDisplay">
+                <table class="ctrInner">
+                    <tr>
+                        <td>
+                            <div id="lblShelf_No" class="lblNormal">선반번호</div>
+                        </td>
+                        <td>
+                            <input id="edtShelf_No" class="edtDisplay styShelfNo" type="text" disabled="disabled" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblItem_Cd" class="lblNormal">상품코드</div>
+                        </td>
+                        <td>
+                            <input id="edtItem_Cd" class="edtDisplay styFillArea" type="text" disabled="disabled" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <!-- <input id="edtItem_Nm" class="edtDisplay styFillArea styLarge" type="text" disabled="disabled" /> -->
+                            <textarea id="edtItem_Nm" class="edtDisplay styFillArea styLarge" disabled="disabled" style="resize: none; height: 104px;"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input id="edtItem_Spec" class="edtDisplay styLarge" type="text" disabled="disabled" style="width: 45%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblBu_Cd" class="lblNormal">사업부</div>
+                        </td>
+                        <td>
+                            <input id="edtBu_Cd_F" class="edtDisplay styFillArea" type="text" disabled="disabled" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblBrand_Cd" class="lblNormal">브랜드</div>
+                        </td>
+                        <td>
+                            <input id="edtBrand_Cd_F" class="edtDisplay styFillArea" type="text" disabled="disabled" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblTot_Entry_Qty" class="lblNormal globalExcludeDisplay">총출고수량</div>
+                        </td>
+                        <td>
+                            <input id="edtTot_Entry_Qty" class="edtDisplay styLarge" type="text" disabled="disabled" style="width: 45%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblShipper_Nm" class="lblNormal">수령자</div>
+                        </td>
+                        <td>
+                            <input id="edtShipper_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 45%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblOrderer_Msg" class="lblNormal">배송메시지</div>
+                        </td>
+                        <td>
+                            <input id="edtOrderer_Msg" class="edtDisplay styFillArea" type="text" disabled="disabled" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblBu_Date" class="lblNormal">전표일자</div>
+                        </td>
+                        <td>
+                            <input id="edtBu_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 45%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblBu_No" class="lblNormal">전표번호</div>
+                        </td>
+                        <td>
+                            <input id="edtBu_No" class="edtDisplay styFillArea styLarge" type="text" disabled="disabled" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblEntry_Qty" class="lblNormal">출고수량</div>
+                        </td>
+                        <td>
+                            <input id="edtEntry_Qty" class="edtDisplay styLarge" type="text" disabled="disabled" style="width: 45%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblDistribute_Qty" class="lblSpecial">분배수량</div>
+                        </td>
+                        <td>
+                            <input id="edtDistribute_Qty" class="edtDisplay styTotal styLargeQty" type="text" disabled="disabled" style="width: 45%;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="ctrProcessBT" style="visibility: hidden;">
+        <div id="ctrOverlayTitleBar" class="ctrPopup">
+            <table class="ctrOverlayTitleBar" style="height: 30px;">
+                <tr>
+                    <td class="lblTitle">상품 일괄분배</td>
+                    <td>
+                        <input id="btnOverlayClose" class="btnImgCancel" type="button" value="닫기" style="width: 60px;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="ctrProcessBTView" class="ctrPopup">
+            <div id="ctrSubLeft" class="ctrLeft" style="border-width: 0 1px 0 0;">
+                <div id="ctrBlockInfo" class="ctrInner" style="border-width: 0 0 1px 0; line-height: 40px;">
+                    <div id="lblProcess_Div" class="lblKey">선반</div>
+                    <div id="ctrBlockButton" class="ctrBlockButton"></div>
+                </div>
+                <div id="ctrBlocks" class="ctrPopup" style="border-width: 0;"></div>
+            </div>
+            <div id="ctrSubRight" class="ctrRight" style="border-width: 0 0 0 1px;">
+                <div class="ctrInner ctrLargeDisplay">
+                    <table class="ctrInner">
+                        <tr>
+                            <td>
+                                <div id="lblL1_Order_Cnt" class="lblNormal">주문건수</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Order_CntBT" class="edtDisplay styFillArea styLarge" type="text" disabled="disabled" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_Item_Cd" class="lblNormal">상품코드</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Item_Cd" class="edtDisplay styFillArea styLarge" type="text" disabled="disabled" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <!-- <input id="edtL1_Item_Nm" class="edtDisplay styFillArea styLarge" type="text" disabled="disabled" /> -->
+                                <textarea id="edtL1_Item_Nm" class="edtDisplay styFillArea styLarge" disabled="disabled" style="resize: none; height: 104px;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input id="edtL1_Item_Spec" class="edtDisplay styLarge" type="text" disabled="disabled" style="width: 45%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_Brand_Cd" class="lblNormal">브랜드</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Brand_Nm" class="edtDisplay styFillArea" type="text" disabled="disabled" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_Entry_Qty" class="lblNormal">출고수량</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Entry_Qty" class="edtDisplay styLarge" type="text" disabled="disabled" style="width: 45%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_Distribute_Qty" class="lblNormal">기분배수량</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Distribute_Qty" class="edtDisplay styLarge" type="text" disabled="disabled" style="width: 45%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_Remain_Qty" class="lblSpecial globalExcludeDisplay">미분배수량</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Remain_Qty" class="edtDisplay styTotal styLargeQty" type="text" disabled="disabled" style="width: 45%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_New_Distribute_Qty" class="lblNormal">분배수량조정</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_New_Distribute_Qty" class="edtNormal styLargeQty" type="text" style="width: 45%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <input id="btnDistributeQtyApply" class="btnNormal styAction" type="button" value="반영" style="width: 45%;" />
+                                <input id="btnDistributeComplete" class="btnSpecial styAction" type="button" value="완료" style="width: 45%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div id="lblL1_Item_Bar_Cd" class="lblKey">상품바코드</div>
+                            </td>
+                            <td>
+                                <input id="edtL1_Item_Bar_Cd" class="edtKey styScan styFillArea" type="text" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

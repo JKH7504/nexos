@@ -1,0 +1,83 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01042P0
+    프로그램명         : 사용자프로그램등록 팝업
+    프로그램설명       : 사용자프로그램등록 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01042P0.css" /> -->
+<script src="js/CSC01042P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblPopup_Program_Id" class="lblNormal">프로그램</div>
+                    <input id="edtProgram_Id" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;" />
+                    <input id="edtProgram_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 140px;" />
+                </td>
+                <td>
+                    <div id="lblExe_Level" class="lblKey" style="width: auto;">기본권한</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkExe_Level1" name="chkExe_Level" class="chkNormal" type="checkbox" checked="checked" />
+                        저장권한
+                        <input id="chkExe_Level2" name="chkExe_Level" class="chkNormal" type="checkbox" checked="checked" />
+                        삭제권한
+                        <input id="chkExe_Level3" name="chkExe_Level" class="chkNormal" type="checkbox" checked="checked" />
+                        확정권한
+                        <input id="chkExe_Level4" name="chkExe_Level" class="chkNormal" type="checkbox" checked="checked" />
+                        취소권한
+                        <input id="chkExe_Level5" name="chkExe_Level" class="chkNormal" type="checkbox" checked="checked" />
+                        승인권한
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft" style="border-width: 0 1px 0 1px;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdSub1" class="lblTitle">미등록 사용자정보</td>
+                <td>
+                    <input id="btnAddUser" class="btnImgNormal" type="button" value="등록" style="width: 55px;" />
+                </td>
+                <td id="ctrRows_grdSub1" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdSub1"></div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="border-width: 0 1px 0 1px;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdSub2" class="lblTitle">등록 사용자정보</td>
+                <td>
+                    <input id="btnDeleteUser" class="btnImgCancel" type="button" value="삭제" style="width: 55px;" />
+                    <input id="btnSave" class="btnImgNormal" type="button" value="저장" />
+                </td>
+                <td id="ctrRows_grdSub2" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdSub2"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnCancel" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

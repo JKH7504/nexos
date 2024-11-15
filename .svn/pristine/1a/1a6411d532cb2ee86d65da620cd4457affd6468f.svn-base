@@ -1,0 +1,53 @@
+#=====================================================================================================================================================
+#
+#   globals.properties : \uc2dc\uc2a4\ud15c \ud658\uacbd\uc124\uc815 - \ud655\uc7a5 - \uc6b4\uc601(PROD)
+#
+#=====================================================================================================================================================
+#   1.  key = value \uad6c\uc870\uc785\ub2c8\ub2e4.
+#   2.  key\uac12\uc740 \uacf5\ubc31\ubb38\uc790\ub97c \ud3ec\ud568\ubd88\uac00, value\uac12\uc740 \uacf5\ubc31\ubb38\uc790\ub97c \uac00\ub2a5
+#   3.  key\uac12\uc73c\ub85c \ud55c\uae00\uc744 \uc0ac\uc6a9\ubd88\uac00,   value\uac12\uc740 \ud55c\uae00\uc0ac\uc6a9\uc774 \uac00\ub2a5
+#   4.  \uc904\uc744 \ubc14\uafc0 \ud544\uc694\uac00 \uc788\uc73c\uba74 '\'\ub97c \ub77c\uc778\uc758 \ub05d\uc5d0 \ucd94\uac00(\ub9cc\uc57d  '\'\ubb38\uc790\ub97c \uc0ac\uc6a9\ud574\uc57c \ud558\ub294 \uacbd\uc6b0\ub294 '\\'\ub97c \uc0ac\uc6a9)
+#   5.  Windows\uc5d0\uc11c\uc758 \ub514\ub809\ud1a0\ub9ac \ud45c\uc2dc : '\\' or '/'  ('\' \uc0ac\uc6a9\ud558\uba74 \uc548\ub428)
+#   6.  Unix\uc5d0\uc11c\uc758 \ub514\ub809\ud1a0\ub9ac \ud45c\uc2dc : '/'
+#   7.  \uc8fc\uc11d\ubb38 \ucc98\ub9ac\ub294  #\uc0ac\uc6a9
+#   8.  value\uac12 \ub4a4\uc5d0 \uc2a4\ud398\uc774\uc2a4\uac00 \uc874\uc7ac\ud558\ub294 \uacbd\uc6b0 \uc11c\ube14\ub9bf\uc5d0\uc11c \ucc38\uc870\ud560\ub54c\ub294 \uc5d0\ub7ec\ubc1c\uc0dd\ud560 \uc218 \uc788\uc73c\ubbc0\ub85c trim()\ud558\uac70\ub098 \ub9c8\uc9c0\ub9c9 \uacf5\ubc31\uc5c6\uc774 properties \uac12\uc744 \uc124\uc815\ud560\uac83
+#=====================================================================================================================================================
+
+#=====================================================================================================================================================
+# \uac01\uc885 \ud30c\uc77c \uc704\uce58
+# FILE.EDI.RECV                         : EDI \uc218\uc2e0 \ud30c\uc77c \uc704\uce58
+# FILE.EDI.SEND                         : EDI \uc1a1\uc2e0 \ud30c\uc77c \uc704\uce58
+# FILE.EXCEL.EXPORT                     : Excel \ub2e4\uc6b4\ub85c\ub4dc\uc2dc \uc784\uc2dc\ud30c\uc77c\uc774 \uc0dd\uc131\ub418\ub294 \uc704\uce58
+# FILE.EXCEL.IMPORT                     : Excel \uc5c5\ub85c\ub4dc\uc2dc \uc784\uc2dc\ud30c\uc77c\uc774 \uc0dd\uc131\ub418\ub294 \uc704\uce58
+# FILE.ATTACHMENT.NOTICE                : \uacf5\uc9c0\uc0ac\ud56d \ucca8\ubd80\ud30c\uc77c \uc5c5\ub85c\ub4dc \uc704\uce58
+# FILE.ATTACHMENT.ORDER.LO              : \ucd9c\uace0 \uc8fc\ubb38 \ucca8\ubd80\ud30c\uc77c \uc5c5\ub85c\ub4dc \uc704\uce58
+# FILE.ATTACHMENT.ORDER.LO.WB           : \ucd9c\uace0 \uc6b4\uc1a1\uc7a5 \ub808\ud3ec\ud2b8 \uc5c5\ub85c\ub4dc \uc704\uce58
+# FILE.UPLOAD_TEMP                      : \ud30c\uc77c\uc5c5\ub4dc\ub85c\uc2dc \uc0ac\uc6a9\ub418\ub294 \uc784\uc2dc\ud30c\uc77c \uc704\uce58
+# FILE.AUTO_CREATE_PATHS                : \uc790\ub3d9 \uc0dd\uc131\ud560 \uc784\uc2dc \ub514\ub809\ud1a0\ub9ac DIR Property \ud0a4 \uac12
+#=====================================================================================================================================================
+FILE.EDI.RECV = ../NEXOS-FILES/edi/recv/
+FILE.EDI.SEND = ../NEXOS-FILES/edi/send/
+FILE.EXCEL.EXPORT = ../NEXOS-FILES/excel/export/
+FILE.EXCEL.IMPORT = ../NEXOS-FILES/excel/import/
+FILE.ATTACHMENT.NOTICE = ../NEXOS-FILES/attachment/notice/
+FILE.ATTACHMENT.ORDER.LO = ../NEXOS-FILES/attachment/order/LO/
+FILE.ATTACHMENT.ORDER.LO.WB = /home/ec2-user/invoice_files/
+FILE.UPLOAD_TEMP = TMP-FILES/uploadTemp/
+FILE.AUTO_CREATE_PATHS = FILE.EDI.RECV,FILE.EDI.SEND,FILE.EXCEL.EXPORT,FILE.EXCEL.IMPORT,\
+FILE.ATTACHMENT.NOTICE,FILE.ATTACHMENT.ORDER.LO,FILE.ATTACHMENT.ORDER.LO.WB,FILE.UPLOAD_TEMP
+
+#=====================================================================================================================================================
+# \uc811\uc18d \uad00\ub828 \uc138\ud305
+# DB.INITIAL_POOL_SIZE                  : DB \uae30\ubcf8 POOL SIZE, MAX\uac00 100\uc774\uae30 \ub54c\ubb38\uc5d0 100\uc774\ud558\ub85c \uc138\ud305
+# HTTP.REQUIRES.CHANNEL                 : any   - HTTP, HTTPS \ubaa8\ub450 \uc0ac\uc6a9
+#                                         http  - HTTP\ub9cc \uc0ac\uc6a9
+#                                         https - HTTPS\ub9cc \uc0ac\uc6a9, \uc11c\ubc84 https \uc801\uc6a9\uc2dc requires-channel\ub3c4 https\ub85c \uc124\uc815
+# MAXIMUM.SESSIONS                      : \uc0ac\uc6a9\uc790\ubcc4 \ub3d9\uc2dc \uc811\uc18d \uac00\ub2a5 \uc218, \uae30\ubcf8\uac12 1, PDA, SCAN\uac80\uc218 \uc0ac\uc6a9\uc2dc \uc870\uc815 \ud544\uc694, \uc81c\ud55c\uc5c6\uc74c -1
+#=====================================================================================================================================================
+DB.INITIAL_POOL_SIZE = 10
+
+HTTP.REQUIRES.CHANNEL = any
+MAXIMUM.SESSIONS = -1
+
+#=====================================================================================================================================================
+CONFIG.ACTIVE = prod

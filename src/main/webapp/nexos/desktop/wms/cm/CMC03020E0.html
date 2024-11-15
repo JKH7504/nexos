@@ -1,0 +1,157 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC03020E0
+    프로그램명         : 브랜드관리
+    프로그램설명       : 브랜드관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC03020E0.css" /> -->
+<script src="js/CMC03020E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Cust_Cd" class="lblCondition">고객사</div>
+                    <input id="edtQCust_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQCust_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQDeal_Div" class="lblCondition">거래구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkQDeal_Div1" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="1" />
+                        거래진행
+                        <input id="chkQDeal_Div2" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="2" />
+                        거래종료
+                        <input id="chkQDeal_Div3" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="3" />
+                        조회종료
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">브랜드</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspDetailInfo" class="lblTitle">기본정보</td>
+            </tr>
+        </table>
+        <div id="divMasterInfoView" class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblBrand_Cd" class="lblKey alignInContent">브랜드코드</div>
+                <input id="edtBrand_Cd" class="edtKey" type="text" maxlength="10" style="width: 110px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblBrand_Nm" class="lblKey alignInContent">브랜드명</div>
+                <input id="edtBrand_Nm" class="edtKey" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblBrand_Full_Nm" class="lblNormal alignInContent">정식명칭</div>
+                <input id="edtBrand_Full_Nm" class="edtNormal" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <!-- 
+            <div id="divchan" class="ctrGroupRow">
+                <div id="divchan" class="lblKey alignInContent">브랜드구분</div>
+                <select id="cboBrand_Div" class="cboKey" style="width: 152px;"></select>
+            </div>
+            -->
+            <div class="ctrGroupRow">
+                <div id="lblPopup_Cust_Cd" class="lblKey alignInContent">고객사</div>
+                <input id="edtCust_Cd" class="edtKey" type="text" style="width: 110px;" />
+                <input id="btnCust_Cd" class="btnIcoPopup" type="button" />
+                <input id="edtCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 190px;" />
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Address" class="lblGroupTitle">주소정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Zip_Cd" class="lblNormal">우편번호</div>
+                        <input id="edtZip_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                        <input id="btnZip_Cd" class="btnIcoPopup" type="button" />
+                        <input id="btnZip_Cd_Clear" class="btnIcoCancel" type="button" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblAddr_Basic" class="lblNormal">기본주소</div>
+                        <input id="edtAddr_Basic" class="edtDisplay" type="text" disabled="disabled" style="width: 323px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblAddr_Detail" class="lblNormal">상세주소</div>
+                        <input id="edtAddr_Detail" class="edtNormal" type="text" style="width: 323px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCharge_Nm" class="lblNormal">담당자명</div>
+                        <input id="edtCharge_Nm" class="edtNormal" type="text" style="width: 110px;" />
+                        <div id="lblTel_No" class="lblNormal">전화번호</div>
+                        <input id="edtTel_No" class="edtNormal" type="text" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Management" class="lblGroupTitle">관리정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Manager_Id" class="lblNormal">관리책임자</div>
+                        <input id="edtManager_Id" class="edtNormal" type="text" style="width: 110px;" />
+                        <input id="btnManager_Id" class="btnIcoPopup" type="button" />
+                        <input id="edtManager_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 183px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Salesman_Id" class="lblNormal">영업당담자</div>
+                        <input id="edtSalesman_Id" class="edtNormal" type="text" style="width: 110px;" />
+                        <input id="btnSalesman_Id" class="btnIcoPopup" type="button" />
+                        <input id="edtSalesman_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 183px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblDeal_Div" class="lblKey">거래구분</div>
+                        <div class="ctrGroupBox" style="width: 323px;">
+                            <input id="rgbDeal_Div1" name="rgbDeal_Div" class="rgbNormal" type="radio" value="1" style="width: 20px;" />
+                            거래진행
+                            <input id="rgbDeal_Div2" name="rgbDeal_Div" class="rgbNormal" type="radio" value="2" style="width: 20px;" />
+                            거래종료
+                            <input id="rgbDeal_Div3" name="rgbDeal_Div" class="rgbNormal" type="radio" value="3" style="width: 20px;" />
+                            조회종료
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblOpen_Date" class="lblNormal">거래일자</div>
+                        <input id="dtpOpen_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                        <div id="lblClose_Date" class="lblNormal">종료일자</div>
+                        <input id="dtpClose_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblRemark1" class="lblNormal alignInContent">비고</div>
+                <input id="edtRemark1" class="edtNormal" type="text" style="width: 330px;" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

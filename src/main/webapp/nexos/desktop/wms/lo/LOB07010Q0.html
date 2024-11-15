@@ -1,0 +1,59 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOB07010Q0
+    프로그램명         : 출고모니터링
+    프로그램설명       : 출고모니터링 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2023-05-02
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2023-05-02    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOB07010Q0.css" /> -->
+<script src="js/LOB07010Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQBu_Cd" class="lblCondition">사업부</div>
+                    <select id="cboQBu_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQOutbound_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">사업부별완료율</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

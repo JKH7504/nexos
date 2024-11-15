@@ -1,0 +1,64 @@
+.ctrGroupRow.comments {
+    background-color: #f1f1f1;
+    color: #424242;
+    font-weight: bold;
+    padding: 5px 5px 5px 22px;
+}
+
+.lblKey, /*
+*/ .lblNormal {
+    width: auto;
+}
+
+.edtNormal {
+    min-width: 300px;
+}
+
+.edtNormal.sample {
+    margin-right: -6px;
+    white-space: pre;
+    overflow-wrap: normal;
+    resize: none;
+    overflow: auto;
+    width: 357px;
+    height: 300px;
+}
+
+.edtNormal.sample.force-wrap {
+    word-break: break-all;
+    white-space: normal;
+}
+
+.lblComments {
+    margin-left: 20px;
+    font-size: 9pt;
+}
+
+.ctrComments {
+    border-collapse: collapse;
+    border-spacing: 5px;
+    border-width: 1px;
+    width: 100%;
+}
+
+.ctrComments.inner {
+    margin: 8px 0;
+    min-width: 686px;
+}
+
+.ctrComments th, .ctrComments td {
+    border: 1px solid #c3c3c3;
+    padding: 2px 10px;
+}
+
+.ctrComments th {
+    background-color: #f3f3f3;
+}
+
+.ctrComments.inner td:nth-child(2), .ctrComments.inner td:nth-child(3) {
+    text-align: center;
+}
+
+body {
+    overflow: auto;
+}

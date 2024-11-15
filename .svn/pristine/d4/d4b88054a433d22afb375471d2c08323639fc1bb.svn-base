@@ -1,0 +1,892 @@
+package nexos.service.lo;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import nexos.dao.lo.LOM02010E0DAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.json.JsonDataSet;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.ServiceSupport;
+import nexos.service.ed.common.EDCommonService;
+import nexos.service.ed.common.EDRESTfulService;
+import nexos.service.ed.common.EDSOAPService;
+
+/**
+ * Class: LOM02010E0Service<br>
+ * Description: 출고작업(LOM02010E0) 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class LOM02010E0Service extends ServiceSupport {
+
+    // private final Logger logger = LoggerFactory.getLogger(LOM02010E0Service.class);
+
+    final String             SP_ID_LO_PROCESSING                 = "LO_PROCESSING";
+    final String             SP_ID_LO_FW_ENTRY_PROCESSING        = "LO_FW_ENTRY_PROCESSING";
+    final String             SP_ID_LO_POLICY_ORDER_ADJUSTMENT_T1 = "LO_POLICY_ORDER_ADJUSTMENT_T1";
+    final String             SP_ID_GET_LO_OUTBOUND_STATE         = "WF.GET_LO_OUTBOUND_STATE";
+    final String             SP_ID_LO_FW_ENTRY_BATCH             = "LO_FW_ENTRY_BATCH";
+    final String             SP_ID_LO_BW_ENTRY_BATCH             = "LO_BW_ENTRY_BATCH";
+    final String             SP_ID_WCS_SEND_FW_LO_BATCH          = "WCS.SEND_FW_LO_BATCH";
+    final String             SP_ID_WCS_SEND_BW_LO_BATCH          = "WCS.SEND_BW_LO_BATCH";
+    final String             SP_ID_LO_OPTION_CONFIRM_ZERO        = "LO_OPTION_CONFIRM_ZERO";
+
+    final String             SELECT_ID_GET_CTCHECKVALUE          = "WC.GET_CTCHECKVALUE";
+
+    @Autowired
+    private LOM02010E0DAO    dao;
+
+    @Autowired
+    private EDCommonService  edCommonService;
+
+    @Autowired
+    private EDSOAPService    edSOAPService;
+
+    @Autowired
+    private EDRESTfulService edRESTfulService;
+
+    // @Autowired
+    // private EDExternalDBService edExternalDBService;
+
+    /**
+     * 출고차수를 채번
+     *
+     * @param params
+     * @return
+     */
+    public Map<String, Object> getOutboundBatch(Map<String, Object> params) {
+
+        return dao.getOutboundBatch(params);
+    }
+
+    /**
+     * OUTBOUND_STATE 체크
+     *
+     * @param params
+     * @param checkState
+     * @return
+     */
+    public String canProcessingState(Map<String, Object> params, String checkState) {
+
+        String result = Consts.OK;
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_LO_OUTBOUND_STATE, params);
+        String oMsg = Util.getOutMessage(resultMap);
+        if (Consts.OK.equals(oMsg)) {
+            String oOutboundState = (String)resultMap.get("O_OUTBOUND_STATE");
+            if (!Util.nullToEmpty(checkState).equals(oOutboundState)) {
+                result = NexosMessage.getDisplayMsg("JAVA.STATE.002", "[전표번호 : " + (String)resultMap.get("P_OUTBOUND_NO") //
+                    + ", 진행상태 : " + oOutboundState + "] 처리할 수 있는 상태가 아닙니다.\n다시 조회 후 데이터를 확인하십시오."//
+                    , new String[ ] {(String)resultMap.get("P_OUTBOUND_NO"), oOutboundState});
+            }
+        } else {
+            result = oMsg;
+        }
+
+        return result;
+    }
+
+    /**
+     * LO_PROCESSING 호출
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public String callLOProcessing(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsMaster = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+
+        String PROCESS_CD = Util.nullToEmpty(params.get(Consts.PK_PROCESS_CD));
+        String DIRECTION = (String)params.get(Consts.PK_DIRECTION);
+        String PROCESS_STATE_FW = (String)params.get(Consts.PK_PROCESS_STATE_FW);
+        String PROCESS_STATE_BW = (String)params.get(Consts.PK_PROCESS_STATE_BW);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+        // -- PROCESS_ENTRY, DIRECTION_FW 처리에 사용 파라메터 -----------------------------
+        String OUTBOUND_DATE_B = (String)params.get("P_OUTBOUND_DATE_B"); // 출고일자
+        String DELIVERY_BATCH = (String)params.get("P_DELIVERY_BATCH"); // 운송차수
+        String DELIVERY_BATCH_NM = (String)params.get("P_DELIVERY_BATCH_NM"); // 운송차수명
+        // 웹서비스방식 송장채번여부
+        boolean isHDCGetNo = ( // [B2C]택배송장 채번/발행 정책, 1 - 선채번/선발행, 2 - 선채번/후발행
+        Util.isIncluded(params.get("P_POLICY_LO381"), new Object[ ] {"1", "2"}) //
+        ) && "2".equals(params.get("P_HDC_GETNO_DIV")); // 웹서비스방식 송장채번
+        // -- PROCESS_DIRECTIONS, DIRECTION_FW 처리에 사용 파라메터 ------------------------
+        String OUTBOUND_BATCH = (String)params.get("P_OUTBOUND_BATCH"); // 출고차수
+        String OUTBOUND_BATCH_NM = (String)params.get("P_OUTBOUND_BATCH_NM"); // 출고차수명
+        String OUTBOUND_BATCH_DIV = (String)params.get("P_OUTBOUND_BATCH_DIV"); // 출고차수구분
+        String EQUIP_DIV = (String)params.get("P_EQUIP_DIV"); // 장비구분
+        boolean isHDCAddress = Consts.YES.equals(params.get("P_HDC_ADDRESS_YN")); // 주소정제여부
+        String CARRIER_CD = (String)params.get("P_CARRIER_CD"); // 운송사코드
+        String CUST_CD = (String)params.get("P_CUST_CD"); // 고객사코드[택배기준]
+        String HDC_DIV = (String)params.get("P_HDC_DIV"); // 택배사구분
+        // ---------------------------------------------------------------------------------
+
+        // 처리할 수 있는 진행상태
+        String CHECK_STATE = "";
+        String CHECK_PROCESS_CD = Consts.PROCESS_ENTRY;
+        // 처리
+        if (Consts.DIRECTION_FW.equals(DIRECTION)) {
+            CHECK_STATE = PROCESS_STATE_FW;
+            if (PROCESS_CD.startsWith(Consts.PROCESS_ENTRY)) {
+                CHECK_STATE = Consts.STATE_ORDER;
+                CHECK_PROCESS_CD = Consts.PROCESS_ORDER;
+            }
+        }
+        // 취소
+        else {
+            CHECK_STATE = PROCESS_STATE_BW;
+        }
+
+        Map<String, Object> checkParams = new HashMap<String, Object>();
+        checkParams.put("P_LINE_NO", ""); // 전표단위
+        checkParams.put(Consts.PK_PROCESS_CD, CHECK_PROCESS_CD);
+        checkParams.put("P_STATE_DIV", "1"); // 상태구분([1]MIN, [2]MAX)
+
+        // 주소정제 처리 파라메터
+        StringBuffer sbOutboundInfo = new StringBuffer();
+
+        // LO_PROCESSING 호출
+        // 전표 단위 Transaction
+        Map<String, Object> callParams;
+        StringBuffer sbResult = new StringBuffer();
+        Map<String, Object> realtimeMap = null;
+        TransactionDefinition td = new DefaultTransactionDefinition();
+        for (int rIndex = 0, rCount = dsMaster.size(); rIndex < rCount; rIndex++) {
+
+            // SP 호출 파라메터
+            callParams = dsMaster.get(rIndex);
+            callParams.put(Consts.PK_PROCESS_CD, PROCESS_CD);
+            callParams.put(Consts.PK_DIRECTION, DIRECTION);
+            callParams.put(Consts.PK_USER_ID, USER_ID);
+
+            String CENTER_CD = (String)callParams.get("P_CENTER_CD");
+            String BU_CD = (String)callParams.get("P_BU_CD");
+            String OUTBOUND_DATE = (String)callParams.get("P_OUTBOUND_DATE");
+            String OUTBOUND_NO = (String)callParams.get("P_OUTBOUND_NO");
+
+            // 진행상태 체크
+            checkParams.put("P_CENTER_CD", CENTER_CD);
+            checkParams.put("P_BU_CD", BU_CD);
+            checkParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE);
+            checkParams.put("P_OUTBOUND_NO", OUTBOUND_NO);
+            String oMsg = canProcessingState(checkParams, CHECK_STATE);
+            if (!Consts.OK.equals(oMsg)) {
+                sbResult.append(oMsg).append(Consts.CRLF);
+                continue;
+            }
+
+            // LO_PROCESSING 호출
+            realtimeMap = null;
+            TransactionStatus ts = beginTrans(td);
+            try {
+                // 출고등록[개별] - FW 처리일 경우
+                // 출고등록[일괄] - FW 처리일 경우 LO_PROCESSING이 아닌 LO_ENTRY_PROCESSING 호출
+                if (PROCESS_CD.startsWith(Consts.PROCESS_ENTRY) && Consts.DIRECTION_FW.equals(DIRECTION)) {
+                    // 출고등록[개별]일 경우 운송차수 채번 후 처리
+                    callParams.put("P_ORDER_DATE", OUTBOUND_DATE);
+                    callParams.put("P_ORDER_NO", OUTBOUND_NO);
+                    callParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE_B);
+                    // 운송차수가 "000"인 경우만 채번하고 그 외에는 선택한 운송차수로 등록
+                    if (Util.isNull(DELIVERY_BATCH) || Consts.BASE_BATCH_NO.equals(DELIVERY_BATCH)) {
+                        callParams.put("P_DELIVERY_BATCH", DELIVERY_BATCH);
+                        callParams.put("P_DELIVERY_BATCH_NM", DELIVERY_BATCH_NM);
+
+                        Map<String, Object> deliveryBatchMap = dao.getDeliveryBatch(callParams);
+                        DELIVERY_BATCH = (String)deliveryBatchMap.get("O_DELIVERY_BATCH");
+                        callParams.put("P_DELIVERY_BATCH", DELIVERY_BATCH);
+                    } else {
+                        callParams.put("P_DELIVERY_BATCH", DELIVERY_BATCH);
+                    }
+
+                    Map<String, Object> resultMap = callProcedure(SP_ID_LO_FW_ENTRY_PROCESSING, callParams);
+                    oMsg = Util.getOutMessage(resultMap);
+                    // 출고등록 정상, 웹서비스방식 송장채번일 경우 송장채번을 위한 정보 추가
+                    if (Consts.OK.equals(oMsg) && isHDCGetNo) {
+                        sbOutboundInfo.append(Consts.DV_SEPARATOR) //
+                            .append(CENTER_CD).append(";") //
+                            .append(BU_CD).append(";") //
+                            .append(resultMap.get("O_OUTBOUND_DATE")).append(";") //
+                            .append(resultMap.get("O_OUTBOUND_NO"));
+                    }
+                }
+                // 출고지시 - FW 처리일 경우
+                else if (Consts.PROCESS_DIRECTIONS.equals(PROCESS_CD) && Consts.DIRECTION_FW.equals(DIRECTION)) {
+                    // 출고지시일 경우 출고차수 채번/UPDATE 후 처리
+                    if (Util.isNull(OUTBOUND_BATCH) || Consts.BASE_BATCH_NO.equals(OUTBOUND_BATCH)) {
+                        // 신규출고배치 취득 위한 파라메터 설정
+                        callParams.put("P_OUTBOUND_BATCH", OUTBOUND_BATCH);
+                        callParams.put("P_OUTBOUND_BATCH_NM", OUTBOUND_BATCH_NM);
+                        callParams.put("P_OUTBOUND_BATCH_DIV", OUTBOUND_BATCH_DIV);
+                        callParams.put("P_EQUIP_DIV", EQUIP_DIV);
+
+                        Map<String, Object> outboundBatchMap = dao.getOutboundBatch(callParams);
+                        // LO020NM에 저장할 데이터 파라메터에 설정
+                        OUTBOUND_BATCH = (String)outboundBatchMap.get("O_OUTBOUND_BATCH");
+                        OUTBOUND_BATCH_NM = (String)outboundBatchMap.get("O_OUTBOUND_BATCH_NM");
+                        callParams.put("P_OUTBOUND_BATCH", OUTBOUND_BATCH);
+                        callParams.put("P_OUTBOUND_BATCH_NM", OUTBOUND_BATCH_NM);
+                    } else {
+                        callParams.put("P_OUTBOUND_BATCH", OUTBOUND_BATCH);
+                        callParams.put("P_OUTBOUND_BATCH_NM", OUTBOUND_BATCH_NM);
+                        callParams.put("P_EQUIP_DIV", EQUIP_DIV);
+                    }
+                    dao.updateOutboundBatch(callParams);
+
+                    // LO_PROCESSING 호출
+                    Map<String, Object> resultMap = callProcedure(SP_ID_LO_PROCESSING, callParams);
+                    oMsg = Util.getOutMessage(resultMap);
+                    // 출고지시 정상, 주소정제할 경우 주소정제 서비스 호출을 위한 정보 추가
+                    if (Consts.OK.equals(oMsg) && isHDCAddress) {
+                        sbOutboundInfo.append(Consts.DV_SEPARATOR) //
+                            .append(CENTER_CD).append(";") //
+                            .append(BU_CD).append(";") //
+                            .append(OUTBOUND_DATE).append(";") //
+                            .append(OUTBOUND_NO);
+                    }
+                }
+                // 그외 LO_PROCESSING 호출
+                else {
+                    // LO_PROCESSING 호출
+                    Map<String, Object> resultMap = callProcedure(SP_ID_LO_PROCESSING, callParams);
+                    oMsg = Util.getOutMessage(resultMap);
+                }
+
+                if (!Consts.OK.equals(oMsg)) {
+                    rollbackTrans(ts);
+                    sbResult.append(oMsg).append(Consts.CRLF);
+                    continue;
+                }
+
+                // 실시간 송신 호출
+                realtimeMap = edCommonService.realtimeSendProcessing();
+                oMsg = Util.getOutMessage(realtimeMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    // 오류가 날 경우 롤백되기 때문에 데이터 삭제, 자체 트랜잭션 처리 함
+                    realtimeMap.put("P_ERROR_YN", Consts.YES);
+                    edCommonService.ifResultProcessing(realtimeMap);
+
+                    rollbackTrans(ts);
+                    sbResult.append(oMsg).append(Consts.CRLF);
+                    continue;
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+                throw new RuntimeException(Util.getErrorMessage(e));
+            }
+
+            // 실시간 결과 데이터 반영, 자체 트랜잭션 처리 함
+            if (realtimeMap != null && !Consts.YES.equals(realtimeMap.get("P_ERROR_YN"))) {
+                edCommonService.ifResultProcessing(realtimeMap);
+            }
+        }
+
+        // FW 처리일 경우
+        if (Consts.DIRECTION_FW.equals(DIRECTION)) {
+            // 출고등록 - 송장번호 채번 호출
+            if (Consts.PROCESS_ENTRY.equals(PROCESS_CD)) {
+                if (isHDCGetNo && sbOutboundInfo.length() > 0) {
+                    // 송장번호채번 호출 기본 파라메터 세팅
+                    callParams = new HashMap<String, Object>();
+                    callParams.put("P_CUST_CD", CUST_CD);
+                    callParams.put("P_CARRIER_CD", CARRIER_CD);
+                    callParams.put("P_HDC_DIV", HDC_DIV);
+                    callParams.put(Consts.PK_USER_ID, USER_ID);
+                    callParams.put(Consts.PK_CHECKED_VALUE, sbOutboundInfo.toString().substring(1)); // 첫번째 Separator 제거
+                    callParams.put("P_THREAD_YN", Consts.YES); // 별도 쓰레드로 처리 여부
+
+                    // 택배사별 송장번호채번 호출
+                    // 택배사구분 -> A2 - 한진택배B2C, B2 - 우체국택배B2C, C2 - CJ대한통운B2C, D2 - 롯데택배B2C
+                    switch (HDC_DIV) {
+                        // 한진택배
+                        case "A2":
+                            callParams.put("P_UPDATE_YN", Consts.YES); // 주소정제 결과 DB 업데이트 여부
+
+                            edRESTfulService.callHanjinGetAddressInformation(callParams);
+                            break;
+                        // 우체국택배
+                        case "B2":
+                            break;
+                        // CJ대한통운
+                        case "C2":
+                            break;
+                        // 롯데택배
+                        case "D2":
+                            break;
+                    }
+                }
+            }
+            // 출고지시 - 주소정제 호출
+            else if (Consts.PROCESS_DIRECTIONS.equals(PROCESS_CD)) {
+                if (isHDCAddress && sbOutboundInfo.length() > 0) {
+                    // 주소정제 호출 기본 파라메터 세팅
+                    callParams = new HashMap<String, Object>();
+                    callParams.put("P_CUST_CD", CUST_CD);
+                    callParams.put("P_CARRIER_CD", CARRIER_CD);
+                    callParams.put("P_HDC_DIV", HDC_DIV);
+                    callParams.put(Consts.PK_USER_ID, USER_ID);
+                    callParams.put(Consts.PK_CHECKED_VALUE, sbOutboundInfo.toString().substring(1)); // 첫번째 Separator 제거
+                    callParams.put("P_THREAD_YN", Consts.YES); // 별도 쓰레드로 처리 여부
+
+                    // 택배사별 주소정제 호출
+                    // 택배사구분 -> A2 - 한진택배B2C, B2 - 우체국택배B2C, C2 - CJ대한통운B2C, D2 - 롯데택배B2C
+                    switch (HDC_DIV) {
+                        // 한진택배
+                        case "A2":
+                            // 웹서비스 방식이 아닐 경우
+                            if (!isHDCGetNo) {
+                                callParams.put("P_UPDATE_YN", Consts.YES); // 주소정제 결과 DB 업데이트 여부
+
+                                edRESTfulService.callHanjinGetAddressInformation(callParams);
+                            }
+                            break;
+                        // 우체국택배
+                        case "B2":
+                            edRESTfulService.callEPostGetAddressInformation(callParams);
+                            break;
+                        // CJ대한통운
+                        case "C2":
+                            edSOAPService.callCJGetAddressInformation(callParams);
+                            break;
+                        // 롯데택배
+                        case "D2":
+                            edRESTfulService.callLotteGetAddressInformation(callParams);
+                            break;
+                    }
+                }
+            }
+        }
+
+        if (sbResult.length() == 0) {
+            sbResult.append(Consts.OK);
+        }
+
+        return sbResult.toString();
+    }
+
+    /**
+     * 출고등록(일괄) 출고가능 수량 조정 처리
+     *
+     * @param params
+     *        조회 조건
+     */
+    public String callOrderAdjustment(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            Map<String, Object> resultMap = callProcedure(SP_ID_LO_POLICY_ORDER_ADJUSTMENT_T1, params);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고일괄등록/취소 처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String callEntryBatchProcessing(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+
+        // 일괄등록처리
+        List<Map<String, Object>> dsMaster = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+
+        String DIRECTION = (String)params.get(Consts.PK_DIRECTION);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+        // 웹서비스방식 송장채번여부
+        boolean isHDCGetNo = ( // [B2C]택배송장 채번/발행 정책, 1 - 선채번/선발행, 2 - 선채번/후발행
+        Util.isIncluded(params.get("P_POLICY_LO381"), new Object[ ] {"1", "2"}) //
+        ) && "2".equals(params.get("P_HDC_GETNO_DIV")); // 웹서비스방식 송장채번
+        String CARRIER_CD = (String)params.get("P_CARRIER_CD"); // 운송사코드
+        String CUST_CD = (String)params.get("P_CUST_CD"); // 고객사코드[택배기준]
+        String HDC_DIV = (String)params.get("P_HDC_DIV"); // 택배사구분
+
+        Map<String, Object> callParams;
+        String oMsg;
+        List<Map<String, Object>> dsHDCGetNo = null;
+
+        Map<String, Object> realtimeMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            callParams = dsMaster.get(0);
+            callParams.put(Consts.PK_USER_ID, USER_ID);
+
+            String PROCEDURE_ID = null;
+            if (Consts.DIRECTION_FW.equals(DIRECTION)) {
+                PROCEDURE_ID = SP_ID_LO_FW_ENTRY_BATCH;
+            } else {
+                PROCEDURE_ID = SP_ID_LO_BW_ENTRY_BATCH;
+            }
+
+            Map<String, Object> resultMap = callProcedure(PROCEDURE_ID, callParams);
+            oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            // 출고일괄등록처리시
+            // 출고등록 송장 발행 정책 값이 (1:선채번), 채번방식이 웹서비스 호출일 경우
+            // Commit 전 출고등록 된 출고등록 전표정보 조회
+            if (Consts.DIRECTION_FW.equals(DIRECTION) && isHDCGetNo) {
+                dsHDCGetNo = getDataList(SELECT_ID_GET_CTCHECKVALUE);
+            }
+
+            // 실시간 송신 호출
+            realtimeMap = edCommonService.realtimeSendProcessing();
+            oMsg = Util.getOutMessage(realtimeMap);
+            if (!Consts.OK.equals(oMsg)) {
+                // 오류가 날 경우 롤백되기 때문에 데이터 삭제, 자체 트랜잭션 처리 함
+                realtimeMap.put("P_ERROR_YN", Consts.YES);
+                edCommonService.ifResultProcessing(realtimeMap);
+
+                throw new RuntimeException(oMsg);
+            }
+
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        // 실시간 결과 데이터 반영, 자체 트랜잭션 처리 함
+        if (realtimeMap != null && !Consts.YES.equals(realtimeMap.get("P_ERROR_YN"))) {
+            edCommonService.ifResultProcessing(realtimeMap);
+        }
+
+        // 출고등록 송장 발행 정책 값이 (1:선채번), 채번방식이 웹서비스 호출일 경우
+        if (Consts.DIRECTION_FW.equals(DIRECTION) && isHDCGetNo) {
+            if (Util.isNotNull(dsHDCGetNo) && dsHDCGetNo.size() > 0) {
+                StringBuffer sbOutboundInfo = new StringBuffer();
+                for (Map<String, Object> rowData : dsHDCGetNo) {
+                    sbOutboundInfo.append(Consts.DV_SEPARATOR) //
+                        .append(rowData.get("CHECK_VALUE"));
+                }
+
+                // 송장채번 호출 기본 파라메터 세팅
+                callParams = new HashMap<String, Object>();
+                callParams.put("P_CUST_CD", CUST_CD);
+                callParams.put("P_CARRIER_CD", CARRIER_CD);
+                callParams.put("P_HDC_DIV", HDC_DIV);
+                callParams.put(Consts.PK_USER_ID, USER_ID);
+                callParams.put(Consts.PK_CHECKED_VALUE, sbOutboundInfo.toString().substring(1)); // 첫번째 Separator 제거
+                callParams.put("P_THREAD_YN", Consts.YES); // 쓰레드로 처리하지 않음
+
+                // 택배사별 송장채번 호출
+                // 택배사구분 -> A2 - 한진택배B2C, B2 - 우체국택배B2C, C2 - CJ대한통운B2C, D2 - 롯데택배B2C
+                switch (HDC_DIV) {
+                    // 한진택배
+                    case "A2":
+                        callParams.put("P_UPDATE_YN", Consts.YES); // 주소정제(송장채번) 결과 DB 업데이트 여부
+
+                        // 한진택배는 주소정제, 송장채번 동일한 함수 사용
+                        edRESTfulService.callHanjinGetAddressInformation(callParams);
+                        break;
+                    // 우체국택배
+                    case "B2":
+                        //
+                        break;
+                    // CJ대한통운
+                    case "C2":
+                        break;
+                    // 롯데택배
+                    case "D2":
+                        //
+                        break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Query 실행 후 조회 데이터를 List 형태로 Return
+     */
+    public JsonDataSet getDataSetEntryBT(String queryId, Map<String, Object> params) throws Exception {
+
+        // 출고가능 수량 조정 처리
+        callOrderAdjustment(params);
+
+        return getDataSet(queryId, params);
+    }
+
+    /**
+     * 출고등록 마스터/디테일 저장 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String save(Map<String, Object> params) throws Exception {
+
+        // 신규 등록이 아닐 경우 저장 전 출고진행상태 체크
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+
+        String PROCESS_CD = (String)params.get(Consts.PK_PROCESS_CD);
+        String PROCESS_STATE_FW = (String)params.get(Consts.PK_PROCESS_STATE_FW);
+        String PROCESS_STATE_BW = (String)params.get(Consts.PK_PROCESS_STATE_BW);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+        // 웹서비스방식 송장채번여부
+        boolean isHDCGetNo = ( // [B2C]택배송장 채번/발행 정책, 1 - 선채번/선발행, 2 - 선채번/후발행
+        Util.isIncluded(params.get("P_POLICY_LO381"), new Object[ ] {"1", "2"}) //
+        ) && "2".equals(params.get("P_HDC_GETNO_DIV")); // 웹서비스방식 송장채번
+        String CARRIER_CD = (String)params.get("P_CARRIER_CD"); // 운송사코드
+        String CUST_CD = (String)params.get("P_CUST_CD"); // 고객사코드[택배기준]
+        String HDC_DIV = (String)params.get("P_HDC_DIV"); // 택배사구분
+
+        if (!Consts.PROCESS_ENTRY_NEW.equals(PROCESS_CD)) {
+            Map<String, Object> checkParams = new HashMap<String, Object>();
+            checkParams.put("P_CENTER_CD", masterRowData.get("P_CENTER_CD"));
+            checkParams.put("P_BU_CD", masterRowData.get("P_BU_CD"));
+            checkParams.put("P_LINE_NO", "");
+            checkParams.put(Consts.PK_PROCESS_CD, PROCESS_CD);
+            checkParams.put("P_STATE_DIV", "1");
+
+            String CHECK_STATE = "";
+            if (Consts.PROCESS_ORDER.equals(PROCESS_CD)) {
+                CHECK_STATE = PROCESS_STATE_FW;
+                checkParams.put("P_OUTBOUND_DATE", masterRowData.get("P_ORDER_DATE"));
+                checkParams.put("P_OUTBOUND_NO", masterRowData.get("P_ORDER_NO"));
+            } else {
+                CHECK_STATE = PROCESS_STATE_BW;
+                checkParams.put("P_OUTBOUND_DATE", masterRowData.get("P_OUTBOUND_DATE"));
+                checkParams.put("P_OUTBOUND_NO", masterRowData.get("P_OUTBOUND_NO"));
+            }
+
+            String oMsg = canProcessingState(checkParams, CHECK_STATE);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+
+        // 저장 처리
+        String result = Consts.ERROR;
+        // Map<String, Object> realtimeMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.save(params);
+
+            // 실시간 송신 호출 -- 테이블 변경으로 인한 임시 주석처리
+            /*
+             * if (Consts.PROCESS_ORDER.equals(PROCESS_CD)) {
+             * // 실시간 송신 호출
+             * realtimeMap = edCommonService.realtimeSendProcessing();
+             * String oMsg = Util.getOutMessage(realtimeMap);
+             * if (!Consts.OK.equals(oMsg)) {
+             * // 오류가 날 경우 롤백되기 때문에 데이터 삭제, 자체 트랜잭션 처리 함
+             * realtimeMap.put("P_ERROR_YN", Consts.YES);
+             * edCommonService.ifResultProcessing(realtimeMap);
+             * throw new RuntimeException(oMsg);
+             * }
+             * }
+             */
+
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        /*
+         * -- 테이블 변경으로 인한 임시 주석처리
+         * // 실시간 결과 데이터 반영, 자체 트랜잭션 처리 함
+         * if (realtimeMap != null && !Consts.YES.equals(realtimeMap.get("P_ERROR_YN"))) {
+         * edCommonService.ifResultProcessing(realtimeMap);
+         * }
+         */
+
+        // 출고등록 송장 발행 정책 값이 (1:선채번), 채번방식이 웹서비스 호출일 경우
+        if (isHDCGetNo) {
+            StringBuffer sbOutboundInfo = new StringBuffer();
+            sbOutboundInfo //
+                .append(masterRowData.get("P_CENTER_CD")).append(";") //
+                .append(masterRowData.get("P_BU_CD")).append(";") //
+                .append(params.get("O_OUTBOUND_DATE")).append(";") //
+                .append(params.get("O_OUTBOUND_NO")).append(";") //
+                .append(CARRIER_CD);
+
+            // 송장채번 호출 기본 파라메터 세팅
+            Map<String, Object> callParams = new HashMap<String, Object>();
+            callParams.put("P_CUST_CD", CUST_CD);
+            callParams.put("P_CARRIER_CD", CARRIER_CD);
+            callParams.put("P_HDC_DIV", HDC_DIV);
+            callParams.put(Consts.PK_USER_ID, USER_ID);
+            callParams.put(Consts.PK_CHECKED_VALUE, sbOutboundInfo.toString());
+            callParams.put("P_THREAD_YN", Consts.YES); // 쓰레드로 처리하지 않음
+
+            // 택배사별 송장채번 호출
+            // 택배사구분 -> A2 - 한진택배B2C, B2 - 우체국택배B2C, C2 - CJ대한통운B2C, D2 - 롯데택배B2C
+            switch (HDC_DIV) {
+                // 한진택배
+                case "A2":
+                    callParams.put("P_UPDATE_YN", Consts.YES); // 주소정제(송장채번) 결과 DB 업데이트 여부
+
+                    // 한진택배는 주소정제, 송장채번 동일한 함수 사용
+                    edRESTfulService.callHanjinGetAddressInformation(callParams);
+                    break;
+                // 우체국택배
+                case "B2":
+                    //
+                    break;
+                // CJ대한통운
+                case "C2":
+                    break;
+                // 롯데택배
+                case "D2":
+                    //
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고확정 저장 처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String saveConfirm(Map<String, Object> params) throws Exception {
+
+        // 저장 전 입고진행상태 체크
+        Map<String, Object> checkParams = new HashMap<String, Object>((Map<String, Object>)params.get(Consts.PK_DS_MASTER));
+        checkParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_ENTRY);
+        checkParams.put("P_STATE_DIV", "1");
+        String oMsg = canProcessingState(checkParams, (String)checkParams.get("P_CHECK_STATE"));
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        // 입고지시 저장
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.saveConfirm(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 배송완료처리 저장 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String saveDelivery(Map<String, Object> params) throws Exception {
+
+        // 진행상태 체크
+        List<Map<String, Object>> dsMaster = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+
+        Map<String, Object> checkParams = new HashMap<String, Object>(dsMaster.get(0));
+        checkParams.put("P_LINE_NO", "");
+        checkParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_ENTRY);
+        checkParams.put("P_STATE_DIV", "1"); // 상태구분([1]MIN, [2]MAX)
+        String oMsg = canProcessingState(checkParams, (String)checkParams.get("P_CUR_STATE"));
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.saveDelivery(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고등록(일괄) 저장 처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    public String saveEntryBT(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.saveEntryBT(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 거래명세서일자 수정 처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    public String callInoutDateUpdate(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.callInoutDateUpdate(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출하장비전송 처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    public Map<String, Object> callSendFwLoBatch(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> resultMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            resultMap = callProcedure(SP_ID_WCS_SEND_FW_LO_BATCH, params);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * 출하장비전송 취소 처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    public Map<String, Object> callSendBwLoBatch(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> resultMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            resultMap = callProcedure(SP_ID_WCS_SEND_BW_LO_BATCH, params);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * 송장 출력 횟수 업데이트 처리
+     *
+     * @param params
+     */
+    public Map<String, Object> callSetWbnoPrintCntUpdate(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> resultMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            resultMap = dao.callSetWbnoPrintCntUpdate(params);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * 주문취소처리
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    public Map<String, Object> callLOOrderCancel(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> resultMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            resultMap = callProcedure(SP_ID_LO_OPTION_CONFIRM_ZERO, params);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+}

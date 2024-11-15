@@ -1,0 +1,47 @@
+package nexos.dao.lc;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: LCC07020E0DAOImpl<br>
+ * Description: LCC07020E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2017-10-31    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("LCC07020E0DAO")
+public class LCC07020E0DAOImpl extends DaoSupport implements LCC07020E0DAO {
+
+    final String PROGRAM_ID= "LCC07020E0";
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void save(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsMaster = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        int dsMasterCount = dsMaster.size();
+        for (int i = 0; i < dsMasterCount; i++) {
+            Map<String, Object> rowData = dsMaster.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+            updateSql(Util.getUpdateQueryId(PROGRAM_ID, (String)rowData.get("P_TABLE_NM")), rowData);
+        }
+    }
+}

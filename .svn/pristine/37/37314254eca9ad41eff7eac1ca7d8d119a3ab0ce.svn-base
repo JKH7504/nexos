@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 몰상품관리 화면
+  // Author : ASETEC
+  // Date : 2016-06-29
+  // Description
+  // 몰상품관리 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('CMC04100E0' ,'CMMALLITEM;CMMALLITEMSET') AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="CMC04100E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="CMC04100E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - CMC04100E0.RS_T1_MASTER -->
+  <select id="RS_T1_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=CMC04100E0_VIRTUALMAP} = call CMC04100E0.RS_T1_MASTER
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV1               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV2               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV3               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MALL_ITEM_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MALL_ITEM_NM            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CMC04100E0.RS_T1_MASTER -->
+
+
+  <!-- [S] - CMC04100E0.RS_T1_DETAIL -->
+  <select id="RS_T1_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=CMC04100E0_VIRTUALMAP} = call CMC04100E0.RS_T1_DETAIL
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MALL_ITEM_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MALL_OPT_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CMC04100E0.RS_T1_DETAIL -->
+
+
+  <!-- [S] - CMC04100E0.RS_T2_MASTER -->
+  <select id="RS_T2_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=CMC04100E0_VIRTUALMAP} = call CMC04100E0.RS_T2_MASTER
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV1               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV2               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV3               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MALL_ITEM_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MALL_ITEM_NM            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CMC04100E0.RS_T2_MASTER -->
+
+
+  <!-- [S] - CMC04100E0.RS_SUB1 -->
+  <select id="RS_SUB1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=CMC04100E0_VIRTUALMAP} = call CMC04100E0.RS_SUB1
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CMC04100E0.RS_SUB1 -->
+
+
+  <!-- [S] - CMC04100E0.RS_SUB2 -->
+  <select id="RS_SUB2" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=CMC04100E0_VIRTUALMAP} = call CMC04100E0.RS_SUB2
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CMC04100E0.RS_SUB2 -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - INSERT_CMMALLITEM [몰상품마스터] -->
+  <insert id="INSERT_CMMALLITEM" parameterType="hashmap">
+    INSERT INTO CMMALLITEM
+               (
+                BU_CD
+               ,CUST_CD
+               ,DELIVERY_CD
+               ,MALL_ITEM_CD
+               ,MALL_OPT_CD
+               <if test="P_MALL_ITEM_NM            != null and P_MALL_ITEM_NM            != ''">,MALL_ITEM_NM                </if>
+               <if test="P_MALL_OPT_NM             != null and P_MALL_OPT_NM             != ''">,MALL_OPT_NM                 </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_DEAL_DIV                != null and P_DEAL_DIV                != ''">,DEAL_DIV                    </if>
+               <if test="P_OPEN_DATE               != null and P_OPEN_DATE               != ''">,OPEN_DATE                   </if>
+               <if test="P_CLOSE_DATE              != null and P_CLOSE_DATE              != ''">,CLOSE_DATE                  </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_BU_CD}
+               ,#{P_CUST_CD}
+               ,#{P_DELIVERY_CD}
+               ,#{P_MALL_ITEM_CD}
+               ,#{P_MALL_OPT_CD}
+               <if test="P_MALL_ITEM_NM            != null and P_MALL_ITEM_NM            != ''">,#{P_MALL_ITEM_NM}           </if>
+               <if test="P_MALL_OPT_NM             != null and P_MALL_OPT_NM             != ''">,#{P_MALL_OPT_NM}            </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_DEAL_DIV                != null and P_DEAL_DIV                != ''">,#{P_DEAL_DIV}               </if>
+               <if test="P_OPEN_DATE               != null and P_OPEN_DATE               != ''">,#{P_OPEN_DATE}              </if>
+               <if test="P_CLOSE_DATE              != null and P_CLOSE_DATE              != ''">,#{P_CLOSE_DATE}             </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CMMALLITEM [몰상품마스터] -->
+
+
+  <!-- [S] - UPDATE_CMMALLITEM [몰상품마스터] -->
+  <update id="UPDATE_CMMALLITEM" parameterType="hashmap">
+    UPDATE CMMALLITEM
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_MALL_ITEM_NM            != null">,MALL_ITEM_NM             = #{P_MALL_ITEM_NM}           </if>
+          <if test="P_MALL_OPT_NM             != null">,MALL_OPT_NM              = #{P_MALL_OPT_NM}            </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                </if>
+          <if test="P_DEAL_DIV                != null">,DEAL_DIV                 = #{P_DEAL_DIV}               </if>
+          <if test="P_OPEN_DATE               != null">,OPEN_DATE                = #{P_OPEN_DATE}              </if>
+          <if test="P_CLOSE_DATE              != null">,CLOSE_DATE               = #{P_CLOSE_DATE}             </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE BU_CD                    = #{P_BU_CD}
+       AND CUST_CD                  = #{P_CUST_CD}
+       AND DELIVERY_CD              = #{P_DELIVERY_CD}
+       AND MALL_ITEM_CD             = #{P_MALL_ITEM_CD}
+       AND MALL_OPT_CD              = #{P_MALL_OPT_CD}
+  </update>
+  <!-- [E] - UPDATE_CMMALLITEM [몰상품마스터] -->
+
+
+  <!-- [S] - DELETE_CMMALLITEM [몰상품마스터] -->
+  <delete id="DELETE_CMMALLITEM" parameterType="hashmap">
+    DELETE 
+      FROM CMMALLITEM
+     WHERE BU_CD                    = #{P_BU_CD}
+     <!--<if test="P_CUST_CD                 != null and P_CUST_CD                 != ''">-->
+       AND CUST_CD                  = #{P_CUST_CD}
+     <!--</if>-->
+     <!--<if test="P_DELIVERY_CD             != null and P_DELIVERY_CD             != ''">-->
+       AND DELIVERY_CD              = #{P_DELIVERY_CD}
+     <!--</if>-->
+     <!--<if test="P_MALL_ITEM_CD            != null and P_MALL_ITEM_CD            != ''">-->
+       AND MALL_ITEM_CD             = #{P_MALL_ITEM_CD}
+     <!--</if>-->
+     <!--<if test="P_MALL_OPT_CD             != null and P_MALL_OPT_CD             != ''">-->
+       AND MALL_OPT_CD              = #{P_MALL_OPT_CD}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_CMMALLITEM [몰상품마스터] -->
+
+
+  <!-- [S] - INSERT_CMMALLITEMSET [몰상품구성마스터] -->
+  <insert id="INSERT_CMMALLITEMSET" parameterType="hashmap">
+    INSERT INTO CMMALLITEMSET
+               (
+                BU_CD
+               ,CUST_CD
+               ,DELIVERY_CD
+               ,MALL_ITEM_CD
+               ,MALL_OPT_CD
+               ,BRAND_CD
+               ,ITEM_CD
+               <if test="P_ITEM_QTY                != null and P_ITEM_QTY                != ''">,ITEM_QTY                    </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_BU_CD}
+               ,#{P_CUST_CD}
+               ,#{P_DELIVERY_CD}
+               ,#{P_MALL_ITEM_CD}
+               ,#{P_MALL_OPT_CD}
+               ,#{P_BRAND_CD}
+               ,#{P_ITEM_CD}
+               <if test="P_ITEM_QTY                != null and P_ITEM_QTY                != ''">,#{P_ITEM_QTY}               </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CMMALLITEMSET [몰상품구성마스터] -->
+
+
+  <!-- [S] - UPDATE_CMMALLITEMSET [몰상품구성마스터] -->
+  <update id="UPDATE_CMMALLITEMSET" parameterType="hashmap">
+    UPDATE CMMALLITEMSET
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_ITEM_QTY                != null">,ITEM_QTY                 = #{P_ITEM_QTY}               </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE BU_CD                    = #{P_BU_CD}
+       AND CUST_CD                  = #{P_CUST_CD}
+       AND DELIVERY_CD              = #{P_DELIVERY_CD}
+       AND MALL_ITEM_CD             = #{P_MALL_ITEM_CD}
+       AND MALL_OPT_CD              = #{P_MALL_OPT_CD}
+       AND BRAND_CD                 = #{P_BRAND_CD}
+       AND ITEM_CD                  = #{P_ITEM_CD}
+  </update>
+  <!-- [E] - UPDATE_CMMALLITEMSET [몰상품구성마스터] -->
+
+
+  <!-- [S] - DELETE_CMMALLITEMSET [몰상품구성마스터] -->
+  <delete id="DELETE_CMMALLITEMSET" parameterType="hashmap">
+    DELETE 
+      FROM CMMALLITEMSET
+     WHERE BU_CD                    = #{P_BU_CD}
+     <!--<if test="P_CUST_CD                 != null and P_CUST_CD                 != ''">-->
+       AND CUST_CD                  = #{P_CUST_CD}
+     <!--</if>-->
+     <!--<if test="P_DELIVERY_CD             != null and P_DELIVERY_CD             != ''">-->
+       AND DELIVERY_CD              = #{P_DELIVERY_CD}
+     <!--</if>-->
+     <!--<if test="P_MALL_ITEM_CD            != null and P_MALL_ITEM_CD            != ''">-->
+       AND MALL_ITEM_CD             = #{P_MALL_ITEM_CD}
+     <!--</if>-->
+     <!--<if test="P_MALL_OPT_CD             != null and P_MALL_OPT_CD             != ''">-->
+       AND MALL_OPT_CD              = #{P_MALL_OPT_CD}
+     <!--</if>-->
+     <!--<if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">-->
+       AND BRAND_CD                 = #{P_BRAND_CD}
+     <!--</if>-->
+     <!--<if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">-->
+       AND ITEM_CD                  = #{P_ITEM_CD}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_CMMALLITEMSET [몰상품구성마스터] -->
+
+
+</mapper>

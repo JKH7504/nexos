@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2023-12-14T14:25:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LOM_HANJIN_WAYBILL_02_subreport1" pageWidth="274" pageHeight="14" orientation="Landscape" columnWidth="274" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Key" uuid="a84dad60-37ea-4419-a8a1-0cdfa3b168ce">
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NEXOS75"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_DATE" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_NO" class="java.lang.String"/>
+	<parameter name="P_BOX_NO" class="java.math.BigDecimal"/>
+	<parameter name="P_ROWS_PER_PAGE" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[SELECT L1.ITEM_CD || ' ' || L1.ITEM_FULL_NM ||  ' / '  || L1.CONFIRM_QTY || '개' AS ITEM_LIST
+    FROM (
+                        SELECT M1.ITEM_CD
+                                 ,T1.ITEM_FULL_NM
+                              ,SUM(M1.CONFIRM_QTY) AS CONFIRM_QTY
+                          FROM LO050NM M1
+                                    JOIN CMITEM T1 ON T1.BRAND_CD = M1.BRAND_CD 
+                                                           AND T1.ITEM_CD = M1.ITEM_CD
+                         WHERE M1.CENTER_CD     = $P{P_CENTER_CD}
+                           AND M1.BU_CD         = $P{P_BU_CD}
+                           AND M1.OUTBOUND_DATE         = WF.C_TO_DATE($P{P_OUTBOUND_DATE})
+                           AND M1.OUTBOUND_NO         = $P{P_OUTBOUND_NO}
+                           AND M1.BOX_NO         = $P{P_BOX_NO}
+                         GROUP BY M1.ITEM_CD
+                                 ,T1.ITEM_FULL_NM
+                         ORDER BY M1.ITEM_CD
+               ) L1]]>
+	</queryString>
+	<field name="ITEM_LIST" class="java.lang.String"/>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="1" y="1" width="273" height="12" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="rgba(222, 43, 40, 0.0)" uuid="6927e654-0fc8-4d43-b030-a2d7c96bfe66"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="1" rightPadding="0">
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_LIST}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,101 @@
+<!--
+    ==================================================================================================================================================
+    main include
+      <div id="ctrLoginLayer" class="ctrLogin" tabindex="1">
+    ==================================================================================================================================================
+ -->
+<div class="ctrOuter">
+    <div class="ctrInner">
+        <form>
+            <table class="ctrLogin">
+                <tr>
+                    <td colspan="3" style="height: auto;">
+                        <span id="imgLogoBI" class="ctrLogoBI"></span>
+                        <div class="ctrGroupRow styDisplay styRight">
+                            <div class="lblDisplay platform">neXos PDA Solution</div>
+                            <div id="lblServerVersion" class="lblDisplay version">0.0.0</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="ctrLoginForm">
+                    <td id="ctrVersion" class="styDisplay styRight" colspan="3" style="vertical-align: top; height: 100px;">
+                        <div class="ctrGroupRow">
+                            <div class="lblDisplay">앱</div>
+                            <div id="lblAppVersion" class="lblDisplay version" style="min-width: 50px;">0.0.0</div>
+                        </div>
+                        <div class="ctrGroupRow ">
+                            <div class="lblDisplay">리소스</div>
+                            <div id="lblResVersion" class="lblDisplay version" style="min-width: 50px;">0.0.0</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="ctrLoginForm">
+                    <td style="min-width: 35px;">
+                        <div class="lblDisplay">ID</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtUser_Id" class="edtNormal" type="text" tabindex="1" maxlength="50" />
+                    </td>
+                    <td rowspan="2" style="min-width: 100px;">
+                        <input id="btnLogin" class="btnNormal" type="button" value="로그인" tabindex="3" />
+                    </td>
+                </tr>
+                <tr class="ctrLoginForm">
+                    <td>
+                        <div class="lblDisplay">PW</div>
+                    </td>
+                    <td>
+                        <input id="edtUser_Pwd" class="edtNormal" type="password" tabindex="2" style="padding-right: 32px;" />
+                        <input id="btnResetForm" class="btnIcoPopup" type="button" tabindex="6" style="width: 28px; background-position-x: center; margin-left: -36px; min-height: 26px; border-width: 0;" />
+                    </td>
+                </tr>
+                <tr class="ctrLoginForm">
+                    <td></td>
+                    <td colspan="2">
+                        <input id="chkSave_User_Id" name="chkSave_User_Id" class="chkNormal" type="checkbox" tabindex="5" />
+                        <span id="dspSaveUserId" class="lblLoginSaveUser">사용자ID 저장</span>
+                    </td>
+                </tr>
+                <tr class="ctrResetForm" style="display: none;">
+                    <td></td>
+                    <td colspan="3" style="font-weight: bold; vertical-align: bottom; height: 100px;">사용자 비밀번호를 초기화 합니다.</td>
+                </tr>
+                <tr class="ctrResetForm" style="display: none;">
+                    <td style="min-width: 35px;">
+                        <div class="lblDisplay">ID</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtReset_User_Id" class="edtNormal" type="text" tabindex="7" maxlength="50" />
+                    </td>
+                    <td rowspan="2" style="min-width: 100px;">
+                        <input id="btnResetUserPwd" class="btnNormal" type="button" value="초기화" tabindex="10" />
+                    </td>
+                </tr>
+                <tr class="ctrResetForm" style="display: none;">
+                    <td>
+                        <div class="lblDisplay">NAME</div>
+                    </td>
+                    <td>
+                        <input id="edtReset_User_Nm" class="edtNormal" type="text" autocomplete="name" tabindex="8" />
+                    </td>
+                </tr>
+                <tr class="ctrResetForm" style="display: none;">
+                    <td>
+                        <div class="lblDisplay">EMAIL</div>
+                    </td>
+                    <td>
+                        <input id="edtReset_User_Email" class="edtNormal" type="text" autocomplete="email" tabindex="9" />
+                    </td>
+                    <td>
+                        <input id="btnLoginForm" class="btnNormal" type="button" value="취소" tabindex="11" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="styDisplay styRight" colspan="3" style="vertical-align: bottom; height: 80px;">
+                        <div class="lblDisplay copyright">Copyright(C) 2013 ASETEC Corporation. All rights reserved.</div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

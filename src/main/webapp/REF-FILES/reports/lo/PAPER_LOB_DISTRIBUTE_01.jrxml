@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LO_DISTRIBUTE" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" uuid="f71e6474-887a-4f44-8b23-e17cb9076e82">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.6963904734899398"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="LOGISPOT"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="FSUBTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPRINTTIME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPUSER" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPAGE" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT LAG(WD.C_NO ,1 ,WD.C_YES) OVER (PARTITION BY L1.ITEM_CD
+                                             ORDER BY L1.DELIVERY_CD
+                                )                       AS ITEM_FIRST_YN
+        ,LAG(WD.C_NO ,1 ,WD.C_YES) OVER (PARTITION BY L1.ITEM_CD
+                                                     ,L1.ITEM_STATE
+                                                     ,L1.ITEM_LOT
+                                                     ,L1.VALID_DATE
+                                                     ,L1.BATCH_NO
+                                             ORDER BY L1.DELIVERY_CD
+                                )                       AS FIRST_YN
+        ,WF.DSP_COMBO(L1.CENTER_CD    ,C1.CENTER_NM)    AS CENTER_CD_F
+        ,WF.DSP_COMBO(L1.BU_CD        ,B1.BU_NM)        AS BU_CD_F
+        ,L1.OUTBOUND_DATE
+        ,L1.OUTBOUND_BATCH
+        ,L1.BRAND_CD
+        ,B2.BRAND_NM
+        ,L1.ITEM_CD
+        ,T1.ITEM_NM || ' ' || T1.ITEM_SPEC              AS ITEM_NM
+        ,T1.ITEM_SPEC
+        ,T1.ITEM_BAR_CD
+        ,C3.COMMON_NM                                   AS ITEM_STATE_D
+        ,NVL(WF.DSP_COMBO(T1.KEEP_DIV ,C4.COMMON_NM) ,'미지정') AS KEEP_DIV_F
+        ,L1.ITEM_LOT
+        ,T1.QTY_IN_BOX
+        ,L1.VALID_DATE
+        ,L1.BATCH_NO
+        ,WF.DSP_COMBO(L1.DELIVERY_CD ,D1.DELIVERY_NM)   AS DELIVERY_CD_F
+        ,D1.DELIVERY_NM
+        ,L1.ENTRY_QTY
+        ,WF.GET_B_BOX(L1.ENTRY_QTY ,T1.QTY_IN_BOX)      AS ENTRY_BOX
+        ,WF.GET_B_EA (L1.ENTRY_QTY ,T1.QTY_IN_BOX)      AS ENTRY_EA
+        ,WF.DSP_COMBO(L1.OUTBOUND_BATCH ,L1.OUTBOUND_BATCH_NM) AS OUTBOUND_BATCH_F
+    FROM (
+          SELECT M1.CENTER_CD         ,M1.BU_CD           ,M1.OUTBOUND_DATE
+                ,M1.CUST_CD           ,M1.DELIVERY_CD
+                ,M1.OUTBOUND_BATCH    ,M2.OUTBOUND_BATCH_NM
+                ,M1.BRAND_CD
+                ,M1.ITEM_CD           ,M1.ITEM_STATE      ,M1.ITEM_LOT
+                ,M1.VALID_DATE        ,M1.BATCH_NO
+                ,SUM(M1.ENTRY_QTY) AS ENTRY_QTY
+            FROM LO030NM M1
+                 JOIN LO020NM M2 ON M2.CENTER_CD     = M1.CENTER_CD
+                                AND M2.BU_CD         = M1.BU_CD
+                                AND M2.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                                AND M2.OUTBOUND_NO   = M1.OUTBOUND_NO
+           WHERE M1.CENTER_CD      = 'A1'
+             AND M1.BU_CD          = '0000'
+             AND M1.OUTBOUND_DATE  = '2021-11-19'
+             AND M1.OUTBOUND_BATCH = '001'
+           GROUP BY M1.CENTER_CD         ,M1.BU_CD           ,M1.OUTBOUND_DATE
+                   ,M1.CUST_CD           ,M1.DELIVERY_CD
+                   ,M1.OUTBOUND_BATCH    ,M2.OUTBOUND_BATCH_NM
+                   ,M1.BRAND_CD
+                   ,M1.ITEM_CD           ,M1.ITEM_STATE      ,M1.ITEM_LOT
+                   ,M1.VALID_DATE        ,M1.BATCH_NO
+         ) L1
+         JOIN CMCENTER   C1 ON C1.CENTER_CD   = L1.CENTER_CD
+         JOIN CMBU       B1 ON B1.BU_CD       = L1.BU_CD
+         JOIN CMBRAND    B2 ON B2.BRAND_CD    = L1.BRAND_CD
+         JOIN CMDELIVERY D1 ON D1.CUST_CD     = L1.CUST_CD
+                           AND D1.DELIVERY_CD = L1.DELIVERY_CD
+         JOIN CMITEM     T1 ON T1.BRAND_CD    = L1.BRAND_CD
+                           AND T1.ITEM_CD     = L1.ITEM_CD
+         JOIN CMCODE     C3 ON C3.COMMON_CD   = L1.ITEM_STATE
+                           AND C3.COMMON_GRP  = WF.GET_COMMON_GRP('ITEM_STATE')
+    LEFT JOIN CMCODE     C4 ON C4.COMMON_CD   = T1.KEEP_DIV
+                           AND C4.COMMON_GRP  = WF.GET_COMMON_GRP('KEEP_DIV')
+   ORDER BY KEEP_DIV
+          ,ITEM_NM
+           ,BRAND_CD
+           ,ITEM_STATE
+           ,ITEM_LOT
+           ,VALID_DATE
+           ,BATCH_NO
+           ,DELIVERY_CD_F]]>
+	</queryString>
+	<field name="ITEM_FIRST_YN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_FIRST_YN"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_FIRST_YN"/>
+	</field>
+	<field name="FIRST_YN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FIRST_YN"/>
+		<property name="com.jaspersoft.studio.field.label" value="FIRST_YN"/>
+	</field>
+	<field name="CENTER_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CENTER_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="CENTER_CD_F"/>
+	</field>
+	<field name="BU_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_CD_F"/>
+	</field>
+	<field name="OUTBOUND_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="OUTBOUND_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTBOUND_DATE"/>
+	</field>
+	<field name="OUTBOUND_BATCH" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="OUTBOUND_BATCH"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTBOUND_BATCH"/>
+	</field>
+	<field name="BRAND_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRAND_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRAND_CD"/>
+	</field>
+	<field name="BRAND_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRAND_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRAND_NM"/>
+	</field>
+	<field name="ITEM_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_CD"/>
+	</field>
+	<field name="ITEM_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_NM"/>
+	</field>
+	<field name="ITEM_SPEC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_SPEC"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_SPEC"/>
+	</field>
+	<field name="ITEM_BAR_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_BAR_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_BAR_CD"/>
+	</field>
+	<field name="ITEM_STATE_D" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_STATE_D"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_STATE_D"/>
+	</field>
+	<field name="KEEP_DIV_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="KEEP_DIV_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="KEEP_DIV_F"/>
+	</field>
+	<field name="ITEM_LOT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_LOT"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_LOT"/>
+	</field>
+	<field name="QTY_IN_BOX" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="QTY_IN_BOX"/>
+		<property name="com.jaspersoft.studio.field.label" value="QTY_IN_BOX"/>
+	</field>
+	<field name="VALID_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="VALID_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="VALID_DATE"/>
+	</field>
+	<field name="BATCH_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BATCH_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="BATCH_NO"/>
+	</field>
+	<field name="DELIVERY_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DELIVERY_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="DELIVERY_CD_F"/>
+	</field>
+	<field name="DELIVERY_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DELIVERY_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="DELIVERY_NM"/>
+	</field>
+	<field name="ENTRY_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_QTY"/>
+	</field>
+	<field name="ENTRY_BOX" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_BOX"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_BOX"/>
+	</field>
+	<field name="ENTRY_EA" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_EA"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_EA"/>
+	</field>
+	<field name="OUTBOUND_BATCH_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="OUTBOUND_BATCH_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTBOUND_BATCH_F"/>
+	</field>
+	<variable name="SUM_ENTRY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_ITEM_CD" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENTRY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="TOT_ENTRY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_KEEP_DIV Group" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENTRY_QTY}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_ENTRY_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_OUTBOUND_BATCH" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENTRY_QTY}]]></variableExpression>
+	</variable>
+	<group name="GRP_OUTBOUND_BATCH" footerPosition="CollateAtBottom">
+		<groupExpression><![CDATA[$F{CENTER_CD_F} + $F{BU_CD_F} + $F{OUTBOUND_DATE} + $F{OUTBOUND_BATCH}]]></groupExpression>
+		<groupFooter>
+			<band height="20">
+				<staticText>
+					<reportElement key="staticText-4" x="429" y="2" width="60" height="15" uuid="95e14e2c-cb80-40d4-bfb3-3b53168e7fbd"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[총 합계 :]]></text>
+				</staticText>
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="498" y="0" width="70" height="19" printWhenGroupChanges="GRP_OUTBOUND_BATCH" uuid="e295c19a-7e1a-46f5-bdea-d6ca6903919a"/>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="15" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_ENTRY_QTY}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GRP_KEEP_DIV Group" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{OUTBOUND_BATCH} + $F{KEEP_DIV_F}]]></groupExpression>
+		<groupFooter>
+			<band height="30">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<staticText>
+					<reportElement key="staticText-4" x="380" y="10" width="110" height="15" uuid="831e6167-a98a-4f7a-8f9d-698371ad07d5">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[보관구분별 합계 :]]></text>
+				</staticText>
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="498" y="10" width="70" height="19" printWhenGroupChanges="GRP_OUTBOUND_BATCH" uuid="d4d3828b-217a-40bf-86ae-8b4e19316909"/>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="15" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_ENTRY_QTY}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GRP_ITEM_CD" keepTogether="true">
+		<groupExpression><![CDATA[$F{OUTBOUND_BATCH} + $F{ITEM_CD}]]></groupExpression>
+		<groupFooter>
+			<band height="20">
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="501" y="1" width="66" height="17" uuid="e295c19a-7e1a-46f5-bdea-d6ca6903919a"/>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_ENTRY_QTY}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-1" x="0" y="19" width="567" height="1" uuid="89c2332c-ee00-40a0-a9c1-b917de2bdb96"/>
+					<graphicElement>
+						<pen lineWidth="0.25" lineStyle="Double"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement key="line-6" x="357" y="0" width="209" height="1" uuid="21b87d82-91ec-42f9-9958-4be558630623"/>
+					<graphicElement>
+						<pen lineWidth="0.25" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-5" x="0" y="52" width="55" height="12" uuid="d050e1b4-62d9-4b2e-841e-ad43313b4096"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<text><![CDATA[브 랜 드 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" x="392" y="79" width="66" height="14" uuid="e0fa7bb8-1825-4c87-9fd2-196f87125203"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력일시   :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="458" y="79" width="109" height="14" uuid="a358bb05-7322-4ee7-921d-b56e3dbf535a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="0" y="94" width="567" height="1" uuid="f108caed-e7a3-48c2-8043-426439e5760d"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="52" width="130" height="12" uuid="975282bf-2413-4bc4-b48a-99b43e2d4dc0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BU_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="38" width="55" height="12" uuid="82f5eafa-0cd9-4e60-88d0-64abfdec81dd"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[물류센터 :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="38" width="130" height="12" uuid="02e2b668-6b74-4d30-8ddf-2e57aad54076"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTER_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-24" x="0" y="66" width="55" height="12" uuid="b0bb2026-9a52-4c5c-9b39-abab4c9b5d05"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<text><![CDATA[출고일자 :]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="55" y="66" width="130" height="12" uuid="baeb041f-09a1-47e8-9c23-5375bf594072"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_DATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-28" x="0" y="80" width="55" height="12" uuid="faad8329-1928-467e-8205-e0968b4b172e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<text><![CDATA[출고차수 :]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="55" y="80" width="130" height="12" uuid="c7c725e9-7eaf-4bfa-a21a-7d04f13fc844"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_BATCH_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-7" x="392" y="65" width="66" height="14" uuid="8c4b5535-f816-4a30-9fe9-8f5ded280188"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력사용자 :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-2" x="458" y="65" width="109" height="12" uuid="72f212a2-9a91-4521-8eac-6c1100265ba9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USER_ID}+" - "+$P{P_USER_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="567" height="26" uuid="dffcd8af-b265-46ec-89d9-54b4ae74df83"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="18" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="392" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="51b43add-194c-4cb1-aa09-6ca979d150ef">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]분배지시서]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="250" y="66" width="130" height="12" uuid="be767d2a-88bd-46a5-a193-104d24b60fb8"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{KEEP_DIV_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-24" x="195" y="66" width="55" height="12" uuid="fc5e360b-d133-443d-9661-df21d1c74fcd"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<text><![CDATA[보관구분 :]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="1" width="58" height="12" uuid="875578f5-4d40-4d6e-9828-317ef8738cf2"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품코드]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="297" y="14" width="59" height="12" uuid="a6c8242e-e73a-497c-8839-22697916ee73"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[제조번호]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="443" y="1" width="37" height="25" uuid="1761390d-75e8-4988-a3fb-0ccc3a7156d8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[입수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="242" y="1" width="54" height="12" uuid="4b57dfe3-69d0-4e7c-8f66-ad3538708f3a"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상태]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="523" y="1" width="43" height="25" uuid="8c8af532-863a-47a1-abbd-670ad485b7b9"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="480" y="14" width="43" height="12" uuid="4925215d-274b-4531-b99c-b8208788a733"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EA수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="242" y="14" width="54" height="12" uuid="c5a83701-7674-4ddb-bb8b-a448af82ec27"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[유통기한]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="480" y="1" width="43" height="12" uuid="fe5a7736-71c4-4e1a-81e7-cc82ae08bcb8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BOX수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="14" width="242" height="12" uuid="cdf1aa16-e5fa-470a-bce7-41a9aa423602"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품명 / 규격]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="297" y="1" width="59" height="12" uuid="484ff7bc-fbdc-49fc-9eeb-2bd67b2f3a44"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOT번호]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="357" y="1" width="85" height="12" uuid="0bdac14f-f26d-4559-a5ab-1f8a4de31ec3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[배송처]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-1" x="0" y="27" width="567" height="1" uuid="21a1348f-81e9-4b1a-b530-770fbe0a1fd5"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="100" y="1" width="47" height="12" uuid="be4bac8b-27c0-49a1-a5fd-fc4900c1ad67"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[브랜드]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="28" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="0" y="1" width="96" height="12" uuid="eddc4dbe-0c60-4c29-ac81-d039463b68f4">
+					<printWhenExpression><![CDATA[$F{ITEM_FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="0" y="14" width="242" height="12" uuid="8a53a052-68e8-41ca-9e61-80d69f2d0f07">
+					<printWhenExpression><![CDATA[$F{ITEM_FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="242" y="1" width="54" height="12" uuid="c0194ff0-e5c5-487b-afea-a5d60026b0ef">
+					<printWhenExpression><![CDATA[$F{FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_STATE_D}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="297" y="1" width="59" height="12" uuid="56c79a4d-dd1e-4ac2-bbc8-ecc2d21139a8">
+					<printWhenExpression><![CDATA[$F{FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_LOT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="443" y="1" width="37" height="25" uuid="b981477f-6421-45b5-953d-205843c65079"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTY_IN_BOX}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="242" y="14" width="54" height="12" uuid="e1fa4415-2293-4b0f-b5ce-ee2551c5d80f">
+					<printWhenExpression><![CDATA[$F{FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALID_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="297" y="14" width="59" height="12" uuid="bd201b83-0bfa-42a9-ac49-bef2f46cbdce">
+					<printWhenExpression><![CDATA[$F{FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BATCH_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="480" y="1" width="43" height="12" uuid="ffd98715-a69c-4877-8f7a-c6923bdf0a57"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENTRY_BOX}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="480" y="14" width="43" height="12" uuid="4dae6172-acc2-4f8d-934a-e658953f90d3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENTRY_EA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="523" y="1" width="43" height="25" uuid="82eb7053-c8a0-4993-84b2-f60fc5a68707"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENTRY_QTY}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="357" y="1" width="85" height="25" uuid="cd1a181a-c94a-47ae-ba54-3ddb5e270a62"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="100" y="1" width="142" height="12" uuid="26a6006e-5068-4ecc-8601-b20cca337421">
+					<printWhenExpression><![CDATA[$F{ITEM_FIRST_YN}.equals( "Y" )]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BRAND_NM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement key="line-3" x="0" y="0" width="567" height="1" uuid="27d7ab1a-c7f6-448d-88bf-b15ecb8caa0a"/>
+			</line>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="277" y="3" width="19" height="12" uuid="1e87afa7-5c90-4863-a0b5-d2fe5bc8a850"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="296" y="3" width="50" height="12" uuid="a6068a7d-01be-4eeb-8679-9dbd76b099de"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="227" y="3" width="50" height="12" uuid="fc7bc7a2-f961-4c01-b2e4-693fbf227834"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

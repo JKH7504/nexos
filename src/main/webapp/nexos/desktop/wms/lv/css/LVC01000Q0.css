@@ -1,0 +1,80 @@
+div.ctrLeft, /*
+*/ div.ctrRight {
+    margin: 0;
+    border-width: 0;
+    overflow: hidden;
+}
+
+div.ctrLeft .ctrInner, /*
+*/ div.ctrRight .ctrInner {
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.lblMoreNotice {
+    display: inline-block;
+    cursor: pointer;
+    color: #808080;
+    font-weight: bold;
+    line-height: 20px;
+    vertical-align: bottom;
+}
+
+.ctrPercentBar {
+    display: inline-block;
+    position: relative;
+    background-color: #f7f7f7;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.ctrPercentBar.special {
+    position: absolute;
+    width: 40px;
+    top: 23px;
+    right: 10px;
+    bottom: 45px;
+}
+
+.lblPercentBarTitle {
+    position: absolute;
+    font-weight: bold;
+    text-align: center;
+    width: 40px;
+    right: 10px;
+    bottom: 10px;
+}
+
+.ctrPercentBarLine {
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    bottom: 0;
+    background-color: #ef7cc8;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.lblPercentBarValue {
+    position: absolute;
+    display: inline-block;
+    text-align: center;
+    top: 15%;
+    width: 100%;
+    z-index: 1;
+    font-weight: bold;
+    letter-spacing: -1px;
+    text-shadow: 0 1px 1px #ffffff;
+}
+
+.slick-cell.selected {
+    background: none;
+}
+
+.slick-row.odd {
+    background: #fff;
+}
+
+.slick-cell, .slick-cell.active {
+    border-right: 1px solid #d6d6d6;
+    border-bottom: 1px solid #d6d6d6;
+}

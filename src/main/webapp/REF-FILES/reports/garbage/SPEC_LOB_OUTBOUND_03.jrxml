@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RECEIPT_LO_OUTBOUND03" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a3495187-6c89-42e8-9601-6b5ccf6f7a5b">
+	<property name="ireport.zoom" value="0.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Detail" fontSize="12"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_BU_CD" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_OUTBOUND_DATE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_OUTBOUND_NO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT WF.DSP_COMBO (M1.CENTER_CD ,C1.CENTER_NM)     AS CENTER_CD_F
+          ,WF.DSP_COMBO (M1.BU_CD  ,B1.BU_NM)      AS BU_CD_F
+          ,TO_CHAR(M1.OUTBOUND_DATE ,WD.C_DATE_FORMAT)   AS OUTBOUND_DATE
+          ,M1.OUTBOUND_NO                                AS OUTBOUND_NO
+          ,WF.DSP_COMBO (M1.INOUT_CD    ,C2.COMMON_NM)     AS INOUT_CD_F
+
+          ,WF.DSP_ADDRESS(C4.ADDR_BASIC ,C4.ADDR_DETAIL) AS PROVIDER_ADDRESS
+          ,WF.DSP_COMBO(C4.CUST_FULL_NM ,C1.CENTER_NM)   AS PROVIDER_NM_F
+          ,C4.BUSINESS_NO                                AS PROVIDER_NO
+          ,C4.BUSINESS_KIND                              AS PROVIDER_KIND
+          ,C4.BUSINESS_TYPE                              AS PROVIDER_TYPE
+          ,C4.CEO_NM                                     AS PROVIDER_NM
+          ,C4.TEL_NO                                     AS PROVIDER_TEL
+          ,WF.DSP_COMBO (M1.DELIVERY_CD ,D1.DELIVERY_NM) AS CUSTOMER_CD_F
+          ,WF.DSP_ADDRESS(D1.ADDR_BASIC ,D1.ADDR_DETAIL) AS CUSTOMER_ADDRESS
+          ,D1.BUSINESS_NO                                AS CUSTOMER_NO
+          ,D1.CHARGE_NM                                  AS CUSTOMER_NM
+          ,D1.CHARGE_TEL                                 AS CUSTOMER_TEL
+          ,D1.BUSINESS_KIND                              AS CUSTOMER_KIND
+          ,D1.BUSINESS_TYPE                              AS CUSTOMER_TYPE
+          ,M1.CENTER_CD || '-' || M1.BU_CD || '-' || TO_CHAR(M1.OUTBOUND_DATE ,'YYYYMMDD') || '-' || M1.OUTBOUND_NO AS PAPER_NO
+      FROM LO020NM M1
+           JOIN CMCENTER   C1 ON C1.CENTER_CD     = M1.CENTER_CD
+           JOIN CMBU       B1 ON B1.BU_CD      = M1.BU_CD
+           JOIN CMDELIVERY D1 ON D1.CUST_CD       = M1.CUST_CD
+                             AND D1.DELIVERY_CD   = M1.DELIVERY_CD
+           JOIN CMCODE     C2 ON C2.COMMON_CD       = M1.INOUT_CD
+                             AND C2.COMMON_GRP      = WF.GET_COMMON_GRP('INOUT_CD')
+           JOIN CMCUST     C4 ON C4.CUST_CD       = M1.CUST_CD
+    WHERE M1.CENTER_CD = $P{P_CENTER_CD}
+      AND M1.BU_CD     = $P{P_BU_CD}
+      AND M1.OUTBOUND_DATE = $P{P_OUTBOUND_DATE}
+      AND M1.OUTBOUND_NO  IN ( SELECT CHECK_VALUE FROM CTCHECKVALUE)
+     ORDER BY OUTBOUND_NO]]>
+	</queryString>
+	<field name="CENTER_CD_F" class="java.lang.String"/>
+	<field name="BU_CD_F" class="java.lang.String"/>
+	<field name="OUTBOUND_DATE" class="java.lang.String"/>
+	<field name="OUTBOUND_NO" class="java.lang.String"/>
+	<field name="INOUT_CD_F" class="java.lang.String"/>
+	<field name="PROVIDER_ADDRESS" class="java.lang.String"/>
+	<field name="PROVIDER_NM_F" class="java.lang.String"/>
+	<field name="PROVIDER_NO" class="java.lang.String"/>
+	<field name="PROVIDER_KIND" class="java.lang.String"/>
+	<field name="PROVIDER_TYPE" class="java.lang.String"/>
+	<field name="PROVIDER_NM" class="java.lang.String"/>
+	<field name="PROVIDER_TEL" class="java.lang.String"/>
+	<field name="CUSTOMER_CD_F" class="java.lang.String"/>
+	<field name="CUSTOMER_ADDRESS" class="java.lang.String"/>
+	<field name="CUSTOMER_NO" class="java.lang.String"/>
+	<field name="CUSTOMER_NM" class="java.lang.String"/>
+	<field name="CUSTOMER_TEL" class="java.lang.String"/>
+	<field name="CUSTOMER_KIND" class="java.lang.String"/>
+	<field name="CUSTOMER_TYPE" class="java.lang.String"/>
+	<field name="PAPER_NO" class="java.lang.String"/>
+	<group name="GRP_PAGE" isStartNewPage="true" isResetPageNumber="true">
+		<groupExpression><![CDATA[$F{CENTER_CD_F} + $F{BU_CD_F} + $F{OUTBOUND_DATE} + $F{OUTBOUND_NO}]]></groupExpression>
+	</group>
+	<detail>
+		<band height="420">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement x="0" y="0" width="595" height="420" printWhenGroupChanges="GRP_PAGE" uuid="6a4ab5a8-2155-4726-af11-6c0574a43f64"/>
+				<subreportParameter name="P_OUTBOUND_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_OUTBOUND_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_OUTBOUND_NO">
+					<subreportParameterExpression><![CDATA[$F{OUTBOUND_NO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SYSDATE">
+					<subreportParameterExpression><![CDATA[$P{P_SYSDATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lo/SPEC_LOB_OUTBOUND_03_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="420">
+			<subreport isUsingCache="false" runToBottom="true">
+				<reportElement x="0" y="0" width="595" height="420" printWhenGroupChanges="GRP_PAGE" uuid="6281e0ef-1171-4fc0-8fdc-74ec6090bab5"/>
+				<subreportParameter name="P_OUTBOUND_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_OUTBOUND_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_OUTBOUND_NO">
+					<subreportParameterExpression><![CDATA[$F{OUTBOUND_NO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SYSDATE">
+					<subreportParameterExpression><![CDATA[$P{P_SYSDATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lo/SPEC_LOB_OUTBOUND_03_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

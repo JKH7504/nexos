@@ -1,0 +1,16 @@
+package nexos.dao.ri;
+
+import java.util.Map;
+
+public interface RIB03090E1DAO {
+
+    /**
+     * 도착일자 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveArrivalDate(Map<String, Object> params) throws Exception;
+
+}

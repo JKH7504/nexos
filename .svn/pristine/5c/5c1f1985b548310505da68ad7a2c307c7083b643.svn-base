@@ -1,0 +1,203 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LSC03010Q0
+    프로그램명         : 재고분석현황
+    프로그램설명       : 재고분석현황 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LSC03010Q0.css" /> -->
+<script src="js/LSC03010Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <!-- 조회 조건 -->
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="divOConditionInoutDate1" class="ctrGroup">
+                        <div id="lblQBase_Date" class="lblCondition">기준일자</div>
+                        <input id="dtpQInout_Date" class="dtpKey" type="text" style="width: 100px;" />
+                    </div>
+                    <div id="divOConditionInoutDate2" class="ctrGroup">
+                        <div id="lblQInout_Date" class="lblCondition">기준일자</div>
+                        <input id="dtpQInout_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                        <span class="lblTerm">▶</span>
+                        <input id="dtpQInout_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_State" class="lblCondition">상품상태</div>
+                    <select id="cboQItem_State" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="divOConditionClassDiv" class="ctrGroup">
+                        <div id="lblQClass_Div" class="lblCondition">분류구분</div>
+                        <select id="cboQClass_Div" class="cboNormal" style="width: 150px;"></select>
+                    </div>
+                    <div id="divOConditionKeepDiv" class="ctrGroup">
+                        <div id="lblQKeep_Div" class="lblCondition">상품보관구분</div>
+                        <select id="cboQKeep_Div" class="cboNormal" style="width: 150px;"></select>
+                    </div>
+                    <div id="divOConditionRemainDays" class="ctrGroup">
+                        <div id="lblQRemain_Days" class="lblCondition">잔여일수</div>
+                        <input id="edtQRemain_Days" class="edtNormal" type="text" style="width: 30px;" />
+                    </div>
+                </td>
+                <td>
+                    <div id="lblQInout_Cd_Nm" class="lblCondition">출고구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkQInout_Cd1" name="chkQInout_Cd" class="chkNormal" type="checkbox" value="D1" />
+                        <span style="margin-right: 5px">B2B</span>
+                        <input id="chkQInout_Cd2" name="chkQInout_Cd" class="chkNormal" type="checkbox" value="DM" />
+                        <span style="margin-right: 5px">B2C</span>
+                        <input id="chkQInout_Cd3" name="chkQInout_Cd" class="chkNormal" type="checkbox" value="DF" />
+                        B2CF
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <!-- 추가 조건 -->
+        <table id="ctrAdditionalConditionView" class="ctrAdditionalCondition">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Dept_Cd" class="lblCondition">부서</div>
+                    <input id="edtQDept_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQDept_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQDept_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td id="tdQDsp_Brand_Cd">
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_Cd" class="lblCondition">상품코드</div>
+                    <input id="edtQItem_Cd" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_Nm" class="lblCondition">상품명</div>
+                    <input id="edtQItem_Nm" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">장기재고분석</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">유통기한임박 상품분석</a></li>
+            <li id="divTab3"><a href="#divT3TabSheetView">일평균재고</a></li>
+            <li id="divTab4"><a href="#divT4TabSheetView">평균재고회전율</a></li>
+            <li id="divTab5"><a href="#divT5TabSheetView">상품별 평균히트율</a></li>
+            <li id="divTab6"><a href="#divT6TabSheetView">로케이션별 평균히트율</a></li>
+        </ul>
+        <!-- 장기재고분석 -->
+        <div id="divT1TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT1Master" class="lblTitle">장기재고분석</td>
+                    <td id="ctrRows_grdT1Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT1Master"></div>
+        </div>
+        <!-- 유효기간임박 상품분석 -->
+        <div id="divT2TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT2Master" class="lblTitle">유효기간임박 상품분석</td>
+                    <td id="ctrRows_grdT2Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT2Master"></div>
+        </div>
+        <!-- 일평균재고 -->
+        <div id="divT3TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT3Master" class="lblTitle">일평균재고</td>
+                    <td id="ctrRows_grdT3Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT3Master"></div>
+        </div>
+        <!-- 평균재고회전율 -->
+        <div id="divT4TabSheetView">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdT4Master" class="lblTitle">평균재고회전율</td>
+                        <td id="ctrRows_grdT4Master" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdT4Master"></div>
+            </div>
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdT4Detail" class="lblTitle">상품별 출고내역</td>
+                        <td id="ctrRows_grdT4Detail" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdT4Detail"></div>
+            </div>
+        </div>
+        <!-- 상품별 평균히트율 -->
+        <div id="divT5TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT5Master" class="lblTitle">상품별 평균히트율</td>
+                    <td id="ctrRows_grdT5Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT5Master"></div>
+        </div>
+        <!-- 로케이션별 평균히트율 -->
+        <div id="divT6TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT6Master" class="lblTitle">로케이션별 평균히트율</td>
+                    <td id="ctrRows_grdT6Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT6Master"></div>
+        </div>
+    </div>
+</body>
+</html>

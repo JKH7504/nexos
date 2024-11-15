@@ -1,0 +1,145 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01020E0
+    프로그램명         : 프로그램관리
+    프로그램설명       : 프로그램관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01020E0.css" /> -->
+<script src="js/CSC01020E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQApplication_Div" class="lblCondition" style="width: 100px;">애플리케이션구분</div>
+                    <select id="cboQApplication_Div" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQProgram_Id" class="lblCondition">프로그램ID</div>
+                    <input id="edtQProgram_Id" class="edtNormal" type="text" style="width: 150px;" />
+                </td>
+                <td>
+                    <div id="lblQProgram_Nm" class="lblCondition">프로그램명</div>
+                    <input id="edtQProgram_Nm" class="edtNormal" type="text" style="width: 200px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">프로그램</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">프로그램 상세정보</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">프로그램 레포트정보</a></li>
+        </ul>
+        <!-- 상세정보 -->
+        <div id="divT1TabSheetView">
+            <div id="divMasterInfoView" class="ctrInner">
+                <div class="ctrGroupRow">
+                    <div id="lblProgram_Id" class="lblKey" style="width: 100px;">프로그램ID</div>
+                    <input id="edtProgram_Id" class="edtKey" type="text" maxlength="30" style="width: 120px;" />
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblProgram_Nm" class="lblKey" style="width: 100px;">프로그램명</div>
+                    <input id="edtProgram_Nm" class="edtKey" type="text" maxlength="200" style="width: 350px;" />
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblWeb_Url" class="lblKey" style="width: 100px;">WEB URL</div>
+                    <input id="edtWeb_Url" class="edtKey" type="text" maxlength="100" style="width: 350px;" />
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblApplication_Div" class="lblKey" style="width: 100px;">애플리케이션구분</div>
+                    <select id="cboApplication_Div" class="cboKey" style="width: 150px;"></select>
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblRemark1" class="lblNormal" style="width: 100px;">비고</div>
+                    <input id="edtRemark1" class="edtNormal" type="text" style="width: 350px;" />
+                </div>
+                <div class="ctrGroupRow inContent">
+                    <div id="dspTitle_Program_Div" class="lblGroupTitle">프로그램 구분</div>
+                    <div class="ctrGroupContent">
+                        <div class="ctrGroupRow">
+                            <input id="rgbProgram_Div_E" name="rgbProgram_Div" class="rgbNormal" type="radio" value="E" />
+                            등록
+                        </div>
+                        <div class="ctrGroupRow">
+                            <input id="rgbProgram_Div_Q" name="rgbProgram_Div" class="rgbNormal" type="radio" value="Q" />
+                            조회
+                        </div>
+                        <div class="ctrGroupRow">
+                            <input id="rgbProgram_Div_R" name="rgbProgram_Div" class="rgbNormal" type="radio" value="R" />
+                            출력
+                        </div>
+                    </div>
+                </div>
+                <div class="ctrGroupRow inContent">
+                    <div id="dspTitle_Wide_Yn" class="lblGroupTitle">화면 와이드 표시여부</div>
+                    <div class="ctrGroupContent">
+                        <div class="ctrGroupRow">
+                            <input id="rgbWide_Yn_Y" name="rgbWide_Yn" class="rgbNormal" type="radio" value="Y" />
+                            활성화
+                        </div>
+                        <div class="ctrGroupRow">
+                            <input id="rgbWide_Yn_N" name="rgbWide_Yn" class="rgbNormal" type="radio" value="N" />
+                            비활성화
+                        </div>
+                    </div>
+                </div>
+                <div class="ctrGroupRow inContent">
+                    <div id="dspTitle_Deal_Div" class="lblGroupTitle">거래구분</div>
+                    <div class="ctrGroupContent">
+                        <div class="ctrGroupRow">
+                            <input id="rgbDeal_Div1" name="rgbDeal_Div" class="rgbNormal" type="radio" value="1" />
+                            거래진행
+                        </div>
+                        <div class="ctrGroupRow">
+                            <input id="rgbDeal_Div2" name="rgbDeal_Div" class="rgbNormal" type="radio" value="2" />
+                            거래종료
+                        </div>
+                        <div class="ctrGroupRow">
+                            <input id="rgbDeal_Div3" name="rgbDeal_Div" class="rgbNormal" type="radio" value="3" />
+                            조회종료
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 프로그램 레포트정보 -->
+        <div id="divT2TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdDetail" class="lblTitle">프로그램 레포트</td>
+                    <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdDetail"></div>
+        </div>
+    </div>
+</body>
+</html>

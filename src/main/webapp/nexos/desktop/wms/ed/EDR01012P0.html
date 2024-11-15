@@ -1,0 +1,62 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : EDR01012P0
+    프로그램명         : 인터페이스수신체크등록 팝업
+    프로그램설명       : 인터페이스수신체크등록 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/EDR01012P0.css" /> -->
+<script src="js/EDR01012P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <!-- split 상단-->
+        <div>
+            <!-- 수신체크 마스터 -->
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">수신체크</td>
+                    <td>
+                        <input id="btnDelete" class="btnImgCancel" type="button" value="수신체크 삭제" style="width: 115px;" />
+                    </td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <!-- split 하단-->
+        <div>
+            <!-- 정의된 수신체크내역 -->
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdDetail" class="lblTitle">정의된 수신체크내역</td>
+                    <td>
+                        <input id="btnEntry" class="btnImgNormal" type="button" value="수신체크 등록" style="width: 115px;" />
+                    </td>
+                    <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdDetail"></div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

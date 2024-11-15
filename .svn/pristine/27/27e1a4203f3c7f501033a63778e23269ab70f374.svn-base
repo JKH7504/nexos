@@ -1,0 +1,185 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LFC02020E0
+    프로그램명         : 정산항목관리
+    프로그램설명       : 정산항목관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LFC02020E0.css" /> -->
+<script src="js/LFC02020E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQBill_Grp" class="lblCondition">정산그룹</div>
+                    <select id="cboQBill_Grp" class="cboNormal" style="width: 200px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Cust_Cd" class="lblCondition">고객사</div>
+                    <input id="edtQCust_Cd" class="edtNormal" type="text" style="width: 70px;" />
+                    <input id="btnQCust_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+                <td>
+                <td>
+                    <div id="lblQDeal_Div" class="lblCondition">거래구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkQDeal_Div1" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="1" />
+                        거래진행
+                        <input id="chkQDeal_Div2" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="2" />
+                        거래종료
+                        <input id="chkQDeal_Div3" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="3" />
+                        조회종료
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 정산항목 마스터 뷰 -->
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">정산항목</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <!-- Detail View -->
+    <div id="divRightView" class="ctrRight">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">기본정보</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">관리정보</a></li>
+        </ul>
+        <!-- 기본정보 -->
+        <div id="divT1TabSheetView" class="ctrInner">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdDetail" class="lblTitle">정산항목별 세부기준</td>
+                    <td>
+                        <input id="btnInquiryBill" class="btnImgInquiry" type="button" value="조회" style="width: 55px;" />
+                        <input id="btnAddBill" class="btnImgNormal" type="button" value="추가" style="width: 55px;" />
+                    </td>
+                    <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <!-- 수수료 검색 조건 -->
+            <div id="ctrAdditional_grdDetail" class="ctrAdditional bottom ctrSubCondition">
+                <table class="ctrInner">
+                    <tr>
+                        <td>
+                            <div id="lblBill_Grp" class="lblCondition">정산그룹</div>
+                            <select id="cboBill_Grp" class="cboNormal" style="width: 150px;"></select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="grdDetail"></div>
+        </div>
+        <div id="divT2TabSheetView" class="ctrInner">
+            <!-- 관리 센터, 사업부, 입출고구분 그리드 View -->
+            <!-- Top -->
+            <div id="divGrdTopView">
+                <div id="divSubView1" class="ctrLeft">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail1" class="lblTitle">관리물류센터</td>
+                            <td>
+                                <input id="btnDeleteCenter" class="btnImgCancel" type="button" value="삭제" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail1" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail1"></div>
+                </div>
+                <div id="divSubView2" class="ctrRight">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail2" class="lblTitle">물류센터</td>
+                            <td>
+                                <input id="btnAddCenter" class="btnImgNormal" type="button" value="등록" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail2" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail2"></div>
+                </div>
+            </div>
+            <!-- Middle -->
+            <div id="divGrdMiddleView" style="margin-top: 5px;">
+                <div id="divSubView3" class="ctrLeft">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail3" class="lblTitle">관리사업부</td>
+                            <td>
+                                <input id="btnDeleteBu" class="btnImgCancel" type="button" value="삭제" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail3" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail3"></div>
+                </div>
+                <div id="divSubView4" class="ctrRight">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail4" class="lblTitle">사업부</td>
+                            <td>
+                                <input id="btnAddBu" class="btnImgNormal" type="button" value="등록" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail4" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail4"></div>
+                </div>
+            </div>
+            <!-- Bottom -->
+            <div id="divGrdBottomView" style="margin-top: 5px;">
+                <div id="divSubView5" class="ctrLeft">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail5" class="lblTitle">관리입출고구분</td>
+                            <td>
+                                <input id="btnDeleteInout" class="btnImgCancel" type="button" value="삭제" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail5" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail5"></div>
+                </div>
+                <div id="divSubView6" class="ctrRight">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail6" class="lblTitle">입출고구분</td>
+                            <td>
+                                <input id="btnAddInout" class="btnImgNormal" type="button" value="등록" style="width: 55px;" />
+                            </td>
+                            <td id="ctrRows_grdDetail6" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail6"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

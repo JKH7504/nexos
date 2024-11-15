@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LS_BOX" pageWidth="411" pageHeight="269" orientation="Landscape" columnWidth="381" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" uuid="da653a23-3e4e-40db-96d3-c459e3f38269">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="ITEM_NM_STYLE" fill="Solid" fontSize="150">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() <33]]></conditionExpression>
+			<style hAlign="Left" vAlign="Middle" fontName="D2Coding" fontSize="17" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() >= 32 && $F{ITEM_NM_LEN}.intValue() <40]]></conditionExpression>
+			<style isBlankWhenNull="true" fontName="D2Coding" fontSize="15" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() >=40 &&$F{ITEM_NM_LEN}.intValue() <47]]></conditionExpression>
+			<style fontName="D2Coding" fontSize="13" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() >=47]]></conditionExpression>
+			<style fontName="D2Coding" fontSize="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT M1.CENTER_CD
+        ,M1.BU_CD
+        ,M1.BRAND_CD
+        ,M1.ITEM_CD
+        ,T1.BOX_BAR_CD
+        ,T1.ITEM_NM
+        ,T1.ITEM_SPEC
+        ,T1.QTY_IN_BOX
+        ,M1.BATCH_NO
+        ,T1.ITEM_BAR_CD
+        ,M1.ITEM_LOT
+        ,M1.VALID_DATE
+        ,M1.STOCK_QTY
+        ,WF.GET_B_BOX (M1.STOCK_QTY ,T1.QTY_IN_BOX)                                    AS STOCK_BOX
+        ,WF.GET_B_EA  (M1.STOCK_QTY ,T1.QTY_IN_BOX)                                    AS STOCK_EA
+        ,B1.BU_FULL_NM
+        ,LENGTHB(T1.ITEM_NM)                                                           AS ITEM_NM_LEN
+   FROM LS010NM M1
+        JOIN CMITEM  T1 ON T1.BRAND_CD = M1.BRAND_CD
+                       AND T1.ITEM_CD  = M1.ITEM_CD
+        JOIN CMBU    B1 ON B1.BU_CD    = M1.BU_CD
+ WHERE M1.CENTER_CD     = $P{P_CENTER_CD}
+   AND M1.BU_CD         = $P{P_BU_CD}]]>
+	</queryString>
+	<field name="CENTER_CD" class="java.lang.String"/>
+	<field name="BU_CD" class="java.lang.String"/>
+	<field name="BRAND_CD" class="java.lang.String"/>
+	<field name="ITEM_CD" class="java.lang.String"/>
+	<field name="BOX_BAR_CD" class="java.lang.String"/>
+	<field name="ITEM_NM" class="java.lang.String"/>
+	<field name="ITEM_SPEC" class="java.lang.String"/>
+	<field name="QTY_IN_BOX" class="java.math.BigDecimal"/>
+	<field name="BATCH_NO" class="java.lang.String"/>
+	<field name="ITEM_BAR_CD" class="java.lang.String"/>
+	<field name="ITEM_LOT" class="java.lang.String"/>
+	<field name="VALID_DATE" class="java.lang.String"/>
+	<field name="STOCK_QTY" class="java.math.BigDecimal"/>
+	<field name="STOCK_BOX" class="java.math.BigDecimal"/>
+	<field name="STOCK_EA" class="java.math.BigDecimal"/>
+	<field name="BU_FULL_NM" class="java.lang.String"/>
+	<field name="ITEM_NM_LEN" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="239" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-4" x="112" y="-12" width="127" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="597af43d-733b-45ae-9dba-b898b316cb52">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]롯데마트 박스라벨]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="66" width="88" height="31" uuid="09f0a966-7e0f-4b9e-abb7-98c36b4f535d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상 품 명 :  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="97" width="88" height="20" uuid="ec04c9b0-c72b-4bd7-a3da-372785bd54fe"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[입    수 :  ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="88" y="97" width="293" height="20" uuid="368f9c30-1ccd-4a91-9179-f3b86cd10b4a"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTY_IN_BOX}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="381" height="45" uuid="7b0021ba-0a77-4d3b-9632-822395882b06"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="36" isBold="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["롯데마트" + "(" + $F{BU_FULL_NM} + ")"]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="104" y="189" width="163" height="50" uuid="e594af0d-643f-4ede-b15d-4a1d1b1599b5"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="true" checksumRequired="false" barWidth="2" barHeight="65">
+					<jr:codeExpression><![CDATA[$F{BATCH_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="88" y="123" width="192" height="65" uuid="c47d3c3b-af38-4d1b-9331-56efd54f4683"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="true" checksumRequired="false" barWidth="2" barHeight="70">
+					<jr:codeExpression><![CDATA[$F{BOX_BAR_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement x="88" y="45" width="293" height="21" uuid="d4a87a0f-0c37-41a6-a87d-e94575c3ef8d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="45" width="88" height="21" uuid="6d5d3ca2-a794-4142-a287-89bb419af81b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품코드 :  ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="ITEM_NM_STYLE" x="88" y="66" width="293" height="31" isRemoveLineWhenBlank="true" uuid="3a900b7e-114c-44f2-8a07-b4a4ddbcfac0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LO_PICKING" printOrder="Horizontal" pageWidth="425" pageHeight="283" orientation="Landscape" columnWidth="394" leftMargin="16" rightMargin="15" topMargin="14" bottomMargin="13" uuid="fc58417d-d8f2-49b2-a12f-0422b2ac7d6b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+       M1.CENTER_CD
+      ,M1.BU_CD
+      ,M1.OUTBOUND_DATE
+      ,M1.OUTBOUND_BATCH
+      ,M1.DELIVERY_BATCH
+      ,Z1.REMARK1   AS ZONE_REMARK1
+      ,'TP' || M1.CENTER_CD || '-' || M1.BU_CD || '-' || TO_CHAR(M1.OUTBOUND_DATE ,'YYYYMMDD') || '-' || M1.OUTBOUND_BATCH || '-' || Z1.REMARK1 AS PAPER_NO
+  FROM LO030NM M1
+       JOIN CMLOCATION E1 ON E1.CENTER_CD   = M1.CENTER_CD
+                         AND E1.LOCATION_CD = M1.LOCATION_CD
+       JOIN CMZONE     Z1 ON Z1.CENTER_CD   = E1.CENTER_CD
+                         AND Z1.ZONE_CD     = E1.ZONE_CD
+ WHERE M1.CENTER_CD = 'S1'
+   AND M1.BU_CD     = '0050'
+   AND M1.OUTBOUND_DATE = '2014-10-08'
+   AND M1.OUTBOUND_BATCH = '001']]>
+	</queryString>
+	<field name="CENTER_CD" class="java.lang.String"/>
+	<field name="BU_CD" class="java.lang.String"/>
+	<field name="OUTBOUND_DATE" class="java.lang.String"/>
+	<field name="OUTBOUND_BATCH" class="java.lang.String"/>
+	<field name="DELIVERY_BATCH" class="java.lang.String"/>
+	<field name="ZONE_REMARK1" class="java.lang.String"/>
+	<field name="PAPER_NO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="256" splitType="Stretch">
+			<staticText>
+				<reportElement x="164" y="143" width="230" height="113" uuid="475d04b5-9d7f-4d29-88c6-08444c4ed101"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="394" height="256" uuid="f36c5e99-ec3b-4bc5-85e1-706f382e60ff"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="164" y="190" width="230" height="66" uuid="86c22f6f-4270-4b1a-8b51-4608c0188f48"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="38" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(층)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="0" y="190" width="82" height="66" uuid="30f661f4-b7ad-4f10-b7dc-eb8f62fc3ab9"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="40" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_BATCH}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-1" x="164" y="143" width="230" height="47" uuid="779dcf84-c473-4272-b59d-bcc12a9f501c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="40" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ZONE_REMARK1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="textField-1" x="0" y="143" width="82" height="47" uuid="73a7b574-89a5-492e-908d-8f599e47f80d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[운송차수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="textField-1" x="82" y="143" width="82" height="47" uuid="4893653b-25f7-48b2-b66b-3cfa682aa34b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고차수]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="82" y="190" width="82" height="66" uuid="4f3c8457-a879-483c-a17d-2dc1fc57ac56"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="40" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_BATCH}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement positionType="FixRelativeToBottom" x="16" y="15" width="362" height="77" isRemoveLineWhenBlank="true" uuid="12a7cbfd-2f3a-4503-8330-6ac52871fdba"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="50">
+					<jr:codeExpression><![CDATA[$F{PAPER_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement positionType="FixRelativeToBottom" x="16" y="41" width="362" height="77" isRemoveLineWhenBlank="true" uuid="c773a88b-fc08-4516-b1d0-8f05c88214d5"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="50">
+					<jr:codeExpression><![CDATA[$F{PAPER_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement positionType="FixRelativeToBottom" x="16" y="66" width="362" height="77" isRemoveLineWhenBlank="true" uuid="ace1bf80-8527-4227-b066-dcd61e8ccc23"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="50">
+					<jr:codeExpression><![CDATA[$F{PAPER_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<staticText>
+				<reportElement key="staticText-4" x="218" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="9f0fbab0-c28f-413a-8a29-d2d55d5fe8b2">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]피킹라벨]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

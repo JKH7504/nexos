@@ -1,0 +1,34 @@
+.scanInspection .lblKey, /*
+*/ .scanInspection .lblSpecial, /*
+*/ .scanInspection .lblNormal, /*
+*/ .scanInspection .edtDisplay {
+    width: 98px;
+}
+
+.scanInspection .lblNormal {
+    font-weight: bold;
+}
+
+.scanInspection .edtDisplay {
+    background-color: #f1f1f1 !important;
+    color: #000 !important;
+    font-size: 10pt;
+    font-weight: bold;
+    height: 24px;
+}
+
+.scanInspection .styImportant {
+    font-size: 10pt !important;
+}
+
+.scanInspection .styLarge {
+    font-size: 18pt;
+    font-weight: bold;
+    height: 36px;
+}
+
+.scanInspection .styScan {
+    font-size: 20pt;
+    font-weight: bold;
+    height: 40px;
+}

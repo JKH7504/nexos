@@ -1,0 +1,47 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : EDC01010E0
+    프로그램명         : 수신체크리스트관리
+    프로그램설명       : 수신체크리스트관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/EDC01010E0.css" /> -->
+<script src="js/EDC01010E0.js"></script>
+</head>
+<body>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">수신 구분</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">수신 체크리스트</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+</body>
+</html>

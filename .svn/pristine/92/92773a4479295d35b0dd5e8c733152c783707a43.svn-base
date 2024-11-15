@@ -1,0 +1,137 @@
+package nexos.dao.cm;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: WCDAOImpl<br>
+ * Description: CMC05010E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2017-10-10    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("CMC05010E0DAO")
+public class CMC05010E0DAOImpl extends DaoSupport implements CMC05010E0DAO {
+
+    final String PRORAM_ID                  = "CMC05010E0";
+
+    final String TABLE_NM_CMLOCATIONREC     = "CMLOCATIONREC";
+    final String INSERT_ID_CMLOCATIONREC    = PRORAM_ID + ".INSERT_" + TABLE_NM_CMLOCATIONREC;
+    final String DELETE_ID_CMLOCATIONREC    = PRORAM_ID + ".DELETE_" + TABLE_NM_CMLOCATIONREC;
+
+    final String SP_ID_CM_LOCATIONFIX_CHECK = "CM_LOCATIONFIX_CHECK";
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void save(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+        String policyCm120 = (String)params.get("P_POLICY_CM120");
+        int dsCnt = dsSave.size();
+        String location;
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                // 1: 존-행-열-단
+                if (policyCm120.equals("1")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 2: 존-행-열단
+                } else if (policyCm120.equals("2")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 3: 존-행열-단
+                } else if (policyCm120.equals("3")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 4: 존행-열-단
+                } else if (policyCm120.equals("4")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 5: 존-행열단
+                } else if (policyCm120.equals("5")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 6: 존행-열단
+                } else if (policyCm120.equals("6")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 7: 존행열-단
+                } else if (policyCm120.equals("7")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 8: 존행열단
+                } else {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                }
+                // LOCATION_CD 컬럼값 교체
+                rowData.put("P_LOCATION_CD", location);
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CMLOCATIONREC, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                // 1: 존-행-열-단
+                if (policyCm120.equals("1")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 2: 존-행-열단
+                } else if (policyCm120.equals("2")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 3: 존-행열-단
+                } else if (policyCm120.equals("3")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 4: 존행-열-단
+                } else if (policyCm120.equals("4")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 5: 존-행열단
+                } else if (policyCm120.equals("5")) {
+                    location = (String)rowData.get("P_ZONE_CD") + "-" + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 6: 존행-열단
+                } else if (policyCm120.equals("6")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + "-" + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                    // 7: 존행열-단
+                } else if (policyCm120.equals("7")) {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD") + "-"
+                        + (String)rowData.get("P_LEV_CD");
+                    // 8: 존행열단
+                } else {
+                    location = (String)rowData.get("P_ZONE_CD") + (String)rowData.get("P_BANK_CD") + (String)rowData.get("P_BAY_CD")
+                        + (String)rowData.get("P_LEV_CD");
+                }
+                // LOCATION_CD 컬럼값 교체
+                rowData.put("P_LOCATION_CD", location);
+                deleteSql(DELETE_ID_CMLOCATIONREC, rowData);
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CMLOCATIONREC, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                deleteSql(DELETE_ID_CMLOCATIONREC, rowData);
+            }
+        }
+
+    }
+
+}

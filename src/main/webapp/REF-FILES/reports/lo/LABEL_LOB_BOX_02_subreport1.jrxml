@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LOB_BOX02_subreport1" pageWidth="275" pageHeight="15" orientation="Landscape" columnWidth="275" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a84dad60-37ea-4419-a8a1-0cdfa3b168ce">
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_DATE" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_NO" class="java.lang.String"/>
+	<parameter name="P_BOX_NO" class="java.math.BigDecimal"/>
+	<parameter name="P_PAGE_NO" class="java.math.BigDecimal"/>
+	<parameter name="P_ROWS_PER_PAGE" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[SELECT L3.BRAND_CD
+      ,L3.ITEM_CD
+      ,L3.ITEM_STATE
+      ,L3.ITEM_LOT
+      ,L3.ITEM_ORDER_DIV
+      ,L3.CONFIRM_QTY
+      ,WF.GET_B_BOX(L3.CONFIRM_QTY ,T1.QTY_IN_BOX)           AS CONFIRM_BOX
+      ,WF.GET_B_EA (L3.CONFIRM_QTY ,T1.QTY_IN_BOX)           AS CONFIRM_EA
+      ,B1.BRAND_NM
+      ,T1.ITEM_NM
+      ,T1.ITEM_SPEC
+      ,T1.QTY_IN_BOX
+      ,C2.COMMON_NM                                          AS ITEM_STATE_D
+  FROM (
+        SELECT L2.*
+              ,CEIL(ROW_NUMBER() OVER(ORDER BY L2.BRAND_CD ,L2.ITEM_CD) / $P{P_ROWS_PER_PAGE}) AS PAGE_NO
+          FROM (
+                SELECT M1.BRAND_CD
+                      ,M1.ITEM_CD
+                      ,M1.ITEM_STATE
+                      ,M1.ITEM_LOT
+                      ,M1.ITEM_ORDER_DIV
+                      ,SUM(L1.CONFIRM_QTY) AS CONFIRM_QTY
+                  FROM (
+                        SELECT CENTER_CD
+                              ,BU_CD
+                              ,OUTBOUND_DATE
+                              ,OUTBOUND_NO
+                              ,LINE_NO
+                              ,MIN(BOX_NO)      AS BOX_NO
+                              ,SUM(CONFIRM_QTY) AS CONFIRM_QTY
+                          FROM LO050NM
+                         WHERE CENTER_CD     = $P{P_CENTER_CD}
+                           AND BU_CD         = $P{P_BU_CD}
+                           AND OUTBOUND_DATE = $P{P_OUTBOUND_DATE}
+                           AND OUTBOUND_NO   = $P{P_OUTBOUND_NO}
+                           AND BOX_NO        = $P{P_BOX_NO}
+                         GROUP BY CENTER_CD
+                                 ,BU_CD
+                                 ,OUTBOUND_DATE
+                                 ,OUTBOUND_NO
+                                 ,LINE_NO
+                        ) L1
+                       JOIN LO020ND M1 ON M1.CENTER_CD       = L1.CENTER_CD
+                                      AND M1.BU_CD           = L1.BU_CD
+                                      AND M1.OUTBOUND_DATE   = L1.OUTBOUND_DATE
+                                      AND M1.OUTBOUND_NO     = L1.OUTBOUND_NO
+                                      AND M1.LINE_NO         = L1.LINE_NO
+                       JOIN CMCODE  C2 ON C2.COMMON_GRP      = WF.GET_COMMON_GRP('ITEM_ORDER_DIV')
+                                      AND C2.COMMON_CD       = M1.ITEM_ORDER_DIV
+                                      AND C2.ATTR01_CD       = WD.C_YES                             --상품주문유형 특성01 피킹검수 대상 - Y
+                 GROUP BY M1.BRAND_CD
+                         ,M1.ITEM_CD
+                         ,M1.ITEM_STATE
+                         ,M1.ITEM_LOT
+                         ,M1.ITEM_ORDER_DIV
+               ) L2
+       ) L3
+       JOIN CMBRAND    B1 ON B1.BRAND_CD        = L3.BRAND_CD
+       JOIN CMITEM     T1 ON T1.BRAND_CD        = L3.BRAND_CD
+                         AND T1.ITEM_CD         = L3.ITEM_CD
+       JOIN CMCODE     C2 ON C2.COMMON_GRP      = WF.GET_COMMON_GRP('ITEM_STATE')
+                         AND C2.COMMON_CD       = L3.ITEM_STATE
+ WHERE L3.PAGE_NO   = $P{P_PAGE_NO}]]>
+	</queryString>
+	<field name="BRAND_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRAND_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRAND_CD"/>
+	</field>
+	<field name="ITEM_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_CD"/>
+	</field>
+	<field name="ITEM_STATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_STATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_STATE"/>
+	</field>
+	<field name="ITEM_LOT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_LOT"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_LOT"/>
+	</field>
+	<field name="ITEM_ORDER_DIV" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_ORDER_DIV"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_ORDER_DIV"/>
+	</field>
+	<field name="CONFIRM_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="CONFIRM_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="CONFIRM_QTY"/>
+	</field>
+	<field name="CONFIRM_BOX" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="CONFIRM_BOX"/>
+		<property name="com.jaspersoft.studio.field.label" value="CONFIRM_BOX"/>
+	</field>
+	<field name="CONFIRM_EA" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="CONFIRM_EA"/>
+		<property name="com.jaspersoft.studio.field.label" value="CONFIRM_EA"/>
+	</field>
+	<field name="BRAND_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRAND_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRAND_NM"/>
+	</field>
+	<field name="ITEM_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_NM"/>
+	</field>
+	<field name="ITEM_SPEC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_SPEC"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_SPEC"/>
+	</field>
+	<field name="QTY_IN_BOX" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="QTY_IN_BOX"/>
+		<property name="com.jaspersoft.studio.field.label" value="QTY_IN_BOX"/>
+	</field>
+	<field name="ITEM_STATE_D" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_STATE_D"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_STATE_D"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="1" width="60" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="6927e654-0fc8-4d43-b030-a2d7c96bfe66">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="60" y="1" width="115" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="480db5e4-cf3b-4238-9e59-76ecc7ae8269">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="200" y="1" width="25" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="f3f7809f-f4d5-4dda-9d47-d4a9584a3adf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTY_IN_BOX}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="175" y="1" width="25" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="1bff0f28-a417-4c79-b991-452b7c50c11b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_SPEC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="250" y="1" width="25" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="e2f580e1-3e8d-46f0-b149-1da6e26c2b4e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONFIRM_EA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="225" y="1" width="25" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="60e2814b-7dff-4f9a-baba-e81057975968">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONFIRM_BOX}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

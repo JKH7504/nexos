@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RECEIPT_LF_DELIVERY" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" uuid="ed17e26b-c40b-4545-b868-bcfcf476d2e2">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.652892561983471"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="FSUBTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPRINTTIME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPUSER" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPAGE" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_CENTER_CD" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["A1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_BU_CD" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["1100"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ADJUST_MONTH" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["2013-11"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ROW_NUMBER() OVER( ORDER BY L1.ADJUST_DATE ,L1.FEE_HEAD_CD, L1.FEE_BASE_CD,C5.CAR_NM,L1.DELIVERY_BATCH, L1.PERIOD_DIV )     AS LINE_NO
+          ,WF.D_TO_CHAR(L1.ADJUST_DATE)                  AS ADJUST_DATE
+          ,C1.CENTER_FULL_NM                             AS PROVIDER_NM
+          ,C2.CUST_FULL_NM                               AS CUSTOMER_NM
+          ,F1.FEE_HEAD_NM
+          ,F2.FEE_BASE_NM
+
+          ,C3.VENDOR_NM
+          ,C4.DELIVERY_NM
+          ,C5.CAR_NM
+          ,L1.DELIVERY_BATCH
+          ,L1.FEE_AMT
+          ,L1.ADJUST_FEE_AMT
+
+          ,L1.CENTER_CD
+          ,L1.BU_CD
+          ,L1.ADJUST_MONTH
+          ,L1.FEE_HEAD_CD
+          ,L1.FEE_BASE_CD
+          ,L1.CAR_CD
+          ,L1.CUST_CD
+          ,L1.VENDOR_CD
+      FROM (
+            SELECT M1.CENTER_CD
+                  ,M1.BU_CD
+                  ,M1.ADJUST_MONTH
+                  ,M1.ADJUST_DATE
+                  ,M1.FEE_HEAD_CD
+                  ,M1.FEE_BASE_CD
+                  ,M1.CAR_CD
+                  ,M1.CUST_CD
+                  ,M1.VENDOR_CD
+                  ,M1.DELIVERY_CD
+                  ,M1.DELIVERY_BATCH
+                  ,M1.PERIOD_DIV
+                  ,SUM(M1.FEE_AMT)          AS FEE_AMT
+                  ,SUM(M1.ADJUST_FEE_AMT)   AS ADJUST_FEE_AMT
+              FROM LF020NM M1
+             GROUP BY M1.CENTER_CD
+                     ,M1.BU_CD
+                     ,M1.ADJUST_MONTH
+                     ,M1.ADJUST_DATE
+                     ,M1.FEE_HEAD_CD
+                     ,M1.FEE_BASE_CD
+                     ,M1.CAR_CD
+                     ,M1.CUST_CD
+                     ,M1.VENDOR_CD
+                     ,M1.DELIVERY_CD
+                     ,M1.DELIVERY_BATCH
+                     ,M1.PERIOD_DIV
+           ) L1
+           JOIN CMCENTER   C1 ON C1.CENTER_CD    = L1.CENTER_CD
+           JOIN CMBU    B1 ON B1.BU_CD     = L1.BU_CD
+           JOIN CMCUST     C2 ON C2.CUST_CD      = B1.CUST_CD
+           JOIN CMVENDOR   C3 ON C3.CUST_CD      = L1.CUST_CD
+                             AND C3.VENDOR_CD    = L1.VENDOR_CD
+           JOIN CMDELIVERY C4 ON C4.CUST_CD      = L1.CUST_CD
+                             AND C4.DELIVERY_CD  = L1.DELIVERY_CD
+           JOIN CMCAR      C5 ON C5.CAR_CD       = L1.CAR_CD
+           JOIN LFHEAD     F1 ON F1.FEE_HEAD_CD  = L1.FEE_HEAD_CD
+           JOIN LFBASE     F2 ON F2.FEE_HEAD_CD  = L1.FEE_HEAD_CD
+                             AND F2.FEE_BASE_CD  = L1.FEE_BASE_CD
+     WHERE L1.CENTER_CD    = $P{P_CENTER_CD}
+       AND L1.BU_CD     = $P{P_BU_CD}
+       AND L1.ADJUST_MONTH = $P{P_ADJUST_MONTH}
+     ORDER BY LINE_NO]]>
+	</queryString>
+	<field name="LINE_NO" class="java.math.BigDecimal"/>
+	<field name="ADJUST_DATE" class="java.lang.String"/>
+	<field name="PROVIDER_NM" class="java.lang.String"/>
+	<field name="CUSTOMER_NM" class="java.lang.String"/>
+	<field name="FEE_HEAD_NM" class="java.lang.String"/>
+	<field name="FEE_BASE_NM" class="java.lang.String"/>
+	<field name="VENDOR_NM" class="java.lang.String"/>
+	<field name="DELIVERY_NM" class="java.lang.String"/>
+	<field name="CAR_NM" class="java.lang.String"/>
+	<field name="DELIVERY_BATCH" class="java.lang.String"/>
+	<field name="FEE_AMT" class="java.math.BigDecimal"/>
+	<field name="ADJUST_FEE_AMT" class="java.math.BigDecimal"/>
+	<field name="CENTER_CD" class="java.lang.String"/>
+	<field name="BU_CD" class="java.lang.String"/>
+	<field name="ADJUST_MONTH" class="java.lang.String"/>
+	<field name="FEE_HEAD_CD" class="java.lang.String"/>
+	<field name="FEE_BASE_CD" class="java.lang.String"/>
+	<field name="CAR_CD" class="java.lang.String"/>
+	<field name="CUST_CD" class="java.lang.String"/>
+	<field name="VENDOR_CD" class="java.lang.String"/>
+	<variable name="SUM_CONFIRM_QTY" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_ADJUST_MONTH" calculation="Sum">
+		<variableExpression><![CDATA[$F{ADJUST_FEE_AMT}]]></variableExpression>
+	</variable>
+	<group name="GRP_ADJUST_MONTH">
+		<groupExpression><![CDATA[$F{ADJUST_MONTH}]]></groupExpression>
+		<groupFooter>
+			<band height="30">
+				<textField evaluationTime="Group" evaluationGroup="GRP_ADJUST_MONTH" pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="437" y="0" width="129" height="29" uuid="e8117447-a134-43b1-b520-d971d2e07139"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="17" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_CONFIRM_QTY}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-6" x="348" y="29" width="218" height="1" uuid="1896b7cb-378f-46e3-97c7-116ea39e0df2"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="362" y="0" width="75" height="29" uuid="f3607bb5-3c9e-4744-a12c-e8c42983c188"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="17" isBold="true"/>
+					</textElement>
+					<text><![CDATA[합계:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="89" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-7" x="391" y="58" width="66" height="14" uuid="63a4b797-f829-4153-97d2-937f2f1e3e02"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력사용자 :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="55" y="44" width="170" height="12" uuid="50719dd2-3d6d-4eae-b71b-9703dcf40c2e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROVIDER_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-6" x="391" y="72" width="66" height="14" uuid="62e08906-80b4-4683-b0fc-8c3b7ffd10ff"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력일시   :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="0" y="58" width="55" height="12" uuid="eb4f39b0-6777-470f-b733-5a5a1d58e286"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[위 탁 사 :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-2" x="457" y="58" width="109" height="12" uuid="810f497b-6ed9-43af-bfd3-742ba8db8d92"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USER_ID}+" - "+$P{P_USER_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="55" y="72" width="170" height="12" uuid="fa603df1-05c7-42a4-9301-b388627da7b8"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADJUST_MONTH}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="44" width="55" height="12" uuid="a805f03c-7f6b-47d6-8e16-4f1e8e0d3fd6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[물류센터 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-24" x="0" y="72" width="55" height="12" uuid="515b972c-7748-4b1a-915d-a6376bc00286"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[정 산 월 :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="457" y="72" width="109" height="14" uuid="95c4cf6f-55ed-40f6-a642-cf46c9563795"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="0" y="88" width="567" height="1" uuid="330fe776-5e55-47d8-8a83-21a8d9a7ae5b"/>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="55" y="58" width="170" height="12" uuid="e7a689d1-f33e-4987-bcea-c8bbba518b3b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMER_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="391" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="fe187b68-4b74-4831-825e-c0468b932a60">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]배송청구내역서]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="5" width="566" height="26" uuid="089fdb62-6474-4297-829e-61f54e6f14ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="18" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<line>
+				<reportElement key="line-1" x="0" y="19" width="567" height="1" uuid="150c669a-5d0a-4aaa-beb4-fb347b973f26"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="0" width="24" height="20" uuid="2c70aead-ee33-4a8e-8fc6-ac7f28849349"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[순  번]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="27" y="0" width="50" height="20" uuid="b15154b7-0a0c-4683-9cd4-f8dbed8e00d0"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[정산일자]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="83" y="0" width="79" height="20" uuid="7c200f50-ad54-4bd1-9353-6aa3a6104a21"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[정산항목]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="447" y="0" width="60" height="20" uuid="382d0834-44a1-48bd-ab92-8a268c03521d"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[정산금액]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="347" y="0" width="66" height="20" uuid="f3a554b5-4e40-498a-9164-bff46917cedd"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[차량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="413" y="0" width="34" height="20" uuid="fa036b25-a23d-465d-b070-bd267058002e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[운송차수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="507" y="0" width="60" height="20" uuid="be6b53d9-799a-486d-931e-e75e462e41c3"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[실정산금액]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="162" y="0" width="93" height="20" uuid="d4e026df-65af-48a7-ba98-c4354881d315"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[공급처]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="255" y="0" width="93" height="20" uuid="1f2eb5c9-a0e8-4acc-8378-5c94a6c2037c"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[배송처]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement key="line-1" x="0" y="14" width="567" height="1" uuid="02938212-fb2f-46e4-86fc-c2ae04a149ff"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="24" height="15" uuid="55076a4f-5ef2-4322-998b-89549db613a1"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINE_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="507" y="0" width="60" height="15" uuid="b3d5106e-dbb2-4cb2-a534-06f612750f54"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADJUST_FEE_AMT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="YYYY-MM-DD" isBlankWhenNull="true">
+				<reportElement x="27" y="0" width="50" height="15" uuid="c862dee0-268a-4eca-b3ce-336caff74a2f"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADJUST_DATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="447" y="0" width="60" height="15" uuid="28299c09-b5c0-4093-8948-7f77b8146332"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEE_AMT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="413" y="0" width="34" height="15" uuid="432333ce-eef6-4e43-b09d-86e7ed10c753"/>
+				<box rightPadding="3">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_BATCH}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="83" y="0" width="79" height="15" uuid="0ade51ec-712c-4b07-9937-d6b1b71fe94f"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEE_BASE_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="347" y="0" width="66" height="15" uuid="3814670f-f038-4792-95f5-551a08bc514a"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAR_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="162" y="0" width="93" height="15" uuid="d663db85-3975-4376-b147-e807f7fffe4b"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="255" y="0" width="93" height="15" uuid="540103d2-b17d-4698-bbc8-c0fd939fe463"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="29" splitType="Stretch">
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="224" y="13" width="50" height="12" uuid="d94b366d-41cc-4421-8bb8-67eefda245a6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-18" x="293" y="13" width="50" height="12" uuid="61c84049-627e-44ac-9faa-36d61b62f84b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="274" y="13" width="19" height="12" uuid="c0d9834d-97ff-4aa8-82d4-6e0a6caa181e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 공통코드그룹관리 화면
+  // Author : ASETEC
+  // Date : 2016-06-29
+  // Description
+  // 공통코드그룹관리 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('CSC05010E0' ,'CMCODEGROUP;CMCODEATTR;CMCODE') AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="CSC05010E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="CSC05010E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - CSC05010E0.RS_MASTER -->
+  <select id="RS_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=CSC05010E0_VIRTUALMAP} = call CSC05010E0.RS_MASTER
+      (#{P_COMMON_GRP              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_COMMON_GRP_NM           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CSC05010E0.RS_MASTER -->
+
+
+  <!-- [S] - CSC05010E0.RS_DETAIL -->
+  <select id="RS_DETAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=CSC05010E0_VIRTUALMAP} = call CSC05010E0.RS_DETAIL()
+    }
+  </select>
+  <!-- [E] - CSC05010E0.RS_DETAIL -->
+
+
+  <!-- [S] - CSC05010E0.RS_SUB -->
+  <select id="RS_SUB" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=CSC05010E0_VIRTUALMAP} = call CSC05010E0.RS_SUB
+      (#{P_COMMON_GRP              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CSC05010E0.RS_SUB -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - INSERT_CMCODEGROUP [공통코드그룹마스터] -->
+  <insert id="INSERT_CMCODEGROUP" parameterType="hashmap">
+    INSERT INTO CMCODEGROUP
+               (
+                COMMON_GRP
+               <if test="P_COMMON_GRP_NM           != null and P_COMMON_GRP_NM           != ''">,COMMON_GRP_NM               </if>
+               <if test="P_ATTR01_TITLE_NM         != null and P_ATTR01_TITLE_NM         != ''">,ATTR01_TITLE_NM             </if>
+               <if test="P_ATTR02_TITLE_NM         != null and P_ATTR02_TITLE_NM         != ''">,ATTR02_TITLE_NM             </if>
+               <if test="P_ATTR03_TITLE_NM         != null and P_ATTR03_TITLE_NM         != ''">,ATTR03_TITLE_NM             </if>
+               <if test="P_ATTR04_TITLE_NM         != null and P_ATTR04_TITLE_NM         != ''">,ATTR04_TITLE_NM             </if>
+               <if test="P_ATTR05_TITLE_NM         != null and P_ATTR05_TITLE_NM         != ''">,ATTR05_TITLE_NM             </if>
+               <if test="P_ATTR06_TITLE_NM         != null and P_ATTR06_TITLE_NM         != ''">,ATTR06_TITLE_NM             </if>
+               <if test="P_ATTR07_TITLE_NM         != null and P_ATTR07_TITLE_NM         != ''">,ATTR07_TITLE_NM             </if>
+               <if test="P_ATTR08_TITLE_NM         != null and P_ATTR08_TITLE_NM         != ''">,ATTR08_TITLE_NM             </if>
+               <if test="P_ATTR09_TITLE_NM         != null and P_ATTR09_TITLE_NM         != ''">,ATTR09_TITLE_NM             </if>
+               <if test="P_ATTR10_TITLE_NM         != null and P_ATTR10_TITLE_NM         != ''">,ATTR10_TITLE_NM             </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_COMMON_GRP}
+               <if test="P_COMMON_GRP_NM           != null and P_COMMON_GRP_NM           != ''">,#{P_COMMON_GRP_NM}          </if>
+               <if test="P_ATTR01_TITLE_NM         != null and P_ATTR01_TITLE_NM         != ''">,#{P_ATTR01_TITLE_NM}        </if>
+               <if test="P_ATTR02_TITLE_NM         != null and P_ATTR02_TITLE_NM         != ''">,#{P_ATTR02_TITLE_NM}        </if>
+               <if test="P_ATTR03_TITLE_NM         != null and P_ATTR03_TITLE_NM         != ''">,#{P_ATTR03_TITLE_NM}        </if>
+               <if test="P_ATTR04_TITLE_NM         != null and P_ATTR04_TITLE_NM         != ''">,#{P_ATTR04_TITLE_NM}        </if>
+               <if test="P_ATTR05_TITLE_NM         != null and P_ATTR05_TITLE_NM         != ''">,#{P_ATTR05_TITLE_NM}        </if>
+               <if test="P_ATTR06_TITLE_NM         != null and P_ATTR06_TITLE_NM         != ''">,#{P_ATTR06_TITLE_NM}        </if>
+               <if test="P_ATTR07_TITLE_NM         != null and P_ATTR07_TITLE_NM         != ''">,#{P_ATTR07_TITLE_NM}        </if>
+               <if test="P_ATTR08_TITLE_NM         != null and P_ATTR08_TITLE_NM         != ''">,#{P_ATTR08_TITLE_NM}        </if>
+               <if test="P_ATTR09_TITLE_NM         != null and P_ATTR09_TITLE_NM         != ''">,#{P_ATTR09_TITLE_NM}        </if>
+               <if test="P_ATTR10_TITLE_NM         != null and P_ATTR10_TITLE_NM         != ''">,#{P_ATTR10_TITLE_NM}        </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CMCODEGROUP [공통코드그룹마스터] -->
+
+
+  <!-- [S] - UPDATE_CMCODEGROUP [공통코드그룹마스터] -->
+  <update id="UPDATE_CMCODEGROUP" parameterType="hashmap">
+    UPDATE CMCODEGROUP
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_COMMON_GRP_NM           != null">,COMMON_GRP_NM            = #{P_COMMON_GRP_NM}          </if>
+          <if test="P_ATTR01_TITLE_NM         != null">,ATTR01_TITLE_NM          = #{P_ATTR01_TITLE_NM}        </if>
+          <if test="P_ATTR02_TITLE_NM         != null">,ATTR02_TITLE_NM          = #{P_ATTR02_TITLE_NM}        </if>
+          <if test="P_ATTR03_TITLE_NM         != null">,ATTR03_TITLE_NM          = #{P_ATTR03_TITLE_NM}        </if>
+          <if test="P_ATTR04_TITLE_NM         != null">,ATTR04_TITLE_NM          = #{P_ATTR04_TITLE_NM}        </if>
+          <if test="P_ATTR05_TITLE_NM         != null">,ATTR05_TITLE_NM          = #{P_ATTR05_TITLE_NM}        </if>
+          <if test="P_ATTR06_TITLE_NM         != null">,ATTR06_TITLE_NM          = #{P_ATTR06_TITLE_NM}        </if>
+          <if test="P_ATTR07_TITLE_NM         != null">,ATTR07_TITLE_NM          = #{P_ATTR07_TITLE_NM}        </if>
+          <if test="P_ATTR08_TITLE_NM         != null">,ATTR08_TITLE_NM          = #{P_ATTR08_TITLE_NM}        </if>
+          <if test="P_ATTR09_TITLE_NM         != null">,ATTR09_TITLE_NM          = #{P_ATTR09_TITLE_NM}        </if>
+          <if test="P_ATTR10_TITLE_NM         != null">,ATTR10_TITLE_NM          = #{P_ATTR10_TITLE_NM}        </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE COMMON_GRP               = #{P_COMMON_GRP}
+  </update>
+  <!-- [E] - UPDATE_CMCODEGROUP [공통코드그룹마스터] -->
+
+
+  <!-- [S] - DELETE_CMCODEGROUP [공통코드그룹마스터] -->
+  <delete id="DELETE_CMCODEGROUP" parameterType="hashmap">
+    DELETE 
+      FROM CMCODEGROUP
+     WHERE COMMON_GRP               = #{P_COMMON_GRP}
+  </delete>
+  <!-- [E] - DELETE_CMCODEGROUP [공통코드그룹마스터] -->
+
+
+  <!-- [S] - INSERT_CMCODEATTR [공통코드특성] -->
+  <insert id="INSERT_CMCODEATTR" parameterType="hashmap">
+    INSERT INTO CMCODEATTR
+               (
+                COMMON_GRP
+               ,ATTR_DIV
+               ,ATTR_CD
+               <if test="P_ATTR_NM                 != null and P_ATTR_NM                 != ''">,ATTR_NM                     </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_COMMON_GRP}
+               ,#{P_ATTR_DIV}
+               ,#{P_ATTR_CD}
+               <if test="P_ATTR_NM                 != null and P_ATTR_NM                 != ''">,#{P_ATTR_NM}                </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CMCODEATTR [공통코드특성] -->
+
+
+  <!-- [S] - UPDATE_CMCODEATTR [공통코드특성] -->
+  <update id="UPDATE_CMCODEATTR" parameterType="hashmap">
+    UPDATE CMCODEATTR
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_ATTR_NM                 != null">,ATTR_NM                  = #{P_ATTR_NM}                </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE COMMON_GRP               = #{P_COMMON_GRP}
+       AND ATTR_DIV                 = #{P_ATTR_DIV}
+       AND ATTR_CD                  = #{P_ATTR_CD}
+  </update>
+  <!-- [E] - UPDATE_CMCODEATTR [공통코드특성] -->
+
+
+  <!-- [S] - DELETE_CMCODEATTR [공통코드특성] -->
+  <delete id="DELETE_CMCODEATTR" parameterType="hashmap">
+    DELETE 
+      FROM CMCODEATTR
+     WHERE COMMON_GRP               = #{P_COMMON_GRP}
+     <if test="P_ATTR_DIV                != null and P_ATTR_DIV                != ''">
+       AND ATTR_DIV                 = #{P_ATTR_DIV}
+     </if>-->
+     <if test="P_ATTR_CD                 != null and P_ATTR_CD                 != ''">
+       AND ATTR_CD                  = #{P_ATTR_CD}
+     </if>
+  </delete>
+  <!-- [E] - DELETE_CMCODEATTR [공통코드특성] -->
+
+
+  <!-- [S] - DELETE_CMCODE [공통코드마스터] -->
+  <delete id="DELETE_CMCODE" parameterType="hashmap">
+    DELETE 
+      FROM CMCODE
+     WHERE COMMON_GRP               = #{P_COMMON_GRP}
+     <if test="P_COMMON_CD               != null and P_COMMON_CD               != ''">
+       AND COMMON_CD                = #{P_COMMON_CD}
+     </if>
+  </delete>
+  <!-- [E] - DELETE_CMCODE [공통코드마스터] -->
+
+
+</mapper>

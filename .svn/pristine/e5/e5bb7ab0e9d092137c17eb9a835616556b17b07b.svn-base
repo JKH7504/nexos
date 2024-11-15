@@ -1,0 +1,878 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>nexos.framework</groupId>
+    <artifactId>nexos-html5-server</artifactId>
+    <version>7.5.0</version>
+    <packaging>war</packaging>
+    <name>000_NEXOS_HTML5_SERVER_V75</name>
+
+    <!-- Repository -->
+    <repositories>
+
+        <!-- Asetec Repository -->
+        <repository>
+            <id>public</id>
+            <url>http://210.116.77.208:10001/nexus/content/groups/public</url>
+        </repository>
+
+        <repository>
+            <id>snapshots</id>
+            <url>http://210.116.77.208:10001/nexus/content/repositories/snapshots</url>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
+    </repositories>
+
+    <!-- Profiles -->
+    <!-- spring.profiles 세팅에 따라 환경설정 변경 적용되도록 적용 -->
+    <!-- mvn -P[profile명] [goals], mvn -Pdev clean package -->
+    <!-- config-encrypt, config-globals-ext, config-task-ext, config-log4j2 -->
+    <!-- local일 경우 기본값 사용 -->
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active></spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>qa</id>
+            <properties>
+                <spring.profiles.active>qa</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
+    <!-- Shared version number properties -->
+    <properties>
+
+        <src.encoding>UTF-8</src.encoding>
+
+        <jdk.version>1.8</jdk.version>
+        <jst.web.version>3.0</jst.web.version>
+        <wst.jsdt.web.version>1.0</wst.jsdt.web.version>
+        <wtp.version>2.0</wtp.version>
+        <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
+        <servlet.version>3.1.0</servlet.version>
+
+        <maven.war.plugin.version>3.3.2</maven.war.plugin.version>
+        <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
+        <maven.resources.plugin.version>3.3.0</maven.resources.plugin.version>
+        <maven.eclipse.plugin.version>2.10</maven.eclipse.plugin.version>
+        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version>
+        <maven.deploy.plugin.version>3.0.0</maven.deploy.plugin.version>
+        <maven.antrun.plugin.version>3.1.0</maven.antrun.plugin.version>
+        <maven.build.helper.plugin.version>3.3.0</maven.build.helper.plugin.version>
+        <maven.copy.rename.plugin.version>1.0</maven.copy.rename.plugin.version>
+        <m2e.lifecycle.mapping.version>1.0.0</m2e.lifecycle.mapping.version>
+
+        <!--
+            [S]Spring Framework[S]====================================================================================================================
+        -->
+        <org.springframework.version>5.3.23</org.springframework.version> <!-- 4.2.5.RELEASE 5.3.23 -->
+        <org.springframework.security.version>5.7.4</org.springframework.security.version> <!-- 4.0.4.RELEASE 5.7.4 -->
+        <!--
+            [E]Spring Framework[E]====================================================================================================================
+        -->
+
+        <!--
+            [S]Database[S]============================================================================================================================
+        -->
+        <com.mchange.c3p0.version>0.9.5.5</com.mchange.c3p0.version> <!-- 0.9.5.2 0.9.5.5 -->
+        <com.oracle.version>19.3.0.0</com.oracle.version> <!-- 11.2.0.4 19.3.0.0 -->
+        <com.microsoft.sqlserver.version>11.2.1.jre17</com.microsoft.sqlserver.version> <!-- 4.0 11.2.1.jre17 -->
+        <com.mysql.version>5.1.40</com.mysql.version>
+        <org.mybatis.version>3.5.11</org.mybatis.version> <!-- 3.4.0 3.5.11 -->
+        <org.mybatis.spring.version>2.0.7</org.mybatis.spring.version> <!-- 1.3.0 2.0.7 -->
+        <!--
+            [E]Database[E]============================================================================================================================
+        -->
+
+        <!--
+            [S]Logging[S]=============================================================================================================================
+        -->
+        <org.slf4j.version>2.0.7</org.slf4j.version> <!-- 1.7.21 2.0.7 -->
+        <org.apache.log4j.version>2.20.0</org.apache.log4j.version>
+        <!--
+            [E]Logging[E]=============================================================================================================================
+        -->
+
+        <!--
+            [S]Job Scheduler[S]=======================================================================================================================
+        -->
+        <org.quartz.version>2.3.2</org.quartz.version> <!-- 2.2.3 2.3.2 -->
+        <!--
+            [E]Job Scheduler[E]=======================================================================================================================
+        -->
+
+        <!--
+            [S]Report[S]==============================================================================================================================
+        -->
+        <net.sf.jasperreport.version>6.20.0</net.sf.jasperreport.version> <!-- 6.2.0 6.20.0 -->
+        <net.sf.barbecue.version>1.5-beta1</net.sf.barbecue.version>
+        <net.sf.barcode4j.version>2.1</net.sf.barcode4j.version>
+        <com.google.zxing.version>3.5.1</com.google.zxing.version>
+        <!--
+            [E]Report[E]==============================================================================================================================
+        -->
+
+        <!--
+            [S]SAP JCo[S]=============================================================================================================================
+        -->
+        <com.sap.sapjco3.version>3.0.18-64BIT</com.sap.sapjco3.version>
+        <!--
+            [E]SAP JCo[E]=============================================================================================================================
+        -->
+
+        <!--
+            [S]Nexos Framework[S]=====================================================================================================================
+        -->
+        <nexos.framework.core.version>7.5.0-SNAPSHOT</nexos.framework.core.version>
+        <nexos.framework.fonts.version>6.2.0</nexos.framework.fonts.version>
+        <!--
+            [E]Nexos Framework[E]=====================================================================================================================
+        -->
+
+        <!--
+            [S]Json[S]================================================================================================================================
+        -->
+        <com.fasterxml.jackson.version>2.13.4</com.fasterxml.jackson.version> <!-- 2.7.4 2.13.4 -->
+        <!--
+            [E]Json[E]=====================================================================================================================
+        -->
+
+        <!--
+            [S]Misc[S]================================================================================================================================
+        -->
+        <org.apache.commons.codec.version>1.15</org.apache.commons.codec.version> <!-- 1.10 1.15 -->
+        <org.apache.commons.io.version>2.11.0</org.apache.commons.io.version> <!-- 2.4 2.11.0 -->
+        <org.apache.commons.fileupload.version>1.4</org.apache.commons.fileupload.version> <!-- 1.3.1 1.4 -->
+        <org.apache.commons.net.version>3.8.0</org.apache.commons.net.version> <!-- 3.4 3.8.0 -->
+        <org.apache.httpcomponents.version>4.5.13</org.apache.httpcomponents.version> <!-- 4.5.2 4.5.13 -->
+        <org.apache.poi.version>5.2.3</org.apache.poi.version> <!-- 3.17 5.2.3 -->
+        <!-- <com.monitorjbl.xlsxstreamer.version>2.2.0</com.monitorjbl.xlsxstreamer.version> --> <!-- 1.2.1 2.2.0 -->
+        <com.excel.streaming.reader.version>4.0.4</com.excel.streaming.reader.version>
+        <org.aspectj.version>1.8.9</org.aspectj.version>
+        <com.jcraft.version>0.1.55</com.jcraft.version> <!-- 0.1.53 0.1.55 -->
+        <javax.mail.version>1.6.2</javax.mail.version>
+        <jakarta.xml.soap.version>3.0.0</jakarta.xml.soap.version>
+        <!--
+            [E]Misc[E]================================================================================================================================
+        -->
+
+    </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+
+        <!--
+            [S]Spring Framework[S]====================================================================================================================
+        -->
+        <!-- Context -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+        -->
+
+        <!-- Security -->
+        <!--
+            <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springframework.security.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springframework.security.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${org.springframework.security.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-core</artifactId>
+            <version>${org.springframework.security.version}</version>
+            </dependency>
+        -->
+
+        <!-- JDBC Data Access Library -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+        -->
+
+        <!-- Object-to-Relation-Mapping (ORM) -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+        -->
+
+        <!-- Web -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+        -->
+
+        <!-- Web MVC -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+        -->
+
+        <!-- Web Socket -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>${org.springframework.version}</version>
+            </dependency>
+        -->
+
+        <!-- Test -->
+        <!--
+            <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${org.springframework.version}</version>
+            <scope>test</scope>
+            </dependency>
+        -->
+        <!--
+            [E]Spring Framework[E]====================================================================================================================
+        -->
+
+        <!--
+            [S]Database[S]============================================================================================================================
+        -->
+        <!-- JDBC driver for Oracle -->
+        <!-- artifactId: v11 - ojdbc6, v12 - ojdbc7 -->
+        <!-- version: v11 - 11.2.0.4, v12 - 12.1.0.2 -->
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>${com.oracle.version}</version>
+        </dependency>
+
+        <!-- JDBC driver for Microsoft SQL Server -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>${com.microsoft.sqlserver.version}</version>
+        </dependency>
+
+        <!-- JDBC driver for MySQL -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${com.mysql.version}</version>
+        </dependency>
+
+        <!-- c3p0 - JDBC Connection pooling / Statement caching library -->
+        <!--
+            <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>${com.mchange.c3p0.version}</version>
+            </dependency>
+        -->
+
+        <!-- The MyBatis SQL mapper framework -->
+        <!--
+            <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${org.mybatis.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${org.mybatis.spring.version}</version>
+            </dependency>
+        -->
+        <!--
+            [E]Database[E]============================================================================================================================
+        -->
+
+        <!--
+            [S]Logging[S]=============================================================================================================================
+        -->
+        <!-- SLF4J Logging -->
+        <!--
+            <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+            </dependency>
+        -->
+
+        <!-- Log4j API and Core implementation required for binding -->
+        <!--
+            <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${org.apache.log4j.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${org.apache.log4j.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${org.apache.log4j.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${org.apache.log4j.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>${org.apache.log4j.version}</version>
+            </dependency>
+        -->
+        <!--
+            [E]Logging[E]=============================================================================================================================
+        -->
+
+        <!--
+            [S]Report[S]==============================================================================================================================
+        -->
+        <!-- Jasper Report -->
+        <!--
+            <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>${net.sf.jasperreport.version}</version>
+            </dependency>
+        -->
+
+        <!-- Barcode - barbecue -->
+        <dependency>
+            <groupId>net.sourceforge.barbecue</groupId>
+            <artifactId>barbecue</artifactId>
+            <version>${net.sf.barbecue.version}</version>
+        </dependency>
+
+        <!-- Barcode4J -->
+        <dependency>
+            <groupId>net.sf.barcode4j</groupId>
+            <artifactId>barcode4j</artifactId>
+            <version>${net.sf.barcode4j.version}</version>
+        </dependency>
+
+        <!-- 2D Barcode, QRCode -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${com.google.zxing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${com.google.zxing.version}</version>
+        </dependency>
+
+        <!--
+            [E]Report[E]==============================================================================================================================
+        -->
+
+        <!--
+            [S]Job Scheduler[S]=======================================================================================================================
+        -->
+        <!-- Quartz - Enterprise Job Scheduler -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${org.quartz.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>c3p0</groupId>
+                    <artifactId>c3p0</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--
+            [E]Job Scheduler[E]=======================================================================================================================
+        -->
+
+        <!--
+            [S]SAP JCo[S]=============================================================================================================================
+        -->
+        <dependency>
+            <groupId>com.sap</groupId>
+            <artifactId>sapjco3</artifactId>
+            <version>${com.sap.sapjco3.version}</version>
+            <!-- jar 파일명이 변경되면 오류가 발생하므로 참조만하고 배포는 webapp\WEB-INF\lib를 통해 배포 -->
+            <scope>provided</scope>
+        </dependency>
+        <!--
+            [E]SAP JCo[E]=============================================================================================================================
+        -->
+
+        <!--
+            [S]Nexos Framework[S]=====================================================================================================================
+        -->
+        <!-- Nexos Framework Core -->
+        <dependency>
+            <groupId>nexos.framework</groupId>
+            <artifactId>nexos-core</artifactId>
+            <version>${nexos.framework.core.version}</version>
+        </dependency>
+
+        <!-- Nexos Framework Fonts - JasperReports -->
+        <dependency>
+            <groupId>nexos.framework</groupId>
+            <artifactId>nexos-fonts</artifactId>
+            <version>${nexos.framework.fonts.version}</version>
+        </dependency>
+        <!--
+            [E]Nexos Framework[E]=====================================================================================================================
+        -->
+
+        <!--
+            [S]Json[S]=====================================================================================================================
+        -->
+        <!--
+            <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+        -->
+        <!--
+            [E]Json[E]=====================================================================================================================
+        -->
+
+        <!--
+            [S]Misc[S]================================================================================================================================
+        -->
+        <!-- Java Servlet -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Apache POI - Java API To Access Microsoft Format Files -->
+        <!--
+            <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${org.apache.poi.version}</version>
+            </dependency>
+        -->
+
+        <!-- Apache POI - Java API To Access Microsoft Format Files -->
+        <!--
+            <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${org.apache.poi.version}</version>
+            </dependency>
+        -->
+
+        <!-- Streaming Excel reader using Apache POI -->
+        <!--
+            <dependency>
+            <groupId>com.monitorjbl</groupId>
+            <artifactId>xlsx-streamer</artifactId>
+            <version>${com.monitorjbl.xlsxstreamer.version}</version>
+            <exclusions>
+            <exclusion>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            </exclusion>
+            </exclusions>
+            </dependency>
+        -->
+
+        <dependency>
+            <groupId>com.github.pjfanning</groupId>
+            <artifactId>excel-streaming-reader</artifactId>
+            <version>${com.excel.streaming.reader.version}</version>
+        </dependency>
+
+        <!-- Apache Commons Upload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${org.apache.commons.fileupload.version}</version>
+        </dependency>
+
+        <!-- Apache Commons IO -->
+        <!--
+            <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${org.apache.commons.io.version}</version>
+            </dependency>
+        -->
+
+        <!-- Apache Commons Codec -->
+        <!--
+            <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${org.apache.commons.codec.version}</version>
+            </dependency>
+        -->
+
+        <!-- Apache HttpComponents Client -->
+        <!--
+            <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
+            </dependency>
+        -->
+
+        <!-- Apache Commons Net library -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>${org.apache.commons.net.version}</version>
+        </dependency>
+
+        <!-- JSch is a pure Java implementation of SSH2 -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>${com.jcraft.version}</version>
+        </dependency>
+
+        <!-- The runtime needed to execute a program using AspectJ -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${org.aspectj.version}</version>
+        </dependency>
+
+        <!-- The AspectJ weaver introduces advices to java classes -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${org.aspectj.version}</version>
+        </dependency>
+
+        <!-- JavaMail API -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+
+        <!-- SOAP API - JDK 11 over -->
+        <!--
+            <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>${jakarta.xml.soap.version}</version>
+            </dependency>
+
+            <dependency>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>${jakarta.xml.soap.version}</version>
+            </dependency>
+        -->
+
+
+        <!--
+            [E]Misc[E]================================================================================================================================
+        -->
+
+    </dependencies>
+
+    <!-- Build -->
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${m2e.lifecycle.mapping.version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>[1.7,)</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${src.encoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.resources.plugin.version}</version>
+                <configuration>
+                    <encoding>${src.encoding}</encoding>
+                </configuration>
+
+                <!-- maven으로 packaging할 경우 - 설정분리 -->
+                <!-- 기본 설정을 profile의 설정으로 덮어 씀(파일 변경) -->
+                <!-- 해당 설정으로 사용시 WAS vm arguments에 spring.profiles.active를 추가하면 안됨 -->
+                <!-- config-encrypt, config-globals-ext, config-task-ext, config-log4j2 -->
+                <!--
+                    <executions>
+                    <execution>
+                    <id>apply-properties</id>
+                    <phase>process-classes</phase>
+                    <goals>
+                    <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                    <encoding>${src.encoding}</encoding>
+                    <outputDirectory>${basedir}/target/classes/nexos/config</outputDirectory>
+                    <overwrite>true</overwrite>
+                    <resources>
+                    <resource>
+                    <directory>${basedir}/src/main/resources/nexos/config/${spring.profiles.active}</directory>
+                    </resource>
+                    </resources>
+                    </configuration>
+                    </execution>
+                    </executions>
+                -->
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
+                <configuration>
+                    <resourceEncoding>${src.encoding}</resourceEncoding>
+                    <warName>ROOT</warName>
+                    <packagingExcludes>
+                        REF-FILES/reports/**/*.jrxml,
+                        REF-FILES/reports/garbage/**,
+                        WEB-INF/classes/nexos/config/dev/**,
+                        WEB-INF/classes/nexos/config/qa/**,
+                        WEB-INF/classes/nexos/config/prod/**
+                    </packagingExcludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven.antrun.plugin.version}</version>
+                <executions>
+                    <!-- 화면 HTML/JS/CSS 압축 사용시 -->
+                    <!--
+                        <execution>
+                        <id>generate-web-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                        <goal>run</goal>
+                        </goals>
+                        <configuration>
+                        <target>
+                        <echo level="info">Generate compressed HTML/CSS/JS file...</echo>
+                        <ant antfile="${basedir}/build.xml">
+                        <target name="package" />
+                        </ant>
+                        </target>
+                        </configuration>
+                        </execution>
+                    -->
+                    <execution>
+                        <id>generate-pda-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo level="info">Generate PDA HTML/CSS/JS file...</echo>
+                                <ant antfile="${basedir}/pda-deploy.xml">
+                                    <target name="package" />
+                                </ant>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <!--
+                        <execution>
+                        <id>clean-pda-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                        <goal>run</goal>
+                        </goals>
+                        <configuration>
+                        <target>
+                        <delete file="${basedir}/src/main/webapp/REF-FILES/deploy/pda/nexos_pda_html.zip" />
+                        </target>
+                        </configuration>
+                        </execution>
+                    -->
+
+                    <!-- WAS vm arguments에 spring.profiles.active를 추가할 경우 - 설정분리 -->
+                    <!-- -Dspring.profiles.active=dev -->
+                    <!-- 설정 파일에 profile명을 추가하여 복사 -->
+                    <!-- config-encrypt-dev, config-globals-ext-dev, config-task-ext-dev, config-log4j2-dev -->
+                    <!--
+                    <execution>
+                        <id>apply-properties</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <taskdef resource="net/sf/antcontrib/antlib.xml">
+                                    <classpath>
+                                        <pathelement path="${basedir}/reference/library/ant/ant-contrib-1.0b3.jar" />
+                                    </classpath>
+                                </taskdef>
+                                <for list="dev,qa,prod" param="profile" delimiter=",">
+                                    <sequential>
+                                        <copy file="${basedir}/src/main/resources/nexos/config/@{profile}/config-encrypt.properties"
+                                            tofile="${project.build.directory}/classes/nexos/config/config-encrypt-@{profile}.properties" />
+                                        <copy file="${basedir}/src/main/resources/nexos/config/@{profile}/config-globals-ext.properties"
+                                            tofile="${project.build.directory}/classes/nexos/config/config-globals-ext-@{profile}.properties" />
+                                        <copy file="${basedir}/src/main/resources/nexos/config/@{profile}/config-log4j2.xml"
+                                            tofile="${project.build.directory}/classes/nexos/config/config-log4j2-@{profile}.xml" />
+                                        <copy file="${basedir}/src/main/resources/nexos/config/@{profile}/config-task-ext.properties"
+                                            tofile="${project.build.directory}/classes/nexos/config/config-task-ext-@{profile}.properties" />
+                                    </sequential>
+                                </for>
+                            </target>
+                        </configuration>
+                    </execution>
+                    -->
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>${maven.eclipse.plugin.version}</version>
+                <configuration>
+                    <wtpContextName>${m2eclipse.wtp.contextRoot}</wtpContextName>
+                    <wtpversion>${wtp.version}</wtpversion>
+                    <!-- <downloadJavadocs>true</downloadJavadocs> -->
+                    <downloadSources>true</downloadSources>
+                    <buildOutputDirectory>${project.build.directory}/${project.build.finalName}</buildOutputDirectory>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+                        <projectnature>org.eclipse.jem.workbench.JavaEMFNature</projectnature>
+                        <projectnature>org.eclipse.wst.common.modulecore.ModuleCoreNature</projectnature>
+                        <projectnature>org.eclipse.jdt.core.javanature</projectnature>
+                        <projectnature>org.eclipse.m2e.core.maven2Nature</projectnature>
+                        <projectnature>org.eclipse.wst.common.project.facet.core.nature</projectnature>
+                        <projectnature>org.eclipse.wst.jsdt.core.jsNature</projectnature>
+                    </additionalProjectnatures>
+                    <additionalProjectFacets>
+                        <java>${jdk.version}</java>
+                        <wst.jsdt.web>${wst.jsdt.web.version}</wst.jsdt.web>
+                        <jst.web>${jst.web.version}</jst.web>
+                    </additionalProjectFacets>
+                    <additionalBuildcommands>
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+                    </additionalBuildcommands>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

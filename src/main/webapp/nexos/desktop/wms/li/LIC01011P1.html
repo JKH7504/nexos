@@ -1,0 +1,134 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : LIC01011P1
+    프로그램명         : 입고예정등록 (의류) 팝업
+    프로그램설명       : 입고예정등록 (의류) 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-05-18
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-05-18    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<script src="js/LIC01011P1.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCenter_Cd_F" class="lblNormal">물류센터</div>
+                    <input id="edtCenter_Cd_F" class="edtKey" type="text" disabled="disabled" style="width: 170px;" />
+                </td>
+                <td>
+                    <div id="lblPopup_Vendor_Cd" class="lblKey">공급처</div>
+                    <input id="edtVendor_Cd" class="edtKey" type="text" tabindex="3" style="width: 60px;" />
+                    <input id="btnVendor_Cd" class="btnIcoPopup" type="button" tabindex="4" />
+                    <input id="edtVendor_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 155px;" />
+                </td>
+                <td>
+                    <div id="lblBu_Date" class="lblNormal">전표일자</div>
+                    <input id="edtBu_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblPopup_Bu_Cd" class="lblNormal">사업부</div>
+                    <input id="edtBu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 104px;" />
+                    <input id="edtCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblAssort_Div" class="lblKey">어소트구분</div>
+                    <select id="cboAssort_Div" class="cboKey" tabindex="5" style="width: 245px;"></select>
+                </td>
+                <td>
+                    <div id="lblBu_No" class="lblNormal">전표번호</div>
+                    <input id="edtBu_No" class="edtDisplay" type="text" disabled="disabled" maxlength="30" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_Date" class="lblKey">예정일자</div>
+                    <input id="dtpOrder_Date" class="dtpKey" type="text" tabindex="1" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblItem_Lot" class="lblKey">상품LOT</div>
+                    <input id="edtItem_Lot" class="edtKey" type="text" maxlength="30" tabindex="6" style="width: 245px;" />
+                </td>
+                <td>
+                    <div id="lblIn_Car_Div" class="lblNormal">입고차량구분</div>
+                    <select id="cboIn_Car_Div" class="cboNormal" tabindex="10" style="width: 120px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_No" class="lblNormal">예정번호</div>
+                    <input id="edtOrder_No" class="edtNormal" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblAssort_Qty" class="lblKey">어소트수량</div>
+                    <input id="edtAssort_Qty" class="edtKey" type="text" maxlength="9" tabindex="7" style="width: 71px;" />
+                    <div id="lblOrder_Box_Qty" class="lblKey">예정박스수량</div>
+                    <input id="edtOrder_Box_Qty" class="edtKey" type="text" maxlength="9" tabindex="8" style="width: 71px;" />
+                </td>
+                <td>
+                    <div id="lblCar_No" class="lblNormal">차량번호</div>
+                    <input id="edtCar_No" class="edtNormal" type="text" maxlength="30" tabindex="14" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblInout_Cd" class="lblKey">입고구분</div>
+                    <select id="cboInout_Cd" class="cboKey" tabindex="2" style="width: 170px;"></select>
+                </td>
+                <td>
+                    <div id="lblPlaned_DateTime" class="lblNormal">도착예정일시</div>
+                    <input id="chkPlaned_Date" name="chkPlaned_Date" class="chkNormal" type="checkbox" value="Y" tabindex="9" />
+                    <input id="dtpPlaned_DateTime" class="dtpKey" type="text" tabindex="10" style="width: 100px;" />
+                    <select id="cboAmPm" class="cboNormal" tabindex="11" style="width: 55px;">
+                        <option value="0">오전</option>
+                        <option value="12">오후</option>
+                    </select>
+                    <input id="edtHours" class="edtNormal formatterInteger" type="text" maxlength="2" tabindex="12" style="width: 25px;" />
+                    <input id="edtMinutes" class="edtNormal formatterInteger" type="text" maxlength="2" tabindex="13" style="width: 25px;" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div id="lblRemark1" class="lblNormal">비고</div>
+                    <input id="edtRemark1" class="edtNormal" type="text" maxlength="255" tabindex="15" style="width: 542px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 입고예정등록 디테일-->
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">입고예정등록 상세정보</td>
+                <td>
+                    <input id="btnEntryNew" class="btnIcoNew" type="button" />
+                    <input id="btnEntryDelete" class="btnIcoDelete" type="button" />
+                    <input id="btnEntrySave" class="btnIcoSave" type="button" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

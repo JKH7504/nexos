@@ -1,0 +1,77 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOM06010Q0
+    프로그램명         : 적재파렛트출력및내역
+    프로그램설명       : 적재파렛트출력및내역 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOM06010Q0.css" /> -->
+<script src="js/LOM06010Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblShip_Date" class="lblCondition">적재일자</div>
+                    <input id="dtpQShip_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divTopView" class="ctrInner">
+        <div id="dspTitle_PltLabel" class="lblGroupTitle">적재파렛트 라벨 발행</div>
+        <div class="ctrGroupContent">
+            <table class="ctrInner">
+                <tr>
+                    <td>
+                        <div id="lblShip_Id_Cnt" class="lblNormal" style="width: 120px">적재파렛트 발행수</div>
+                        <input id="edtShip_Id_Cnt" class="edtNormal" type="text" style="width: 110px" />
+                        <input id="btnShip_Id_Gen" class="btnImgPrint" type="button" value="발행" style="width: 60px;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">적재파렛트 내역</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdDetail" class="lblTitle">적재파렛트 상세내역</td>
+                    <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdDetail"></div>
+        </div>
+    </div>
+</body>
+</html>

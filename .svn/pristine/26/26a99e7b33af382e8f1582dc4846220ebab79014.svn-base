@@ -1,0 +1,71 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC01030E0
+    프로그램명         : 로케이션관리
+    프로그램설명       : 로케이션관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-02-27
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-02-27    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC01030E0.css" /> -->
+<script src="js/CMC01030E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td class="styFillArea styRight">
+                    <input id="btnSetCellChkdigit" class="btnImgNormal" type="button" value="로케이션 셀 체크디지트 설정" style="width: 205px;" />
+                    <input id="btnSetLocOrder" class="btnImgNormal" type="button" value="로케이션 셀순위 재설정" style="width: 175px;" />
+                    <input id="btnCreateLoc" class="btnImgPopup" type="button" value="기본로케이션 생성" style="width: 140px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">존</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divDetailView" class="ctrMiddle">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">행</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="divSubView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdSub" class="lblTitle">로케이션</td>
+                <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdSub"></div>
+    </div>
+</body>
+</html>

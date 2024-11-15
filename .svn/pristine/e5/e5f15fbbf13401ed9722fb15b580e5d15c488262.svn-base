@@ -1,0 +1,43 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : EDS04061P0
+    프로그램명         : 배송RFID스캔 미송신내역 팝업
+    프로그램설명       : 배송RFID스캔 미송신내역 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-08-10
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-08-10    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/EDS04041P0.css" /> -->
+<script src="js/EDS04061P0.js"></script>
+</head>
+<body>
+    <!-- 미송신 내역 -->
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">배송RFID스캔 미송신내역</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnSend" class="btnNormal" type="button" value="송신처리" style="width: 100px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

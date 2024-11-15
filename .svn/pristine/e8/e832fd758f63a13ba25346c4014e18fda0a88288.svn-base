@@ -1,0 +1,141 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : noticepopup
+    프로그램명         : 공지사항 팝업
+    프로그램설명       : 공지사항 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- Notice Popup CSS/JS -->
+<!-- <link rel="stylesheet" href="css/noticepopup.css" /> -->
+<script src="js/noticepopup.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">공지사항</td>
+                <td>
+                    <input id="btnRefresh" class="btnIcoRefresh" type="button" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+    <div id="ctrNoticeOverlay" style="display: none;">
+        <div class="ctrPopup">
+            <table class="ctrOverlayTitleBar">
+                <tr>
+                    <td class="lblTitle">공지사항 상세내역</td>
+                    <td>
+                        <input id="btnNoticeInfoClose" class="btnImgCancel" type="button" value="닫기" style="width: 60px;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="ctrNoticeMasterInfoView" class="ctrPopup">
+            <div class="ctrInner">
+                <table class="ctrInner">
+                    <tr>
+                        <td>
+                            <div id="lblWrite_No" class="lblNormal">공지번호</div>
+                            <input id="edtWrite_No" class="edtNormal" type="text" disabled="disabled" style="width: 60px;" />
+                        </td>
+                        <td>
+                            <div id="lblNotice_Div" class="lblNormal">공지구분</div>
+                            <input id="edtNotice_Div" class="edtNormal" type="text" disabled="disabled" style="width: 60px;" />
+                            <input id="edtNotice_Div_D" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblBu_Cd" class="lblNormal">사업부</div>
+                            <input id="edtBu_Cd" class="edtNormal" type="text" disabled="disabled" style="width: 60px;" />
+                            <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                        </td>
+                        <td>
+                            <div id="lblUser_Id" class="lblNormal">등록자</div>
+                            <input id="edtUser_Id" class="edtNormal" type="text" disabled="disabled" style="width: 60px;" />
+                            <input id="edtUser_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblFile_Nm" class="lblNormal">첨부파일명</div>
+                            <input id="edtFile_Nm" class="edtNormal" type="text" disabled="disabled" style="width: 216px;" />
+                        </td>
+                        <td>
+                            <div id="lblFile_Size" class="lblNormal">첨부파일크기</div>
+                            <input id="edtFile_Size" class="edtDisplay" type="text" disabled="disabled" style="width: 135px;" />
+                            <input id="btnDownload" class="btnNormal" type="button" value="파일저장" style="width: 75px;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="lblReg_Datetime" class="lblNormal">등록일시</div>
+                            <input id="edtReg_Datetime" class="edtNormal" type="text" disabled="disabled" style="width: 216px;" />
+                        </td>
+                        <td>
+                            <div id="lblReadUser" class="lblNormal">공지확인</div>
+                            <select id="cboReadUser" class="cboNormal" style="width: 216px;"></select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="ctrGroupRow">
+                    <div id="lblNotice_Title" class="lblGroupTitle">제목</div>
+                    <input id="edtNotice_Title" class="edtNormal" type="text" disabled="disabled" style="width: 100%;" />
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblContent_Text" class="lblGroupTitle">내용</div>
+                    <textarea id="edtContent_Text" class="edtNormal" disabled="disabled" style="padding: 5px; resize: none; width: 100%; height: 120px;"></textarea>
+                </div>
+            </div>
+        </div>
+        <div id="ctrDetailView" class="ctrPopup">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdDetail" class="lblTitle">덧글</td>
+                    <td>
+                        <input id="btnDeleteReply" class="btnIcoDelete" type="button" />
+                    </td>
+                    <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdDetail"></div>
+        </div>
+        <div id="ctrReplyView" class="ctrPopup">
+            <table class="ctrInner styFillArea" style="height: 40px;">
+                <tr>
+                    <td style="padding-right: 5px;">
+                        <textarea id="edtReply_Content_Text" class="edtNormal" maxlength="4000" style="resize: none; width: 100%; height: 100%;"></textarea>
+                    </td>
+                    <td style="padding-right: 5px; width: 75px;">
+                        <input id="btnEntryReply" class="btnNormal" type="button" value="덧글등록" style="margin: 0; width: 100%; height: 100%;" />
+                    </td>
+                    <td style="width: 75px;">
+                        <input id="btnModifyReply" class="btnNormal" type="button" value="덧글수정" style="margin: 0; width: 100%; height: 100%;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

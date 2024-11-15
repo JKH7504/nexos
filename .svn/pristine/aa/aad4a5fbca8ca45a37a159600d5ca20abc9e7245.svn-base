@@ -1,0 +1,148 @@
+package nexos.dao.lc;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: LCC04010E0DAOImpl<br>
+ * Description: LCC04010E0 DAO (Data Access Object) - 데이터처리를 담당하는 Class<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("LCC04010E0DAO")
+public class LCC04010E0DAOImpl extends DaoSupport implements LCC04010E0DAO {
+
+    final String PROGRAM_ID          = "LCC04010E0";
+
+    final String TABLE_NM_LC040NM    = "LC040NM";
+    final String INSERT_ID_LC040NM   = PROGRAM_ID + ".INSERT_" + TABLE_NM_LC040NM;
+    final String UPDATE_ID_LC040NM   = PROGRAM_ID + ".UPDATE_" + TABLE_NM_LC040NM;
+    final String DELETE_ID_LC040NM   = PROGRAM_ID + ".DELETE_" + TABLE_NM_LC040NM;
+
+    final String TABLE_NM_LC040ND    = "LC040ND";
+    final String INSERT_ID_LC040ND   = PROGRAM_ID + ".INSERT_" + TABLE_NM_LC040ND;
+    final String UPDATE_ID_LC040ND   = PROGRAM_ID + ".UPDATE_" + TABLE_NM_LC040ND;
+    final String DELETE_ID_LC040ND   = PROGRAM_ID + ".DELETE_" + TABLE_NM_LC040ND;
+
+    final String SP_ID_LC040NM_GETNO = "WT.LC_040NM_GETNO";
+    final String SP_ID_LC040ND_GETNO = "WT.LC_040ND_GETNO";
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void save(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> dsDetail = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+        String processCd = (String)params.get(Consts.PK_PROCESS_CD);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+        String investNo = null;
+        int lineNo;
+        int dsDetailCount = dsDetail.size();
+
+        // 등록자ID 입력
+        masterRowData.put(Consts.PK_USER_ID, userId);
+
+        // 신규 등록
+        if (Consts.PROCESS_ENTRY_CREATE.equals(processCd)) {
+
+            if (dsDetailCount < 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.LCC04010E0.001", "재고실사등록 상세내역이 존재하지 않습니다."));
+            }
+
+            // 입고번호 채번
+            Map<String, Object> resultMap = callProcedure(SP_ID_LC040NM_GETNO, masterRowData);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            lineNo = 1;
+            investNo = (String)resultMap.get("O_INVEST_NO");
+            masterRowData.put("P_INVEST_NO", investNo);
+
+            // 마스터 생성, CRUD 체크 안함
+            masterRowData.put(Consts.PK_ENTRY_USER_ID, userId);
+            masterRowData.put(Consts.PK_ENTRY_DATETIME, Consts.DV_SYSDATE);
+            insertSql(INSERT_ID_LC040NM, masterRowData);
+        } else {
+            // 수정 처리
+            // 입고순번 채번
+            investNo = (String)masterRowData.get("P_INVEST_NO");
+            masterRowData.put("P_INVEST_NO", investNo);
+
+            Map<String, Object> resultMap = callProcedure(SP_ID_LC040ND_GETNO, masterRowData);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            lineNo = ((Number)resultMap.get("O_LINE_NO")).intValue();
+            // 마스터 수정, 마스터를 수정했으면
+            if (Consts.DV_CRUD_U.equals(masterRowData.get(Consts.PK_CRUD))) {
+                updateSql(UPDATE_ID_LC040NM, masterRowData);
+            }
+        }
+        params.put("O_INVEST_NO", investNo);
+
+        if (dsDetailCount == 0) {
+            return;
+        }
+
+        // 디테일 처리
+        for (int i = 0; i < dsDetailCount; i++) {
+            Map<String, Object> rowData = dsDetail.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                rowData.put("P_INVEST_NO", investNo);
+                if ("".equals(String.valueOf(rowData.get("P_LINE_NO")))) {
+                    rowData.put("P_LINE_NO", lineNo);
+                    lineNo++;
+                }
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_LC040ND, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_LC040ND, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                deleteSql(DELETE_ID_LC040ND, rowData);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void delete(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+
+        int dsSaveCount = dsSave.size();
+        for (int i = 0; i < dsSaveCount; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                deleteSql(DELETE_ID_LC040ND, rowData);
+                deleteSql(DELETE_ID_LC040NM, rowData);
+            }
+        }
+    }
+}

@@ -1,0 +1,62 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC02060E0
+    프로그램명         : 택배기준관리
+    프로그램설명       : 택배기준관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-11-26
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-11-26    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC02060E0.css" /> -->
+<script src="js/CMC02060E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Carrier_Cd" class="lblCondition">운송사</div>
+                    <input id="edtQCarrier_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQCarrier_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">택배기준</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">운송장번호대역</td>
+                <td>
+                    <input id="btnCreateWbNo" class="btnImgNormal" type="button" value="운송장번호생성" style="width: 120px;" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+</body>
+</html>

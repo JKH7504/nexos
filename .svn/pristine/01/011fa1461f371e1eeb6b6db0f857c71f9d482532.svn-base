@@ -1,0 +1,1358 @@
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _InquiryC(args) {
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTERC);
+    // 파라메터 세팅
+    G_GRDMASTERC.queryParams = {
+        P_CENTER_CD: args.CENTER_CD,
+        P_BU_CD: args.BU_CD,
+        P_OUTBOUND_DATE: args.OUTBOUND_DATE,
+        P_INOUT_CD: args.INOUT_CD,
+        P_BU_NO: args.BU_NO,
+        P_OUTBOUND_BATCH: args.OUTBOUND_BATCHC,
+        P_CAR_DIV: args.CAR_DIV,
+        P_DELIVERY_CD: args.DELIVERY_CD,
+        P_RDELIVERY_CD: args.RDELIVERY_CD,
+        P_DELIVERY_DIV: args.DELIVERY_DIV,
+        P_REGION_DIV: args.REGION_DIV,
+        P_BRAND_CD: args.BRAND_CD,
+        P_ITEM_CD: args.ITEM_CD,
+        P_ITEM_NM: args.ITEM_NM,
+        P_STATE_PRE_YN: args.STATE_PRE_YN,
+        P_STATE_CUR_YN: args.STATE_CUR_YN
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LOB02010E0/getDataSet.do", $NC.getGridParams(G_GRDMASTERC), onGetMasterC);
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _NewC() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _SaveC() {
+
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _DeleteC() {
+
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _CancelC() {
+
+}
+
+function onProcessPreC() {
+
+    var rCount = G_GRDMASTERC.data.getLength();
+    if (rCount == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.022", "조회 후 처리하십시오."));
+        return;
+    }
+    if ($NC.G_VAR.PROCESS_YN != $ND.C_YES) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.023", "수행 가능한 프로세스가 없습니다.\n사업부별 프로세스관리에서 수행 프로세스를 등록 후 처리하십시오."));
+        return;
+    }
+
+    var OUTBOUND_BATCH_F = $NC.getValueCombo("#cboQOutbound_BatchC", "F");
+    if (!confirm($NC.getDisplayMsg("JS.LOB02010E0.052", "출고지시 취소 처리하시겠습니까?\n출고차수(" + OUTBOUND_BATCH_F + ")", OUTBOUND_BATCH_F))) {
+        return;
+    }
+
+    if (G_GRDMASTERC.view.getEditorLock().isActive()) {
+        G_GRDMASTERC.view.getEditorLock().commitCurrentEdit();
+    }
+
+    var dsMaster = [];
+    var PROCESS_STATE = $NC.G_VAR.stateFWBW[$NC.G_VAR.activeView.PROCESS_CD].CANCEL;
+    var checkedCount = 0;
+    var rowData;
+    for (var rIndex = 0; rIndex < rCount; rIndex++) {
+        rowData = G_GRDMASTERC.data.getItem(rIndex);
+        if (rowData.CHECK_YN != $ND.C_YES) {
+            continue;
+        }
+        checkedCount++;
+        // 출고지시 상태인 전표만 대상
+        if (rowData.OUTBOUND_STATE != PROCESS_STATE) {
+            continue;
+        }
+        dsMaster.push({
+            P_CENTER_CD: rowData.CENTER_CD,
+            P_BU_CD: rowData.BU_CD,
+            P_OUTBOUND_DATE: rowData.OUTBOUND_DATE,
+            P_OUTBOUND_NO: rowData.OUTBOUND_NO
+        });
+    }
+    if (checkedCount == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.053", "출고지시 취소 처리할 데이터를 선택하십시오."));
+        return;
+    }
+    if (dsMaster.length == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.054", "선택한 데이터 중 출고지시 취소 처리 가능한 데이터가 없습니다."));
+        return;
+    }
+
+    $NC.serviceCall("/LOB02010E0/callLOProcessing.do", {
+        P_PROCESS_CD: $ND.C_PROCESS_DIRECTIONS,
+        P_DIRECTION: $ND.C_DIRECTION_BW,
+        P_PROCESS_STATE_FW: $NC.G_VAR.stateFWBW[$NC.G_VAR.activeView.PROCESS_CD].CONFIRM,
+        P_PROCESS_STATE_BW: $NC.G_VAR.stateFWBW[$NC.G_VAR.activeView.PROCESS_CD].CANCEL,
+        // -- PROCESS_ENTRY, DIRECTION_FW 처리에 사용 -------
+        P_OUTBOUND_DATE_B: "",
+        P_DELIVERY_BATCH: "",
+        P_DELIVERY_BATCH_NM: "",
+        // -- PROCESS_DIRECTIONS, DIRECTION_FW 처리에 사용 --
+        P_OUTBOUND_BATCH: "",
+        P_OUTBOUND_BATCH_NM: "",
+        P_DIRECTIONS_DIV: "",
+        P_EQUIP_DIV: "",
+        // -- 택배 송장채번, 주소정제 처리에 사용 -----------
+        P_CUST_CD: "",
+        P_CARRIER_CD: "",
+        P_HDC_DIV: "",
+        P_HDC_ADDRESS_YN: "",
+        P_HDC_GETNO_DIV: "",
+        // --------------------------------------------------
+        P_DS_MASTER: dsMaster,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSuccessPreC, onSaveErrorC, 2);
+}
+
+function onProcessNxtC() {
+
+    var rCount = G_GRDMASTERC.data.getLength();
+    if (rCount == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.022", "조회 후 처리하십시오."));
+        return;
+    }
+    if ($NC.G_VAR.PROCESS_YN != $ND.C_YES) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.023", "수행 가능한 프로세스가 없습니다.\n사업부별 프로세스관리에서 수행 프로세스를 등록 후 처리하십시오."));
+        return;
+    }
+
+    var batchInfo = getOutboundBatchInfo("#cboOutbound_BatchC");
+    var OUTBOUND_BATCH = batchInfo.OUTBOUND_BATCH;
+
+    var DIRECTIONS_DIV = $NC.getValueRadioGroup("rgbDirections_Div");
+    if (DIRECTIONS_DIV == "2" && !batchInfo.isTotal) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.055", "[신규] 또는 [토탈출고] 차수를 선택하고 출고지시 처리하십시오."));
+        $NC.setFocus("#rgbDirections_Div1");
+        return;
+    }
+
+    var OUTBOUND_BATCH_DIV;
+    if (DIRECTIONS_DIV == "1") {
+        OUTBOUND_BATCH_DIV = "20";
+    } else {
+        OUTBOUND_BATCH_DIV = "10";
+    }
+
+    var OUTBOUND_BATCH_F = batchInfo.OUTBOUND_BATCH_F;
+    if (DIRECTIONS_DIV == "1") {
+        if (!confirm($NC.getDisplayMsg("JS.LOB02010E0.056", "개별 출고지시 처리하시겠습니까?"))) {
+            return;
+        }
+    } else {
+        if (!confirm($NC.getDisplayMsg("JS.LOB02010E0.057", "출고지시 처리하시겠습니까?\n출고차수(" + OUTBOUND_BATCH_F + ")", OUTBOUND_BATCH_F))) {
+            return;
+        }
+    }
+
+    if (G_GRDMASTERC.view.getEditorLock().isActive()) {
+        G_GRDMASTERC.view.getEditorLock().commitCurrentEdit();
+    }
+
+    var EQUIP_DIV = DIRECTIONS_DIV == "1" ? "" : $NC.getValue("#cboEquip_Div");
+    var dsMaster = [];
+    var PROCESS_STATE = $NC.G_VAR.stateFWBW[$NC.G_VAR.activeView.PROCESS_CD].CONFIRM;
+    var checkedCount = 0;
+    var rowData;
+    for (var rIndex = 0; rIndex < rCount; rIndex++) {
+        rowData = G_GRDMASTERC.data.getItem(rIndex);
+        if (rowData.CHECK_YN != $ND.C_YES) {
+            continue;
+        }
+        checkedCount++;
+        // 출고등록 상태인 전표만 대상
+        if (rowData.OUTBOUND_STATE != PROCESS_STATE) {
+            continue;
+        }
+        dsMaster.push({
+            P_CENTER_CD: rowData.CENTER_CD,
+            P_BU_CD: rowData.BU_CD,
+            P_OUTBOUND_DATE: rowData.OUTBOUND_DATE,
+            P_OUTBOUND_NO: rowData.OUTBOUND_NO,
+            P_CRUD: $ND.C_DV_CRUD_U
+        });
+    }
+    if (checkedCount == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.058", "출고지시 처리할 데이터를 선택하십시오."));
+        return;
+    }
+    if (dsMaster.length == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.059", "선택한 데이터 중 출고지시 처리 가능한 데이터가 없습니다."));
+        return;
+    }
+
+    var OUTBOUND_BATCH_NM = "";
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    var OUTBOUND_DATE = $NC.getValue("#dtpQOutbound_Date");
+    var canNextProcess = false;
+
+    // 토탈출고
+    if (DIRECTIONS_DIV == "2") {
+        // 신규 차수 - 차수명 미지정시 출하장비명으로 생성
+        if (OUTBOUND_BATCH == $ND.C_BASE_BATCH_NO) {
+            OUTBOUND_BATCH_NM = $NC.getValue("#edtOutbound_Batch_NmC");
+            if ($NC.isNull(OUTBOUND_BATCH_NM)) {
+                OUTBOUND_BATCH_NM = $NC.getValueCombo("#cboEquip_Div", "N");
+            }
+        }
+        // 기존 차수에 추가
+        else {
+            // 기존 출고차수에 추가 가능한지 체크
+            $NC.serviceCallAndWait("/LOB02010E0/getDataSet.do", {
+                P_QUERY_ID: "LOB02010E0.RS_SUB3",
+                P_QUERY_PARAMS: {
+                    P_CENTER_CD: CENTER_CD,
+                    P_BU_CD: BU_CD,
+                    P_OUTBOUND_DATE: OUTBOUND_DATE,
+                    P_OUTBOUND_BATCH: OUTBOUND_BATCH
+                }
+            }, function(ajaxData) {
+                var dsResult = $NC.toArray(ajaxData);
+                if ($NC.isNull(dsResult) || dsResult.length == 0) {
+                    alert($NC.getDisplayMsg("JS.LOB02010E0.060", "기존 출고차수에 추가 가능여부를 확인하지 못했습니다. 다시 처리하십시오."));
+                    return;
+                }
+
+                if (dsResult[0].EQUIP_STATE > "01") {
+                    alert($NC.getDisplayMsg("JS.LOB02010E0.061", "출고차수(" + OUTBOUND_BATCH_F + ")는 이미 출하장비로 전송되어 해당 차수로 추가 출고지시할 수 없습니다.",
+                        OUTBOUND_BATCH_F));
+                    return;
+                }
+
+                canNextProcess = true;
+            });
+            // 오류일 경우 리턴
+            if (!canNextProcess) {
+                return;
+            }
+            OUTBOUND_BATCH_NM = batchInfo.OUTBOUND_BATCH_NM;
+        }
+    }
+
+    // 사전 채번으로 변경, 2021-08
+    // 해당 로직 제거시 기존과 같이 Java에서 채번
+    canNextProcess = false;
+    if (OUTBOUND_BATCH == $ND.C_BASE_BATCH_NO) {
+        $NC.serviceCallAndWait("/LOB02010E0/getOutboundBatch.do", {
+            P_CENTER_CD: CENTER_CD,
+            P_BU_CD: BU_CD,
+            P_OUTBOUND_DATE: OUTBOUND_DATE,
+            P_OUTBOUND_BATCH_NM: OUTBOUND_BATCH_NM,
+            P_OUTBOUND_BATCH_DIV: OUTBOUND_BATCH_DIV,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }, function(ajaxData) {
+            // 호출 오류, 채번 오류일 경우는 JAVA에서 오류 처리
+            // 정상채번일 경우만
+            var resultData = $NC.toObject(ajaxData);
+            // 채번 후 리턴된 출고차수, 명칭 사용
+            OUTBOUND_BATCH = resultData.O_OUTBOUND_BATCH;
+            OUTBOUND_BATCH_NM = resultData.O_OUTBOUND_BATCH_NM;
+
+            canNextProcess = true;
+        });
+        // 오류일 경우 리턴
+        if (!canNextProcess) {
+            return;
+        }
+    }
+
+    // 출고차수 기록
+    $("#cboOutbound_BatchC").data("_OUTBOUND_BATCH", OUTBOUND_BATCH);
+
+    $NC.serviceCall("/LOB02010E0/callLOProcessing.do", {
+        P_PROCESS_CD: $ND.C_PROCESS_DIRECTIONS,
+        P_DIRECTION: $ND.C_DIRECTION_FW,
+        P_PROCESS_STATE_FW: $NC.G_VAR.stateFWBW[$NC.G_VAR.activeView.PROCESS_CD].CONFIRM,
+        P_PROCESS_STATE_BW: $NC.G_VAR.stateFWBW[$NC.G_VAR.activeView.PROCESS_CD].CANCEL,
+        // -- PROCESS_ENTRY, DIRECTION_FW 처리에 사용 -------
+        P_OUTBOUND_DATE_B: "",
+        P_DELIVERY_BATCH: "",
+        P_DELIVERY_BATCH_NM: "",
+        // -- PROCESS_DIRECTIONS, DIRECTION_FW 처리에 사용 --
+        P_OUTBOUND_BATCH: OUTBOUND_BATCH,
+        P_OUTBOUND_BATCH_NM: OUTBOUND_BATCH_NM,
+        P_OUTBOUND_BATCH_DIV: OUTBOUND_BATCH_DIV,
+        P_EQUIP_DIV: EQUIP_DIV,
+        // -- 택배 송장채번, 주소정제 처리에 사용 -----------
+        P_CUST_CD: $NC.G_VAR.WB.CUST_CD,
+        P_CARRIER_CD: $NC.G_VAR.policyVal.LO441,
+        P_HDC_DIV: $NC.G_VAR.WB.HDC_DIV,
+        P_HDC_ADDRESS_YN: $NC.G_VAR.WB.HDC_ADDRESS_YN,
+        P_HDC_GETNO_DIV: $NC.G_VAR.WB.HDC_GETNO_DIV,
+        // --------------------------------------------------
+        P_DS_MASTER: dsMaster,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSuccessNxtC, onSaveErrorC, 2);
+}
+
+function grdMasterCOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "OUTBOUND_STATE_P",
+        field: "OUTBOUND_STATE",
+        name: "P",
+        resizable: false,
+        formatter: window.getGridProcessFormatter
+    });
+    $NC.setGridColumn(columns, {
+        id: "OUTBOUND_STATE_S",
+        field: "OUTBOUND_STATE",
+        name: "S",
+        resizable: false,
+        formatter: window.getGridStateFormatter
+    });
+    $NC.setGridColumn(columns, {
+        id: "CHECK_YN",
+        field: "CHECK_YN",
+        resizable: false,
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editor: Slick.Editors.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "OUTBOUND_NO",
+        field: "OUTBOUND_NO",
+        name: "출고번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INOUT_NM",
+        field: "INOUT_NM",
+        name: "출고구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DELIVERY_CD",
+        field: "DELIVERY_CD",
+        name: "배송처"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DELIVERY_NM",
+        field: "DELIVERY_NM",
+        name: "배송처명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RDELIVERY_CD",
+        field: "RDELIVERY_CD",
+        name: "실배송처"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RDELIVERY_NM",
+        field: "RDELIVERY_NM",
+        name: "실배송처명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DELIVERY_DIV_F",
+        field: "DELIVERY_DIV_F",
+        name: "배송처구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REGION_DIV_D",
+        field: "REGION_DIV_D",
+        name: "지역구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CAR_DIV_F",
+        field: "CAR_DIV_F",
+        name: "차량구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_DIV_D",
+        field: "ORDER_DIV_D",
+        name: "주문구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "TOT_ENTRY_QTY",
+        field: "TOT_ENTRY_QTY",
+        name: "총수량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "TOTAL_AMT",
+        field: "TOTAL_AMT",
+        name: "총금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "OUTBOUND_STATE_D",
+        field: "OUTBOUND_STATE_D",
+        name: "진행상태",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INOUT_DATE",
+        field: "INOUT_DATE",
+        name: "거래명세서일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_DATE",
+        field: "ORDER_DATE",
+        name: "예정일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_NO",
+        field: "ORDER_NO",
+        name: "예정번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ERP_BATCH",
+        field: "ERP_BATCH",
+        name: "ERP차수",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_DATE",
+        field: "BU_DATE",
+        name: "전표일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_NO",
+        field: "BU_NO",
+        name: "전표번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_DATE",
+        field: "SO_DATE",
+        name: "주문일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_NO",
+        field: "SO_NO",
+        name: "주문번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 출고지시 마스터 그리드 초기화
+ */
+function grdMasterCInitialize() {
+
+    var options = {
+        frozenColumn: 3,
+        specialRow: {
+            compareFn: function(specialRow, rowData, column, row, cell, colspan) {
+                if (rowData.EQUIP_STATE >= "50") {
+                    return "stySendDone";
+                }
+            }
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMasterC", {
+        columns: grdMasterCOnGetColumns(),
+        queryId: "LOB02010E0.RS_T2_MASTER",
+        sortCol: "OUTBOUND_NO",
+        gridOptions: options
+    });
+
+    G_GRDMASTERC.view.onSelectedRowsChanged.subscribe(grdMasterCOnAfterScroll);
+    G_GRDMASTERC.view.onHeaderClick.subscribe(grdMasterCOnHeaderClick);
+    G_GRDMASTERC.view.onClick.subscribe(grdMasterCOnClick);
+    G_GRDMASTERC.view.onBeforeEditCell.subscribe(grdMasterCOnBeforeEditCell);
+    G_GRDMASTERC.view.onCellChange.subscribe(grdMasterCOnCellChange);
+
+    $NC.setGridColumnHeaderCheckBox(G_GRDMASTERC, "CHECK_YN");
+}
+
+function grdMasterCOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTERC, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDMASTERC.data.getItem(row);
+
+    // 조회시 전역 변수 값 초기화
+    $NC.clearGridData(G_GRDDETAILC);
+    G_GRDDETAILC.queryParams = {
+        P_CENTER_CD: rowData.CENTER_CD,
+        P_BU_CD: rowData.BU_CD,
+        P_OUTBOUND_DATE: rowData.OUTBOUND_DATE,
+        P_OUTBOUND_NO: rowData.OUTBOUND_NO
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LOB02010E0/getDataSet.do", $NC.getGridParams(G_GRDDETAILC), onGetDetailC);
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTERC, row + 1);
+}
+
+function grdMasterCOnHeaderClick(e, args) {
+
+    switch (args.column.id) {
+        case "CHECK_YN":
+            $NC.onGridColumnHeaderCheckBoxChange(G_GRDMASTERC, e, args);
+            break;
+    }
+}
+
+function grdMasterCOnClick(e, args) {
+
+    var columnId = G_GRDMASTERC.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "CHECK_YN":
+            $NC.onGridCheckBoxEditorChange(G_GRDMASTERC, e, args);
+            break;
+    }
+}
+
+/**
+ * @param e
+ *        Event Handler
+ * @param args
+ *        row: activeRow, cell: activeCell, item: item, column: columnDef
+ */
+function grdMasterCOnBeforeEditCell(e, args) {
+
+    return true;
+}
+
+function grdMasterCOnCellChange(e, args) {
+
+    var rowData = args.item;
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDMASTERC, rowData);
+}
+
+function grdDetailCOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "CHECK_YN",
+        field: "CHECK_YN",
+        resizable: false,
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editor: Slick.Editors.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        },
+        initialHidden: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "LINE_NO",
+        field: "LINE_NO",
+        name: "순번",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_BAR_CD",
+        field: "ITEM_BAR_CD",
+        name: "상품바코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_NM",
+        field: "ITEM_NM",
+        name: "상품명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_SPEC",
+        field: "ITEM_SPEC",
+        name: "규격"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INSPECT_BATCH",
+        field: "INSPECT_BATCH",
+        name: "검수배치",
+        cssClass: "styCenter",
+        initialHidden: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "LOCATION_CD",
+        field: "LOCATION_CD",
+        name: "고정로케이션",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BRAND_NM",
+        field: "BRAND_NM",
+        name: "브랜드명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_STATE_F",
+        field: "ITEM_STATE_F",
+        name: "상태",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_LOT",
+        field: "ITEM_LOT",
+        name: "LOT번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "QTY_IN_BOX",
+        field: "QTY_IN_BOX",
+        name: "입수",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "OUT_UNIT_DIV_F",
+        field: "OUT_UNIT_DIV_F",
+        name: "출고단위"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_QTY",
+        field: "ORDER_QTY",
+        name: "예정수량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ENTRY_QTY",
+        field: "ENTRY_QTY",
+        name: "등록수량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PICK_QTY",
+        field: "PICK_QTY",
+        name: "피킹수량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PICK_BOX",
+        field: "PICK_BOX",
+        name: "피킹BOX",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PICK_EA",
+        field: "PICK_EA",
+        name: "피킹EA",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VALID_DATE",
+        field: "VALID_DATE",
+        name: "유통기한",
+        cssClass: "styCenter",
+        initialHidden: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "BATCH_NO",
+        field: "BATCH_NO",
+        name: "제조배치번호",
+        initialHidden: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "BOX_WEIGHT",
+        field: "BOX_WEIGHT",
+        name: "박스중량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PICK_WEIGHT",
+        field: "PICK_WEIGHT",
+        name: "피킹중량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SUPPLY_PRICE",
+        field: "SUPPLY_PRICE",
+        name: "공급단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DC_PRICE",
+        field: "DC_PRICE",
+        name: "할인단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "APPLY_PRICE",
+        field: "APPLY_PRICE",
+        name: "적용단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SUPPLY_AMT",
+        field: "SUPPLY_AMT",
+        name: "공급금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VAT_AMT",
+        field: "VAT_AMT",
+        name: "부가세액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DC_AMT",
+        field: "DC_AMT",
+        name: "할인금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "TOTAL_AMT",
+        field: "TOTAL_AMT",
+        name: "합계금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_ORDER_DIV_F",
+        field: "ITEM_ORDER_DIV_F",
+        name: "상품주문유형"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SERIAL_OUT_DIV_D",
+        field: "SERIAL_OUT_DIV_D",
+        name: "출고일련번호관리구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_LINE_NO",
+        field: "ORDER_LINE_NO",
+        name: "예정순번",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_LINE_NO",
+        field: "BU_LINE_NO",
+        name: "전표순번"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_KEY",
+        field: "BU_KEY",
+        name: "전표키"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_LINE_NO",
+        field: "SO_LINE_NO",
+        name: "주문순번"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_KEY",
+        field: "SO_KEY",
+        name: "주문키"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdDetailCOnSetColumns() {
+
+    // 재고 관리 기준 : 2 - 입고일자, 유효일자, 배치번호별 관리
+    $NC.setGridColumns(G_GRDDETAILC, [ // 숨김컬럼 세팅
+        $NC.G_VAR.policyVal.LS210 != "2" ? "VALID_DATE,BATCH_NO" : ""
+    ]);
+}
+
+function grdDetailCInitialize() {
+
+    var options = {
+        frozenColumn: 3
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetailC", {
+        columns: grdDetailCOnGetColumns(),
+        queryId: "LOB02010E0.RS_T2_DETAIL",
+        sortCol: "LINE_NO",
+        gridOptions: options
+    });
+
+    G_GRDDETAILC.view.onSelectedRowsChanged.subscribe(grdDetailCOnAfterScroll);
+    G_GRDDETAILC.view.onClick.subscribe(grdDetailCOnClick);
+    G_GRDDETAILC.view.onHeaderClick.subscribe(grdDetailCOnHeaderClick);
+
+    $NC.setGridColumnHeaderCheckBox(G_GRDDETAILC, "CHECK_YN");
+}
+
+function grdDetailCOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAILC, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAILC, row + 1);
+}
+
+function grdDetailCOnHeaderClick(e, args) {
+
+    switch (args.column.id) {
+        case "CHECK_YN":
+            $NC.onGridColumnHeaderCheckBoxChange(G_GRDDETAILC, e, args);
+            break;
+    }
+}
+
+function grdDetailCOnClick(e, args) {
+
+    var columnId = G_GRDDETAILC.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "CHECK_YN":
+            $NC.onGridCheckBoxEditorChange(G_GRDDETAILC, e, args);
+            break;
+    }
+}
+
+function onGetMasterC(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTERC, ajaxData);
+    if (!$NC.setInitGridAfterOpen(G_GRDMASTERC, "OUTBOUND_NO", true)) {
+        // 디테일 초기화
+        $NC.clearGridData(G_GRDDETAILC);
+    }
+
+    // 전표 건수 정보 업데이트
+    window.setMasterSummaryInfo();
+    // 공통 버튼 활성화
+    window.setTopButtons();
+
+    // 출고지시 옵션 세팅
+    setDirectionsOptions();
+}
+
+function onGetDetailC(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAILC, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDDETAILC);
+}
+
+/**
+ * 확정 처리 후 처리<br>
+ * 1. 차수구분을 신규차수로, 확정처리 했을 경우, 출고차수콤보의 마지막행 표시 하여 검색 처리<br>
+ * 2. 출고차수를 기존차수로, 확정처리 했을 경우, 출고차수콤보를 기존출고차수행 표시하여 검색처리
+ * 
+ * @param ajaxData
+ */
+function onSuccessNxtC(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+    var oMsg = $NC.getOutMessage(resultData);
+    if (oMsg != $ND.C_OK) {
+        alert(oMsg);
+        // 선택 처리, 오류 메시지 표시 후 재조회
+        // return;
+    }
+
+    // 기록된 출고차수
+    var OUTBOUND_BATCH = $NC.nullToDefault($("#cboOutbound_BatchC").data("_OUTBOUND_BATCH"), $ND.C_BASE_BATCH_NO);
+    if (OUTBOUND_BATCH != $ND.C_BASE_BATCH_NO) {
+        window.setOutboundBatchCombo("#cboQOutbound_BatchC", false, OUTBOUND_BATCH);
+    } else {
+        // 출고지시구분에 따라 처리
+        var DIRECTIONS_DIV = $NC.getValueRadioGroup("rgbDirections_Div");
+        // 개별출고 - 출고차수 마지막 선택
+        if (DIRECTIONS_DIV == "1") {
+            window.setOutboundBatchCombo("#cboQOutbound_BatchC", false, "last");
+        }
+        // 토탈출고 - 출고차수에서 990미만에서 마지막 선택
+        else {
+            OUTBOUND_BATCH = $NC.getValue("#cboOutbound_BatchC");
+            window.setOutboundBatchCombo("#cboQOutbound_BatchC", false, OUTBOUND_BATCH);
+            // 신규차수면 토탈출고 차수에서 마지막 선택
+            if (OUTBOUND_BATCH == $ND.C_BASE_BATCH_NO) {
+                var dsOutboundBatch = $NC.getComboData("#cboQOutbound_BatchC");
+                var rCount = dsOutboundBatch.length;
+                if (rCount > 0) {
+                    var outboundBatchIndex = rCount - 1;
+                    for (var rIndex = rCount - 1; rIndex >= 0; rIndex--) {
+                        if (dsOutboundBatch[rIndex].OUTBOUND_BATCH_GRP == "1") {
+                            outboundBatchIndex = rIndex;
+                            break;
+                        }
+                    }
+                    $NC.setValue("#cboQOutbound_BatchC", dsOutboundBatch[outboundBatchIndex].OUTBOUND_BATCH);
+                }
+            }
+        }
+    }
+
+    // 출고차수(입력용) 재설정 및 명 초기화
+    window.setOutboundBatchCombo("#cboOutbound_BatchC", false);
+    $NC.setValue("#edtOutbound_Batch_NmC");
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTERC, {
+        selectKey: [
+            "OUTBOUND_NO"
+        ]
+    });
+    window._Inquiry();
+    G_GRDMASTERC.lastKeyVal = lastKeyVal;
+}
+
+/**
+ * 취소 처리 후 처리 출고차수콤보를 첫행(신규) 표시하여 검색처리
+ * 
+ * @param ajaxData
+ */
+function onSuccessPreC(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+    var oMsg = $NC.getOutMessage(resultData);
+    if (oMsg != $ND.C_OK) {
+        alert(oMsg);
+        // 선택 처리, 오류 메시지 표시 후 재조회
+        // return;
+    }
+
+    // 취소햇을 경우는 출고차수 콤보의 첫행(신규)선택하여 검색처리한다.
+    window.setOutboundBatchCombo("#cboQOutbound_BatchC", false, "first");
+    // 출고차수(입력용) 재설정
+    window.setOutboundBatchCombo("#cboOutbound_BatchC", false);
+    setTimeout(function() {
+        var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTERC, {
+            selectKey: [
+                "OUTBOUND_NO"
+            ]
+        });
+        window._Inquiry();
+        G_GRDMASTERC.lastKeyVal = lastKeyVal;
+    }, $ND.C_TIMEOUT_ACT);
+}
+
+/**
+ * 확정처리/ 취소처리시 오류 발생했을 경우의 처리
+ * 
+ * @param ajaxData
+ */
+function onSaveErrorC(ajaxData) {
+
+    $NC.onError(ajaxData);
+    window.setMasterSummaryInfo();
+}
+
+/**
+ * 조회시 출고지시 옵션 초기화
+ */
+function setDirectionsOptions() {
+
+    // 출고차수그룹, 1 - 토탈, 2 - 개별, 3 - 기타
+    var batchInfo = getOutboundBatchInfo("#cboQOutbound_BatchC");
+
+    // 토탈출고로 출고지시된 출고차수가 선택되어 있을 경우 출고지시시 선택한 출하장비구분 값을 기준으로 세팅
+    var EQUIP_DIV;
+    if (G_GRDMASTERC.data.getLength() > 0 //
+        && !batchInfo.isNew // 신규가 아닐 경우
+        && batchInfo.isTotal // 토탈출고 차수
+    ) {
+        var rowData = G_GRDMASTERC.data.getItem(G_GRDMASTERC.lastRow) || {};
+        EQUIP_DIV = rowData.EQUIP_DIV;
+
+        $NC.setValue("#cboEquip_Div", EQUIP_DIV);
+        $NC.setEnable("#cboEquip_Div", false);
+        $NC.setEnable("#cboEquip_Alloc_Div", false);
+    }
+    // 그외 현재 선택된 출하장비구분 기준으로 세팅
+    else {
+        EQUIP_DIV = $NC.getValue("#cboEquip_Div");
+
+        $NC.setEnable("#cboEquip_Div");
+        $NC.setEnable("#cboEquip_Alloc_Div");
+    }
+
+    // EQUIP_DIV 특성
+    // ATTR01_CD: 적용출고업부
+    // ATTR02_CD: 장비종류
+    // ATTR03_CD: 최대할당
+
+    // 분배가능 전표수 세팅
+    var comboData = $NC.getComboData("#cboEquip_Div", EQUIP_DIV || "");
+    var equipCnt = $NC.toNumber(comboData.ATTR03_CD);
+    $NC.setValue("#edtEquip_Cnt", equipCnt);
+    // 전표수, 출하장비가 있을 경우 해당 값, 없을 경우 정책 값을 기본으로
+    $NC.setValue("#edtBill_Cnt", equipCnt == 0 ? $NC.G_VAR.policyVal.LO341 : equipCnt);
+
+    // 출하장비가 있을 경우, 000 - 신규 차수가 아니면 출하장비전송버튼 활성
+    var isEnable = $NC.isNotNull(comboData.ATTR02_CD) && batchInfo.isTotal && !batchInfo.isNew;
+    $NC.setEnable("#btnEquipSend", isEnable);
+    $NC.setEnable("#btnEquipSendCancel", isEnable);
+
+    // 선택오더수 초기화
+    $NC.setValue("#edtSelected_Cnt", 0);
+}
+
+function setDirectionsDiv(directionsDiv) {
+
+    if ($NC.isNull(setDirectionsDiv)) {
+        directionsDiv = $NC.getValueRadioGroup("rgbDirections_Div");
+    }
+
+    // 개별출고
+    if (directionsDiv == "1") {
+        $("#tdViewCOutboundBatch").hide();
+        $("#tdViewCOrderCnt").hide();
+        $("#tdViewCBillCnt").hide();
+        $("#trViewCEquipInfo").hide();
+        $NC.setValue("#cboOutbound_BatchC", $ND.C_BASE_BATCH_NO);
+    }
+    // 토탈출고
+    else {
+        $("#tdViewCOutboundBatch").show();
+        // 사용 가능한 출하장비가 있을 경우
+        var isVisible = $NC.getComboData("#cboEquip_Div").length > 0;
+        $NC.setVisible("#tdViewCOrderCnt", isVisible);
+        $NC.setVisible("#tdViewCBillCnt", isVisible);
+        $NC.setVisible("#trViewCEquipInfo", isVisible);
+    }
+
+    // Splitter를 통해 리사이즈 호출
+    $($NC.G_VAR.activeView.container).trigger("resize");
+}
+
+function setEquipDiv(equipDiv) {
+
+    if ($NC.isNull(equipDiv)) {
+        equipDiv = $NC.getValue("#cboEquip_Div");
+    }
+
+    // 분배가능 세팅 - 출하장비구분의 특성03(최대할당)
+    var comboData = $NC.getComboData("#cboEquip_Div", equipDiv);
+    var equipCnt = $NC.toNumber(comboData.ATTR03_CD);
+    $NC.setValue("#edtEquip_Cnt", equipCnt);
+    $NC.setValue("#edtBill_Cnt", equipCnt == 0 ? $NC.G_VAR.policyVal.LO341 : equipCnt);
+}
+
+function setSelectedCount() {
+
+    var selectedCount = 0;
+    var rowData, rIndex, rCount;
+    // 오더별할당
+    if ($NC.getValue("#cboEquip_Alloc_Div") == "1") {
+        // 체크된 수만큼 선택 수 증가
+        for (rIndex = 0, rCount = G_GRDMASTERC.data.getLength(); rIndex < rCount; rIndex++) {
+            rowData = G_GRDMASTERC.data.getItem(rIndex);
+            if (rowData.CHECK_YN != $ND.C_YES) {
+                continue;
+            }
+            selectedCount++;
+        }
+    }
+    // 배송처별할당
+    else {
+        // 실배송처가 중복되지 않을때만 선택 수 증가
+        var dsRDelivery = [];
+        for (rIndex = 0, rCount = G_GRDMASTERC.data.getLength(); rIndex < rCount; rIndex++) {
+            rowData = G_GRDMASTERC.data.getItem(rIndex);
+            if (rowData.CHECK_YN != $ND.C_YES) {
+                continue;
+            }
+            // 배열 안에 포함되어 있지 않으면 -1 return
+            if ($.inArray(rowData.RDELIVERY_CD, dsRDelivery) < 0) {
+                dsRDelivery.push(rowData.RDELIVERY_CD);
+            }
+        }
+        selectedCount = dsRDelivery.length;
+    }
+    $NC.setValue("#edtSelected_Cnt", selectedCount);
+}
+
+function btnBillCntOnClick() {
+
+    var rCount = G_GRDMASTERC.data.getLength();
+    if (rCount == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.022", "조회 후 처리하십시오."));
+        return;
+    }
+
+    var billCount = Number($NC.getValue("#edtBill_Cnt", "0"));
+    if (billCount <= 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.062", "1이상의 전표수를 입력하십시오."));
+        $NC.setFocus("#edtBill_Cnt");
+        return;
+    }
+
+    var equipAllocDiv = $NC.getValue("#cboEquip_Alloc_Div");
+    var rowData, rIndex;
+    // 배송처별할당일 경우
+    if (equipAllocDiv == "2") {
+        var dsRDelivery = [];
+        for (rIndex = 0; rIndex < rCount; rIndex++) {
+            rowData = G_GRDMASTERC.data.getItem(rIndex);
+            // 배열 안에 포함되어 있지 않으면 -1 return
+            if ($.inArray(rowData.RDELIVERY_CD, dsRDelivery) < 0) {
+                // 선택 전표수보다 작을 경우 추가하고 선택
+                if (dsRDelivery.length < billCount) {
+                    dsRDelivery.push(rowData.RDELIVERY_CD);
+                    if (rowData.CHECK_YN != $ND.C_YES) {
+                        rowData.CHECK_YN = $ND.C_YES;
+                        G_GRDMASTERC.data.updateItem(rowData.id, rowData);
+                    }
+                }
+                // 선책 전표수를 초과했을 경우 선택 해제
+                else {
+                    if (rowData.CHECK_YN != $ND.C_NO) {
+                        rowData.CHECK_YN = $ND.C_NO;
+                        G_GRDMASTERC.data.updateItem(rowData.id, rowData);
+                    }
+                }
+            }
+            // 이미 추가되어 있을 경우 선택이 안되어 있으면 선택
+            else {
+                if (rowData.CHECK_YN != $ND.C_YES) {
+                    rowData.CHECK_YN = $ND.C_YES;
+                    G_GRDMASTERC.data.updateItem(rowData.id, rowData);
+                }
+            }
+        }
+
+        $NC.setValue("#edtSelected_Cnt", dsRDelivery.length);
+    }
+    // 할당구분이 없거나, 오더별할당일 경우
+    else {
+        for (rIndex = 0; rIndex < rCount; rIndex++) {
+            rowData = G_GRDMASTERC.data.getItem(rIndex);
+            if (rIndex < billCount) {
+                if (rowData.CHECK_YN != $ND.C_YES) {
+                    rowData.CHECK_YN = $ND.C_YES;
+                    G_GRDMASTERC.data.updateItem(rowData.id, rowData);
+                }
+            } else {
+                if (rowData.CHECK_YN != $ND.C_YES) {
+                    continue;
+                }
+                rowData.CHECK_YN = $ND.C_NO;
+                G_GRDMASTERC.data.updateItem(rowData.id, rowData);
+            }
+        }
+
+        $NC.setValue("#edtSelected_Cnt", Math.min(billCount, rCount));
+    }
+}
+
+/**
+ * 출하장비전송 버튼 클릭 이벤트 처리
+ */
+function btnEquipSendOnClick() {
+
+    if (!$NC.getProgramPermission().canSave) {
+        alert($NC.getDisplayMsg("JS.MAIN.001", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    if (G_GRDMASTERC.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.022", "조회 후 처리하십시오."));
+        return;
+    }
+
+    var batchInfo = getOutboundBatchInfo("#cboQOutbound_BatchC");
+    // 신규차수
+    if (batchInfo.isNew) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.063", "[출하장비전송] 처리할 출고차수를 선택하십시오."));
+        return;
+    }
+    // 개별차수
+    else if (!batchInfo.isTotal) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.064", "[토탈출고] 차수를 선택하고 [출하장비전송] 처리하십시오."));
+        return;
+    }
+
+    var EQUIP_DIV = $NC.getValue("#cboEquip_Div");
+    if ($NC.isNull(EQUIP_DIV)) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.065", "출하장비구분을 선택하십시오."));
+        $NC.setFocus("#cboEquip_Div");
+        return;
+    }
+
+    var EQUIP_ALLOC_DIV = $NC.getValue("#cboEquip_Alloc_Div");
+    if ($NC.isNull(EQUIP_ALLOC_DIV)) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.066", "할당구분을 선택하십시오."));
+        $NC.setFocus("#cboEquip_Alloc_Div");
+        return;
+    }
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    var OUTBOUND_DATE = $NC.getValue("#dtpQOutbound_Date");
+
+    // 소터투입 불가 상품 체크
+    $NC.serviceCall("/LOB02010E0/getDataSet.do", {
+        P_QUERY_ID: "LOB02010E0.RS_SUB4",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: CENTER_CD,
+            P_BU_CD: BU_CD,
+            P_OUTBOUND_DATE: OUTBOUND_DATE,
+            P_OUTBOUND_BATCH: batchInfo.OUTBOUND_BATCH,
+            P_EQUIP_DIV: EQUIP_DIV
+        }
+    }, function(ajaxData) {
+        var dsResult = $NC.toArray(ajaxData);
+        if ($NC.isNull(dsResult)) {
+            alert($NC.getDisplayMsg("JS.LOB02010E0.067", "소터투입 불가 상품 체크에 오류가 발생 했습니다."));
+            return;
+        }
+
+        var message = "";
+        var rowData = dsResult[0] || {};
+        if ($NC.toNumber(rowData.ITEM_CNT) > 0) {
+            message = "[" + rowData.ITEM_INFO + "] 포함 " + rowData.ITEM_CNT + " 건이 소터투입 대상이 아닙니다.\n\n";
+        }
+
+        if (!confirm($NC.getDisplayMsg("JS.LOB02010E0.068", message + "출하장비전송 처리 하시겠습니까?", message))) {
+            return;
+        }
+
+        $NC.serviceCall("/LOB02010E0/callSendFwLoBatch.do", {
+            P_CENTER_CD: CENTER_CD,
+            P_BU_CD: BU_CD,
+            P_OUTBOUND_DATE: OUTBOUND_DATE,
+            P_OUTBOUND_BATCH: batchInfo.OUTBOUND_BATCH,
+            P_EQUIP_ALLOC_DIV: EQUIP_ALLOC_DIV,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }, function() {
+            alert($NC.getDisplayMsg("JS.LOB02010E0.069", "[출하장비전송] 처리가 완료되었습니다."));
+            window._Inquiry();
+        });
+    });
+}
+
+/**
+ * 출하장비전송취소 버튼 클릭 이벤트 처리
+ */
+function btnEquipSendCancelOnClick() {
+
+    if (!$NC.getProgramPermission().canDelete) {
+        alert($NC.getDisplayMsg("JS.MAIN.002", "해당 프로그램의 삭제권한이 없습니다."));
+        return;
+    }
+
+    if (G_GRDMASTERC.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.022", "조회 후 처리하십시오."));
+        return;
+    }
+
+    var batchInfo = getOutboundBatchInfo("#cboQOutbound_BatchC");
+    // 신규차수
+    if (batchInfo.isNew) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.070", "[출하장비전송취소] 처리할 출고차수를 선택하십시오."));
+        return;
+    }
+    // 개별차수
+    else if (!batchInfo.isTotal) {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.071", "[토탈출고] 차수를 선택하고 [출하장비전송취소] 처리하십시오."));
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.LOB02010E0.072", "출하장비전송취소 처리 하시겠습니까?"))) {
+        return;
+    }
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    var OUTBOUND_DATE = $NC.getValue("#dtpQOutbound_Date");
+
+    $NC.serviceCall("/LOB02010E0/callSendBwLoBatch.do", {
+        P_CENTER_CD: CENTER_CD,
+        P_BU_CD: BU_CD,
+        P_OUTBOUND_DATE: OUTBOUND_DATE,
+        P_OUTBOUND_BATCH: batchInfo.OUTBOUND_BATCH,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, function() {
+        alert($NC.getDisplayMsg("JS.LOB02010E0.073", "[출하장비전송취소] 처리가 완료되었습니다."));
+        window._Inquiry();
+    });
+}
+
+/**
+ * 선택된 출고차수 정보 리턴<br>
+ * 
+ * <pre>
+ * OUTBOUND_BATCH: 출고차수
+ * OUTBOUND_BATCH_NM: 출고차수명
+ * OUTBOUND_BATCH_F: 출고차수 - 출고차수명
+ * OUTBOUND_BATCH_GRP: 출고차수그룹
+ * isTotal: 토탈출고여부
+ * isNew: 신규차수여부
+ * </pre>
+ */
+function getOutboundBatchInfo(selector) {
+
+    var result = {
+        OUTBOUND_BATCH: "",
+        OUTBOUND_BATCH_NM: "",
+        OUTBOUND_BATCH_F: "",
+        OUTBOUND_BATCH_GRP: "",
+        isTotal: false,
+        isNew: false
+    };
+
+    var $view = $(selector);
+    if ($view.length == 0) {
+        return result;
+    }
+
+    // 출고차수
+    result.OUTBOUND_BATCH = $NC.getValue($view);
+    result.OUTBOUND_BATCH_F = $NC.getValueCombo($view, "F");
+    result.OUTBOUND_BATCH_NM = $NC.getValueCombo($view, "N");
+    // 출고차수그룹, 1 - 토탈, 2 - 개별, 3 - 기타
+    // 000 - 신규 -> 토탈, 그외 출고차수의 그룹
+    if (result.OUTBOUND_BATCH == $ND.C_BASE_BATCH_NO) {
+        result.OUTBOUND_BATCH_GRP = "1";
+        result.isNew = true;
+    } else {
+        result.OUTBOUND_BATCH_GRP = $NC.getComboData($view, result.OUTBOUND_BATCH || "").OUTBOUND_BATCH_GRP;
+    }
+
+    result.isTotal = result.OUTBOUND_BATCH_GRP == "1";
+
+    return result;
+}

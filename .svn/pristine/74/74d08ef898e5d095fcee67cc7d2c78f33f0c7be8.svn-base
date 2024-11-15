@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LOM_WAYBILL02_subreport1" pageWidth="230" pageHeight="14" orientation="Landscape" columnWidth="230" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a84dad60-37ea-4419-a8a1-0cdfa3b168ce">
+	<property name="ireport.zoom" value="1.9487171000000019"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_DATE" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_NO" class="java.lang.String"/>
+	<parameter name="P_BOX_NO" class="java.math.BigDecimal"/>
+	<parameter name="P_PAGE_NUM" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT ITEM_CD
+       ,ITEM_NM
+       ,CONFIRM_QTY
+  FROM (
+        SELECT M1.ITEM_CD
+              ,I1.ITEM_NM
+              ,SUM(M1.CONFIRM_QTY)                     AS CONFIRM_QTY
+              ,CEIL(ROW_NUMBER() OVER(ORDER BY 1) / 6) AS PAGE_NUM
+          FROM LO020NT M1
+               JOIN CMITEM I1 ON I1.BRAND_CD = M1.BRAND_CD
+                             AND I1.ITEM_CD  = M1.ITEM_CD
+         WHERE M1.CENTER_CD     = $P{P_CENTER_CD}
+           AND M1.BU_CD         = $P{P_BU_CD}
+           AND M1.OUTBOUND_DATE = $P{P_OUTBOUND_DATE}
+           AND M1.OUTBOUND_NO   = $P{P_OUTBOUND_NO}
+           AND M1.BOX_NO        = TO_CHAR($P{P_BOX_NO})
+         GROUP BY M1.ITEM_CD
+                 ,I1.ITEM_NM
+         ORDER BY M1.ITEM_CD
+       )
+ WHERE PAGE_NUM = $P{P_PAGE_NUM}]]>
+	</queryString>
+	<field name="ITEM_CD" class="java.lang.String"/>
+	<field name="ITEM_NM" class="java.lang.String"/>
+	<field name="CONFIRM_QTY" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="4" y="0" width="55" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="6927e654-0fc8-4d43-b030-a2d7c96bfe66"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="61" y="0" width="125" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="480db5e4-cf3b-4238-9e59-76ecc7ae8269"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="187" y="0" width="42" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="f3f7809f-f4d5-4dda-9d47-d4a9584a3adf"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONFIRM_QTY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

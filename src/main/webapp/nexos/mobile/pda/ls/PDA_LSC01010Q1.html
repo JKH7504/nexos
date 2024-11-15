@@ -1,0 +1,149 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : PDA_LSC01010Q1
+    프로그램명         : PDA 상품별 재고조회
+    프로그램설명       : PDA 상품별 재고조회 화면(의류) HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-06-29
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-02-27    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/PDA_LSC01010Q1.css" /> -->
+<script src="js/PDA_LSC01010Q1.js"></script>
+</head>
+<body>
+    <div id="ctrMasterInfoView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblItem_Bar_Cd" class="lblKey">상품바코드</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Bar_Cd" class="edtKey" type="text" style="min-width: 140px; margin-right: -67px; padding-right: 68px;" />
+                    <div class="ctrGroupBox" style="background: #ffffff; width: 63px;">
+                        <input id="chkAll_Bu_Yn" name="chkAll_Bu_Yn" class="chkNormal" type="checkbox" tabindex="-1" />
+                        전체
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Cd" class="lblNormal">상품코드</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Cd" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Nm" class="lblNormal">상품명</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">로케이션별 재고</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrDetailView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <!-- <tr>
+                <td>
+                    <div id="lblLocation_Cd" class="lblNormal">로케이션</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtLocation_Cd" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>-->
+            <tr>
+                <td>
+                    <div id="lblZone_Cd" class="lblNormal">존</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtZone_Cd" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_State" class="lblNormal">상품상태</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_State" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQty_In_Box" class="lblNormal">입수</div>
+                </td>
+                <td>
+                    <input id="edtQty_In_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblPStock_Qty" class="lblNormal">출고가능량</div>
+                </td>
+                <td>
+                    <input id="edtPStock_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblStock_Qty" class="lblNormal">현재고</div>
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtStock_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td style="width: 30%;">
+                    <input id="edtStock_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtStock_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblTot_PStock_Qty" class="lblNormal">토탈수량</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtTot_Stock_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table id="ctrActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnClose" class="btnAction">
+                    <span>이전</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>취소</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+        </tr>
+    </table>
+</body>
+</html>

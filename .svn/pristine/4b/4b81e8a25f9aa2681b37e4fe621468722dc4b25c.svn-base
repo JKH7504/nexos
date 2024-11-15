@@ -1,0 +1,198 @@
+package nexos.framework.config;
+
+import java.io.IOException;
+import java.util.Properties;
+
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.security.DataEncryptor;
+
+// ===================================================================================================================================================
+// XML 원본 설정 - context-common.xml
+// ===================================================================================================================================================
+// <?xml version="1.0" encoding="UTF-8"?>
+// <!--
+// ==================================================================================================================================================
+// Spring Root Context 설정 [공통]
+// Author : ASETEC
+// Date : 2012-10-25
+// Description
+// Root Context 중에서 공통적인 설정
+// ==================================================================================================================================================
+// -->
+// <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+// xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+// xmlns:util="http://www.springframework.org/schema/util"
+// xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+// http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+// http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+// <!--
+// ==============================================================================================================================================
+// Annotation 사용을 위한 BeanPostProcessor 자동 등록
+// - AutowiredAnnotationBeanPostProcessor CommonAnnotationBeanPostProcessor
+// - PersistenceAnnotationBeanPostProcessor RequiredAnnotationBeanPostProcessor
+// ==============================================================================================================================================
+// -->
+// <context:annotation-config />
+//
+// <!--
+// ==============================================================================================================================================
+// TaskScheduler 관련 Properties 등록
+// ==============================================================================================================================================
+// -->
+// <util:properties id="taskProps"
+// location="classpath:/nexos/config/config-task.properties,classpath:/nexos/config/config-task-ext${spring.profiles.apply}.properties" />
+//
+// <!--
+// ==============================================================================================================================================
+// 암호화/복호화 처리 관련
+// depends-on="taskProps"
+// ==============================================================================================================================================
+// -->
+// <bean id="dataEncryptor" class="nexos.framework.security.DataEncryptor" />
+//
+// <!--
+// spring.profiles.apply는 spring.profiles.active 세팅에 따른 실제 적용 값
+// -->
+// <!--
+// ==============================================================================================================================================
+// 암호화된 공통 Properties 등록 - System Property에 등록 됨
+// ==============================================================================================================================================
+// -->
+// <bean id="encryptProps" class="org.jasypt.spring4.properties.EncryptablePropertyPlaceholderConfigurer">
+// <constructor-arg ref="dataEncryptor" />
+// <property name="location" value="classpath:/nexos/config/config-encrypt${spring.profiles.apply}.properties" />
+// </bean>
+//
+// <!--
+// ==============================================================================================================================================
+// 공통 Properties 등록
+// ==============================================================================================================================================
+// -->
+// <util:properties id="commonProps"
+// location="classpath:/nexos/config/config-globals.properties,classpath:/nexos/config/config-globals-ext${spring.profiles.apply}.properties">
+// <prop key="WEBAPP.ROOT">${NEXOS.WEBAPP.ROOT}</prop>
+// <!-- encryptProps에 등록된 Property 추가 -->
+// <prop key="DB.JDBC_URL">${ENC.DB.JDBC_URL}</prop>
+// <prop key="DB.USER_ID">${ENC.DB.USER_ID}</prop>
+// <prop key="DB.USER_PWD">${ENC.DB.USER_PWD}</prop>
+// </util:properties>
+//
+// <!--
+// ==============================================================================================================================================
+// 전체 Properties 관련
+// ==============================================================================================================================================
+// -->
+// <!-- depends-on="commonProps,taskProps" -->
+// <bean id="globalProps" class="nexos.framework.config.GlobalProperties">
+// <property name="commonProps" ref="commonProps" />
+// <property name="taskProps" ref="taskProps" />
+// </bean>
+//
+// </beans>
+@Configuration
+public class CommonConfig {
+
+    @Bean
+    public Properties taskProps() throws IOException {
+
+        PropertiesFactoryBean factory = new PropertiesFactoryBean();
+        factory.setFileEncoding(Consts.CHARSET);
+        factory.setLocations(new Resource[] { //
+            new ClassPathResource("/nexos/config/config-task.properties"), //
+            new ClassPathResource(getApplySettingFileName("config-task-ext", ".properties", null)) //
+        });
+        factory.afterPropertiesSet();
+
+        return factory.getObject();
+    }
+
+    @Bean
+    public DataEncryptor dataEncryptor() {
+
+        return new DataEncryptor();
+    }
+
+    @Bean
+    public Properties encryptProps() throws IOException {
+
+        PropertiesFactoryBean factory = new PropertiesFactoryBean();
+        factory.setFileEncoding(Consts.CHARSET);
+        factory.setLocation(new ClassPathResource(getApplySettingFileName("config-encrypt", ".properties", null)));
+        factory.afterPropertiesSet();
+
+        return factory.getObject();
+    }
+
+    @Bean
+    public Properties commonProps() throws IOException {
+
+        PropertiesFactoryBean factory = new PropertiesFactoryBean();
+        factory.setFileEncoding(Consts.CHARSET);
+        factory.setLocations(new Resource[] { //
+            new ClassPathResource("/nexos/config/config-globals.properties"), //
+            new ClassPathResource(getApplySettingFileName("config-globals-ext", ".properties", null)) //
+        });
+        factory.afterPropertiesSet();
+
+        Properties properties = factory.getObject();
+
+        DataEncryptor dataEncryptor = dataEncryptor();
+        Properties encryptProps = encryptProps();
+
+        properties.put(Consts.WEBAPP_ROOT, System.getProperty("NEXOS.WEBAPP.ROOT", ""));
+        properties.put("WEBAPP.SALT", System.getProperty("NEXOS.WEBAPP.SALT", //
+            String.format("%013d%05d", System.currentTimeMillis(), (int)(Math.random() * 100000)).substring(0, 18)));
+        properties.put("DB.JDBC_URL", dataEncryptor.decrypt(encryptProps.getProperty("ENC.DB.JDBC_URL", "")));
+        properties.put("DB.USER_ID", dataEncryptor.decrypt(encryptProps.getProperty("ENC.DB.USER_ID", "")));
+        properties.put("DB.USER_PWD", dataEncryptor.decrypt(encryptProps.getProperty("ENC.DB.USER_PWD", "")));
+
+        return properties;
+    }
+
+    @Bean
+    public GlobalProperties globalProps() throws IOException {
+
+        GlobalProperties result = new GlobalProperties();
+        result.setCommonProps(commonProps());
+        result.setTaskProps(taskProps());
+
+        return result;
+    }
+
+    /**
+     * 적용할 세팅 파일명 리턴
+     *
+     * @param baseFileName
+     * @param fileExt
+     * @param path
+     * @return
+     */
+    private String getApplySettingFileName(String baseFileName, String fileExt, String path) {
+
+        path = Util.nullToDefault(path, "/nexos/config/");
+        if (!path.endsWith("/")) {
+            path += "/";
+        }
+
+        String applyProfile = System.getProperty(Consts.SPRING_PROFILES_APPLY);
+        if (Util.isNotNull(applyProfile)) {
+            path += applyProfile + "/";
+        }
+
+        fileExt = Util.nullToDefault(fileExt, ".properties");
+        if (!fileExt.startsWith(".")) {
+            fileExt = "." + fileExt;
+        }
+
+        return path //
+            + baseFileName //
+            + fileExt;
+    }
+}

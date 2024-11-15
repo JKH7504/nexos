@@ -1,0 +1,352 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : PDA_LOC02340E0
+    프로그램명         : PDA 피킹분배작업
+    프로그램설명       : PDA 피킹분배작업
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2024-11-20
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2024-11-20    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/PDA_LOC02340E0.css" /> -->
+<script src="js/PDA_LOC02340E0.js"></script>
+</head>
+<body>
+    <div id="ctrMasterInfoView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblPaper_No" class="lblKey">지시서</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtPaper_No" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOutbound_Date" class="lblNormal">출고일자</div>
+                </td>
+                <td colspan="2" style="width: 65%;">
+                    <input id="edtOutbound_Date" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtOutbound_Batch" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">분배 상품정보</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrDetailView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblItem_Bar_Cd" class="lblKey">상품바코드</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtItem_Bar_Cd" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Cd" class="lblNormal">상품코드</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Cd" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Nm" class="lblNormal">상품명</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtItem_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_State" class="lblNormal">상품상태</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtItem_State" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQty_In_Box" class="lblNormal">박스입수</div>
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtQty_In_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td style="width: 30%;">
+                    <div id="lblBox_In_Plt" class="lblNormal" style="width: 80px;">PLT입수</div>
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtBox_In_Plt" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblEntry_Qty" class="lblNormal">지시수량</div>
+                </td>
+                <td>
+                    <input id="edtEntry_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtEntry_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtEntry_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblDistribute_Qty" class="lblNormal">분배수량</div>
+                </td>
+                <td>
+                    <input id="edtDistribute_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtDistribute_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtDistribute_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblRemain_Order_Cnt" class="lblNormal">분배미완료</div>
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtRemain_Order_Cnt" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td style="width: 30%;">
+                    <div id="lblDistribute_Order_Cnt" class="lblNormal" style="width: 80px;">분배완료</div>
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtDistribute_Order_Cnt" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table id="ctrActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnClose" class="btnAction">
+                    <span>이전</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>취소</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+            <td>
+                <div id="btnDistributeCancel" class="btnAction">
+                    <span>분배취소</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnDistribute" class="btnAction">
+                    <span>분배작업</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <!-- 분배작업 Overlay -->
+    <div id="ctrDistributeOverlay" style="display: none;">
+        <div id="ctrDistributeView" class="ctrPopup ctrLinearLayout">
+            <table class="ctrInner">
+                <tr>
+                    <td>
+                        <div id="lblL1_Outbound_Date" class="lblNormal">출고일자</div>
+                    </td>
+                    <td colspan="2" style="width: 65%;">
+                        <input id="edtL1_Outbound_Date" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_Outbound_No" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Shipper_Nm" class="lblNormal">수령자</div>
+                    </td>
+                    <td class="styFillArea" colspan="3">
+                        <input id="edtL1_Shipper_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Orderer_Msg" class="lblNormal">배송메시지</div>
+                    </td>
+                    <td class="styFillArea" colspan="3">
+                        <input id="edtL1_Orderer_Msg" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Item_Cd" class="lblNormal">상품코드</div>
+                    </td>
+                    <td class="styFillArea" colspan="3">
+                        <input id="edtL1_Item_Cd" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Item_Nm" class="lblNormal">상품명</div>
+                    </td>
+                    <td colspan="3">
+                        <input id="edtL1_Item_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Qty_In_Box" class="lblNormal">상품상태</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_Item_State" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td style="width: 30%;">
+                        <div id="lblL1_Qty_In_Box" class="lblNormal" style="width: 50px;">박스입수</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_Qty_In_Box" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Tot_Entry_Qty" class="lblNormal">총지시수량</div>
+                    </td>
+                    <td>
+                        <input id="edtL1_Tot_Entry_Box" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td>
+                        <input id="edtL1_Tot_Entry_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td>
+                        <input id="edtL1_Tot_Entry_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Tot_Distribute_Qty" class="lblNormal">총분배수량</div>
+                    </td>
+                    <td>
+                        <input id="edtL1_Tot_Distribute_Box" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td>
+                        <input id="edtL1_Tot_Distribute_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td>
+                        <input id="edtL1_Tot_Distribute_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Remain_Order_Cnt" class="lblNormal">미분배선반수</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_Remain_Order_Cnt" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td style="width: 30%;">
+                        <div id="lblL1_Distribute_Order_Cnt" class="lblNormal" style="width: 80px;">총선반수</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_Distribute_Order_Cnt" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr class="styLarge">
+                    <td>
+                        <div id="lblL1_1st_Shelf_No" class="lblNormal">현재선반번호</div>
+                    </td>
+                    <td class="styFillArea" colspan="3">
+                        <input id="edtL1_1st_Shelf_No" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr class="styLarge">
+                    <td>
+                        <div id="lblL1_1st_Distribute_Qty" class="lblNormal">분배수량</div>
+                    </td>
+                    <td>
+                        <input id="edtL1_1st_Distribute_Box" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td>
+                        <input id="edtL1_1st_Distribute_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td>
+                        <input id="edtL1_1st_Distribute_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_Shelf_No" class="lblKey">선반번호</div>
+                    </td>
+                    <td class="styFillArea" colspan="3">
+                        <input id="edtL1_Shelf_No" class="edtKey" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_2nd_Shelf_No" class="lblNormal">다음선반번호</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_2nd_Shelf_No" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td style="width: 30%;">
+                        <div id="lblL1_2nd_Distribute_Qty" class="lblNormal" style="width: 80px;">분배수량</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_2nd_Distribute_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblL1_3rd_Shelf_No" class="lblNormal">다음선반번호</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_3rd_Shelf_No" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                    <td style="width: 30%;">
+                        <div id="lblL1_3rd_Distribute_Qty" class="lblNormal" style="width: 80px;">분배수량</div>
+                    </td>
+                    <td style="width: 35%;">
+                        <input id="edtL1_3rd_Distribute_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table id="ctrPopupActionBar" class="ctrBottomActionBar">
+            <tr>
+                <td>
+                    <div id="btnDistributeClose" class="btnAction">
+                        <span>이전</span>
+                    </div>
+                </td>
+                <td class="styFillArea"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

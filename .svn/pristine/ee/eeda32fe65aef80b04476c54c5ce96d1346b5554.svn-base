@@ -1,0 +1,68 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : commonpopup
+    프로그램명         : 공통코드검색 팝업
+    프로그램설명       : 공통코드검색 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../} -->
+<!-- Common Popup CSS/JS -->
+<!-- <link rel="stylesheet" href="css/commonpopup.css" /> -->
+<script src="js/commonpopup.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQSearchVal" class="lblCondition" style="width: 70px;">검색</div>
+                </td>
+                <td class="styFillArea">
+                    <input id="edtQSearchVal" class="edtNormal" type="text" maxlength="50" tabindex="1" />
+                </td>
+                <td style="min-width: 60px;">
+                    <input id="btnSearch" class="btnImgInquiry" type="button" value="검색" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">목록</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <table id="ctrPopupActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>종료</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+            <td>
+                <div id="btnOk" class="btnAction">
+                    <span>확인</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

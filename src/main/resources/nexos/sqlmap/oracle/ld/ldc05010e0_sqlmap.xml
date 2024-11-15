@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 월지입료관리 화면
+  // Author : ASETEC
+  // Date : 2021-02-17
+  // Description
+  // 월지입료관리 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('LDC05010E0' ,'LD060NM' ,NULL ,'N' ,NULL ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="LDC05010E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="LDC05010E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - LDC05010E0.RS_MASTER -->
+  <select id="RS_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=LDC05010E0_VIRTUALMAP} = call LDC05010E0.RS_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ADJUST_MONTH            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_POLICY_CM510            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LDC05010E0.RS_MASTER -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - UPDATE_LD060NM [차량월지입료] -->
+  <update id="UPDATE_LD060NM" parameterType="hashmap">
+    UPDATE LD060NM
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_RUNNING_CNT             != null">,RUNNING_CNT              = #{P_RUNNING_CNT}            </if>
+          <if test="P_DELIVERY_COST           != null">,DELIVERY_COST            = #{P_DELIVERY_COST}          </if>
+          <if test="P_TOLL_COST               != null">,TOLL_COST                = #{P_TOLL_COST}              </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                </if>
+          <if test="P_CONFIRM_YN              != null">,CONFIRM_YN               = #{P_CONFIRM_YN}             </if>
+          <if test="P_CONFIRM_USER_ID         != null">,CONFIRM_USER_ID          = #{P_CONFIRM_USER_ID}        </if>
+          <if test="P_CONFIRM_DATETIME        != null">
+          ,CONFIRM_DATETIME         = DECODE(#{P_CONFIRM_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_CONFIRM_DATETIME}))
+          </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+       AND ADJUST_MONTH             = #{P_ADJUST_MONTH}
+       AND CAR_CD                   = #{P_CAR_CD}
+  </update>
+  <!-- [E] - UPDATE_LD060NM [차량월지입료] -->
+
+
+</mapper>

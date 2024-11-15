@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LFC_CONSIGNMENT_02_subreport1" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" uuid="84f10716-8e92-486f-8151-2c521ab585be">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SPIGEN_NEXOX_V75"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["A2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_BU_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RD"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ADJUST_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[--<월 정산내역서>--
+SELECT L1.BILL_NM
+      ,L1.FINAL_AMT
+      ,ROUND(L1.FINAL_AMT * 0.1) AS VAT_AMT
+      ,ROUND(L1.FINAL_AMT * 1.1) AS TOT_AMT
+      ,TO_CHAR(L1.ADJUST_MONTH ,'YYYY"년 "MM"월 "') || '정산 내역서' AS REPORT_TITLE
+  FROM (
+        --<일반보관료 정산내역>---------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF110NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<셀구분보관료 정산내역>-------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF120NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<일반작업비 정산내역>---------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF210NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<전표작업비 정산내역>---------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF220NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<출고패킹작업비 정산내역>-----------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF230NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<패킹소모품비 정산내역>-------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF240NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+               JOIN CMBOX  C1 ON C1.BU_CD       = M1.BU_CD
+                             AND C1.BOX_SIZE_CD = M1.BOX_SIZE_CD
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<전표환산작업비 정산내역>-----------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF250NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<전표패킹작업비 정산내역>-----------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF260NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<전표추가작업비 정산내역>-----------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF270NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<월기타비 정산내역>-----------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF310NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<일기타비 정산내역>-----------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF410NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<택배 정산내역>---------------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF510NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+           AND M1.ADJUST_SDATE   IS NOT NULL
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<화물운송비 정산내역>---------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF520NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+           AND M1.ADJUST_SDATE   IS NOT NULL
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+         UNION ALL
+        --<가공작업비 정산내역>---------------------------------------------------------------------
+        SELECT M1.ADJUST_MONTH
+              ,M1.BILL_DIV
+              ,M2.BILL_NM
+              ,SUM(M1.FINAL_AMT) AS FINAL_AMT
+          FROM LF610NM M1
+               JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                             AND M2.BILL_DIV    = M1.BILL_DIV
+         WHERE M1.CENTER_CD    = $P{P_CENTER_CD}
+           AND M1.BU_CD        = $P{P_BU_CD}
+           AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+         GROUP BY M1.ADJUST_MONTH
+                 ,M1.BILL_DIV
+                 ,M2.BILL_NM
+       ) L1
+ ORDER BY BILL_DIV
+         ,BILL_NM]]>
+	</queryString>
+	<field name="BILL_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BILL_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BILL_NM"/>
+	</field>
+	<field name="FINAL_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="FINAL_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_AMT"/>
+	</field>
+	<field name="VAT_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="VAT_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="VAT_AMT"/>
+	</field>
+	<field name="TOT_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TOT_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="TOT_AMT"/>
+	</field>
+	<field name="REPORT_TITLE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="REPORT_TITLE"/>
+		<property name="com.jaspersoft.studio.field.name" value="REPORT_TITLE"/>
+	</field>
+	<variable name="SUM_FINAL_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_PAGE" calculation="Sum">
+		<variableExpression><![CDATA[$F{FINAL_AMT}]]></variableExpression>
+	</variable>
+	<variable name="SUM_VAT_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_PAGE" calculation="Sum">
+		<variableExpression><![CDATA[$F{VAT_AMT}]]></variableExpression>
+	</variable>
+	<variable name="SUM_TOT_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_PAGE" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_AMT}]]></variableExpression>
+	</variable>
+	<group name="GRP_PAGE" isStartNewPage="true" keepTogether="true">
+		<groupExpression><![CDATA[$P{P_CENTER_CD} + $P{P_BU_CD} + $P{P_ADJUST_DATE}]]></groupExpression>
+		<groupHeader>
+			<band height="54">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="1" width="566" height="26" uuid="e149c30d-45c2-4061-8cee-cff237a0fcf8"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="18" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{REPORT_TITLE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-4" x="1" y="29" width="109" height="24" uuid="ffaa8dfb-c13c-43e9-b7d9-3bcf1c223a8c">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[정산명]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-4" x="476" y="29" width="90" height="24" uuid="c0d6897b-66ab-4fc3-b528-1009f2df0938">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[비고]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-4" x="341" y="29" width="135" height="24" uuid="d616212c-0d6f-4310-a2c2-bc2d5099b260">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[합계금액]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-1" x="0" y="28" width="566" height="1" uuid="0734093b-0cae-464a-8624-7d1ab208e2e5"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-4" x="230" y="29" width="110" height="24" uuid="2f1e84c8-f771-46c2-84fe-5fba80c29644">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VAT]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-1" x="0" y="53" width="566" height="1" uuid="92c8526a-0a04-427c-a2be-b0f695eea040"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText-4" x="110" y="29" width="120" height="24" uuid="c187dc39-8f9e-4a48-ae90-bd91d9591955">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[금액]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="55">
+				<line>
+					<reportElement key="line-1" x="0" y="-2" width="566" height="1" uuid="ca4abd3a-d4e8-4c4e-8001-8566d106b8b7"/>
+				</line>
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="textField-18" mode="Transparent" x="242" y="23" width="112" height="23" uuid="d45fff93-aec8-4e31-9479-1279b67bf83a">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_FINAL_AMT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="textField-18" mode="Transparent" x="354" y="23" width="106" height="23" uuid="6b24e5e9-094d-424a-9f2e-e2601a5d3049">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_VAT_AMT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="textField-18" mode="Transparent" x="460" y="23" width="107" height="23" uuid="233ffdfa-5fca-46c8-b952-6a582ea45e68">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOT_AMT}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-1" x="242" y="46" width="325" height="1" uuid="2ad14371-ab90-4757-a1d2-5f1f5a520783"/>
+					<graphicElement>
+						<pen lineStyle="Double"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement key="staticText-4" x="242" y="0" width="112" height="23" uuid="f31593c2-d475-498e-89a1-a87f286eebb2">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[총금액]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-4" x="354" y="0" width="106" height="23" uuid="431e3565-af81-458b-822f-e4a5f8ca6be4">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[총VAT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-4" x="460" y="0" width="106" height="23" uuid="0dcb2d84-eba6-4a7a-a7d8-0f6cb7add57e">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[총합계금액]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-1" x="242" y="23" width="325" height="1" uuid="4abe66f0-e04a-4ff1-ac7c-196fc748f3c9"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="18">
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="508" y="1" width="58" height="12" uuid="15ad21e9-254e-4e8f-a4ff-65372b505738"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="439" y="1" width="50" height="12" uuid="2503134f-4a13-4502-a666-8bc4eb96d2ea"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="489" y="1" width="19" height="12" uuid="93b07f38-b47a-460e-bbf7-71bd211d55b8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="28" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="1" y="0" width="109" height="27" uuid="ad3d5837-e634-41ab-a03e-058c3530d0f0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILL_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="341" y="0" width="135" height="27" uuid="c2da45b4-f21f-499a-88f3-b0b59c8c0c40"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_AMT}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="0" y="27" width="566" height="1" uuid="4e678cc2-00c1-40ce-8ca0-1c3615f26b90"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="230" y="0" width="110" height="27" uuid="e334a307-668f-4024-aaa3-1ae5007a8094"/>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VAT_AMT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="110" y="0" width="120" height="27" uuid="361e6ac3-41b1-42c9-91b7-b00c4f9005df">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FINAL_AMT}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="0" y="-1" width="566" height="1" uuid="ca8982a7-a33b-4540-85ca-97486c05ea07"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

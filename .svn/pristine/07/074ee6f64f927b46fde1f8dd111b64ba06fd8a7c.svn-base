@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CM03040R_R01" pageWidth="226" pageHeight="170" orientation="Landscape" columnWidth="226" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="16b4e64a-6978-4e38-9419-5f8aecf9c216">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.1435888100000016"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<queryString>
+		<![CDATA[SELECT M1.ZONE_CD
+        ,Z1.ZONE_NM
+        ,M1.BANK_CD
+        ,M1.BAY_CD
+        ,M1.LEV_CD
+        ,M1.BRAND_CD
+        ,B1.BRAND_NM
+        ,M1.ITEM_CD
+        ,T1.ITEM_NM
+        ,T1.ITEM_SPEC
+        ,WF.DSP_COMBO(M1.ITEM_STATE ,C1.COMMON_NM) AS ITEM_STATE_F
+        ,T1.QTY_IN_BOX
+        ,M1.LOCATION_CD
+        ,LAG('N' ,1 ,'Y') OVER(PARTITION BY M1.ZONE_CD ORDER BY M1.BANK_CD ,M1.BAY_CD ,M1.LEV_CD) AS ZONE_FIRST_YN
+        ,LAG('N' ,1 ,'Y') OVER(PARTITION BY M1.ZONE_CD ,M1.BANK_CD ORDER BY M1.BAY_CD ,M1.LEV_CD) AS BANK_FIRST_YN
+        ,LAG('N' ,1 ,'Y') OVER(PARTITION BY M1.ZONE_CD ,M1.BANK_CD ,M1.BAY_CD ORDER BY M1.LEV_CD) AS BAY_FIRST_YN
+    FROM CMLOCATIONFIX M1
+         JOIN CMZONE  Z1 ON Z1.CENTER_CD  = M1.CENTER_CD
+                        AND Z1.ZONE_CD    = M1.ZONE_CD
+         JOIN CMBRAND B1 ON B1.BRAND_CD   = M1.BRAND_CD
+         JOIN CMITEM  T1 ON T1.BRAND_CD   = M1.BRAND_CD
+                        AND T1.ITEM_CD    = M1.ITEM_CD
+         JOIN CMCODE  C1 ON C1.COMMON_CD  = M1.ITEM_STATE
+                        AND C1.COMMON_GRP = WF.GET_COMMON_GRP('ITEM_STATE')
+   WHERE M1.CENTER_CD = 'S1'
+     AND (M1.LOCATION_CD ,M1.BU_CD ,M1.BRAND_CD ,M1.ITEM_CD ,M1.ITEM_STATE)
+         IN (SELECT 'I-09-3-1','0000','0000','BCGJ1','A' FROM DUAL
+            )
+   ORDER BY ZONE_CD
+           ,BANK_CD
+           ,BAY_CD
+           ,LEV_CD
+           ,BRAND_CD
+           ,ITEM_CD
+           ,ITEM_STATE]]>
+	</queryString>
+	<field name="ZONE_CD" class="java.lang.String"/>
+	<field name="ZONE_NM" class="java.lang.String"/>
+	<field name="BANK_CD" class="java.lang.String"/>
+	<field name="BAY_CD" class="java.lang.String"/>
+	<field name="LEV_CD" class="java.lang.String"/>
+	<field name="BRAND_CD" class="java.lang.String"/>
+	<field name="BRAND_NM" class="java.lang.String"/>
+	<field name="ITEM_CD" class="java.lang.String"/>
+	<field name="ITEM_NM" class="java.lang.String"/>
+	<field name="ITEM_SPEC" class="java.lang.String"/>
+	<field name="ITEM_STATE_F" class="java.lang.String"/>
+	<field name="QTY_IN_BOX" class="java.math.BigDecimal"/>
+	<field name="LOCATION_CD" class="java.lang.String"/>
+	<field name="ZONE_FIRST_YN" class="java.lang.String"/>
+	<field name="BANK_FIRST_YN" class="java.lang.String"/>
+	<field name="BAY_FIRST_YN" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="169" splitType="Stretch">
+			<rectangle>
+				<reportElement key="rectangle-1" x="7" y="8" width="212" height="154" uuid="2a3e5c14-e7a7-4a38-b5d6-fa17702f9b62"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="118" width="52" height="21" uuid="f67fa0c0-ee40-49f7-944b-ab0a09dd9e1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품명칭]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-3" x="61" y="97" width="83" height="21" uuid="ce200974-42e1-478f-9a00-b4dadbadd85f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="144" y="97" width="30" height="21" uuid="1b35b236-289b-4827-bec8-1bf787939d5e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[입수]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-2" stretchType="RelativeToBandHeight" x="61" y="118" width="159" height="21" uuid="ea4b4af1-36de-4a6d-9d3c-8dd5181e536e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="7" y="96" width="212" height="1" uuid="7c4369dc-4b0c-4900-84ad-b2635b9b9f0e"/>
+			</line>
+			<line>
+				<reportElement key="line-2" x="7" y="117" width="212" height="1" uuid="a8693500-eb91-4a01-952d-011b00cb08ae"/>
+			</line>
+			<line>
+				<reportElement key="line-2" x="7" y="139" width="212" height="1" uuid="81ea96d0-c8b8-477e-bb3c-68448bfce7a7"/>
+			</line>
+			<staticText>
+				<reportElement x="7" y="97" width="52" height="21" uuid="d4294771-671f-4086-a5bb-dc2efff48f77"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품코드]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-5" stretchType="RelativeToBandHeight" x="61" y="140" width="159" height="21" uuid="c92edf78-222c-4d13-ad40-11cfb51b3210"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_SPEC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="7" y="140" width="52" height="21" uuid="680830e6-741f-49e8-b537-ac7e51985c48"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품규격]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="176" y="97" width="43" height="21" uuid="0f3a267e-12be-4b9e-ba35-9b1c4ea746f6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTY_IN_BOX}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement mode="Transparent" x="143" y="97" width="1" height="20" uuid="266efac7-76c1-436b-ad99-189e7cfd6655"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="175" y="97" width="1" height="20" uuid="73c4a5ce-c479-4d5d-b851-70871bf72ab6"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="59" y="97" width="1" height="63" uuid="a122ec80-cd1a-47d2-9d8f-8025c72a301d"/>
+			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-4" x="7" y="7" width="212" height="37" uuid="a49f4f63-1e87-419a-afef-7acf6fca0813"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="D2Coding" size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LOCATION_CD}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement mode="Transparent" x="29" y="44" width="171" height="37" uuid="b32c7079-7f0b-471b-98be-15f2c911ad4f"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{LOCATION_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement mode="Transparent" x="29" y="61" width="171" height="37" uuid="32414751-7e81-43c5-b564-7394936bd131"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{LOCATION_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

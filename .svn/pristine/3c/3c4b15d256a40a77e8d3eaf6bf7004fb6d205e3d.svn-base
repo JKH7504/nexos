@@ -1,0 +1,134 @@
+package nexos.service.lo;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+
+import nexos.dao.lo.LOC05090E0DAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.ServiceSupport;
+
+/**
+ * Class: LOC05090E0Service<br>
+ * Description: 출고작업비등록(LOC05090E0) 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class LOC05090E0Service extends ServiceSupport {
+
+    final String          SP_ID_GET_LO_OUTBOUND_STATE = "WF.GET_LO_OUTBOUND_STATE";
+
+    @Autowired
+    private LOC05090E0DAO dao;
+
+    /**
+     * 출고작업비등록 저장 처리
+     * 
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String save(Map<String, Object> params) throws Exception {
+
+        // 진행상태 체크
+        List<Map<String, Object>> masterRowData = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> subRowData = (List<Map<String, Object>>)params.get(Consts.PK_DS_SUB);
+
+        int masterCnt = masterRowData.size();
+        for (int i = 0; i < masterCnt; i++) {
+            Map<String, Object> rowData = masterRowData.get(i);
+            Map<String, Object> checkParams = new HashMap<String, Object>();
+            String checkState = (String)rowData.get("P_CHECK_STATE");
+
+            checkParams.put("P_CENTER_CD", rowData.get("P_CENTER_CD"));
+            checkParams.put("P_BU_CD", rowData.get("P_BU_CD"));
+            checkParams.put("P_LINE_NO", rowData.get(""));
+            checkParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_ENTRY);
+            checkParams.put("P_STATE_DIV", "1"); // 상태구분([1]MIN, [2]MAX)
+            checkParams.put("P_OUTBOUND_DATE", rowData.get("P_OUTBOUND_DATE"));
+            checkParams.put("P_OUTBOUND_NO", rowData.get("P_OUTBOUND_NO"));
+
+            String oMsg = canProcessingState(checkParams, checkState);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+
+        int subCnt = subRowData.size();
+        for (int i = 0; i < subCnt; i++) {
+            Map<String, Object> rowData = subRowData.get(i);
+            Map<String, Object> checkParams = new HashMap<String, Object>();
+            String checkState = (String)rowData.get("P_CHECK_STATE");
+
+            checkParams.put("P_CENTER_CD", rowData.get("P_CENTER_CD"));
+            checkParams.put("P_BU_CD", rowData.get("P_BU_CD"));
+            checkParams.put("P_LINE_NO", rowData.get(""));
+            checkParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_ENTRY);
+            checkParams.put("P_STATE_DIV", "1"); // 상태구분([1]MIN, [2]MAX)
+            checkParams.put("P_OUTBOUND_DATE", rowData.get("P_OUTBOUND_DATE"));
+            checkParams.put("P_OUTBOUND_NO", rowData.get("P_OUTBOUND_NO"));
+
+            String oMsg = canProcessingState(checkParams, checkState);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.saveSub(params);
+            dao.saveMaster(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * OUTBOUND_STATE 체크
+     * 
+     * @param params
+     * @param checkState
+     * @return
+     */
+    public String canProcessingState(Map<String, Object> params, String checkState) {
+
+        String result = Consts.OK;
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_LO_OUTBOUND_STATE, params);
+        String oMsg = Util.getOutMessage(resultMap);
+        if (Consts.OK.equals(oMsg)) {
+            String oOutboundState = (String)resultMap.get("O_OUTBOUND_STATE");
+            if (!Util.nullToEmpty(checkState).equals(oOutboundState)) {
+                result = NexosMessage.getDisplayMsg("JAVA.STATE.004", "[전표일자 : " + (String)resultMap.get("P_OUTBOUND_DATE") //
+                    + ", 전표번호 : " + (String)resultMap.get("P_OUTBOUND_NO") //
+                    + ", 진행상태 : " + oOutboundState + "]\n진행상태가 변경되었습니다.\n다시 조회 후 데이터를 확인하십시오." //
+                    , new String[ ] {(String)resultMap.get("P_OUTBOUND_NO"), oOutboundState});
+            }
+        } else {
+            result = oMsg;
+        }
+
+        return result;
+    }
+}

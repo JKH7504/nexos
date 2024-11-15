@@ -1,0 +1,64 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC02011P0
+    프로그램명         : 운송권역복사 팝업
+    프로그램설명       : 운송권역복사 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01011P0.css" /> -->
+<script src="js/CMC02011P0.js"></script>
+</head>
+<body>
+    <div id="divLeftView" class="ctrLeft" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_NewUser" class="lblTitle">기준 물류센터정보</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblCenter_Cd" class="lblKey" style="min-width: 60px;">물류센터</div>
+                <input id="edtCenter_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 190px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblArea_Cd" class="lblNormal" style="min-width: 60px;">운송권역</div>
+                <input id="edtArea_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 60px;" />
+                <input id="edtArea_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 124px;" />
+            </div>
+        </div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_DestUser" class="lblTitle">대상 물류센터정보</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblCenter_Cd" class="lblKey">물류센터</div>
+                <select id="cboTo_Center_Cd" class="cboKey" style="width: 150px;"></select>
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnCopy" class="btnNormal" type="button" value="복사하기" style="width: 80px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

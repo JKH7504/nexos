@@ -1,0 +1,56 @@
+package nexos.dao.lc;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: WCDAOImpl<br>
+ * Description: LCC08010E0DAO DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2020-09-29    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("LCC08010E0DAO")
+public class LCC08010E0DAOImpl extends DaoSupport implements LCC08010E0DAO {
+
+    final String SP_ID_LS_010NM_PALLET_RELOAD = "LS_010NM_PALLET_RELOAD";
+
+    @Override
+    public String callStockPalletReload(Map<String, Object> params) throws Exception {
+
+        String result = Consts.OK;
+
+        Map<String, Object> resultMap = null;
+        String checkedValue = (String)params.get(Consts.PK_CHECKED_VALUE);
+
+        // 선택 값 CTCHECKVALUE 테이블에 INSERT
+        Map<String, Object> checkedParams = new HashMap<String, Object>();
+        checkedParams.put(Consts.PK_CHECKED_VALUE, checkedValue);
+        insertCheckedValue(checkedParams);
+
+        resultMap = callProcedure(SP_ID_LS_010NM_PALLET_RELOAD, params);
+
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        return result;
+    }
+
+}

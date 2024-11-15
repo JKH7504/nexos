@@ -1,0 +1,60 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LFC03080E0
+    프로그램명         : PLT/BOX/EA 단가관리
+    프로그램설명       : PLT/BOX/EA 단가관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2023-01-30
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2023-01-30    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LFC03080E0.css" /> -->
+<script src="js/LFC03080E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Contract_No" class="lblCondition">계약번호</div>
+                    <input id="edtQContract_No" class="edtNormal" type="text" style="width: 70px;" />
+                    <input id="btnQContract_No" class="btnIcoPopup" type="button" />
+                    <input id="edtQContract_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Bill_Div" class="lblCondition">정산구분</div>
+                    <input id="edtQBill_Div" class="edtNormal" type="text" style="width: 70px;" />
+                    <input id="btnQBill_Div" class="btnIcoPopup" type="button" />
+                    <input id="edtQBill_Div_D" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQContract_Month" class="lblCondition">계약월</div>
+                    <input id="dtpQContract_Month" class="dtpNormal" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">PLT/BOX/EA 단가내역</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

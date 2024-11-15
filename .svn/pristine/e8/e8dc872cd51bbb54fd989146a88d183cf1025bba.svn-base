@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LC_PROCESSING" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" uuid="54d283ce-764a-4316-ae9e-69dd64390a65">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.8181818181818192"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SPIGEN_NEXOX_V75"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="Title" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FSUBTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPRINTTIME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPUSER" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPAGE" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT M1.CENTER_CD
+      ,M1.BU_CD
+      ,M1.PROCESSING_DATE
+      ,M1.PROCESSING_NO
+      ,M1.BRAND_CD
+      ,B2.BRAND_NM
+      ,M1.ITEM_CD
+      ,T1.ITEM_NM      AS PROCESSING_NM
+      ,T1.ITEM_BAR_CD
+      ,M1.CONFIRM_QTY  AS PROCESSING_QTY
+      ,M2.MATERIAL_CD
+      ,T2.MATERIAL_NM
+      ,M2.CONFIRM_QTY  AS MATERIAL_QTY
+      ,M2.REMARK1        AS MATERIAL_REMARK
+      ,WF.DSP_COMBO(M1.CENTER_CD ,C1.CENTER_NM)   AS CENTER_CD_F
+      ,WF.DSP_COMBO(M1.BU_CD       ,B1.BU_NM)           AS BU_CD_F
+      ,CASE WHEN M1.CONFIRM_YN = WD.C_YES THEN '(확정)' ELSE '(등록)' END AS CONFIRM_YN
+  FROM LC110NM M1
+       JOIN LC110ND    M2 ON M2.CENTER_CD       = M1.CENTER_CD
+                         AND M2.BU_CD           = M1.BU_CD
+                         AND M2.PROCESSING_DATE = M1.PROCESSING_DATE
+                         AND M2.PROCESSING_NO   = M1.PROCESSING_NO
+       JOIN CMCENTER   C1 ON C1.CENTER_CD       = M1.CENTER_CD
+       JOIN CMBU       B1 ON B1.BU_CD           = M1.BU_CD
+       JOIN CMBRAND B2 ON B2.BRAND_CD    = M1.BRAND_CD
+       JOIN CMITEM     T1 ON T1.BRAND_CD        = M1.BRAND_CD
+                         AND T1.ITEM_CD         = M1.ITEM_CD
+       JOIN CMMATERIAL T2 ON T2.CUST_CD         = M2.CUST_CD
+                         AND T2.MATERIAL_CD     = M2.MATERIAL_CD
+ WHERE M1.CENTER_CD         = 'RD'
+   AND M1.BU_CD                  = 'RD'
+   AND M1.PROCESSING_DATE = TO_DATE('20230629' ,'YYYY-MM-DD')
+   AND M1.PROCESSING_NO   = '000004']]>
+	</queryString>
+	<field name="CENTER_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CENTER_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="CENTER_CD"/>
+	</field>
+	<field name="BU_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_CD"/>
+	</field>
+	<field name="PROCESSING_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PROCESSING_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="PROCESSING_DATE"/>
+	</field>
+	<field name="PROCESSING_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PROCESSING_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="PROCESSING_NO"/>
+	</field>
+	<field name="BRAND_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRAND_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRAND_CD"/>
+	</field>
+	<field name="BRAND_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRAND_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRAND_NM"/>
+	</field>
+	<field name="ITEM_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_CD"/>
+	</field>
+	<field name="PROCESSING_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PROCESSING_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="PROCESSING_NM"/>
+	</field>
+	<field name="ITEM_BAR_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_BAR_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_BAR_CD"/>
+	</field>
+	<field name="PROCESSING_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="PROCESSING_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="PROCESSING_QTY"/>
+	</field>
+	<field name="MATERIAL_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MATERIAL_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="MATERIAL_CD"/>
+	</field>
+	<field name="MATERIAL_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MATERIAL_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="MATERIAL_NM"/>
+	</field>
+	<field name="MATERIAL_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="MATERIAL_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="MATERIAL_QTY"/>
+	</field>
+	<field name="MATERIAL_REMARK" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MATERIAL_REMARK"/>
+		<property name="com.jaspersoft.studio.field.label" value="MATERIAL_REMARK"/>
+	</field>
+	<field name="CENTER_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CENTER_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="CENTER_CD_F"/>
+	</field>
+	<field name="BU_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_CD_F"/>
+	</field>
+	<field name="CONFIRM_YN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CONFIRM_YN"/>
+		<property name="com.jaspersoft.studio.field.label" value="CONFIRM_YN"/>
+	</field>
+	<variable name="PAGE_ITEM_CD" class="java.lang.String" resetType="Page" calculation="First">
+		<variableExpression><![CDATA[$F{ITEM_CD}]]></variableExpression>
+	</variable>
+	<group name="GRP_PAGE" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{ITEM_CD}+$F{CENTER_CD}+$F{BU_CD}+$F{PROCESSING_DATE}+$F{PROCESSING_NO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="1">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<line>
+					<reportElement key="line-3" x="0" y="0" width="567" height="1" uuid="365e7e6c-f8dd-4876-9745-cb87f05883a8"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="205" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-3" x="0" y="71" width="55" height="14" uuid="b42e1bb2-cba1-4c3a-8165-6420eda1bc2e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[가공번호 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" x="0" y="57" width="55" height="14" uuid="064ea3db-e289-4b35-90ff-27e92dd19f48">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[가공일자 :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-4" x="55" y="43" width="130" height="14" uuid="b9b5f6a7-de95-4fe1-b98e-0dd9a3199b5d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BU_CD_F}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="55" y="57" width="130" height="14" uuid="745decee-1b78-4920-8bc9-48e681c7b2d9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROCESSING_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-3" x="55" y="29" width="130" height="14" uuid="2b36b338-4ff9-41d6-a723-02290ec1dc3d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTER_CD_F}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-6" x="55" y="71" width="130" height="14" uuid="e282a28d-4422-4a63-84f9-733f7aac910e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROCESSING_NO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-3" x="0" y="100" width="70" height="18" uuid="de3f77bd-812c-4889-9afd-7f9df90781f8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[가공상품명]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="0" y="43" width="55" height="14" uuid="fb542e03-2d9d-4141-ab5c-394bf279bd6b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[사 업 부 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="29" width="55" height="14" uuid="33400395-f52e-4245-938e-7c3bf7a9a599">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[물류센터 :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="567" height="26" uuid="8840cfa2-c71c-44a7-a074-cd6fd9ec66f2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="18" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_REPORT_TITLE_NM} + $F{CONFIRM_YN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="391" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="b9305698-9f0c-43a5-8cea-f1b1ea946399">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]가공작업지시서]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="458" y="68" width="109" height="14" uuid="ebefc9e6-5ff5-4bad-9f94-833f59c28663"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-6" x="392" y="68" width="66" height="14" uuid="69a2cb6d-eba5-4e7a-8892-a80a73f0bfbe"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력일시   :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-7" x="392" y="54" width="66" height="14" uuid="82c185b3-b1ec-43a4-859f-37c07a2413e7"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력사용자 :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-2" x="458" y="54" width="109" height="14" uuid="2f773ccc-67b1-4579-aeb9-dd4f9763a5dd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USER_ID}+" - "+$P{P_USER_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-3" x="0" y="180" width="79" height="22" uuid="a458d0a3-31e4-43ba-a1e2-5dc04d63cf95">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[가공작업상세]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-1" x="0" y="122" width="567" height="1" uuid="2f34986b-8ad1-4ed0-b111-19c472897e5d"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="375" y="123" width="46" height="20" uuid="b8cb8733-2ceb-4110-b931-06fc0345dfe7"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[가공작업수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="421" y="123" width="146" height="20" uuid="8564cfc4-7a6d-4e77-a99d-5385f98771fb"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[바코드]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="123" width="110" height="20" uuid="77b4ccf4-0a40-457c-8a0f-fb2ee45afbd0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[제품코드]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="110" y="123" width="190" height="20" uuid="d4fd2d0d-f848-4da6-9b8b-4813668a0f76"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품명]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="0" y="143" width="110" height="22" uuid="8f759908-74d0-4d1a-a320-60f3f61f3f83">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="110" y="143" width="190" height="22" uuid="39f6d9bf-1a50-4ee3-a1bf-ef1caf1135bc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+					<paragraph lineSpacing="Double"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROCESSING_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="375" y="143" width="46" height="22" printWhenGroupChanges="GRP_PAGE" uuid="b18a1ede-6486-4426-9127-3fdb2b10e2ea">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROCESSING_QTY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="421" y="143" width="146" height="22" printWhenGroupChanges="GRP_PAGE" uuid="c64bc697-b4b9-4d58-9445-863fcc2b9eba">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_BAR_CD}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="0" y="164" width="567" height="1" uuid="bf080230-313c-4bfd-94ac-600d36735075"/>
+			</line>
+			<line>
+				<reportElement key="line-1" x="0" y="142" width="567" height="1" uuid="3acf3501-f986-4fc3-9a6e-48e5c131fb36"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="300" y="123" width="74" height="20" uuid="fe0a6699-dd7a-4a6e-8bdf-d71252f31ba2"/>
+				<box rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[브랜드명]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="300" y="143" width="74" height="22" printWhenGroupChanges="GRP_PAGE" uuid="1555388f-9748-4791-a20d-380ce2c580ad">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BRAND_NM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<line>
+				<reportElement key="line-1" x="0" y="-1" width="567" height="1" uuid="8f76a07e-97ff-4e4f-a47a-c83c17d7cf15"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="0" width="54" height="20" uuid="1e4b3ccd-ec29-4f7a-9f62-1de2153b6d96"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="54" y="0" width="97" height="20" uuid="ed95f61e-bf99-4b33-952b-9e3abb005246">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[가공코드]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="151" y="0" width="224" height="20" uuid="2767e6ec-6605-4dd0-badb-69eb20e400d1"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[가공명]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="375" y="0" width="46" height="20" uuid="d9d90fd3-61f5-48ce-a886-135c74fe4cd1"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[자재수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="421" y="0" width="146" height="20" uuid="a9aa290b-7177-4d18-bc6c-aeda8148f6d7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[비고]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-3" x="0" y="18" width="567" height="1" uuid="00ad69aa-586b-4ac1-954d-3893fa1abd12"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="54" y="0" width="97" height="22" uuid="b731b2b6-f31c-484f-b85a-58e775c87dab">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MATERIAL_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="0" y="0" width="54" height="22" uuid="9bec8169-f91c-4170-930e-65cafa144faa">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box rightPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="151" y="0" width="224" height="22" uuid="f764955a-9102-4ea5-820e-f691ee9b9d25">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+					<paragraph lineSpacing="Double"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MATERIAL_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###;#,##0.###-" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="375" y="0" width="46" height="22" uuid="22a1160f-3639-40bd-839e-a44f95bc09b9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+					<paragraph lineSpacingSize="1.0" rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MATERIAL_QTY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="450" y="0" width="116" height="22" uuid="5130753b-d1d1-481d-9d4d-db7b39f111c1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MATERIAL_REMARK}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-6" x="0" y="21" width="567" height="1" uuid="fa2e0c92-89a9-4e61-b449-2cfeb2e0385d">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="222" y="3" width="50" height="14" uuid="b9d9dbef-1de1-4e27-ab20-ebae85761d12">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="294" y="3" width="50" height="14" uuid="32370696-8df1-4948-9f1a-429fcd749755">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="274" y="3" width="19" height="14" uuid="ead76f4e-a428-4e24-9c97-8e2c4fbcf703">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

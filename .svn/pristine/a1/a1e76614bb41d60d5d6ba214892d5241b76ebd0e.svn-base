@@ -1,0 +1,487 @@
+﻿/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : LOC04010Q0
+ *  프로그램명         : WCS작업결과내역
+ *  프로그램설명       : WCS작업결과내역 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2023-06-20
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2023-06-20    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#divMasterView",
+            grids: [
+                "#grdMaster"
+            ]
+        }
+    });
+
+    // 그리드 초기화
+    grdMasterInitialize();
+
+    // 초기값 설정
+    $NC.setValue("#edtQBu_Cd", $NC.G_USERINFO.BU_CD);
+    $NC.setValue("#edtQBu_Nm", $NC.G_USERINFO.BU_NM);
+    $NC.setValue("#edtQCust_Cd", $NC.G_USERINFO.CUST_CD);
+
+    $("#btnQBu_Cd").click(showUserBuPopup);
+    $("#btnQOutbound_Batch").click(setOutboundBatchCombo); // 출고차수 재조회
+
+    $NC.setInitDatePicker("#dtpQOutbound_Date");
+
+    // 조회조건 - 물류센터 초기화
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CSUSERCENTER",
+        P_QUERY_PARAMS: {
+            P_USER_ID: $NC.G_USERINFO.USER_ID,
+            P_CENTER_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQCenter_Cd",
+        codeField: "CENTER_CD",
+        nameField: "CENTER_NM",
+        onComplete: function() {
+            $NC.setValue("#cboQCenter_Cd", $NC.G_USERINFO.CENTER_CD);
+            setOutboundBatchCombo();
+        }
+    });
+
+    // 검색구분 콤보박스 세팅
+    $NC.setInitComboData({
+        selector: "#cboQView_Div",
+        codeField: "COMMON_CD",
+        nameField: "COMMON_NM",
+        data: [
+            {
+                COMMON_CD: 0,
+                COMMON_NM: $NC.getDisplayMsg("JS.LOC04010Q0.010", "전체")
+            },
+            {
+                COMMON_CD: 1,
+                COMMON_NM: $NC.getDisplayMsg("JS.LOC04010Q0.011", "결품발생상품")
+            }
+        ],
+        onComplete: function() {
+            $NC.setValue("#cboQView_Div", 1);
+        }
+    });
+
+    // 운송장구분에 전체를 선택
+    $NC.setValueRadioGroup("rgbQEquip_Div", $ND.C_BASE_CD_L1); // 기본값 0 -전체
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * Input, Select Change Event 처리
+ * 
+ * @param e
+ *        이벤트 핸들러
+ * @param view
+ *        대상 Object
+ */
+function _OnConditionChange(e, view, val) {
+
+    var id = view.prop("id").substr(4).toUpperCase();
+    switch (id) {
+        case "CENTER_CD":
+            setOutboundBatchCombo();
+            break;
+        case "BU_CD":
+            $NP.onUserBuChange(val, {
+                P_USER_ID: $NC.G_USERINFO.USER_ID,
+                P_BU_CD: val,
+                P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+            }, onUserBuPopup);
+            return;
+        case "OUTBOUND_DATE":
+            $NC.setValueDatePicker(view, val, $NC.getDisplayMsg("JS.LOC04010Q0.001", "출고일자를 정확히 입력하십시오."));
+            setOutboundBatchCombo();
+            break;
+    }
+
+    // 화면클리어
+    onChangingCondition();
+}
+
+/**
+ * 검색항목 값 변경시 화면 클리어
+ */
+function onChangingCondition() {
+
+    // 초기화
+    $NC.clearGridData(G_GRDMASTER);
+
+    // 공통 버튼 초기화 - 조회 버튼만 활성
+    $NC.setInitTopButtons();
+}
+
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    if ($NC.isNull(CENTER_CD)) {
+        alert($NC.getDisplayMsg("JS.LOC04010Q0.003", "물류센터를 선택하십시오."));
+        $NC.setFocus("#cboQCenter_Cd");
+        return;
+    }
+
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    if ($NC.isNull(BU_CD)) {
+        alert($NC.getDisplayMsg("JS.LOC04010Q0.004", "사업부를 입력하십시오."));
+        $NC.setFocus("#edtQBu_Cd");
+        return;
+    }
+
+    var OUTBOUND_DATE = $NC.getValue("#dtpQOutbound_Date");
+    if ($NC.isNull(OUTBOUND_DATE)) {
+        alert($NC.getDisplayMsg("JS.LOC04010Q0.005", "출고일자를 입력하십시오."));
+        $NC.setFocus("#dtpQOutbound_Date");
+        return;
+    }
+
+    var VIEW_DIV = $NC.getValue("#cboQView_Div");
+    if ($NC.isNull(VIEW_DIV)) {
+        alert($NC.getDisplayMsg("JS.LOC04010Q0.008", "결품발생여부를 선택하십시오."));
+        $NC.setFocus("#cboQView_Div");
+    }
+
+    var OUTBOUND_BATCH = $NC.getValue("#cboQOutbound_Batch");
+    var EQUIP_DIV = $NC.getValueRadioGroup("rgbQEquip_Div");
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTER);
+
+    G_GRDMASTER.queryParams = {
+        P_CENTER_CD: CENTER_CD,
+        P_BU_CD: BU_CD,
+        P_OUTBOUND_DATE: OUTBOUND_DATE,
+        P_OUTBOUND_BATCH: OUTBOUND_BATCH,
+        P_EQUIP_DIV: EQUIP_DIV,
+        P_VIEW_DIV: VIEW_DIV
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LOC04010Q0/getDataSet.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel() {
+
+}
+
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "OUTBOUND_NO",
+        field: "OUTBOUND_NO",
+        name: "출고번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "OUTBOUND_BATCH_F",
+        field: "OUTBOUND_BATCH_F",
+        name: "출고차수"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INOUT_CD_F",
+        field: "INOUT_CD_F",
+        name: "출고구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "EQUIP_NM",
+        field: "EQUIP_NM",
+        name: "장비명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "EQUIP_DIV_F",
+        field: "EQUIP_DIV_F",
+        name: "장비구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_BAR_CD",
+        field: "ITEM_BAR_CD",
+        name: "상품바코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_NM",
+        field: "ITEM_NM",
+        name: "상품명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_SPEC",
+        field: "ITEM_SPEC",
+        name: "규격"
+    });
+    $NC.setGridColumn(columns, {
+        id: "QTY_IN_BOX",
+        field: "QTY_IN_BOX",
+        name: "입수",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BRAND_NM",
+        field: "BRAND_NM",
+        name: "브랜드명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LOCATION_CD",
+        field: "LOCATION_CD",
+        name: "로케이션코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ENTRY_QTY",
+        field: "ENTRY_QTY",
+        name: "등록수량",
+        cssClass: "styRight",
+        // 기본 Formatter 자동 지정이 아닌 임의 지정
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("FLOAT_QTY")
+    });
+    $NC.setGridColumn(columns, {
+        id: "PICK_QTY",
+        field: "PICK_QTY",
+        name: "피킹수량",
+        cssClass: "styRight",
+        // 기본 Formatter 자동 지정이 아닌 임의 지정
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("FLOAT_QTY")
+    });
+    $NC.setGridColumn(columns, {
+        id: "CONFIRM_QTY",
+        field: "CONFIRM_QTY",
+        name: "확정수량",
+        cssClass: "styRight",
+        // 기본 Formatter 자동 지정이 아닌 임의 지정
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("FLOAT_QTY")
+    });
+    $NC.setGridColumn(columns, {
+        id: "CART_BATCH",
+        field: "CART_BATCH",
+        name: "카트배치"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DAS_BATCH",
+        field: "DAS_BATCH",
+        name: "DAS배치"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DPC_DIV",
+        field: "DPC_DIV",
+        name: "DPC구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CART_ID",
+        field: "CART_ID",
+        name: "카트ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "TOTEBOX_ID",
+        field: "TOTEBOX_ID",
+        name: "토트박스ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BIN_ID",
+        field: "BIN_ID",
+        name: "오토스토어빈ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_USER_ID",
+        field: "RECV_USER_ID",
+        name: "수신사용자ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_DATETIME",
+        field: "RECV_DATETIME",
+        name: "수신처리일시",
+        cssClass: "styCenter"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 출고시리얼 내역 그리드 초기화
+ */
+function grdMasterInitialize() {
+
+    var options = {
+        frozenColumn: 3
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "LOC04010Q0.RS_MASTER",
+        sortCol: "OUTBOUND_NO",
+        gridOptions: options,
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+}
+
+/**
+ * 출고시리얼 내역 그리드 행 클릭시 처리
+ * 
+ * @param e
+ * @param args
+ */
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+/**
+ * 출고시리얼 내역 조회버튼 클릭후 그리드에 데이터 표시처리
+ * 
+ * @param ajaxData
+ */
+function onGetMaster(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTER, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDMASTER, "OUTBOUND_NO");
+}
+
+/**
+ * 검색조건의 사업부 검색 팝업 클릭
+ */
+function showUserBuPopup() {
+
+    $NP.showUserBuPopup({
+        P_USER_ID: $NC.G_USERINFO.USER_ID,
+        P_BU_CD: $ND.C_ALL,
+        P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+    }, onUserBuPopup, function() {
+        $NC.setFocus("#edtQBu_Cd", true);
+    });
+}
+
+/**
+ * 사업부 검색 결과
+ * 
+ * @param resultInfo
+ */
+function onUserBuPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQBu_Cd", resultInfo.BU_CD);
+        $NC.setValue("#edtQBu_Nm", resultInfo.BU_NM);
+        $NC.setValue("#edtQCust_Cd", resultInfo.CUST_CD);
+    } else {
+        $NC.setValue("#edtQBu_Cd");
+        $NC.setValue("#edtQBu_Nm");
+        $NC.setValue("#edtQCust_Cd");
+        $NC.setFocus("#edtQBu_Cd", true);
+    }
+    $NC.setValue("#edtQBrand_Cd");
+    $NC.setValue("#edtQBrand_Nm");
+    onChangingCondition();
+}
+
+/**
+ * 물류센터/사업부/출고일자 값 변경시 출고차수 콤보 재설정
+ */
+function setOutboundBatchCombo() {
+
+    // 조회조건 - 출고차수 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "LOC04010Q0.RS_SUB1",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.getValue("#cboQCenter_Cd"),
+            P_BU_CD: $NC.getValue("#edtQBu_Cd"),
+            P_OUTBOUND_DATE: $NC.getValue("#dtpQOutbound_Date")
+        }
+    }, {
+        selector: "#cboQOutbound_Batch",
+        codeField: "OUTBOUND_BATCH",
+        nameField: "OUTBOUND_BATCH",
+        fullNameField: "OUTBOUND_BATCH_F",
+        addAll: true
+    });
+}

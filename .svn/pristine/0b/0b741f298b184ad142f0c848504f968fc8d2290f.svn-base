@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 운송관리 관련 Procedure
+  // Author : ASETEC
+  // Date : 2022-11-30
+  // Description
+  // 운송관리 관련 Procedure Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROCEDURE_MAPPER('LD') AS SQLMAP_TEXT
+    FROM DUAL;
+  //====================================================================================================================
+  // ※ Procedure 호출 관련 Mapper의 Namespace는 "SP" 로 처리
+  //====================================================================================================================
+  -->
+<mapper namespace="SP">
+  <!--
+  //====================================================================================================================
+  // PROCEDURE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="LD_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - LD_APPLY_FUEL_PRICE_T1 -->
+  <select id="LD_APPLY_FUEL_PRICE_T1" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_APPLY_FUEL_PRICE_T1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_MONTH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_FUEL_PRICE              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_APPLY_FUEL_PRICE_T1 -->
+
+
+  <!-- [S] - LD_APPLY_FUEL_PRICE_T2 -->
+  <select id="LD_APPLY_FUEL_PRICE_T2" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_APPLY_FUEL_PRICE_T2
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE1          ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_DATE2          ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_FUEL_PRICE              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_APPLY_FUEL_PRICE_T2 -->
+
+
+  <!-- [S] - LD_BW_BU_CLOSING_DAILY -->
+  <select id="LD_BW_BU_CLOSING_DAILY" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_BW_BU_CLOSING_DAILY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_BW_BU_CLOSING_DAILY -->
+
+
+  <!-- [S] - LD_BW_CLOSING_DAILY -->
+  <select id="LD_BW_CLOSING_DAILY" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_BW_CLOSING_DAILY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_BW_CLOSING_DAILY -->
+
+
+  <!-- [S] - LD_BW_CLOSING_MONTHLY -->
+  <select id="LD_BW_CLOSING_MONTHLY" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_BW_CLOSING_MONTHLY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ADJUST_MONTH            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_BW_CLOSING_MONTHLY -->
+
+
+  <!-- [S] - LD_BW_DISTRIBUTE_DIV -->
+  <select id="LD_BW_DISTRIBUTE_DIV" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_BW_DISTRIBUTE_DIV
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_BW_DISTRIBUTE_DIV -->
+
+
+  <!-- [S] - LD_CLOSING_DAILY_CHECK -->
+  <select id="LD_CLOSING_DAILY_CHECK" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_CLOSING_DAILY_CHECK
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_DAILY_CHECK             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_CLOSING_DAILY_CHECK -->
+
+
+  <!-- [S] - LD_FW_BU_CLOSING_DAILY -->
+  <select id="LD_FW_BU_CLOSING_DAILY" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_BU_CLOSING_DAILY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_BU_CLOSING_DAILY -->
+
+
+  <!-- [S] - LD_FW_CHANGE_CAR_T1 -->
+  <select id="LD_FW_CHANGE_CAR_T1" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CHANGE_CAR_T1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DELIVERY_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_NEW_CAR_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CHANGE_CAR_T1 -->
+
+
+  <!-- [S] - LD_FW_CHANGE_CAR_T2 -->
+  <select id="LD_FW_CHANGE_CAR_T2" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CHANGE_CAR_T2
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DELIVERY_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_RDELIVERY_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_NEW_CAR_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CHANGE_CAR_T2 -->
+
+
+  <!-- [S] - LD_FW_CHANGE_CAR_T3 -->
+  <select id="LD_FW_CHANGE_CAR_T3" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CHANGE_CAR_T3
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_NEW_CAR_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CHANGE_CAR_T3 -->
+
+
+  <!-- [S] - LD_FW_CHANGE_DOCK_T1 -->
+  <select id="LD_FW_CHANGE_DOCK_T1" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CHANGE_DOCK_T1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DELIVERY_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DOCK_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_NEW_DOCK_NO             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CHANGE_DOCK_T1 -->
+
+
+  <!-- [S] - LD_FW_CHANGE_DOCK_T2 -->
+  <select id="LD_FW_CHANGE_DOCK_T2" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CHANGE_DOCK_T2
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DOCK_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_NEW_DOCK_NO             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CHANGE_DOCK_T2 -->
+
+
+  <!-- [S] - LD_FW_CLOSING_DAILY -->
+  <select id="LD_FW_CLOSING_DAILY" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CLOSING_DAILY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CLOSING_DAILY -->
+
+
+  <!-- [S] - LD_FW_CLOSING_MONTHLY -->
+  <select id="LD_FW_CLOSING_MONTHLY" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_CLOSING_MONTHLY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ADJUST_MONTH            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_CLOSING_MONTHLY -->
+
+
+  <!-- [S] - LD_FW_DISTRIBUTE_DIV -->
+  <select id="LD_FW_DISTRIBUTE_DIV" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_DISTRIBUTE_DIV
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DISTRIBUTE_DIV          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_DISTRIBUTE_DIV -->
+
+
+  <!-- [S] - LD_FW_INIT_LD040NM -->
+  <select id="LD_FW_INIT_LD040NM" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_INIT_LD040NM
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_INIT_LD040NM -->
+
+
+  <!-- [S] - LD_FW_INIT_LD060NM -->
+  <select id="LD_FW_INIT_LD060NM" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_INIT_LD060NM
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ADJUST_MONTH            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_RUNNING_CNT             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_INIT_LD060NM -->
+
+
+  <!-- [S] - LD_FW_INIT_TRANS_ROUTE -->
+  <select id="LD_FW_INIT_TRANS_ROUTE" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_INIT_TRANS_ROUTE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DELIVERY_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_INIT_TRANS_ROUTE -->
+
+
+  <!-- [S] - LD_FW_SPLIT_ORDER -->
+  <select id="LD_FW_SPLIT_ORDER" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_FW_SPLIT_ORDER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ENTRY_QTY               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_FW_SPLIT_ORDER -->
+
+
+  <!-- [S] - LD_ROUTE_LEVEL_EXCHANGE -->
+  <select id="LD_ROUTE_LEVEL_EXCHANGE" statementType="CALLABLE" parameterType="hashmap">
+    {  call LD_ROUTE_LEVEL_EXCHANGE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DELIVERY_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_RDELIVERY_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TO_DELIVERY_CD          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TO_RDELIVERY_CD         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LD_ROUTE_LEVEL_EXCHANGE -->
+
+
+</mapper>

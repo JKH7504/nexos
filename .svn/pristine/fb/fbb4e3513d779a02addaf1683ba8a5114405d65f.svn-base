@@ -1,0 +1,295 @@
+package nexos.framework.config;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
+import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.session.ConcurrentSessionFilter;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import nexos.framework.Util;
+import nexos.framework.filter.SecurityUserAuthenticationFilter;
+import nexos.framework.filter.ServletRequestFilter;
+import nexos.framework.filter.ServletResponseFilter;
+import nexos.framework.security.DataEncryptor;
+import nexos.framework.security.SecurityUserDetailsService;
+import nexos.framework.security.SecurityUserPasswordEncoder;
+
+// ===================================================================================================================================================
+// XML 원본 설정 - context-security.xml
+// ===================================================================================================================================================
+// <?xml version="1.0" encoding="UTF-8"?>
+// <!--
+// ==================================================================================================================================================
+// Spring Root Context 설정 [보안 설정]
+// Author : ASETEC
+// Date : 2012-10-25
+// Description
+// Root Context 중에서 보안 설정 부분
+// ==================================================================================================================================================
+// -->
+// <beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security"
+// xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+// xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+// http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.7.xsd">
+// <!--
+// ==============================================================================================================================================
+// Security 보안 설정
+// ==============================================================================================================================================
+// -->
+// <security:http auto-config="true" use-expressions="true">
+// <security:intercept-url pattern="/**" requires-channel="#{commonProps['HTTP.REQUIRES.CHANNEL']}" />
+// <security:custom-filter position="CONCURRENT_SESSION_FILTER" ref="sessionAuthenticationFilter" />
+// <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+// <security:form-login login-page="/" />
+//
+// <!-- Cross Site Request Forgery (CSRF) - 사용안함(미적용) -->
+// <security:csrf disabled="true" />
+// <!-- iFrame 사용을 위해 X-Frame-Options을 SAMEORIGIN으로 적용 -->
+// <!-- 캐시 사용안함으로 설정 되지 않도록 지정(캐시 설정은 ResponseFilter에서 처리) -->
+// <security:headers>
+// <security:frame-options policy="SAMEORIGIN" />
+// <security:cache-control disabled="true" />
+// </security:headers>
+// </security:http>
+//
+// <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+// <bean id="securityContextRepository" class="org.springframework.security.web.context.HttpSessionSecurityContextRepository" />
+//
+// <!--
+// ==============================================================================================================================================
+// Session 체크 관련, 세션에 대한 별도 오류 처리 필터
+// ==============================================================================================================================================
+// -->
+// <bean id="sessionAuthenticationFilter" class="nexos.framework.filter.SecurityUserAuthenticationFilter">
+// <constructor-arg name="sessionRegistry" ref="sessionRegistry" />
+// </bean>
+//
+// <!--
+// ==============================================================================================================================================
+// Security User 정보
+// ==============================================================================================================================================
+// -->
+// <!-- depends-on="defaultDao" -->
+// <bean id="securityUserDetailsService" class="nexos.framework.security.SecurityUserDetailsService">
+// <!-- 직접 CSUSER 테이블에서 사용자 검색시 생성자에 dataSource 지정 -->
+// <constructor-arg ref="dataSource" />
+// <!-- 정의 된 SQL Mapper로 사용자 검색시 생성자에 dataSource를 지정하지 않고, Mapper 호출 속성을 세팅 -->
+// <!-- 미지정시 아래 정보를 사용 -->
+// <!--
+// <property name="queryId" value="WC.GET_LOGIN" />
+// <property name="paramUserId" value="P_USER_ID" />
+// <property name="columnUserId" value="USER_ID" />
+// <property name="columnUserPwd" value="USER_PWD" />
+// -->
+// </bean>
+//
+// <!--
+// ==============================================================================================================================================
+// Security User Password 암호화 처리
+// ==============================================================================================================================================
+// -->
+// <!-- depends-on="dataEncryptor" -->
+// <bean id="securityUserPasswordEncoder" class="nexos.framework.security.SecurityUserPasswordEncoder">
+// <property name="dataEncryptor" ref="dataEncryptor" />
+// </bean>
+//
+// <!--
+// ==============================================================================================================================================
+// User 단일 접속 처리 관련
+// ==============================================================================================================================================
+// -->
+// <bean id="sessionAuthenticationStrategy"
+// class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
+// <constructor-arg>
+// <list>
+// <bean class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+// <constructor-arg ref="sessionRegistry" />
+// <property name="maximumSessions" value="#{commonProps['MAXIMUM.SESSIONS']}" />
+// <property name="exceptionIfMaximumExceeded" value="false" />
+// </bean>
+// <bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy" />
+// <bean class="org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy">
+// <constructor-arg ref="sessionRegistry" />
+// </bean>
+// </list>
+// </constructor-arg>
+// </bean>
+//
+// <!--
+// ==============================================================================================================================================
+// Security 관련
+// ==============================================================================================================================================
+// -->
+// <security:authentication-manager alias="authenticationManager">
+// <security:authentication-provider ref="authenticationProvider" />
+// </security:authentication-manager>
+//
+// <bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+// <property name="userDetailsService" ref="securityUserDetailsService" />
+// <property name="passwordEncoder" ref="securityUserPasswordEncoder" />
+// <!-- <property name="hideUserNotFoundExceptions" value="false" /> -->
+// </bean>
+//
+// <!--
+// ==============================================================================================================================================
+// Service 대해 ROLE_USER를 세팅
+// ==============================================================================================================================================
+// -->
+// <!-- DAO, SERVICE Security 체크 사용안함
+// <security:global-method-security secured-annotations="enabled">
+// <security:protect-pointcut access="ROLE_USER" expression="execution(* nexos.service..*.*(..))" />
+// <security:protect-pointcut access="ROLE_USER" expression="execution(* nexos.dao..*.*(..))" />
+// </security:global-method-security>
+// -->
+// </beans>
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Autowired
+    private ComboPooledDataSource dataSource;
+
+    @Autowired
+    private GlobalProperties      globalProps;
+
+    @Autowired
+    private DataEncryptor         dataEncryptor;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeRequests().antMatchers("*.do").authenticated() //
+            .and() //
+            .formLogin().disable() //
+            .logout().disable() //
+            .httpBasic().disable() //
+            .csrf().disable() //
+            .headers().frameOptions().sameOrigin().cacheControl().disable() //
+            .and() //
+            .sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy()) //
+            .and() //
+            .addFilterAt(sessionAuthenticationFilter(), ConcurrentSessionFilter.class) //
+            .addFilterBefore(servletRequestFilter(), ChannelProcessingFilter.class) //
+            .addFilterAfter(servletResponseFilter(), SwitchUserFilter.class); //
+
+        if ("https".equalsIgnoreCase(globalProps.getProperty("HTTP.REQUIRES.CHANNEL"))) {
+            http.requiresChannel().anyRequest().requiresSecure();
+        } else {
+            http.requiresChannel().anyRequest().requiresInsecure();
+        }
+
+        return http.build();
+    }
+
+    @Bean
+    public SessionRegistryImpl sessionRegistry() throws Exception {
+
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public HttpSessionSecurityContextRepository securityContextRepository() throws Exception {
+
+        return new HttpSessionSecurityContextRepository();
+    }
+
+    @Bean
+    public SecurityUserDetailsService securityUserDetailsService() throws Exception {
+
+        SecurityUserDetailsService result = new SecurityUserDetailsService(dataSource);
+
+        return result;
+    }
+
+    @Bean
+    public SecurityUserPasswordEncoder securityUserPasswordEncoder() throws Exception {
+
+        SecurityUserPasswordEncoder result = new SecurityUserPasswordEncoder();
+        result.setDataEncryptor(dataEncryptor);
+
+        return result;
+    }
+
+    @Bean
+    public CompositeSessionAuthenticationStrategy sessionAuthenticationStrategy() throws Exception {
+
+        SessionRegistryImpl sessionRegistry = sessionRegistry();
+
+        List<SessionAuthenticationStrategy> delegateStrategies = new ArrayList<SessionAuthenticationStrategy>();
+        ConcurrentSessionControlAuthenticationStrategy concurrentSessionControl = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry);
+        concurrentSessionControl.setMaximumSessions(Util.toInt(globalProps.getProperty("MAXIMUM.SESSIONS")));
+        concurrentSessionControl.setExceptionIfMaximumExceeded(false);
+        delegateStrategies.add(concurrentSessionControl);
+        delegateStrategies.add(new SessionFixationProtectionStrategy());
+        delegateStrategies.add(new RegisterSessionAuthenticationStrategy(sessionRegistry));
+
+        return new CompositeSessionAuthenticationStrategy(delegateStrategies);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+
+        AuthenticationManagerBuilder result = http.getSharedObject(AuthenticationManagerBuilder.class);
+        result.authenticationProvider(authenticationProvider());
+
+        return result.build();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() throws Exception {
+
+        DaoAuthenticationProvider result = new DaoAuthenticationProvider();
+        result.setUserDetailsService(securityUserDetailsService());
+        result.setPasswordEncoder(securityUserPasswordEncoder());
+
+        return result;
+    }
+
+    @Bean
+    public SecurityUserAuthenticationFilter sessionAuthenticationFilter() throws Exception {
+
+        SecurityUserAuthenticationFilter result = new SecurityUserAuthenticationFilter(sessionRegistry());
+
+        return result;
+    }
+
+    @Bean
+    public ServletRequestFilter servletRequestFilter() {
+
+        ServletRequestFilter result = new ServletRequestFilter();
+        // result.setExcludeUrls(null);
+        // result.setIncludeUrls(new String[] {".do"});
+
+        return result;
+    }
+
+    @Bean
+    public ServletResponseFilter servletResponseFilter() {
+
+        ServletResponseFilter result = new ServletResponseFilter();
+        // result.setExcludeUrls(null);
+        // result.setIncludeUrls(new String[] {".html"});
+        // result.setCharacterEncoding(Consts.CHARSET);
+
+        return result;
+    }
+}

@@ -1,0 +1,712 @@
+package nexos.controller.ed.common;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.json.MapTypeReference;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.security.AuthenticationUtil;
+import nexos.framework.security.SecurityUserDetailsService;
+import nexos.framework.support.NexosSupport;
+import nexos.service.ed.common.EDIFApiService;
+
+/**
+ * Class: WMS IF API 컨트롤러<br>
+ * Description: WMS IF API Controller Class<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Controller
+@RequestMapping(value = "/ifapi")
+public class EDIFApiController {
+
+    /*
+     * 생성 : POST
+     * 수정 : PUT
+     * 조회 : GET
+     * 취소/삭제 : DELETE
+     */
+
+    // private final Logger logger = LoggerFactory.getLogger(EDIFApiController.class);
+
+    @Autowired
+    private EDIFApiService             service;
+
+    @Autowired
+    private SecurityUserDetailsService securityUserService;
+
+    private final String               IFAPI_PREDEFINED            = "PREDEFINED";
+    private final String               DV_BU_CD                    = "buCd";
+    private final String               DV_EDI_DIV                  = "ediDiv";
+    private final String               DV_DEFINE_NO                = "defineNo";
+    private final String               DV_RETURN_AFTER_DATA_INSERT = "returnAfterDataInsertYn";
+
+    private final String               PK_BU_CD                    = "P_BU_CD";
+    private final String               PK_EDI_DIV                  = "P_EDI_DIV";
+    private final String               PK_DEFINE_NO                = "P_DEFINE_NO";
+    private final String               PK_RETURN_AFTER_DATA_INSERT = "P_RETURN_AFTER_DATA_INSERT";
+
+    /**
+     * IFAPI 수신 - Request Parameter
+     *
+     * @param request
+     * @param response
+     * @param ifApiDiv
+     * @param payload
+     * @return
+     */
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    @RequestMapping(value = "/{ifApiDiv}/receive.do", method = RequestMethod.POST, params = {"payload"})
+    public ResponseEntity<String> recvIfApiParam(HttpServletRequest request, HttpServletResponse response, @PathVariable("ifApiDiv") String ifApiDiv,
+        @RequestParam("payload") String payload) {
+
+        ifApiDiv = Util.nullToEmpty(ifApiDiv).toUpperCase();
+        // 수신정의 정보를 기준으로 처리
+        if (IFAPI_PREDEFINED.equals(ifApiDiv)) {
+            return recvPredefinedProcessing(request, response, payload);
+        }
+
+        // IFAPI SPEC 정보를 기준으로 처리 - Package
+        return recvIfApiProcessing(request, response, ifApiDiv, payload);
+    }
+
+    /**
+     * IFAPI 수신 - Request Body
+     *
+     * @param request
+     * @param response
+     * @param ifApiDiv
+     * @param payload
+     * @return
+     */
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    @RequestMapping(value = "/{ifApiDiv}/receive.do", method = RequestMethod.POST)
+    public ResponseEntity<String> recvIfApiBody(HttpServletRequest request, HttpServletResponse response, @PathVariable("ifApiDiv") String ifApiDiv,
+        @RequestBody String payload) {
+
+        ifApiDiv = Util.nullToEmpty(ifApiDiv).toUpperCase();
+        // 수신정의 정보를 기준으로 처리
+        if (IFAPI_PREDEFINED.equals(ifApiDiv)) {
+            return recvPredefinedProcessing(request, response, payload);
+        }
+
+        // IFAPI SPEC 정보를 기준으로 처리 - Package
+        return recvIfApiProcessing(request, response, ifApiDiv, payload);
+    }
+
+    /**
+     * IFAPI 송신 - Request Parameter
+     *
+     * @param request
+     * @param response
+     * @param ifApiDiv
+     * @param requestParams
+     * @return
+     */
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    @RequestMapping(value = "/{ifApiDiv}/send.do", method = RequestMethod.POST, params = {"request"})
+    public ResponseEntity<String> sendIfApiParam(HttpServletRequest request, HttpServletResponse response, @PathVariable("ifApiDiv") String ifApiDiv,
+        @RequestParam("request") String requestParams) {
+
+        ifApiDiv = Util.nullToEmpty(ifApiDiv).toUpperCase();
+        // 송신정의 정보를 기준으로 처리
+        if (IFAPI_PREDEFINED.equals(ifApiDiv)) {
+            return sendPredefinedProcessing(request, response, requestParams);
+        }
+
+        // IFAPI SPEC 정보를 기준으로 처리 - Package
+        return sendIfApiProcessing(request, response, ifApiDiv, requestParams);
+    }
+
+    /**
+     * IFAPI 송신 - Request Body
+     *
+     * @param request
+     * @param response
+     * @param ifApiDiv
+     * @param requestParams
+     * @return
+     */
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    @RequestMapping(value = "/{ifApiDiv}/send.do", method = RequestMethod.POST)
+    public ResponseEntity<String> sendIfApiBody(HttpServletRequest request, HttpServletResponse response, @PathVariable("ifApiDiv") String ifApiDiv,
+        @RequestBody String requestParams) {
+
+        ifApiDiv = Util.nullToEmpty(ifApiDiv).toUpperCase();
+        // 송신정의 정보를 기준으로 처리
+        if (IFAPI_PREDEFINED.equals(ifApiDiv)) {
+            return sendPredefinedProcessing(request, response, requestParams);
+        }
+
+        // IFAPI SPEC 정보를 기준으로 처리 - Package
+        return sendIfApiProcessing(request, response, ifApiDiv, requestParams);
+    }
+
+    /**
+     * JSON 데이터 수신 - 공통 Format<br>
+     * jsonString에 사업부/수신구분을 고객사에서 보내줄 수 있을 경우 사용
+     *
+     * @param request
+     * @param response
+     * @param payload
+     *        <pre>
+     * {
+     *     "buCd": "0010",
+     *     "ediDiv": "RLI10",
+     *     "defineNo": "REST",
+     *     "orders": [
+     *         {
+     *             "centerCd": "RD",
+     *             "clientDate": "2019-07-18",
+     *             "clientNo": "201907180001",
+     *             "VendorCd": "V00001",
+     *             "items": [
+     *                 {
+     *                     "clientLineNo": "001",
+     *                     "itemCd": "I0001",
+     *                     "itemState": "A",
+     *                     "orderQty": 5
+     *                 },
+     *                 {
+     *                     "clientLineNo": "002",
+     *                     "itemCd": "I0002",
+     *                     "itemState": "A",
+     *                     "orderQty": 3
+     *                 }
+     *             ]
+     *         },
+     *         {
+     *             "centerCd": "RD",
+     *             "clientDate": "2019-07-18",
+     *             "clientNo": "201907180002",
+     *             "VendorCd": "V00002",
+     *             "items": [
+     *                 {
+     *                     "clientLineNo": "001",
+     *                     "itemCd": "I0003",
+     *                     "itemState": "A",
+     *                     "orderQty": 5
+     *                 },
+     *                 {
+     *                     "clientLineNo": "002",
+     *                     "itemCd": "I0004",
+     *                     "itemState": "A",
+     *                     "orderQty": 3
+     *                 }
+     *             ]
+     *         }
+     *     ]
+     * }
+     *        </pre>
+     * @return
+     */
+    private ResponseEntity<String> recvPredefinedProcessing(HttpServletRequest request, HttpServletResponse response, String payload) {
+
+        // 인증토큰 체크
+        String principal;
+        try {
+            principal = validateUserToken(request);
+        } catch (Exception e) {
+            AuthenticationUtil.clearHttpAuthorization(request);
+            return getResponseEntityError(request, Util.getErrorMessage(e), HttpStatus.UNAUTHORIZED);
+        }
+
+        // 수신 데이터 체크
+        if (Util.isNull(payload)) {
+            return getResponseEntityError(request, NexosMessage.getDisplayMsg("JAVA.ED.XXX", "수신 데이터(payload)가 존재하지 않습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        ResponseEntity<String> result = null;
+        Map<String, Object> params = getParameter(payload, true);
+        String oMsg = Util.getOutMessage(params);
+        if (!Consts.OK.equals(oMsg)) {
+            return getResponseEntityError(request, oMsg);
+        }
+        // payload 파라메터 내에 수신정의 정보가 있을 경우
+        if (params.containsKey(DV_BU_CD)) {
+            params.put(PK_BU_CD, params.get(DV_BU_CD));
+            params.remove(DV_BU_CD);
+        }
+        if (params.containsKey(DV_EDI_DIV)) {
+            params.put(PK_EDI_DIV, params.get(DV_EDI_DIV));
+            params.remove(DV_EDI_DIV);
+        }
+        if (params.containsKey(DV_DEFINE_NO)) {
+            params.put(PK_DEFINE_NO, params.get(DV_DEFINE_NO));
+            params.remove(DV_DEFINE_NO);
+        }
+        if (params.containsKey(DV_RETURN_AFTER_DATA_INSERT)) {
+            params.put(PK_RETURN_AFTER_DATA_INSERT, params.get(DV_RETURN_AFTER_DATA_INSERT));
+            params.remove(DV_RETURN_AFTER_DATA_INSERT);
+        }
+
+        try {
+            // Payload 및 추가 정보 입력
+            params.put("P_DOCUMENT", payload);
+            params.put("P_FILE_DIV", Consts.FILE_DIV_DOC);
+            params.put(Consts.PK_USER_ID, principal);
+
+            Map<String, Object> resultMap = service.receiveJson(params);
+            oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            result = getResponseEntity(request, resultMap, getResultInfo(params));
+        } catch (Exception e) {
+            oMsg = Util.getErrorMessage(e);
+            Map<String, Object> resultInfo = getResultInfo(params);
+            if (Util.isNull(resultInfo)) {
+                result = getResponseEntityError(request, oMsg);
+            } else {
+                result = getResponseEntityError(request, oMsg, resultInfo);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * JSON 데이터 송신 - 공통 Format
+     *
+     * @param request
+     * @param response
+     * @param requestParams
+     * @return
+     */
+    private ResponseEntity<String> sendPredefinedProcessing(HttpServletRequest request, HttpServletResponse response, String requestParams) {
+
+        // 인증토큰 체크
+        String principal;
+        try {
+            principal = validateUserToken(request);
+        } catch (Exception e) {
+            AuthenticationUtil.clearHttpAuthorization(request);
+            return getResponseEntityError(request, Util.getErrorMessage(e), HttpStatus.UNAUTHORIZED);
+        }
+
+        ResponseEntity<String> result = null;
+        Map<String, Object> params = getParameter(requestParams);
+        String oMsg = Util.getOutMessage(params);
+        if (!Consts.OK.equals(oMsg)) {
+            result = getResponseEntityError(request, oMsg);
+            return result;
+        }
+        // requestParams 파라메터 내에 송신정의 정보가 있을 경우
+        if (params.containsKey(DV_BU_CD)) {
+            params.put(PK_BU_CD, params.get(DV_BU_CD));
+            params.remove(DV_BU_CD);
+        }
+        if (params.containsKey(DV_EDI_DIV)) {
+            params.put(PK_EDI_DIV, params.get(DV_EDI_DIV));
+            params.remove(DV_EDI_DIV);
+        }
+        if (params.containsKey(DV_DEFINE_NO)) {
+            params.put(PK_DEFINE_NO, params.get(DV_DEFINE_NO));
+            params.remove(DV_DEFINE_NO);
+        }
+        if (params.containsKey(DV_RETURN_AFTER_DATA_INSERT)) {
+            params.put(PK_RETURN_AFTER_DATA_INSERT, params.get(DV_RETURN_AFTER_DATA_INSERT));
+            params.remove(DV_RETURN_AFTER_DATA_INSERT);
+        }
+
+        try {
+            // 추가 정보 입력
+            params.put(Consts.PK_USER_ID, principal);
+
+            Map<String, Object> resultMap = service.sendJson(params);
+            oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            result = getResponseEntity(request, resultMap, getResultInfo(params));
+        } catch (Exception e) {
+            oMsg = Util.getErrorMessage(e);
+            Map<String, Object> resultInfo = getResultInfo(params);
+            if (Util.isNull(resultInfo)) {
+                result = getResponseEntityError(request, oMsg);
+            } else {
+                result = getResponseEntityError(request, oMsg, resultInfo);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * IFAPI 수신 처리
+     *
+     * @param request
+     * @param response
+     * @param ifApiDiv
+     * @param payload
+     * @return
+     */
+    private ResponseEntity<String> recvIfApiProcessing(HttpServletRequest request, HttpServletResponse response, String ifApiDiv, String payload) {
+
+        // 인증토큰 체크
+        String principal;
+        try {
+            principal = validateUserToken(request);
+        } catch (Exception e) {
+            AuthenticationUtil.clearHttpAuthorization(request);
+            return getResponseEntityError(request, Util.getErrorMessage(e), HttpStatus.UNAUTHORIZED);
+        }
+
+        // 수신 데이터 체크
+        if (Util.isNull(payload)) {
+            return getResponseEntityError(request, NexosMessage.getDisplayMsg("JAVA.ED.XXX", "[" + ifApiDiv + //
+                "]수신 데이터(payload)가 존재하지 않습니다.", new String[] {ifApiDiv}), HttpStatus.BAD_REQUEST);
+        }
+
+        ResponseEntity<String> result = null;
+        Map<String, Object> params = Util.newMap();
+        try {
+            // Payload 및 추가 정보 입력
+            params.put("P_FILE_DIV", Consts.FILE_DIV_DOC);
+            params.put("P_DOCUMENT", payload);
+            params.put("P_IFAPI_DIV", ifApiDiv);
+            params.put(Consts.PK_USER_ID, principal);
+
+            Map<String, Object> resultMap = service.recvIfApiProcessing(params);
+
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            result = getResponseEntity(request, resultMap, getResultInfo(params));
+        } catch (Exception e) {
+            String oMsg = Util.getErrorMessage(e);
+            Map<String, Object> resultInfo = getResultInfo(params);
+            if (Util.isNull(resultInfo)) {
+                result = getResponseEntityError(request, oMsg);
+            } else {
+                result = getResponseEntityError(request, oMsg, resultInfo);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * IFAPI 송신 처리
+     *
+     * @param request
+     * @param response
+     * @param ifApiDiv
+     * @param requestParams
+     * @return
+     */
+    private ResponseEntity<String> sendIfApiProcessing(HttpServletRequest request, HttpServletResponse response, String ifApiDiv,
+        String requestParams) {
+
+        // 인증토큰 체크
+        String principal;
+        try {
+            principal = validateUserToken(request);
+        } catch (Exception e) {
+            AuthenticationUtil.clearHttpAuthorization(request);
+            return getResponseEntityError(request, Util.getErrorMessage(e), HttpStatus.UNAUTHORIZED);
+        }
+
+        ResponseEntity<String> result = null;
+
+        Map<String, Object> params = getParameter(requestParams);
+        String oMsg = Util.getOutMessage(params);
+        if (!Consts.OK.equals(oMsg)) {
+            result = getResponseEntityError(request, oMsg);
+            return result;
+        }
+
+        try {
+            // 추가 정보 입력
+            params.put(Consts.PK_USER_ID, principal);
+
+            Map<String, Object> resultMap = service.sendJson(params);
+
+            oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            result = getResponseEntity(request, resultMap, getResultInfo(params));
+        } catch (Exception e) {
+            oMsg = Util.getErrorMessage(e);
+            Map<String, Object> resultInfo = getResultInfo(params);
+            if (Util.isNull(resultInfo)) {
+                result = getResponseEntityError(request, oMsg);
+            } else {
+                result = getResponseEntityError(request, oMsg, resultInfo);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 인증정보 유효성 체크
+     *
+     * @param request
+     * @throws Exception
+     * @return String
+     */
+    private String validateUserToken(HttpServletRequest request) throws Exception {
+
+        // 인증 체크할 경우만 처리
+        if (!NexosSupport.getGlobalBooleanProperty("EDI.IFAPI.AUTHORITY_CHECK", false)) {
+            return "";
+        }
+
+        String authorization = AuthenticationUtil.getHttpAuthorization(request);
+        if (Util.isNull(authorization)) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.003", "인증 정보가 존재하지 않습니다."));
+        }
+
+        String principal = AuthenticationUtil.getPrincipalFromAuthorization(authorization);
+
+        if (Util.isNull(principal)) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.004", "인증 정보가 유효하지 않습니다."));
+        } else {
+            UserDetails user = securityUserService.loadUserByUsername(principal);
+            AuthenticationUtil.validateAuthorization(authorization, user);
+        }
+
+        return principal;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getResultInfo(Map<String, Object> params) {
+
+        return (Map<String, Object>)params.get("P_JSON_RESULT_INFO");
+    }
+
+    private ResponseEntity<String> getResponseEntity(HttpServletRequest request, Map<String, Object> resultMap, Map<String, Object> resultInfo) {
+
+        // 송신일 경우
+        String result = (String)resultMap.get("O_DOCUMENT");
+        if (Util.isNotNull(result)) {
+            return getResponseEntity(request, result, null, null, getHttpHeader());
+        }
+
+        return getResponseEntity(request, resultInfo);
+    }
+
+    private ResponseEntity<String> getResponseEntity(HttpServletRequest request, Map<String, Object> resultInfo) {
+
+        return getResponseEntity(request, Consts.OK, resultInfo, null, null);
+    }
+
+    private ResponseEntity<String> getResponseEntity(HttpServletRequest request, String message, Map<String, Object> resultInfo,
+        HttpStatus httpStatus, HttpHeaders httpHeaders) {
+
+        request.setAttribute("__RESPONSE_STATUS", Consts.OK);
+        // Http Status 기본값 200 - OK
+        if (httpStatus == null) {
+            httpStatus = HttpStatus.OK;
+        }
+        // 결과 메시지 변경, ResultInfo가 있을 경우 MediaType -> Json으로 전송
+        if (resultInfo != null) {
+            message = getResultMessage((String)resultInfo.get("P_RESULT_CD_SUCCESS"), message, resultInfo);
+            if (httpHeaders == null) {
+                httpHeaders = getHttpHeader();
+            }
+        }
+        // 그외, MediaType -> Text/Html로 전송
+        else {
+            if (httpHeaders == null) {
+                httpHeaders = getHttpHeader(MediaType.TEXT_PLAIN_VALUE + ";charset=" + Consts.CHARSET);
+            }
+        }
+
+        return new ResponseEntity<String>(message, httpHeaders, httpStatus);
+    }
+
+    private ResponseEntity<String> getResponseEntityError(HttpServletRequest request, String message) {
+
+        return getResponseEntityError(request, message, null, null, null);
+    }
+
+    private ResponseEntity<String> getResponseEntityError(HttpServletRequest request, String message, Map<String, Object> resultInfo) {
+
+        return getResponseEntityError(request, message, resultInfo, null, null);
+    }
+
+    private ResponseEntity<String> getResponseEntityError(HttpServletRequest request, String message, HttpStatus httpStatus) {
+
+        return getResponseEntityError(request, message, null, httpStatus, null);
+    }
+
+    private ResponseEntity<String> getResponseEntityError(HttpServletRequest request, String message, Map<String, Object> resultInfo,
+        HttpStatus httpStatus, HttpHeaders httpHeaders) {
+
+        // Null Pointer Exception일 경우 message가 없음
+        message = Util.nullToDefault(message, "Null Pointer Exception");
+        request.setAttribute("__RESPONSE_STATUS", message.replaceAll("\\r?\\n", ""));
+        // Http Status 기본값 500 - INTERNAL_SERVER_ERROR
+        if (httpStatus == null) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        // 결과 메시지 변경, ResultInfo가 있을 경우 MediaType -> Json으로 전송
+        if (resultInfo != null) {
+            message = getResultMessage((String)resultInfo.get("P_RESULT_CD_ERROR"), message, resultInfo);
+            if (httpHeaders == null) {
+                httpHeaders = getHttpHeader();
+            }
+        }
+        // 그외, MediaType -> Text/Html로 전송
+        else {
+            if (httpHeaders == null) {
+                httpHeaders = getHttpHeader(MediaType.TEXT_PLAIN_VALUE + ";charset=" + Consts.CHARSET);
+            }
+        }
+
+        return new ResponseEntity<String>(message, httpHeaders, httpStatus);
+    }
+
+    private String getResultMessage(String messageCd, String message, Map<String, Object> resultInfo) {
+
+        String resultTag = Util.nullToDefault((String)resultInfo.get("P_TAG_RESULT"), (String)resultInfo.get("P_RESULT_MESSAGE"));
+
+        // 숫자 타입
+        if ("NUMBER".equals(resultInfo.get("P_RESULT_CD_DATA_TYPE"))) {
+            resultTag = resultTag.replace("#RESULT_CD#", messageCd);
+        }
+        // 문자 타입
+        else {
+            resultTag = resultTag.replace("#RESULT_CD#", "\"" + messageCd + "\"");
+        }
+
+        try {
+            ObjectMapper objMapper = new ObjectMapper();
+            resultTag = resultTag.replace("#RESULT_MSG#", objMapper.writeValueAsString(message));
+        } catch (Exception e) {
+            resultTag = resultTag.replace("#RESULT_MSG#", NexosMessage.getDisplayMsg("JAVA.ED.008", "\"Json 변환 오류\""));
+        }
+
+        return resultTag;
+    }
+
+    /**
+     * Json String 을 Map 로 변환하여 리턴
+     *
+     * @param jsonParams
+     * @return Map<String, Object>
+     */
+    private Map<String, Object> getParameter(String jsonParams) {
+
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        Util.setOutMessage(result, Consts.OK);
+        if (Util.isNotNull(jsonParams)) {
+            ObjectMapper objMapper = new ObjectMapper();
+            try {
+                result = objMapper.readValue(jsonParams, new MapTypeReference<String, Object>());
+            } catch (Exception e) {
+                Util.setOutMessage(result, Util.getErrorMessage(e));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Json String 을 Map 로 변환하여 리턴
+     *
+     * @param jsonParams
+     * @return Map<String, Object>
+     */
+    private Map<String, Object> getParameter(String jsonParams, boolean isFirstLevel) {
+
+        if (isFirstLevel) {
+            Map<String, Object> result = new HashMap<String, Object>();
+
+            Util.setOutMessage(result, Consts.OK);
+            if (Util.isNotNull(jsonParams)) {
+                ObjectMapper objMapper = new ObjectMapper();
+                try {
+                    JsonNode rootNode = objMapper.readTree(jsonParams);
+                    if (rootNode.size() > 0) {
+                        Iterator<Entry<String, JsonNode>> fields = rootNode.fields();
+                        while (fields.hasNext()) {
+                            Entry<String, JsonNode> field = fields.next();
+                            JsonNode node = field.getValue();
+                            if (node.isTextual()) {
+                                result.put(field.getKey(), node.textValue());
+                            } else if (node.isNumber()) {
+                                result.put(field.getKey(), String.valueOf(node.numberValue()));
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Util.setOutMessage(result, Util.getErrorMessage(e));
+                }
+            }
+            return result;
+        } else {
+            return getParameter(jsonParams);
+        }
+    }
+
+    /**
+     * response HttpHeader 리턴
+     *
+     * @return HttpHeaders
+     */
+    private HttpHeaders getHttpHeader() {
+
+        HttpHeaders result = new HttpHeaders();
+        // Context Type을 Json으로 설정.
+        result.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=" + Consts.CHARSET);
+
+        return result;
+    }
+
+    /**
+     * response HttpHeader 리턴
+     *
+     * @return HttpHeaders
+     */
+    private HttpHeaders getHttpHeader(String mediaType) {
+
+        HttpHeaders result = new HttpHeaders();
+        // Context Type 설정.
+        result.add(HttpHeaders.CONTENT_TYPE, mediaType);
+
+        return result;
+    }
+}

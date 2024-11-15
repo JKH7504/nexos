@@ -1,0 +1,51 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOM07022P0
+    프로그램명         : 택배사 배송조회 팝업
+    프로그램설명       : 택배사 배송조회 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOM07022P0.css" /> -->
+<script src="js/LOM07022P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCarrier_Cd" class="lblNormal">운송사</div>
+                    <input id="edtCarrier_Cd" class="edtDisplay" type="text" disabled="disabled" tabindex="1" style="width: 60px;">
+                    <input id="edtCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" tabindex="2" style="width: 150px;">
+                </td>
+                <td>
+                    <div id="lblWb_No" class="lblNormal">운송장번호</div>
+                    <input id="edtWb_No" class="edtDisplay" type="text" disabled="disabled" tabindex="3" style="width: 150px;">
+                </td>
+                <td width="40%"></td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrPopup">
+        <iframe id="ifmWBDelivery" name="ifmWBDelivery" style="border: none; width: 100%; height: 100%;"></iframe>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnImgCancel" type="button" value="닫기" style="width: 60px;" />
+    </div>
+</body>
+</html>

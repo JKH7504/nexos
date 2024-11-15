@@ -1,0 +1,185 @@
+<!-- 
+    ==================================================================================================================================================
+    프로그램ID         : CMC01010E0
+    프로그램명         : 물류센터관리
+    프로그램설명       : 물류센터관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-02-27
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-02-27    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM VERSION/CSS/JS -->
+<meta name="version" content="1.0">
+<!-- <link rel="stylesheet" href="css/CMC01010E0.css" /> -->
+<script src="js/CMC01010E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQDeal_Div" class="lblCondition">거래구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkQDeal_Div1" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="1" />
+                        거래진행
+                        <input id="chkQDeal_Div2" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="2" />
+                        거래종료
+                        <input id="chkQDeal_Div3" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="3" />
+                        조회종료
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">물류센터</td>
+                <td>
+                    <input id="btnEntryCoord" class="btnImgPopup" type="button" value="좌표일괄등록" style="width: 105px;" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspDetailInfo" class="lblTitle">기본정보</td>
+            </tr>
+        </table>
+        <div id="divMasterInfoView" class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblCenter_Cd" class="lblKey alignInContent">물류센터코드</div>
+                <input id="edtCenter_Cd" class="edtKey" type="text" maxlength="2" style="width: 110px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblCenter_Nm" class="lblKey alignInContent">물류센터명</div>
+                <input id="edtCenter_Nm" class="edtKey" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblCenter_Full_Nm" class="lblNormal alignInContent">정식명칭</div>
+                <input id="edtCenter_Full_Nm" class="edtNormal" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Business" class="lblGroupTitle">사업자정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblBusiness_No" class="lblNormal">사업자번호</div>
+                        <input id="edtBusiness_No" class="edtNormal" type="text" maxlength="20" style="width: 110px;" />
+                        <div id="lblCeo_Nm" class="lblNormal">대표자명</div>
+                        <input id="edtCeo_Nm" class="edtNormal" type="text" maxlength="50" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblBusiness_Kind" class="lblNormal">업태</div>
+                        <input id="edtBusiness_Kind" class="edtNormal" type="text" maxlength="50" style="width: 110px;" />
+                        <div id="lblBusiness_Type" class="lblNormal">업종</div>
+                        <input id="edtBusiness_Type" class="edtNormal" type="text" maxlength="50" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Address" class="lblGroupTitle">주소정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Zip_Cd" class="lblNormal">우편번호</div>
+                        <input id="edtZip_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                        <input id="btnZip_Cd" class="btnIcoPopup" type="button" />
+                        <input id="btnZip_Cd_Clear" class="btnIcoCancel" type="button" />
+                        <input id="btnGetCoord" class="btnImgNormal" type="button" value="좌표입력" style="width: 80px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblAddr_Basic" class="lblNormal">기본주소</div>
+                        <input id="edtAddr_Basic" class="edtDisplay" type="text" disabled="disabled" style="width: 323px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblAddr_Detail" class="lblNormal">상세주소</div>
+                        <input id="edtAddr_Detail" class="edtNormal" type="text" maxlength="100" style="width: 323px;" />
+                    </div>
+                    <div id="coordGroupRow" class="ctrGroupRow">
+                        <div id="lblGeocode_Lat" class="lblNormal">위도</div>
+                        <input id="edtGeocode_Lat" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                        <div id="lblGeocode_Lng" class="lblNormal">경도</div>
+                        <input id="edtGeocode_Lng" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblTel_No" class="lblNormal">전화번호</div>
+                        <input id="edtTel_No" class="edtNormal" type="text" maxlength="20" style="width: 110px;" />
+                        <div id="lblFax_No" class="lblNormal">팩스번호</div>
+                        <input id="edtFax_No" class="edtNormal" type="text" maxlength="20" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Management" class="lblGroupTitle">관리정보</div>
+                <div class="ctrGroupContent">
+                    <div id="ctrDsp_Pharmacist_Nm" class="ctrGroupRow">
+                        <div id="lblPharmacist_Nm" class="lblNormal">관리약사</div>
+                        <input id="edtPharmacist_Nm" class="edtNormal" type="text" maxlength="50" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Manager_Id" class="lblNormal">관리책임자</div>
+                        <input id="edtManager_Id" class="edtNormal" type="text" style="width: 110px;" />
+                        <input id="btnManager_Id" class="btnIcoPopup" type="button" />
+                        <input id="edtManager_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 183px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblManager_Tel" class="lblNormal">전화번호</div>
+                        <input id="edtManager_Tel" class="edtNormal" type="text" maxlength="20" style="width: 110px;" />
+                        <div id="lblManager_Hp" class="lblNormal">휴대전화번호</div>
+                        <input id="edtManager_Hp" class="edtNormal" type="text" maxlength="20" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblDeal_Div" class="lblKey">거래구분</div>
+                        <div class="ctrGroupBox" style="width: 323px;">
+                            <input id="rgbDeal_Div1" name="rgbDeal_Div" class="rgbNormal" type="radio" value="1" style="width: 20px;" />
+                            거래진행
+                            <input id="rgbDeal_Div2" name="rgbDeal_Div" class="rgbNormal" type="radio" value="2" style="width: 20px;" />
+                            거래종료
+                            <input id="rgbDeal_Div3" name="rgbDeal_Div" class="rgbNormal" type="radio" value="3" style="width: 20px;" />
+                            조회종료
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblOpen_Date" class="lblNormal">거래일자</div>
+                        <input id="dtpOpen_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                        <div id="lblClose_Date" class="lblNormal">종료일자</div>
+                        <input id="dtpClose_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Management" class="lblGroupTitle">조직정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Facility_Orgn_Cd" class="lblNormal">시설물조직</div>
+                        <input id="edtFacility_Orgn_Cd" class="edtNormal" type="text" style="width: 110px;" />
+                        <input id="btnFacility_Orgn_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtFacility_Orgn_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 183px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblRemark1" class="lblNormal alignInContent">비고</div>
+                <input id="edtRemark1" class="edtNormal" type="text" maxlength="255" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow styRight">
+                <input id="btnBasicMaster" class="btnImgNormal" type="button" value="기본마스터생성" style="width: 120px;">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

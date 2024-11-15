@@ -1,0 +1,72 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC01040Q0
+    프로그램명         : 로케이션라벨출력
+    프로그램설명       : 로케이션라벨출력 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC01040Q0.css" /> -->
+<script src="js/CMC01040Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQZone_Cd" class="lblCondition">존구분</div>
+                    <select id="cboQZone_Cd" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQBank_Cd" class="lblCondition" style="min-width: 30px;">행</div>
+                    <input id="edtQBank_Cd1" class="edtNormal" type="text" maxlength="3" style="width: 30px; margin-left: 4px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="edtQBank_Cd2" class="edtNormal" type="text" maxlength="3" style="width: 30px;" />
+                </td>
+                <td>
+                    <div id="lblQBay_Cd" class="lblCondition" style="min-width: 30px;">열</div>
+                    <input id="edtQBay_Cd1" class="edtNormal" type="text" maxlength="3" style="width: 30px; margin-left: 4px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="edtQBay_Cd2" class="edtNormal" type="text" maxlength="3" style="width: 30px;" />
+                </td>
+                <td>
+                    <div id="lblQLev_Cd" class="lblCondition" style="min-width: 30px;">단</div>
+                    <input id="edtQLev_Cd1" class="edtNormal" type="text" maxlength="3" style="width: 30px; margin-left: 4px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="edtQLev_Cd2" class="edtNormal" type="text" maxlength="3" style="width: 30px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">물류센터 존</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

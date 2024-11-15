@@ -1,0 +1,59 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC08030E0
+    프로그램명         : 조직관리
+    프로그램설명       : 조직관리 화면(일반) HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-10-28
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-10-28    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC08030E0.css" /> -->
+<script src="js/CMC08030E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQOrgn_Div" class="lblCondition">조직구분</div>
+                    <select id="cboQOrgn_Div" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQDeal_Div" class="lblCondition">거래구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkQDeal_Div1" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="1" />
+                        거래진행
+                        <input id="chkQDeal_Div2" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="2" />
+                        거래종료
+                        <input id="chkQDeal_Div3" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="3" />
+                        조회종료
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">조직</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

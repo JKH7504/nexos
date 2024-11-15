@@ -1,0 +1,679 @@
+.ctrTopMenuBar {
+    background: #e6e6e6 url("image/imgMainTopMenuBG.png") 50% 50% repeat-x;
+    width: 100%;
+    height: 36px;
+}
+
+.ctrTopLogo {
+    background: transparent url("image/imgMainLogo.png") 0 0 no-repeat;
+    cursor: default;
+    min-width: 150px;
+    width: 100%;
+}
+
+.imgLine.top, /*
+*/ .imgLine.bottom {
+    background: #d98f00 url("image/imgMainLine.png") repeat-x;
+    min-width: 840px;
+    height: 4px;
+}
+
+.imgLine.bottom {
+    background-position-y: -4px;
+}
+
+.ctrScrollTabs {
+    display: none;
+    position: absolute;
+    background-color: #333333;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 24px;
+}
+
+.ctrPopupMessage {
+    display: none;
+    padding: 5px 5px 0 5px;
+    margin: 0;
+    outline: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.ctrTopFixedButtons {
+    padding-right: 5px;
+}
+
+.ctrTopFixedButtons .btnNormal, /*
+*/ .ctrTopFixedButtons .btnSpecial {
+    height: 26px;
+}
+
+.ctrViewport {
+    visibility: hidden;
+}
+
+.ctrProgramMenu {
+    background-color: #f9f9f9;
+}
+
+.edtHiddenFile {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+    opacity: 0.0; /* Standard: FF gt 1.5, Opera, Safari */
+    filter: alpha(opacity = 0); /* IE lt 8 */
+    -ms-filter: "alpha(opacity=0)"; /* IE 8 */
+    -khtml-opacity: 0.0; /* Safari 1.x */
+    -moz-opacity: 0.0; /* FF lt 1.5, Netscape */
+}
+
+/*
+  //====================================================================================================================
+  // COMMON BUTTON
+  //====================================================================================================================
+*/
+.btnTopNormal, /*
+*/ .btnTopInquiry, /*
+*/ .btnTopNew, /*
+*/ .btnTopSave, /*
+*/ .btnTopCancel, /*
+*/ .btnTopDelete, /*
+*/ .btnTopMenu, /*
+*/ .btnTopPrint, /*
+*/ .btnTopUser, /*
+*/ .btnTopLiveWM {
+    padding: 4px 4px 4px 30px;
+    border: 1px solid transparent;
+    overflow: hidden;
+    color: #353535;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, .7);
+    text-overflow: ellipsis;
+    cursor: pointer;
+    outline: 0;
+    min-width: 60px;
+    max-width: 90px;
+    height: 32px;
+}
+
+.btnTopNormal {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.btnTopInquiry, /*
+*/ .btnTopNew, /*
+*/ .btnTopSave, /*
+*/ .btnTopCancel, /*
+*/ .btnTopDelete, /*
+*/ .btnTopMenu, /*
+*/ .btnTopPrint, /*
+*/ .btnTopUser, /*
+*/ .btnTopLiveWM {
+    background-color: transparent;
+    background-image: url("image/btnMainTopMenuDefault.png");
+    background-repeat: no-repeat;
+}
+
+.btnTopInquiry {
+    background-position: 2px 0px;
+}
+
+.btnTopNew {
+    background-position: 2px -32px;
+}
+
+.btnTopSave {
+    background-position: 2px -64px;
+}
+
+.btnTopCancel {
+    background-position: 2px -96px;
+}
+
+.btnTopDelete {
+    background-position: 2px -128px;
+}
+
+.btnTopMenu {
+    background-position: 2px -160px;
+}
+
+.btnTopPrint {
+    background-position: 2px -192px;
+}
+
+.btnTopUser {
+    background-position: 2px -256px;
+}
+
+.btnTopLiveWM {
+    background-position: 2px -288px;
+}
+
+.btnTopNormal:enabled:hover, /*
+*/ .btnTopInquiry:enabled:hover, /*
+*/ .btnTopNew:enabled:hover, /*
+*/ .btnTopSave:enabled:hover, /*
+*/ .btnTopCancel:enabled:hover, /*
+*/ .btnTopDelete:enabled:hover, /*
+*/ .btnTopMenu:enabled:hover, /*
+*/ .btnTopPrint:enabled:hover, /*
+*/ .btnTopUser:enabled:hover, /*
+*/ .btnTopLiveWM:enabled:hover {
+    background-color: #f3f3f3;
+    background-image: url("image/btnMainTopMenuHover.png");
+    border: solid 1px #5a5a5a;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    box-shadow: 0 1px 1px rgba(32, 65, 93, .5);
+    -webkit-box-shadow: 0 1px 1px rgba(32, 65, 93, .5);
+    -moz-box-shadow: 0 1px 1px rgba(32, 65, 93, .5);
+    color: #5a5a5a;
+}
+
+.btnTopNormal:enabled:active, /*
+*/ .btnTopInquiry:enabled:active, /*
+*/ .btnTopNew:enabled:active, /*
+*/ .btnTopSave:enabled:active, /*
+*/ .btnTopCancel:enabled:active, /*
+*/ .btnTopDelete:enabled:active, /*
+*/ .btnTopMenu:enabled:active, /*
+*/ .btnTopPrint:enabled:active, /*
+*/ .btnTopUser:enabled:active, /*
+*/ .btnTopLiveWM:enabled:active {
+    position: relative;
+    top: 1px;
+}
+
+.btnTopNormal:disabled, /*
+*/ .btnTopInquiry:disabled, /*
+*/ .btnTopNew:disabled, /*
+*/ .btnTopSave:disabled, /*
+*/ .btnTopCancel:disabled, /*
+*/ .btnTopDelete:disabled, /*
+*/ .btnTopMenu:disabled, /*
+*/ .btnTopPrint:disabled, /*
+*/ .btnTopUser:disabled, /*
+*/ .btnTopLiveWM:disabled {
+    background-color: transparent;
+    background-image: url("image/btnMainTopMenuDisabled.png");
+    cursor: default;
+    color: #8c8c8c;
+}
+
+/*
+  //====================================================================================================================
+  // DIV - Conatiner
+  //====================================================================================================================
+*/
+div.ctrRight {
+    position: relative;
+    margin: 0;
+    background-color: #808080;
+    border: none;
+    overflow: hidden;
+}
+
+/*
+  //====================================================================================================================
+  // Login
+  //====================================================================================================================
+*/
+.ctrLoginDialog {
+    padding: 0;
+    background: url("image/imgLoginBG.png") no-repeat;
+    border: none !important;
+    box-shadow: 0 0 5px 1px #262626e8;
+    -webkit-box-shadow: 0 0 5px 1px #262626e8;
+    -moz-box-shadow: 0 0 5px 1px #262626e8;
+    z-index: 1301;
+}
+
+.ctrLoginOverlay {
+    position: absolute;
+    top: 110px;
+    left: 50px;
+}
+
+.ctrLoginOverlay .ctrInner td {
+    padding: 2px;
+    border-left-width: 0;
+    height: auto;
+}
+
+.ctrLoginOverlay input[type=text], /*
+*/ .ctrLoginOverlay input[type=password] {
+    width: 180px;
+    height: 24px;
+}
+
+.ctrServerVersion>.lblDisplay {
+    padding: 5px 2px;
+    color: #e2e2e2;
+    font-size: 8pt;
+    font-family: sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.ctrServerVersion>.lblDisplay.version {
+    margin-left: -7px;
+    font-size: 7pt;
+}
+
+.ctrLoginBgOverlay {
+
+}
+
+/*
+  //====================================================================================================================
+  // BUTTON
+  //====================================================================================================================
+*/
+.btnNormal, /*
+*/ .btnSpecial {
+    min-width: 60px;
+    max-width: 90px;
+}
+
+.ui-autocomplete {
+    padding: 2px;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 1301;
+    max-width: 194px;
+    max-height: 400px;
+}
+
+.ui-autocomplete.ui-menu {
+    background-color: #f2f2f2;
+}
+
+.ui-autocomplete.ui-menu .ui-menu-item {
+    border: 1px solid transparent;
+    line-height: 20px;
+    width: auto;
+    height: 26px;
+}
+
+.ui-autocomplete.ui-menu .ui-menu-item-wrapper {
+    display: inline-block;
+    padding: 2px 5px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+}
+
+.ui-autocomplete.ui-menu .ui-menu-item-wrapper.ui-state-active {
+    margin: 0;
+    border: 1px solid #aaa;
+    font-weight: normal;
+}
+
+.ui-menu .ui-menu-item.ui-state-focus {
+    margin: 0;
+    border: 1px solid #79b7e7;
+    font-weight: normal;
+}
+
+.ctrMenuTitleBar {
+    background-color: #ffffff;
+    border-bottom: 1px solid silver;
+    border-collapse: separate;
+    white-space: nowrap;
+    width: 100%;
+    height: 25px;
+}
+
+.lblMenuTitle {
+    width: 26px;
+    border-left: 1px solid silver;
+    background-color: transparent;
+}
+
+.lblMenuTitle:hover, /*
+*/ .lblMenuTitle.styActive:hover {
+    background-color: #f1f1f1;
+}
+
+.lblMenuTitle.styActive {
+    background-color: #eaeaea;
+}
+
+.lblMenuTitle span {
+    vertical-align: middle;
+    overflow: hidden;
+    cursor: pointer;
+    font-weight: bold;
+    color: #636363;
+    text-overflow: ellipsis;
+}
+
+.btnReloadMenu, /*
+*/ .btnPinMenu, /*
+*/ .btnCloseMenu {
+    display: table-cell;
+    margin: 4px;
+    background-image: url("image/btnMainDefault.png");
+    background-repeat: no-repeat;
+    cursor: pointer;
+    width: 26px;
+    height: 16px;
+}
+
+.btnReloadMenu {
+    background-position: 50% -22px;
+}
+
+.btnReloadMenu:hover {
+    background-position: 50% -2px;
+}
+
+.btnPinMenu {
+    background-position: 50% -82px;
+}
+
+.btnPinMenu:hover {
+    background-position: 50% -62px;
+}
+
+.btnCloseMenu {
+    background-position: 50% -142px;
+}
+
+.btnCloseMenu:hover {
+    background-position: 50% -122px;
+}
+
+.btnMenuTitle {
+    display: inline-block;
+    padding-left: 2px;
+    max-width: 28px;
+    width: 28px;
+}
+
+/*
+ *======================================================================================================================
+ * Loading Message
+ *======================================================================================================================
+ */
+div.ctrLoadingOverlay {
+    position: fixed;
+    outline: none;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+div.ctrLoadingOverlay .ctrOuter {
+    display: table;
+    background: url("image/imgLoadingBG.png");
+    outline: none;
+    z-index: 2001;
+    width: 100%;
+    height: 100%;
+}
+
+div.ctrLoadingOverlay .ctrInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+div.ctrLoadingOverlay .ctrContent {
+    display: inline-block;
+    position: relative;
+    background-color: #2e2e2e;;
+    border: 2px solid #1c1c1c;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    line-height: 50px;
+    width: 400px;
+    height: 50px;
+}
+
+div.ctrLoadingOverlay .ctrProcessingStyle1 {
+    display: inline-block;
+    position: absolute;
+    padding: 2px;
+    background-color: #ffffff;
+    border-radius: 0 5px 0 0;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.9);
+    left: 0px;
+    bottom: 0px;
+    min-width: 300px;
+}
+
+div.ctrLoadingOverlay .ctrLoadingData {
+    display: inline-block;
+    color: #ee0000;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    vertical-align: middle;
+    text-align: left;
+}
+
+div.ctrLoadingOverlay .styIcoLoading {
+    display: inline-block;
+    background: transparent url(image/imgLoading.gif) 0 0 no-repeat;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+}
+
+div.ctrLoadingOverlay .ctrProgress {
+    margin: 5px 5px 0 5px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    height: 16px;
+    z-index: 1;
+}
+
+div.ctrLoadingOverlay .ctrContent.printing, /*
+*/ div.ctrLoadingOverlay .ctrContent.progress {
+    font-size: 12px;
+    width: 400px;
+}
+
+div.ctrLoadingOverlay .ctrContent.progress .progress {
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    line-height: 30px;
+}
+
+/*
+  //====================================================================================================================
+  // 기타
+  //====================================================================================================================
+*/
+.ctrTopPopupOverlay {
+    position: fixed;
+    background-color: rgba(0, 0, 0, .1);
+    outline: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+}
+
+.ctrTopOverlay {
+    position: absolute;
+    background-color: #f6f6f6;
+    border: 2px solid #5f6968;
+    box-shadow: 0px 0px 3px #00000099;
+}
+
+.ctrCopyGridData {
+    background-color: #f6f6f6;
+    min-width: 300px;
+    min-height: 60px;
+    z-index: 2000;
+}
+
+textarea.edtNormal {
+    white-space: pre;
+    word-wrap: normal;
+    overflow: hidden;
+    resize: none;
+    width: 100%;
+    height: 34px;
+}
+
+.ctrExtra {
+    height: 0;
+}
+
+/*
+  //====================================================================================================================
+  // GRID
+  //====================================================================================================================
+*/
+.slick-cell {
+    border: 1px solid transparent;
+}
+
+.slick-row, .slick-row.odd {
+    background-color: transparent;
+}
+
+.slick-cell.hover:hover {
+    cursor: pointer;
+    background-color: #ececec;
+    border-bottom: 1px solid #cecece;
+}
+
+.slick-cell.favhover {
+    line-height: 1.4em;
+}
+
+.slick-cell.favmenu {
+    cursor: pointer;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #cecece;
+}
+
+.slick-cell.favhover:hover {
+    cursor: pointer;
+    background-color: #ececec;
+    border-bottom: 1px solid #cecece;
+}
+
+.styIcoProgramQ, /*
+*/ .styIcoProgramE, /*
+*/ .styIcoProgramR {
+    cursor: pointer;
+}
+
+.slick-cell.menu {
+    cursor: pointer;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #cecece;
+}
+
+.slick-cell.print {
+    font-size: 12px;
+}
+
+/*
+  //====================================================================================================================
+  // IMAGE
+  //====================================================================================================================
+*/
+
+/*
+  //====================================================================================================================
+  // JWINDOW
+  //====================================================================================================================
+*/
+.jWindow-wrapper {
+    position: relative;
+}
+
+.jWindow-titleBar {
+    background: #333333;
+}
+
+.jWindow-titleBar .jWindow-icon {
+    position: absolute;
+    background: transparent url("../../../../framework/css/image/icoDefault.png") no-repeat;
+    cursor: pointer;
+    top: 0;
+    width: 23px;
+    height: 22px;
+}
+
+.jWindow-titleBar .jWindow-title {
+    padding-left: 23px;
+}
+
+.jWindow-titleBar .jWindow-button {
+    background-color: #333333;
+}
+
+.jWindow-titleBar.p {
+    background: #2b2e34;
+}
+
+.jWindow-titleBar.e .jWindow-icon {
+    background-position: 3px -280px;
+}
+
+.jWindow-titleBar.q .jWindow-icon {
+    background-position: 3px -260px;
+}
+
+.jWindow-titleBar.r .jWindow-icon {
+    background-position: 3px -300px;
+}
+
+.jWindow-titleBar.p .jWindow-icon, /*
+*/ .jWindow-titleBar.c .jWindow-icon {
+    background: transparent url("../../../../framework/css/image/btnDefault.png") no-repeat;
+}
+
+.jWindow-titleBar.p .jWindow-icon {
+    background-position: 3px -180px;
+}
+
+.jWindow-titleBar.c .jWindow-icon {
+    background-position: 3px -300px;
+}
+
+.jWindow-titleBar.p .jWindow-button {
+    background-color: #2b2e34;
+}
+
+.jWindow-titleBar.e .jWindow-contentAttrBar {
+    background-color: #d85b5b;
+}
+
+.jWindow-titleBar.q .jWindow-contentAttrBar {
+    background-color: #7379df;
+}
+
+.jWindow-titleBar.r .jWindow-contentAttrBar {
+    background-color: #dcae60;
+}

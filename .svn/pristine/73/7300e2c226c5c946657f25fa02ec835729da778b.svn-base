@@ -1,0 +1,50 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC01060Q0
+    프로그램명         : 선반라벨출력
+    프로그램설명       : 선반라벨출력 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-04-20
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-04-20    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC01060Q0.css" /> -->
+<script src="js/CMC01060Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQShelf_Cd" class="lblCondition" style="min-width: 30px;">선반</div>
+                    <input id="edtQShelf_Cd1" class="edtNormal" type="text" maxlength="3" style="width: 30px; margin-left: 4px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="edtQShelf_Cd2" class="edtNormal" type="text" maxlength="3" style="width: 30px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">선반</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

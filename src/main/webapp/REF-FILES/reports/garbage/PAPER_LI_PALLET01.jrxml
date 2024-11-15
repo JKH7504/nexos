@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LI_PALLET01" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57fe2ff8-929e-4268-9cab-fe6099a058fa">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_PALLET_INFO" class="java.lang.String"/>
+	<parameter name="P_BATCH_NO" class="java.lang.String"/>
+	<parameter name="P_VALID_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT '40/03.20'                                      AS FIRST_ROW
+       ,'P123456789'                                AS SECOND_ROW
+       ,'20.02.29'                                      AS THIRD_ROW
+   FROM DUAL]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="555" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="178" uuid="1ac155bb-fa95-47f6-9c95-613ec7a2e748"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="-17" width="802" height="188" uuid="2a42b2cd-1987-4a50-b1a1-6f06484cfec0"/>
+				<box bottomPadding="0" rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="굴림체" size="160" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_PALLET_INFO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="178" width="802" height="198" uuid="467702b4-88f1-4836-b7c1-7ee9a19214f7"/>
+			</rectangle>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="0" y="161" width="802" height="201" uuid="8ed9fb62-9a34-495b-92a8-453c15a0122d"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="굴림체" size="160" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_BATCH_NO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="376" width="802" height="178" uuid="61807ec6-ace1-42e1-beed-982201f44c20"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="352" width="802" height="190" uuid="ae5aa9bf-3921-483c-9e2e-aac0993e72d8"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="굴림체" size="160" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_VALID_DATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,142 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOF07023P0
+    프로그램명         : 온라인출고 반입요청 팝업[B2CF]
+    프로그램설명       : 온라인출고 반입요청 팝업[B2CF] 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-12-24
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-12-24    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOF07023P0.css" /> -->
+<script src="js/LOF07023P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCarrier_Cd" class="lblNormal">운송사</div>
+                    <input id="edtCarrier_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 60px;">
+                    <input id="edtCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;">
+                </td>
+                <td>
+                    <div id="lblOutbound_Date" class="lblNormal">출고일자</div>
+                    <input id="edtOutbound_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;">
+                </td>
+                <td>
+                    <div id="lblPopup_Delivery_Cd" class="lblNormal">온라인몰</div>
+                    <input id="edtDelivery_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 60px;" />
+                    <input id="edtDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblWb_No" class="lblNormal">운송장번호</div>
+                    <input id="edtWb_No" class="edtDisplay" type="text" disabled="disabled" style="width: 166px;">
+                </td>
+                <td>
+                    <div id="lblOutbound_No" class="lblNormal">출고번호</div>
+                    <input id="edtOutbound_No" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;" />
+                </td>
+                <td>
+                    <div id="lblOrderer_Nm" class="lblNormal">주문자명</div>
+                    <input id="edtOrderer_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 186px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_Date" class="lblNormal">반입예정일자</div>
+                    <input id="edtOrder_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;">
+                </td>
+                <td>
+                    <div id="lblBu_Date" class="lblNormal">전표일자</div>
+                    <input id="edtBu_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;">
+                </td>
+                <td>
+                    <div id="lblShipper_Nm" class="lblNormal">수령자명</div>
+                    <input id="edtShipper_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 186px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_No" class="lblNormal">반입예정번호</div>
+                    <input id="edtOrder_No" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;">
+                </td>
+                <td>
+                    <div id="lblBu_No" class="lblNormal">전표번호</div>
+                    <input id="edtBu_No" class="edtDisplay" type="text" disabled="disabled" style="width: 206px;">
+                </td>
+                <td>
+                    <div id="lblShipper_Zip_Cd" class="lblKey">우편번호</div>
+                    <input id="edtShipper_Zip_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 70px;" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="lblWb_Remark1" class="lblNormal">택배사메시지</div>
+                    <input id="edtWb_Remark1" class="edtNormal" type="text" tabindex="1" style="width: 500px;">
+                </td>
+                <td>
+                    <div id="lblShipper_Addr_Basic" class="lblNormal">기본주소</div>
+                    <input id="edtShipper_Addr_Basic" class="edtDisplay" type="text" disabled="disabled" style="width: 300px;" />
+                </td>
+            </tr>
+            <tr>
+            <tr>
+                <td colspan="2">
+                    <div id="lblRemark1" class="lblNormal">비고</div>
+                    <input id="edtRemark1" class="edtNormal" type="text" tabindex="1" style="width: 500px;">
+                </td>
+                <td>
+                    <div id="lblShipper_Addr_Detail" class="lblNormal">상세주소</div>
+                    <input id="edtShipper_Addr_Detail" class="edtDisplay" type="text" disabled="disabled" style="width: 300px;" />
+                </td>
+            </tr>
+            <tr>
+                <td id="tdSend_Div">
+                    <div id="lblSend_Div" class="lblKey">택배사송신</div>
+                    <div class="ctrGroupBox" style="width: 160px;">
+                        <input id="rgbSend_Div1" name="rgbSend_Div" class="rgbNormal" type="radio" value="1" checked="checked" style="width: 20px;" />
+                        송신함
+                        <input id="rgbSend_Div2" name="rgbSend_Div" class="rgbNormal" type="radio" value="2" style="width: 20px;" />
+                        송신안함
+                    </div>
+                </td>
+                <td id="tdSend_DateTime">
+                    <div id="lblSend_DateTime" class="lblNormal">송신일시</div>
+                    <input id="edtSend_DateTime" class="edtDisplay" type="text" disabled="disabled" style="width: 206px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">운송장 상품내역</td>
+                <td>
+                    <input id="btnReturnSave" class="btnIcoSave" type="button" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnImgCancel" type="button" value="닫기" style="width: 60px;" />
+    </div>
+</body>
+</html>

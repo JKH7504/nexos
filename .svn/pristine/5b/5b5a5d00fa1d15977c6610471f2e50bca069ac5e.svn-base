@@ -1,0 +1,121 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : PDA_LIC02370E0
+    프로그램명         : PDA 입고작업비관리
+    프로그램설명       : PDA 입고작업비관리
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2023-04-20
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2023-04-20    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/PDA_LIC02370E0.css" /> -->
+<script src="js/PDA_LIC02370E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQExtra_Work_Div" class="lblCondition">작업구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="rgbQExtra_Work_Div1" name="rgbQExtra_Work_Div" class="rgbNormal" type="radio" value="" checked="checked" />
+                        전체
+                        <input id="rgbQExtra_Work_Div2" name="rgbQExtra_Work_Div" class="rgbNormal" type="radio" value="Y" />
+                        작업
+                        <input id="rgbQExtra_Work_Div3" name="rgbQExtra_Work_Div" class=" rgbNormal" type="radio" value="N" />
+                        미작업
+                    </div>
+                </td>
+                <td class="styFillArea"></td>
+                <td>
+                    <input id="btnInquiry" class="btnImgInquiry" type="button" value="조회" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 상단그리드 -->
+    <div id="ctrMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">입고내역</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrMasterInfoView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblBill_Qty_Title" class="lblKey">정산수량</div>
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtBill_Plt_Qty" class="edtKey" type="text" />
+                </td>
+                <td style="width: 30%;">
+                    <input id="edtBill_Box_Qty" class="edtKey" type="text" />
+                </td>
+                <td style="width: 35%;">
+                    <input id="edtBill_Ea_Qty" class="edtKey" type="text" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 하단그리드 -->
+    <div id="ctrDetailView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">추가작업비 정보</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrDetailInfoView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblExtra_Work_Qty" class="lblKey">작업수량</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtExtra_Work_Qty" class="edtKey" type="text" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 액션버튼 -->
+    <table id="ctrActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnClose" class="btnAction">
+                    <span>이전</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>취소</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+            <td>
+                <div id="btnSave" class="btnAction">
+                    <span>저장</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

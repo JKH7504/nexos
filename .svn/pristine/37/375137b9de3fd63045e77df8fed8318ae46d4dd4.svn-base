@@ -1,0 +1,211 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : PDA_LOC02310E0
+    프로그램명         : PDA 출고피킹
+    프로그램설명       : PDA 출고피킹
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-02-27
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-02-27    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/PDA_LOC02310E0.css" /> -->
+<script src="js/PDA_LOC02310E0.js"></script>
+</head>
+<body>
+    <div id="ctrMasterInfoView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblPaper_No" class="lblKey">지시서</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtPaper_No" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOutbound_Date" class="lblNormal">출고일자</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtOutbound_Date" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblOutbound_Batch" class="lblNormal">출고차수</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtOutbound_Batch" class="edtDisplay" type="text" disabled="disabled" />
+                    <input id="edtOutbound_No" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr id="ctrDelivery">
+                <td>
+                    <div id="lblDelivery_Nm" class="lblNormal">배송처</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr id="ctrShipper">
+                <td>
+                    <div id="lblShipper_Nm" class="lblNormal">수령자</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtShipper_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">피킹 상품정보</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrDetailView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblLocation_Cd" class="lblKey">로케이션</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtLocation_Cd" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Bar_Cd" class="lblKey">상품바코드</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Bar_Cd" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td><div id="lblItem_Cd" class="lblNormal">상품코드</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Cd" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Nm" class="lblNormal">상품명</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtItem_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_State" class="lblNormal">상품상태</div>
+                </td>
+                <td  class="styHalfArea">
+                    <input id="edtItem_State" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblItem_Lot" class="lblNormal">상품LOT</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtItem_Lot" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQty_In_Box" class="lblNormal" style="width: 50px;">박스입수</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtQty_In_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblBox_In_Plt" class="lblNormal" style="width: 80px;">PLT입수</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtBox_In_Plt" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr id="ctrValidDate">
+                <td>
+                    <div id="lblValid_Date" class="lblNormal">유통기한</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtValid_Date" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblBatch_No" class="lblNormal">제조배치</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtBatch_No" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblEntry_Qty" class="lblNormal">지시수량</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtEntry_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtEntry_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtEntry_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblPick_Qty" class="lblKey">피킹수량</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtPick_Box" class="edtKey" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtPick_Ea" class="edtKey" type="text" disabled="disabled" />
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtPick_Qty" class="edtKey" type="text" disabled="disabled" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table id="ctrActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnClose" class="btnAction">
+                    <span>이전</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>취소</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+            <td>
+                <div id="btnPick" class="btnAction">
+                    <span>피킹</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnSave" class="btnAction">
+                    <span>처리</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,23 @@
+package nexos.dao.lc;
+
+import java.util.Map;
+
+public interface LCC02040E0DAO {
+
+    /**
+     * 세트상품관리 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void save(Map<String, Object> params) throws Exception;
+
+    /**
+     * 기타입출고 세트변환 예정으로 재고이동등록 생성
+     * 
+     * @param params
+     * @return
+     */
+    Map<String, Object> callLCFWSetMoveOrder(Map<String, Object> params) throws Exception;
+}

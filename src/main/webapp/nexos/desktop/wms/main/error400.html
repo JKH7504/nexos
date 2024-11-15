@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<style type="text/css">
+html, body {
+    height: 100%;
+}
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+    background-color: #efefef;
+}
+
+.imgError {
+    padding: 3px;
+    vertical-align: top;
+}
+
+.lblError {
+    font-family: 'Malgun Gothic', GulimChe;
+    font-size: 22px;
+    font-weight: bold;
+    color: red;
+    white-space: pre;
+}
+</style>
+<script type="text/javascript">
+    function getUrlPrefix() {
+
+        var urlPrefix = document.location.href || "";
+        var staticPos = urlPrefix.lastIndexOf("/nexos/");
+        if (staticPos > -1) {
+            urlPrefix = urlPrefix.substr(0, staticPos);
+        } else {
+            if (urlPrefix.startsWith("file")) {
+                urlPrefix = urlPrefix.substr(0, urlPrefix.lastIndexOf("/"));
+            } else {
+                if (document.location.pathname != "/") {
+                    urlPrefix = urlPrefix.replace(document.location.pathname, "");
+                }
+            }
+        }
+
+        if (urlPrefix.endsWith("/")) {
+            urlPrefix = urlPrefix.substring(0, urlPrefix.length - 1);
+        }
+
+        return urlPrefix;
+    }
+</script>
+</head>
+<body style="padding: 0; margin: 0;">
+    <img id="imgError" class="imgError">
+    <span class="lblError">잘못된 서비스 호출입니다. 호출 파라메터를 확인하십시오.</span>
+</body>
+<script type="text/javascript">
+    // document.getElementById("imgError").src = "css/image/imgUnsupported.png";
+    // 절대 경로로 지정
+    document.getElementById("imgError").src = getUrlPrefix() + "/nexos/desktop/wms/main/css/image/imgUnsupported.png";
+</script>
+</html>

@@ -1,0 +1,1341 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : RIB01011P1
+ *  프로그램명         : 반입예정등록 팝업(의류)
+ *  프로그램설명       : 반입예정등록 팝업 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2016-12-14
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2018-08-16    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#divDetailView",
+            grids: [
+                "#grdDetail"
+            ],
+            exceptHeight: $NC.getViewHeight("#ctrPopupView")
+        },
+        // 마스터 데이터
+        masterData: null
+    });
+
+    // 버튼 클릭 이벤트 연결
+    $("#btnClose").click(onCancel); // 닫기버튼
+    $("#btnDelivery_Cd").click(showDeliveryPopup);
+    $("#btnRDelivery_Cd").click(showRDeliveryPopup);
+    $("#btnCar_Cd").click(showCarPopup);
+    $("#btnEntryNew").click(_New); // 그리드 행 추가 버튼
+    $("#btnEntryDelete").click(_Delete); // 그리드 행 삭제버튼
+    $("#btnEntrySave").click(_Save); // 저장 버튼
+
+    $NC.setEnable("#edtCenter_Cd_F", false);
+    $NC.setEnable("#edtBu_Cd", false);
+    $NC.setEnable("#edtOrder_No", false);
+    $NC.setEnable("#edtBu_Date", false);
+
+    $NC.setInitDatePicker("#dtpPlaned_DateTime"); // 도착예정일자
+    $NC.setInitDatePicker("#dtpOrder_Date"); // 예정일자
+
+    // 그리드 초기화
+    grdDetailInitialize();
+
+    // 신규/삭제/저장 버튼 툴팁 세팅
+    $NC.setTooltip("#btnEntryNew", $NC.getDisplayMsg("JS.RIB01011P1.001", "신규"));
+    $NC.setTooltip("#btnEntryDelete", $NC.getDisplayMsg("JS.RIB01011P1.002", "삭제"));
+    $NC.setTooltip("#btnEntrySave", $NC.getDisplayMsg("JS.RIB01011P1.003", "저장"));
+}
+
+/**
+ * 등록팝업 Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    // 반입예정등록 전표생성 가능여부 N -> 반입예정등록시 신규, 수정 불가능
+    if ($NC.G_VAR.G_PARAMETER.P_POLICY_RI110 != $ND.C_YES) {
+        $NC.setEnable("#btnEntryNew", false);
+        $NC.setEnable("#btnEntryDelete", false);
+    }
+
+    var planedDateEnabled = false; // 도착예정일 제어
+    $NC.setValue("#chkPlaned_Date", $ND.C_NO); // 체크해제(체크해제시 도착예정일 항목은 비활성화)
+    $NC.setValue("#edtCenter_Cd_F", $NC.G_VAR.G_PARAMETER.P_CENTER_CD_F);
+    $NC.setValue("#edtBu_Cd", $NC.G_VAR.G_PARAMETER.P_BU_CD);
+    $NC.setValue("#edtBu_Nm", $NC.G_VAR.G_PARAMETER.P_BU_NM);
+    $NC.setValue("#edtCust_Cd", $NC.G_VAR.G_PARAMETER.P_CUST_CD);
+    $NC.setValue("#dtpOrder_Date", $NC.G_VAR.G_PARAMETER.P_ORDER_DATE);
+
+    // 신규 등록
+    if ($NC.G_VAR.G_PARAMETER.P_PROCESS_CD == $ND.C_PROCESS_ORDER_CREATE) {
+
+        var INOUT_CD = $NC.getValue("#cboInout_Cd");
+        var ORDER_DATE = $NC.getValue("#dtpOrder_Date");
+        var PLANED_DATETIME = $NC.getValue("#dtpPlaned_DateTime");
+        // 마스터 데이터 세팅
+        $NC.G_VAR.masterData = {
+            CENTER_CD: $NC.G_VAR.G_PARAMETER.P_CENTER_CD,
+            BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD,
+            ORDER_DATE: ORDER_DATE,
+            ORDER_NO: "",
+            INOUT_CD: INOUT_CD,
+            INBOUND_STATE: $ND.C_STATE_ORDER,
+            CUST_CD: $NC.G_VAR.G_PARAMETER.P_CUST_CD,
+            DELIVERY_CD: "",
+            RDELIVERY_CD: "",
+            RETURN_TYPE: "",
+            BOX_SEQ: "",
+            RHDC_DIV: "",
+            RETURN_COST: 0,
+            CAR_CD: "",
+            CAR_NM: "",
+            PLANED_DATETIME: PLANED_DATETIME,
+            PLANED_DATETIME_ORG: "",
+            BU_DATE: "",
+            BU_NO: "",
+            MALL_MSG: "",
+            ORDERER_CD: "",
+            ORDERER_NM: "",
+            ORDERER_TEL: "",
+            ORDERER_HP: "",
+            ORDERER_EMAIL: "",
+            ORDERER_MSG: "",
+            SHIPPER_NM: "",
+            SHIPPER_TEL: "",
+            SHIPPER_HP: "",
+            SHIPPER_ZIP_CD: "",
+            SHIPPER_ADDR_BASIC: "",
+            SHIPPER_ADDR_DETAIL: "",
+            REMARK1: "",
+            CRUD: $ND.C_DV_CRUD_C
+        };
+
+        $NC.setFocus("#edtDelivery_Cd");
+
+    }
+    // 예정 -> 등록, 등록 수정
+    else {
+        // 마스터 데이터 세팅
+        var dsMaster = $NC.G_VAR.G_PARAMETER.P_MASTER_DS;
+        $NC.setValue("#dtpOrder_Date", dsMaster.ORDER_DATE);
+        $NC.setValue("#edtOrder_No", dsMaster.ORDER_NO);
+        $NC.setValue("#edtDelivery_Cd", dsMaster.DELIVERY_CD);
+        $NC.setValue("#edtDelivery_Nm", dsMaster.DELIVERY_NM);
+        $NC.setValue("#edtRDelivery_Cd", dsMaster.RDELIVERY_CD);
+        $NC.setValue("#edtRDelivery_Nm", dsMaster.RDELIVERY_NM);
+        $NC.setValue("#edtCar_Cd", dsMaster.CAR_CD);
+        $NC.setValue("#edtCar_Nm", dsMaster.CAR_NM);
+        $NC.setValue("#edtBu_Date", dsMaster.BU_DATE);
+        $NC.setValue("#edtBu_No", dsMaster.BU_NO);
+        $NC.setValue("#edtRemark1", dsMaster.REMARK1);
+        // 도착예정일 편집
+        if ($NC.isNotNull(dsMaster.PLANED_DATETIME)) {
+            $NC.setValue("#chkPlaned_Date", $ND.C_YES);
+            $NC.setValue("#dtpPlaned_DateTime", dsMaster.PLANED_DATETIME.substring(0, 10));
+            var hh = dsMaster.PLANED_DATETIME.substring(11, 13);
+            var mm = dsMaster.PLANED_DATETIME.substring(14, 16);
+            hh = $NC.isNull(hh) ? 0 : hh;
+            mm = $NC.isNull(mm) ? 0 : mm;
+            var ampm = hh / 12 < 1 ? "0" : "12";
+            $NC.setValue("#cboAmPm", ampm);
+            $NC.setValue("#edtHours", hh - ampm);
+            $NC.setValue("#edtMinutes", mm);
+            planedDateEnabled = true;
+        } else {
+            $NC.setValue("#dtpPlaned_DateTime");
+        }
+
+        $NC.G_VAR.masterData = {
+            CENTER_CD: dsMaster.CENTER_CD,
+            BU_CD: dsMaster.BU_CD,
+            ORDER_DATE: dsMaster.ORDER_DATE,
+            ORDER_NO: dsMaster.ORDER_NO,
+            INOUT_CD: dsMaster.INOUT_CD,
+            INBOUND_STATE: $ND.C_STATE_ORDER,
+            CUST_CD: dsMaster.CUST_CD,
+            DELIVERY_CD: dsMaster.DELIVERY_CD,
+            RDELIVERY_CD: dsMaster.RDELIVERY_CD,
+            RETURN_TYPE: dsMaster.RETURN_TYPE,
+            BOX_SEQ: dsMaster.BOX_SEQ,
+            RHDC_DIV: dsMaster.RHDC_DIV,
+            RETURN_COST: dsMaster.RETURN_COST,
+            CAR_CD: dsMaster.CAR_CD,
+            CAR_NM: dsMaster.CAR_NM,
+            PLANED_DATETIME: dsMaster.PLANED_DATETIME,
+            PLANED_DATETIME_ORG: dsMaster.PLANED_DATETIME,
+            BU_DATE: dsMaster.BU_DATE,
+            BU_NO: dsMaster.BU_NO,
+            MALL_MSG: dsMaster.MALL_MSG,
+            ORDERER_CD: dsMaster.ORDERER_CD,
+            ORDERER_NM: dsMaster.ORDERER_NM,
+            ORDERER_TEL: dsMaster.ORDERER_TEL,
+            ORDERER_HP: dsMaster.ORDERER_HP,
+            ORDERER_EMAIL: dsMaster.ORDERER_EMAIL,
+            ORDERER_MSG: dsMaster.ORDERER_MSG,
+            SHIPPER_NM: dsMaster.SHIPPER_NM,
+            SHIPPER_TEL: dsMaster.SHIPPER_TEL,
+            SHIPPER_HP: dsMaster.SHIPPER_HP,
+            SHIPPER_ZIP_CD: dsMaster.SHIPPER_ZIP_CD,
+            SHIPPER_ADDR_BASIC: dsMaster.SHIPPER_ADDR_BASIC,
+            SHIPPER_ADDR_DETAIL: dsMaster.SHIPPER_ADDR_DETAIL,
+            REMARK1: dsMaster.REMARK1,
+            CRUD: $ND.C_DV_CRUD_R
+        };
+
+        // 디테일 데이터 세팅
+        var dsDetail = $NC.G_VAR.G_PARAMETER.P_DETAIL_DS;
+        var rowData, newRowData;
+        G_GRDDETAIL.data.beginUpdate();
+        try {
+            for (var rIndex = 0, rCount = dsDetail.length; rIndex < rCount; rIndex++) {
+                rowData = dsDetail[rIndex];
+                if (Number(rowData.ORDER_QTY) < 1) {
+                    continue;
+                }
+                newRowData = {
+                    CENTER_CD: rowData.CENTER_CD,
+                    BU_CD: rowData.BU_CD,
+                    ORDER_DATE: rowData.ORDER_DATE,
+                    ORDER_NO: rowData.ORDER_NO,
+                    LINE_NO: rowData.LINE_NO,
+                    INBOUND_STATE: $ND.C_STATE_ORDER,
+                    BRAND_CD: rowData.BRAND_CD,
+                    BRAND_NM: rowData.BRAND_NM,
+                    ITEM_CD: rowData.ITEM_CD,
+                    ITEM_NM: rowData.ITEM_NM,
+                    ITEM_SPEC: rowData.ITEM_SPEC,
+                    ITEM_STATE: rowData.ITEM_STATE,
+                    ITEM_STATE_F: rowData.ITEM_STATE_F,
+                    ITEM_LOT: rowData.ITEM_LOT,
+                    QTY_IN_BOX: rowData.QTY_IN_BOX,
+                    VAT_YN: rowData.VAT_YN,
+                    ORDER_QTY: rowData.ORDER_QTY,
+                    ORDER_BOX: $NC.getBBox(rowData.ORDER_QTY, rowData.QTY_IN_BOX),
+                    ORDER_EA: $NC.getBEa(rowData.ORDER_QTY, rowData.QTY_IN_BOX),
+                    ORDER_WEIGHT: rowData.ORDER_WEIGHT,
+                    BOX_WEIGHT: rowData.BOX_WEIGHT,
+                    RETURN_DIV: rowData.RETURN_DIV,
+                    RETURN_DIV_F: rowData.RETURN_DIV_F,
+                    RETURN_COMMENT: rowData.RETURN_COMMENT,
+                    VALID_DATE: rowData.VALID_DATE,
+                    BATCH_NO: rowData.BATCH_NO,
+                    SUPPLY_PRICE: rowData.SUPPLY_PRICE,
+                    DC_PRICE: rowData.DC_PRICE,
+                    APPLY_PRICE: rowData.APPLY_PRICE,
+                    SUPPLY_AMT: rowData.SUPPLY_AMT,
+                    VAT_AMT: rowData.VAT_AMT,
+                    DC_AMT: rowData.DC_AMT,
+                    TOTAL_AMT: rowData.TOTAL_AMT,
+                    DRUG_DIV_D: rowData.DRUG_DIV_D,
+                    MEDICATION_DIV_D: rowData.MEDICATION_DIV_D,
+                    KEEP_DIV_D: rowData.KEEP_DIV_D,
+                    DRUG_CD: rowData.DRUG_CD,
+                    BU_LINE_NO: rowData.BU_LINE_NO,
+                    BU_KEY: rowData.BU_KEY,
+                    REMARK1: rowData.REMARK1,
+                    id: $NC.getGridNewRowId(),
+                    CRUD: $ND.C_DV_CRUD_R
+                };
+                G_GRDDETAIL.data.addItem(newRowData);
+            }
+        } finally {
+            G_GRDDETAIL.data.endUpdate();
+        }
+
+        // 수정일 경우 입력불가 항목 비활성화 처리
+        $NC.setEnable("#dtpOrder_Date", false);
+        $NC.setEnable("#cboInout_Cd", false);
+        $NC.setEnable("#edtDelivery_Cd", false);
+        $NC.setEnable("#btnDelivery_Cd", false);
+
+        $NC.setGridSelectRow(G_GRDDETAIL, 0);
+    }
+
+    // 조회조건 - 반입구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "INOUT_CD",
+            P_COMMON_CD: $ND.C_ALL,
+            P_ATTR01_CD: $ND.C_INOUT_GRP_E3,
+            P_VIEW_DIV: "1" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboInout_Cd",
+        codeField: "COMMON_CD",
+        nameField: "COMMON_NM",
+        fullNameField: "COMMON_CD_F",
+        selectOption: $NC.G_VAR.G_PARAMETER.P_PROCESS_CD == $ND.C_PROCESS_ORDER_CREATE ? "F" : null,
+        onComplete: function() {
+            if ($NC.G_VAR.G_PARAMETER.P_PROCESS_CD == $ND.C_PROCESS_ORDER_CREATE) {
+                $NC.G_VAR.masterData.INOUT_CD = $NC.getValue("#cboInout_Cd");
+            } else {
+                $NC.setValue("#cboInout_Cd", $NC.G_VAR.masterData.INOUT_CD);
+            }
+        }
+    });
+
+    $NC.setEnable("#cboAmPm", planedDateEnabled);
+    $NC.setEnable("#edtHours", planedDateEnabled);
+    $NC.setEnable("#edtMinutes", planedDateEnabled);
+    $NC.setEnable("#dtpPlaned_DateTime", planedDateEnabled);
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * 닫기,취소버튼 클릭 이벤트
+ */
+function onCancel() {
+
+    $NC.setPopupCloseAction($ND.C_CANCEL);
+    $NC.onPopupClose();
+}
+
+/**
+ * 저장,확인버튼 클릭 이벤트
+ */
+function onClose() {
+
+    $NC.setPopupCloseAction($ND.C_OK);
+    $NC.onPopupClose();
+}
+
+/**
+ * Input Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnInputChange(e, view, val) {
+
+    var id = view.prop("id").substr(3).toUpperCase();
+    masterDataOnChange(e, {
+        view: view,
+        col: id,
+        val: val
+    });
+}
+
+/**
+ * 조회
+ */
+function _Inquiry() {
+
+}
+
+/**
+ * 신규
+ */
+function _New() {
+
+    var DELIVERY_CD = $NC.getValue("#edtDelivery_Cd");
+    if ($NC.isNull(DELIVERY_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.004", "먼저 배송처를 입력하십시오."));
+        $NC.setFocus("#edtDelivery_Cd");
+        return;
+    }
+
+    var RDELIVERY_CD = $NC.getValue("#edtRDelivery_Cd");
+    if ($NC.isNull(RDELIVERY_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.005", "먼저 실배송처 코드를 입력하십시오."));
+        $NC.setFocus("#edtRDelivery_Cd");
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL)) {
+        return;
+    }
+
+    // 신규 데이터는 CRUD를 "N"으로 하고 데이터 입력 후 다른 Row로 이동하면 "C"로 변경
+    var newRowData = {
+        CENTER_CD: $NC.G_VAR.masterData.CENTER_CD,
+        BU_CD: $NC.G_VAR.masterData.BU_CD,
+        ORDER_DATE: $NC.G_VAR.masterData.ORDER_DATE,
+        ORDER_NO: $NC.G_VAR.masterData.ORDER_NO,
+        LINE_NO: "",
+        INBOUND_STATE: $NC.G_VAR.masterData.INBOUND_STATE,
+        BRAND_CD: "",
+        BRAND_NM: "",
+        ITEM_CD: "",
+        ITEM_NM: "",
+        ITEM_SPEC: "",
+        ITEM_STATE: $NC.G_VAR.G_PARAMETER.P_POLICY_RI240,
+        ITEM_STATE_F: $NC.getGridComboName(G_GRDDETAIL, {
+            columnId: "ITEM_STATE_F",
+            searchVal: $NC.G_VAR.G_PARAMETER.P_POLICY_RI240,
+            dataCodeField: "COMMON_CD",
+            dataFullNameField: "COMMON_CD_F"
+        }),
+        ITEM_LOT: $ND.C_BASE_ITEM_LOT,
+        VALID_DATE: "",
+        BATCH_NO: "",
+        QTY_IN_BOX: 1,
+        ORDER_QTY: 0,
+        ORDER_BOX: 0,
+        ORDER_EA: 0,
+        ORDER_WEIGHT: 0,
+        BOX_WEIGHT: 0,
+        RETURN_DIV: $ND.C_REASON_ETC_DIV,
+        RETURN_DIV_F: $NC.getGridComboName(G_GRDDETAIL, {
+            columnId: "RETURN_DIV_F",
+            searchVal: $ND.C_REASON_ETC_DIV,
+            dataCodeField: "COMMON_CD",
+            dataFullNameField: "COMMON_CD_F"
+        }),
+        RETURN_COMMENT: "",
+        SUPPLY_PRICE: 0,
+        DC_PRICE: 0,
+        APPLY_PRICE: 0,
+        SUPPLY_AMT: 0,
+        VAT_AMT: 0,
+        DC_AMT: 0,
+        TOTAL_AMT: 0,
+        BU_LINE_NO: "",
+        BU_KEY: "",
+        REMARK1: "",
+        VAT_YN: "",
+        id: $NC.getGridNewRowId(),
+        CRUD: $ND.C_DV_CRUD_N
+    };
+
+    // 신규 데이터 생성 및 이벤트 호출
+    $NC.newGridRowData(G_GRDDETAIL, newRowData);
+}
+
+/**
+ * 저장
+ */
+function _Save() {
+
+    if ($NC.isNull($NC.G_VAR.masterData.CENTER_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.007", "물류센터가 지정되어 있지 않습니다. 다시 작업하십시오."));
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.BU_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.008", "사업부가 지정되어 있지 않습니다. 다시 작업하십시오."));
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.ORDER_DATE)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.009", "먼저 예정일자를 입력하십시오."));
+        $NC.setFocus("#dtpOrder_Date");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.INOUT_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.010", "먼저 반입구분을 선택하십시오."));
+        $NC.setFocus("#cboInout_Cd");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.DELIVERY_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.004", "먼저 배송처를 입력하십시오."));
+        $NC.setFocus("#edtDelivery_Cd");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.RDELIVERY_CD)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.005", "먼저 실배송처 코드를 입력하십시오."));
+        $NC.setFocus("#edtRDelivery_Cd");
+        return;
+    }
+
+    if (Number($NC.getValue("#edtHours")) < 0 || Number($NC.getValue("#edtHours")) > 12) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.011", "도착예정일의 시간은 0~11의 숫자를 입력하십시오."));
+        $NC.setFocus("#edtHours");
+        return;
+    }
+
+    if (Number($NC.getValue("#edtMinutes")) < 0 || Number($NC.getValue("#edtMinutes")) > 59) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.012", "도착예정일의 분은 0~59의 숫자를 입력하십시오."));
+        $NC.setFocus("#edtMinutes");
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL)) {
+        return;
+    }
+
+    if (G_GRDDETAIL.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.006", "저장할 데이터가 없습니다."));
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.RIB01011P1.013", "저장하시겠습니까?"))) {
+        return;
+    }
+
+    var dsD = [];
+    var dsCU = [];
+    // 필터링 된 데이터라 전체 데이터를 기준으로 처리
+    var dsTarget = G_GRDDETAIL.data.getItems();
+    var dsDetail, rowData;
+    for (var rIndex = 0, rCount = dsTarget.length; rIndex < rCount; rIndex++) {
+        rowData = dsTarget[rIndex];
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            continue;
+        } else if (rowData.CRUD == $ND.C_DV_CRUD_D) {
+            dsDetail = dsD;
+        } else {
+            dsDetail = dsCU;
+        }
+        dsDetail.push({
+            P_CENTER_CD: $NC.G_VAR.masterData.CENTER_CD,
+            P_BU_CD: $NC.G_VAR.masterData.BU_CD,
+            P_ORDER_DATE: $NC.G_VAR.masterData.ORDER_DATE,
+            P_ORDER_NO: $NC.G_VAR.masterData.ORDER_NO,
+            P_LINE_NO: rowData.LINE_NO,
+            P_INBOUND_STATE: rowData.INBOUND_STATE,
+            P_BRAND_CD: rowData.BRAND_CD,
+            P_ITEM_CD: rowData.ITEM_CD,
+            P_ITEM_STATE: rowData.ITEM_STATE,
+            P_ITEM_LOT: rowData.ITEM_LOT,
+            P_ORDER_QTY: rowData.ORDER_QTY,
+            P_ENTRY_QTY: rowData.ENTRY_QTY,
+            P_VALID_DATE: rowData.VALID_DATE,
+            P_BATCH_NO: rowData.BATCH_NO,
+            P_SUPPLY_PRICE: rowData.SUPPLY_PRICE,
+            P_DC_PRICE: rowData.DC_PRICE,
+            P_APPLY_PRICE: rowData.APPLY_PRICE,
+            P_SUPPLY_AMT: rowData.SUPPLY_AMT,
+            P_VAT_AMT: rowData.VAT_AMT,
+            P_DC_AMT: rowData.DC_AMT,
+            P_TOTAL_AMT: rowData.TOTAL_AMT,
+            P_BU_LINE_NO: rowData.BU_LINE_NO,
+            P_BU_KEY: rowData.BU_KEY,
+            P_RETURN_DIV: rowData.RETURN_DIV,
+            P_RETURN_COMMENT: rowData.RETURN_COMMENT,
+            P_REMARK1: rowData.REMARK1,
+            P_CRUD: rowData.CRUD
+        });
+    }
+    dsDetail = dsD.concat(dsCU);
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R && dsDetail.length == 0) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.014", "데이터 수정 후 저장하십시오."));
+        return;
+    }
+
+    var PLANED_DATETIME = $NC.G_VAR.masterData.PLANED_DATETIME;
+    if ($NC.getValue("#chkPlaned_Date") != $ND.C_YES) {
+        PLANED_DATETIME = $NC.G_VAR.masterData.PLANED_DATETIME_ORG;
+    }
+
+    $NC.serviceCall("/RIB01010E0/save.do", {
+        P_DS_MASTER: {
+            P_CENTER_CD: $NC.G_VAR.masterData.CENTER_CD,
+            P_BU_CD: $NC.G_VAR.masterData.BU_CD,
+            P_ORDER_DATE: $NC.G_VAR.masterData.ORDER_DATE,
+            P_ORDER_NO: $NC.G_VAR.masterData.ORDER_NO,
+            P_INOUT_CD: $NC.G_VAR.masterData.INOUT_CD,
+            P_INBOUND_STATE: $NC.G_VAR.masterData.INBOUND_STATE,
+            P_CUST_CD: $NC.G_VAR.masterData.CUST_CD,
+            P_DELIVERY_CD: $NC.G_VAR.masterData.DELIVERY_CD,
+            P_RDELIVERY_CD: $NC.G_VAR.masterData.RDELIVERY_CD,
+            P_RETURN_TYPE: $NC.G_VAR.masterData.RETURN_TYPE,
+            P_BOX_SEQ: $NC.G_VAR.masterData.BOX_SEQ,
+            P_RHDC_DIV: $NC.G_VAR.masterData.RHDC_DIV,
+            P_RETURN_COST: $NC.G_VAR.masterData.RETURN_COST,
+            P_CAR_CD: $NC.G_VAR.masterData.CAR_CD,
+            P_PLANED_DATETIME: PLANED_DATETIME,
+            P_BU_DATE: $NC.G_VAR.masterData.BU_DATE,
+            P_BU_NO: $NC.G_VAR.masterData.BU_NO,
+            P_MALL_MSG: $NC.G_VAR.masterData.MALL_MSG,
+            P_ORDERER_CD: $NC.G_VAR.masterData.ORDERER_CD,
+            P_ORDERER_NM: $NC.G_VAR.masterData.ORDERER_NM,
+            P_ORDERER_TEL: $NC.G_VAR.masterData.ORDERER_TEL,
+            P_ORDERER_HP: $NC.G_VAR.masterData.ORDERER_HP,
+            P_ORDERER_EMAIL: $NC.G_VAR.masterData.ORDERER_EMAIL,
+            P_ORDERER_MSG: $NC.G_VAR.masterData.ORDERER_MSG,
+            P_SHIPPER_NM: $NC.G_VAR.masterData.SHIPPER_NM,
+            P_SHIPPER_TEL: $NC.G_VAR.masterData.SHIPPER_TEL,
+            P_SHIPPER_HP: $NC.G_VAR.masterData.SHIPPER_HP,
+            P_SHIPPER_ZIP_CD: $NC.G_VAR.masterData.SHIPPER_ZIP_CD,
+            P_SHIPPER_ADDR_BASIC: $NC.G_VAR.masterData.SHIPPER_ADDR_BASIC,
+            P_SHIPPER_ADDR_DETAIL: $NC.G_VAR.masterData.SHIPPER_ADDR_DETAIL,
+            P_REMARK1: $NC.G_VAR.masterData.REMARK1,
+            P_CRUD: $NC.G_VAR.masterData.CRUD
+        },
+        P_DS_DETAIL: dsDetail,
+        P_PROCESS_CD: $NC.G_VAR.G_PARAMETER.P_PROCESS_CD,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave);
+}
+
+/**
+ * 삭제
+ */
+function _Delete() {
+
+    if (G_GRDDETAIL.data.getLength() == 0 || $NC.isNull(G_GRDDETAIL.lastRow)) {
+        alert($NC.getDisplayMsg("JS.RIB01011P1.015", "삭제할 데이터가 없습니다."));
+        return;
+    }
+
+    var rowData = G_GRDDETAIL.data.getItem(G_GRDDETAIL.lastRow);
+    // 신규 데이터일 경우 Grid 데이터만 삭제, 그외 CRUD를 "D"로 변경
+    $NC.deleteGridRowData(G_GRDDETAIL, rowData, true);
+}
+
+/**
+ * 마스터 데이터 변경시 처리
+ */
+function masterDataOnChange(e, args) {
+
+    switch (args.col) {
+        case "DELIVERY_CD":
+            $NP.onDeliveryChange(args.val, {
+                P_CUST_CD: $NC.getValue("#edtCust_Cd"),
+                P_DELIVERY_CD: args.val,
+                P_DELIVERY_DIV: $ND.C_ALL,
+                P_VIEW_DIV: "1"
+            }, onDeliveryPopup);
+            return;
+        case "RDELIVERY_CD":
+            $NP.onDeliveryChange(args.val, {
+                P_CUST_CD: $NC.getValue("#edtCust_Cd"),
+                P_DELIVERY_CD: args.val,
+                P_DELIVERY_DIV: $ND.C_ALL,
+                P_VIEW_DIV: "1"
+            }, onRDeliveryPopup);
+            return;
+        case "CAR_CD":
+            $NP.onCarChange(args.val, {
+                P_CENTER_CD: $NC.G_VAR.G_PARAMETER.P_CENTER_CD,
+                P_CAR_CD: args.val,
+                P_VIEW_DIV: "1"
+            }, onCarPopup);
+            return;
+        case "INOUT_CD":
+            $NC.G_VAR.masterData.INOUT_CD = args.val;
+            break;
+        case "ORDER_DATE":
+            $NC.setValueDatePicker(args.view, args.val, $NC.getDisplayMsg("JS.RIB01011P1.016", "예정일자를 정확히 입력하십시오."));
+            $NC.G_VAR.masterData.ORDER_DATE = $NC.getValue("#dtpOrder_Date");
+            break;
+        case "PLANED_DATE":
+            var isEnabled = args.val == $ND.C_YES;
+            $NC.setEnable("#cboAmPm", isEnabled);
+            $NC.setEnable("#edtHours", isEnabled);
+            $NC.setEnable("#edtMinutes", isEnabled);
+            $NC.setEnable("#dtpPlaned_DateTime", isEnabled);
+            break;
+        case "PLANED_DATETIME":
+            if ($NC.isNotNull(args.val)) {
+                $NC.setValueDatePicker(args.view, args.val, $NC.getDisplayMsg("JS.RIB01011P1.017", "도착예정일을 정확히 입력하십시오."));
+            }
+            setPlanedDatetime();
+            break;
+        case "AMPM":
+        case "HOURS":
+        case "MINUTES":
+            setPlanedDatetime();
+            break;
+        case "REMARK1":
+            $NC.G_VAR.masterData.REMARK1 = args.val;
+            break;
+        case "PALLET_ID_CNT":
+            $NC.G_VAR.masterData.PALLET_ID_CNT = args.val;
+            break;
+    }
+
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+}
+
+/**
+ * 도착예정일 설정
+ */
+function setPlanedDatetime() {
+
+    var date = $NC.getValue("#dtpPlaned_DateTime");
+    if ($NC.isNull(date)) {
+        $NC.G_VAR.masterData.PLANED_DATETIME = "";
+    } else {
+        var hh = Number($NC.getValue("#cboAmPm")) + Number($NC.getValue("#edtHours")) + "";
+        var mm = $NC.getValue("#edtMinutes");
+        hh = hh.length == 1 ? "0" + hh : hh;
+        mm = mm.length == 1 ? "0" + mm : mm;
+        $NC.G_VAR.masterData.PLANED_DATETIME = date + " " + hh + ":" + mm + ":00";
+    }
+}
+
+function grdDetailOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "LINE_NO",
+        field: "LINE_NO",
+        name: "순번",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드",
+        editor: Slick.Editors.Popup,
+        editorOptions: {
+            onPopup: grdDetailOnPopup,
+            isKeyField: true
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_NM",
+        field: "ITEM_NM",
+        name: "상품명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_SPEC",
+        field: "ITEM_SPEC",
+        name: "규격"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BRAND_NM",
+        field: "BRAND_NM",
+        name: "브랜드명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_STATE_F",
+        field: "ITEM_STATE_F",
+        name: "상태",
+        cssClass: "styCenter",
+        editor: Slick.Editors.ComboBox,
+        editorOptions: $NC.getGridComboEditorOptions("/WC/getDataSet.do", {
+            P_QUERY_ID: "WC.POP_CMCODE",
+            P_QUERY_PARAMS: {
+                P_COMMON_GRP: "ITEM_STATE",
+                P_COMMON_CD: $ND.C_ALL,
+                P_ATTR01_CD: "1",
+                P_VIEW_DIV: "1" // 1:등록팝업, 2:조회팝업
+            }
+        }, {
+            codeField: "ITEM_STATE",
+            dataCodeField: "COMMON_CD",
+            dataFullNameField: "COMMON_CD_F",
+            isKeyField: true
+        })
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_LOT",
+        field: "ITEM_LOT",
+        name: "LOT번호",
+        editor: Slick.Editors.Text,
+        editorOptions: {
+            isKeyField: true
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "QTY_IN_BOX",
+        field: "QTY_IN_BOX",
+        name: "입수",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_QTY",
+        field: "ORDER_QTY",
+        name: "예정수량",
+        cssClass: "styRight",
+        // 기본 editorOptions 자동 지정이 아닌 임의 지정
+        editor: Slick.Editors.Number,
+        editorOptions: $NC.getGridNumberColumnOptions({
+            formatterType: "FLOAT_QTY",
+            isKeyField: true
+        })
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_BOX",
+        field: "ORDER_BOX",
+        name: "예정BOX",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_EA",
+        field: "ORDER_EA",
+        name: "예정EA",
+        cssClass: "styRight",
+        // 기본 editorOptions 자동 지정이 아닌 임의 지정
+        editor: Slick.Editors.Number,
+        editorOptions: $NC.getGridNumberColumnOptions("FLOAT_QTY")
+    });
+    $NC.setGridColumn(columns, {
+        id: "RETURN_DIV_F",
+        field: "RETURN_DIV_F",
+        name: "반품사유구분",
+        editor: Slick.Editors.ComboBox,
+        editorOptions: $NC.getGridComboEditorOptions("/WC/getDataSet.do", {
+            P_QUERY_ID: "WC.POP_CMCODE",
+            P_QUERY_PARAMS: {
+                P_COMMON_GRP: "RI.RETURN_DIV",
+                P_COMMON_CD: $ND.C_ALL,
+                P_VIEW_DIV: "1" // 1:등록팝업, 2:조회팝업
+            }
+        }, {
+            codeField: "RETURN_DIV",
+            dataCodeField: "COMMON_CD",
+            dataFullNameField: "COMMON_CD_F",
+            isKeyField: true
+        })
+    });
+    $NC.setGridColumn(columns, {
+        id: "RETURN_COMMENT",
+        field: "RETURN_COMMENT",
+        name: "반품사유내역",
+        editor: Slick.Editors.Text
+    });
+    if ($NC.G_VAR.G_PARAMETER.P_POLICY_LS210 == "2") {
+        $NC.setGridColumn(columns, {
+            id: "VALID_DATE",
+            field: "VALID_DATE",
+            name: "유통기한",
+            editor: Slick.Editors.Date
+        });
+        $NC.setGridColumn(columns, {
+            id: "BATCH_NO",
+            field: "BATCH_NO",
+            name: "제조배치번호",
+            editor: Slick.Editors.Text
+        });
+    }
+    $NC.setGridColumn(columns, {
+        id: "BOX_WEIGHT",
+        field: "BOX_WEIGHT",
+        name: "박스중량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_WEIGHT",
+        field: "ORDER_WEIGHT",
+        name: "예정중량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SUPPLY_PRICE",
+        field: "SUPPLY_PRICE",
+        name: "공급단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DC_PRICE",
+        field: "DC_PRICE",
+        name: "할인단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "APPLY_PRICE",
+        field: "APPLY_PRICE",
+        name: "적용단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SUPPLY_AMT",
+        field: "SUPPLY_AMT",
+        name: "공급금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VAT_AMT",
+        field: "VAT_AMT",
+        name: "부가세액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DC_AMT",
+        field: "DC_AMT",
+        name: "할인금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "TOTAL_AMT",
+        field: "TOTAL_AMT",
+        name: "합계금액",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DRUG_DIV_D",
+        field: "DRUG_DIV_D",
+        name: "약품구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MEDICATION_DIV_D",
+        field: "MEDICATION_DIV_D",
+        name: "투여구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "KEEP_DIV_D",
+        field: "KEEP_DIV_D",
+        name: "보관구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DRUG_CD",
+        field: "DRUG_CD",
+        name: "보험코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_LINE_NO",
+        field: "BU_LINE_NO",
+        name: "전표순번"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_KEY",
+        field: "BU_KEY",
+        name: "전표키"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고",
+        editor: Slick.Editors.Text
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+
+}
+
+/**
+ * 그리드 초기값 설정
+ */
+function grdDetailInitialize() {
+
+    var options = {
+        editable: true,
+        autoEdit: true,
+        frozenColumn: 3
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail", {
+        columns: grdDetailOnGetColumns(),
+        queryId: null,
+        sortCol: "LINE_NO",
+        gridOptions: options,
+        canExportExcel: false,
+        onFilter: grdDetailOnFilter
+    });
+
+    G_GRDDETAIL.view.onSelectedRowsChanged.subscribe(grdDetailOnAfterScroll);
+    G_GRDDETAIL.view.onBeforeEditCell.subscribe(grdDetailOnBeforeEditCell);
+    G_GRDDETAIL.view.onCellChange.subscribe(grdDetailOnCellChange);
+
+}
+
+/**
+ * grdDetail 데이터 필터링 이벤트
+ */
+function grdDetailOnFilter(item) {
+
+    return item.CRUD != $ND.C_DV_CRUD_D;
+}
+
+/**
+ * 그리드 신규 추가 버튼 클릭 후 포커스 설정
+ * 
+ * @param args
+ */
+function grdDetailOnNewRecord(args) {
+
+    $NC.setFocusGrid(G_GRDDETAIL, args.row, "ITEM_CD", true);
+}
+
+/**
+ * 그리드에 입고예정등록 전표 생성 가능여부가 N일경우 편집 불가로 처리
+ * 
+ * @param e
+ * @param args
+ * @returns {Boolean}
+ */
+function grdDetailOnBeforeEditCell(e, args) {
+
+    // 반입예정등록 전표생성 가능여부 N -> 반입예정등록시 신규, 수정 불가능
+    if ($NC.G_VAR.G_PARAMETER.P_POLICY_RI110 != $ND.C_YES) {
+        return false;
+    }
+
+    var rowData = args.item;
+    // 신규 데이터일 때만 수정 가능한 컬럼
+    if (rowData.CRUD != $ND.C_DV_CRUD_N && rowData.CRUD != $ND.C_DV_CRUD_C) {
+        switch (args.column.id) {
+            case "ITEM_CD":
+                return false;
+        }
+    }
+    return true;
+}
+
+function grdDetailOnCellChange(e, args) {
+
+    var rowData = args.item;
+    switch (G_GRDDETAIL.view.getColumnId(args.cell)) {
+        case "ITEM_CD":
+            $NP.onItemChange(rowData.ITEM_CD, {
+                P_BU_CD: rowData.BU_CD,
+                P_ITEM_CD: rowData.ITEM_CD,
+                P_VIEW_DIV: "1",
+                P_DEPART_CD: $ND.C_ALL,
+                P_LINE_CD: $ND.C_ALL,
+                P_CLASS_CD: $ND.C_ALL
+            }, onItemPopup);
+            return;
+        case "ORDER_QTY":
+            if (Number(rowData.ORDER_QTY) < 1) {
+                alert($NC.getDisplayMsg("JS.RIB01011P1.018", "예정수량은 1보다 작을 수 없습니다."));
+                rowData.ORDER_QTY = args.oldItem.ORDER_QTY;
+                $NC.setFocusGrid(G_GRDDETAIL, args.row, args.cell, true);
+                break;
+            }
+            rowData = grdDetailOnCalc(rowData);
+            $NC.setFocusGrid(G_GRDDETAIL, G_GRDDETAIL.lastRow, G_GRDDETAIL.view.getColumnIndex("RETURN_DIV_F"), true);
+            break;
+        case "RETURN_DIV_F":
+            $NC.setFocusGrid(G_GRDDETAIL, G_GRDDETAIL.lastRow, G_GRDDETAIL.view.getColumnIndex("RETURN_COMMENT"), true);
+            break;
+        case "VALID_DATE":
+            if ($NC.isNotNull(rowData.VALID_DATE)) {
+                if (!$NC.isDate(rowData.VALID_DATE)) {
+                    alert($NC.getDisplayMsg("JS.RIB01011P1.019", "유통기한을 정확히 입력하십시오."));
+                    rowData.VALID_DATE = "";
+                    $NC.setFocusGrid(G_GRDDETAIL, args.row, args.cell, true);
+                } else {
+                    rowData.VALID_DATE = $NC.getDate(rowData.VALID_DATE);
+                }
+            }
+            break;
+    }
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDDETAIL, rowData);
+}
+
+function grdDetailOnBeforePost(row) {
+
+    // Validation 대상인지 체크, 아니면 True로 리턴
+    if (!$NC.isGridValidPostRow(G_GRDDETAIL, row, "ITEM_CD")) {
+        return true;
+    }
+
+    var rowData = G_GRDDETAIL.data.getItem(row);
+    if (rowData.CRUD != $ND.C_DV_CRUD_R) {
+        if ($NC.isNull(rowData.ITEM_CD) || $NC.isNull(rowData.ITEM_NM)) {
+            alert($NC.getDisplayMsg("JS.RIB01011P1.020", "상품코드를 입력하십시오."));
+            $NC.setFocusGrid(G_GRDDETAIL, row, "ITEM_CD", true);
+            return false;
+        }
+        if ($NC.isNull(rowData.ITEM_STATE)) {
+            alert($NC.getDisplayMsg("JS.RIB01011P1.021", "상태를 선택하십시오."));
+            $NC.setFocusGrid(G_GRDDETAIL, row, "ITEM_STATE_F", true);
+            return false;
+        }
+        if ($NC.isNull(rowData.ITEM_LOT)) {
+            alert($NC.getDisplayMsg("JS.RIB01011P1.022", "LOT번호를 입력하십시오."));
+            $NC.setFocusGrid(G_GRDDETAIL, row, "ITEM_LOT", true);
+            return false;
+        }
+        if ($NC.isNull(rowData.ORDER_QTY)) {
+            alert($NC.getDisplayMsg("JS.RIB01011P1.023", "예정수량을 입력하십시오."));
+            $NC.setFocusGrid(G_GRDDETAIL, row, "ORDER_QTY", true);
+            return false;
+        }
+
+        if ($NC.isNull(rowData.RETURN_DIV)) {
+            alert($NC.getDisplayMsg("JS.RIB01011P1.024", "반품사유구분을 입력하십시오."));
+            $NC.setGridSelectRow(G_GRDDETAIL, {
+                selectRow: row,
+                activeCell: G_GRDDETAIL.view.getColumnIndex("RETURN_DIV_F"),
+                editMode: true
+            });
+            return false;
+        }
+    }
+
+    // 신규 데이터 업데이트, N -> C
+    $NC.setGridApplyPost(G_GRDDETAIL, rowData);
+    return true;
+}
+
+/**
+ * 그리드 행 선택 변경 했을 경우
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetailOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL, row + 1);
+}
+
+/**
+ * 그리드의 상품 팝업 처리
+ */
+function grdDetailOnPopup(e, args) {
+
+    var rowData = args.item;
+    switch (args.column.id) {
+        case "ITEM_CD":
+            $NP.showItemPopup({
+                P_BU_CD: rowData.BU_CD,
+                P_ITEM_CD: $ND.C_ALL,
+                P_VIEW_DIV: "1",
+                P_DEPART_CD: $ND.C_ALL,
+                P_LINE_CD: $ND.C_ALL,
+                P_CLASS_CD: $ND.C_ALL
+            }, onItemPopup, function() {
+                $NC.setFocusGrid(G_GRDDETAIL, args.row, args.cell, true, true);
+            });
+            break;
+    }
+}
+
+function grdDetailOnCalc(rowData, orderQty) {
+
+    if ($NC.isNotNull(orderQty)) {
+        rowData.ORDER_QTY = Number(orderQty);
+    }
+    rowData.ORDER_BOX = $NC.getBBox(rowData.ORDER_QTY, rowData.QTY_IN_BOX);
+    rowData.ORDER_EA = $NC.getBEa(rowData.ORDER_QTY, rowData.QTY_IN_BOX);
+    rowData.ORDER_WEIGHT = $NC.getWeight(rowData.ORDER_QTY, rowData.QTY_IN_BOX, rowData.BOX_WEIGHT);
+
+    var calcParams = {
+        ITEM_PRICE: rowData.SUPPLY_PRICE,// 매입단가 또는 공급단가
+        APPLY_PRICE: rowData.APPLY_PRICE,// 적용단가
+        ITEM_QTY: rowData.ORDER_QTY,// 상품수량
+        ITEM_AMT: rowData.SUPPLY_AMT,// 매입금액 또는 공급금액
+        VAT_YN: rowData.VAT_YN,// 과세여부가 NULL일 경우는 부가세금액이 있는지로 체크
+        VAT_AMT: rowData.VAT_AMT,// 부가세
+        DC_AMT: rowData.DC_AMT,// 할인금액
+        TOTAL_AMT: rowData.TOTAL_AMT,// 합계금액
+        POLICY_VAL: $NC.G_VAR.G_PARAMETER.P_POLICY_RI190
+    };
+
+    rowData.SUPPLY_AMT = $NC.getItemAmt(calcParams);
+    rowData.VAT_AMT = $NC.getVatAmt(calcParams);
+    rowData.TOTAL_AMT = $NC.getTotalAmt(calcParams);
+    return rowData;
+}
+
+function showDeliveryPopup() {
+
+    var CUST_CD = $NC.getValue("#edtCust_Cd");
+
+    $NP.showDeliveryPopup({
+        queryParams: {
+            P_CUST_CD: CUST_CD,
+            P_DELIVERY_CD: $ND.C_ALL,
+            P_DELIVERY_DIV: $ND.C_ALL,
+            P_VIEW_DIV: "1"
+        }
+    }, onDeliveryPopup, function() {
+        $NC.setFocus("#edtDelivery_Cd", true);
+    });
+}
+
+function onDeliveryPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.G_VAR.masterData.DELIVERY_CD = resultInfo.DELIVERY_CD;
+        $NC.setValue("#edtDelivery_Cd", resultInfo.DELIVERY_CD);
+        $NC.setValue("#edtDelivery_Nm", resultInfo.DELIVERY_NM);
+        if ($NC.isNull($NC.G_VAR.masterData.RDELIVERY_CD) || !$NC.isVisible("#edtRDelivery_Cd")) {
+            $NC.G_VAR.masterData.RDELIVERY_CD = resultInfo.DELIVERY_CD;
+            $NC.setValue("#edtRDelivery_Cd", resultInfo.DELIVERY_CD);
+            $NC.setValue("#edtRDelivery_Nm", resultInfo.DELIVERY_NM);
+        }
+        $NC.setFocus("#edtCar_Cd", true);
+    } else {
+        $NC.G_VAR.masterData.DELIVERY_CD = "";
+        $NC.setValue("#edtDelivery_Cd");
+        $NC.setValue("#edtDelivery_Nm");
+        if (!$NC.isVisible("#edtRDelivery_Cd")) {
+            $NC.G_VAR.masterData.RDELIVERY_CD = "";
+            $NC.setValue("#edtRDelivery_Cd");
+            $NC.setValue("#edtRDelivery_Nm");
+        }
+        $NC.setFocus("#edtDelivery_Cd", true);
+    }
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+}
+
+function showRDeliveryPopup() {
+
+    var CUST_CD = $NC.getValue("#edtCust_Cd");
+
+    $NP.showDeliveryPopup({
+        queryParams: {
+            P_CUST_CD: CUST_CD,
+            P_DELIVERY_CD: $ND.C_ALL,
+            P_DELIVERY_DIV: $ND.C_ALL,
+            P_VIEW_DIV: "1"
+        }
+    }, onRDeliveryPopup, function() {
+        $NC.setFocus("#edtRDelivery_Cd", true);
+    });
+}
+
+function onRDeliveryPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.G_VAR.masterData.RDELIVERY_CD = resultInfo.DELIVERY_CD;
+        $NC.setValue("#edtRDelivery_Cd", resultInfo.DELIVERY_CD);
+        $NC.setValue("#edtRDelivery_Nm", resultInfo.DELIVERY_NM);
+        $NC.setFocus("#edtCar_Cd", true);
+    } else {
+        $NC.G_VAR.masterData.RDELIVERY_CD = "";
+        $NC.setValue("#edtRDelivery_Cd");
+        $NC.setValue("#edtRDelivery_Nm");
+        $NC.setFocus("#edtRDelivery_Cd", true);
+    }
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+}
+
+function showCarPopup() {
+
+    var CENTER_CD = $NC.G_VAR.G_PARAMETER.P_CENTER_CD;
+
+    $NP.showCarPopup({
+        P_CENTER_CD: CENTER_CD,
+        P_CAR_CD: $ND.C_ALL,
+        P_VIEW_DIV: "1"
+    }, onCarPopup, function() {
+        $NC.setFocus("#edtCar_Cd", true);
+    });
+}
+
+function onCarPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.G_VAR.masterData.CAR_CD = resultInfo.CAR_CD;
+        $NC.setValue("#edtCar_Cd", resultInfo.CAR_CD);
+        $NC.setValue("#edtCar_Nm", resultInfo.CAR_NM);
+    } else {
+        $NC.G_VAR.masterData.CAR_CD = "";
+        $NC.setValue("#edtCar_Cd");
+        $NC.setValue("#edtCar_Nm");
+        $NC.setFocus("#edtCar_Cd", true);
+    }
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+}
+
+function onItemPopup(resultInfo) {
+
+    var rowData = G_GRDDETAIL.data.getItem(G_GRDDETAIL.lastRow);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+
+    var focusCol;
+    if ($NC.isNotNull(resultInfo)) {
+        rowData.BRAND_CD = resultInfo.BRAND_CD;
+        rowData.BRAND_NM = resultInfo.BRAND_NM;
+        rowData.ITEM_CD = resultInfo.ITEM_CD;
+        rowData.ITEM_NM = resultInfo.ITEM_NM;
+        rowData.ITEM_SPEC = resultInfo.ITEM_SPEC;
+        rowData.QTY_IN_BOX = resultInfo.QTY_IN_BOX;
+        rowData.BOX_WEIGHT = resultInfo.BOX_WEIGHT;
+        rowData.SUPPLY_PRICE = resultInfo.SUPPLY_PRICE;
+        rowData.DC_PRICE = 0;
+        rowData.APPLY_PRICE = 0;
+        if ($NC.G_VAR.G_PARAMETER.P_POLICY_RI190 == "2") { // 공급금액 계산정책
+            rowData.APPLY_PRICE = resultInfo.SUPPLY_PRICE;
+        }
+        rowData.SUPPLY_AMT = 0;
+        rowData.VAT_AMT = 0;
+        rowData.DC_AMT = 0;
+        rowData.TOTAL_AMT = 0;
+        rowData.VAT_YN = resultInfo.VAT_YN;
+        rowData.VALID_DATE = "";
+        rowData.BATCH_NO = "";
+        rowData.DRUG_DIV_D = resultInfo.DRUG_DIV_D;
+        rowData.MEDICATION_DIV_D = resultInfo.MEDICATION_DIV_D;
+        rowData.KEEP_DIV_D = resultInfo.KEEP_DIV_D;
+        rowData.DRUG_CD = resultInfo.DRUG_CD;
+        rowData = grdDetailOnCalc(rowData);
+
+        focusCol = G_GRDDETAIL.view.getColumnIndex("ORDER_QTY");
+    } else {
+        rowData.BRAND_CD = "";
+        rowData.BRAND_NM = "";
+        rowData.ITEM_CD = "";
+        rowData.ITEM_NM = "";
+        rowData.ITEM_SPEC = "";
+        rowData.QTY_IN_BOX = 1;
+        rowData.ORDER_QTY = 0;
+        rowData.ORDER_BOX = 0;
+        rowData.ORDER_EA = 0;
+        rowData.BOX_WEIGHT = 0;
+        rowData.ORDER_WEIGHT = 0;
+        rowData.SUPPLY_PRICE = 0;
+        rowData.DC_PRICE = 0;
+        rowData.APPLY_PRICE = 0;
+        rowData.SUPPLY_AMT = 0;
+        rowData.VAT_AMT = 0;
+        rowData.DC_AMT = 0;
+        rowData.TOTAL_AMT = 0;
+        rowData.VAT_YN = $ND.C_NO;
+        rowData.DRUG_DIV_D = "";
+        rowData.MEDICATION_DIV_D = "";
+        rowData.KEEP_DIV_D = "";
+        rowData.DRUG_CD = "";
+
+        focusCol = G_GRDDETAIL.view.getColumnIndex("ITEM_CD");
+    }
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDDETAIL, rowData);
+
+    $NC.setFocusGrid(G_GRDDETAIL, G_GRDDETAIL.lastRow, focusCol, true, true);
+}
+
+/**
+ * 저장후 처리
+ * 
+ * @param ajaxData
+ */
+function onSave(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+    var oMsg = $NC.getOutMessage(resultData);
+    if (oMsg != $ND.C_OK) {
+        alert(oMsg);
+        return;
+    }
+
+    onClose();
+}

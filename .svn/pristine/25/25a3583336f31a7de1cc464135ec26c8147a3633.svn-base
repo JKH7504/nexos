@@ -1,0 +1,1369 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : EDR04010E0
+ *  프로그램명         : [수신]출고예정
+ *  프로그램설명       : [수신]출고예정 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2016-12-13
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2016-12-13    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#divMasterView",
+            grids: "#grdMaster"
+        },
+        autoResizeFixedView: {
+            viewFirst: {
+                container: "#divDetail1",
+                grids: "#grdDetail1"
+            },
+            viewSecond: function() {
+                return $NC.isVisible("#divDetail2") ? {
+                    container: "#divDetail2",
+                    grids: "#grdDetail2"
+                } : {};
+            },
+            viewType: "h",
+            viewFixed: {
+                container: "viewSecond",
+                size: 400
+            }
+        },
+        EDI_DIV: "RLO10"
+    });
+
+    // 그리드 초기화
+    grdMasterInitialize();
+    grdDetail1Initialize();
+    grdDetail2Initialize();
+
+    // 조회조건 - 사업부 세팅
+    $NC.setValue("#edtQBu_Cd", $NC.G_USERINFO.BU_CD);
+    $NC.setValue("#edtQBu_Nm", $NC.G_USERINFO.BU_NM);
+
+    // 수신일자에 달력이미지 설정
+    $NC.setInitDateRangePicker("#dtpQRecv_Date1", "#dtpQRecv_Date2");
+
+    // 조회조건 - 수신정의 세팅
+    onGetDefineNo();
+
+    // 조회조건에 오류수신내역 선택
+    $NC.setValue("#rgbQView_Div1", "1");
+
+    // 사업부 검색 이미지 클릭
+    $("#btnQBu_Cd").click(showUserBuPopup);
+
+    $("#btnRecv").click(btnRecvOnClick);
+    $("#btnErrorProcess").click(btnErrorProcessAndColseOnClick);
+    $("#btnClose").click(btnErrorProcessAndColseOnClick);
+
+    // 프로그램 사용 권한 설정
+    setUserProgramPermission();
+}
+
+function _OnLoaded() {
+
+    // 스플리터 초기화
+    $NC.setInitSplitter("#divMasterView", "h", 200);
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * Input, Select Change Event 처리
+ * 
+ * @param e
+ *        이벤트 핸들러
+ * @param view
+ *        대상 Object
+ */
+function _OnConditionChange(e, view, val) {
+
+    // 조회 조건에 Object Change
+    var id = view.prop("id").substr(4).toUpperCase();
+
+    switch (id) {
+        case "BU_CD":
+            if (val == $ND.C_BASE_BU_CD) {
+                $NC.setValue("#edtQBu_Nm", $ND.C_BASE_NM);
+                // 조회조건 - 수신정의 세팅
+                onGetDefineNo();
+                break;
+            } else {
+                $NP.onUserBuChange(val, {
+                    P_USER_ID: $NC.G_USERINFO.USER_ID,
+                    P_BU_CD: val,
+                    P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+                }, onUserBuPopup);
+                return;
+            }
+        case "RECV_DATE1":
+            $NC.setValueDatePicker(view, val, $NC.getDisplayMsg("JS.EDR04010E0.001", "수신 시작일자를 정확히 입력하십시오."));
+            break;
+        case "RECV_DATE2":
+            $NC.setValueDatePicker(view, val, $NC.getDisplayMsg("JS.EDR04010E0.002", "수신 종료일자를 정확히 입력하십시오."));
+            break;
+    }
+    // 화면클리어
+    onChangingCondition();
+}
+
+function onChangingCondition() {
+
+    // 초기화
+    $NC.clearGridData(G_GRDDETAIL2);
+    $NC.clearGridData(G_GRDDETAIL1);
+    $NC.clearGridData(G_GRDMASTER);
+
+    // 오류내역 그리드 초기화
+    $("#divDetail2").hide();
+    $("#divDetail1").css("border-width", "0");
+    $NC.onGlobalResize();
+
+    // 공통 버튼 초기화 - 조회 버튼만 활성
+    $NC.setInitTopButtons();
+    // 프로그램 사용 권한 설정
+    setUserProgramPermission();
+}
+
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+    // 조회조건 체크
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    var BU_NM = $NC.getValue("#edtQBu_Nm");
+    if ($NC.isNull(BU_NM)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.003", "사업부를 입력하십시오."));
+        $NC.setFocus("#edtQBu_Cd");
+        return;
+    }
+    var DEFINE_NO = $NC.getValueCombo("#cboQDefine_No");
+    if ($NC.isNull(DEFINE_NO)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.004", "수신정의를 선택하십시오."));
+        $NC.setFocus("#cboQDefine_No");
+        return;
+    }
+    var RECV_DATE1 = $NC.getValue("#dtpQRecv_Date1");
+    if ($NC.isNull(RECV_DATE1)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.005", "수신 시작일자를 입력하십시오."));
+        $NC.setFocus("#dtpQRecv_Date1");
+        return;
+    }
+    var RECV_DATE2 = $NC.getValue("#dtpQRecv_Date2");
+    if ($NC.isNull(RECV_DATE2)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.006", "수신 종료일자를 입력하십시오."));
+        $NC.setFocus("#dtpQRecv_Date2");
+        return;
+    }
+    var VIEW_DIV = $NC.getValueRadioGroup("rgbQView_Div");
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDDETAIL2);
+    $NC.setInitGridVar(G_GRDDETAIL1);
+    $NC.setInitGridVar(G_GRDMASTER);
+
+    // 파라메터 세팅
+    G_GRDMASTER.queryParams = {
+        P_BU_CD: BU_CD,
+        P_DEFINE_NO: DEFINE_NO,
+        P_RECV_DATE1: RECV_DATE1,
+        P_RECV_DATE2: RECV_DATE2,
+        P_VIEW_DIV: VIEW_DIV
+    };
+    // 데이터 조회
+    $NC.serviceCall("/EDR04010E0/getDataSet.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.007", "삭제할 데이터가 없습니다."));
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.EDR04010E0.008", "선택한 수신처리내역을 삭제하시겠습니까?"))) {
+        return;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    // ER_PROCESSING 호출
+    $NC.serviceCall("/EDR04010E0/callERLOOrderDelete.do", {
+        P_BU_CD: rowData.BU_CD,
+        P_EDI_DIV: rowData.EDI_DIV,
+        P_DEFINE_NO: rowData.DEFINE_NO,
+        P_RECV_DATE: rowData.RECV_DATE,
+        P_RECV_NO: rowData.RECV_NO,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onGetDelete);
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel() {
+
+}
+
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "RECV_DATE",
+        field: "RECV_DATE",
+        name: "수신일자",
+        cssClass: "styCenter",
+        summaryTitle: "[합계]"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_NO",
+        field: "RECV_NO",
+        name: "수신번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CLOSING_YN",
+        field: "CLOSING_YN",
+        name: "처리완료여부",
+        cssClass: "styCenter",
+        resizable: false,
+        formatter: Slick.Formatters.CheckBox
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT",
+        field: "RECV_CNT",
+        name: "총수신건수",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT0",
+        field: "RECV_CNT0",
+        name: "생성오류건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT1",
+        field: "RECV_CNT1",
+        name: "컬럼값오류건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT2",
+        field: "RECV_CNT2",
+        name: "미처리건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT3",
+        field: "RECV_CNT3",
+        name: "처리오류건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT4",
+        field: "RECV_CNT4",
+        name: "정상처리건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT5",
+        field: "RECV_CNT5",
+        name: "후처리오류건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT6",
+        field: "RECV_CNT6",
+        name: "정상후처리건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+    // $NC.setGridColumn(columns, {
+    // id: "RECV_CNTE",
+    // field: "RECV_CNTE",
+    // name: "실시간오류처리건수",
+    // cssClass: "styRight",
+    // formatter: Slick.Formatters.Number,
+    // formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+    // aggregator: "SUM"
+    // });
+    $NC.setGridColumn(columns, {
+        id: "RECV_CNT9",
+        field: "RECV_CNT9",
+        name: "종결처리건수",
+        cssClass: "styRight",
+        formatter: Slick.Formatters.Number,
+        formatterOptions: $NC.getGridNumberColumnOptions("INT"),
+        aggregator: "SUM"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 수신처리 내역
+ */
+function grdMasterInitialize() {
+
+    var options = {
+        summaryRow: {
+            visible: true
+        },
+        specialRow: {
+            compareKey: "CLOSING_YN",
+            compareVal: $ND.C_NO,
+            compareOperator: "==",
+            cssClass: "styDone"
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "EDR04010E0.RS_MASTER",
+        sortCol: "RECV_DATE",
+        gridOptions: options
+    });
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDMASTER.data.getItem(row);
+
+    var VIEW_DIV = $NC.getValueRadioGroup("rgbQView_Div");
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDDETAIL2);
+    $NC.setInitGridVar(G_GRDDETAIL1);
+    // 파라메터 세팅
+    G_GRDDETAIL1.queryParams = {
+        P_BU_CD: rowData.BU_CD,
+        P_DEFINE_NO: rowData.DEFINE_NO,
+        P_RECV_DATE: rowData.RECV_DATE,
+        P_RECV_NO: rowData.RECV_NO,
+        P_VIEW_DIV: VIEW_DIV
+    };
+    // 데이터 조회
+    $NC.serviceCall("/EDR04010E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL1), onGetDetail1);
+
+    if (rowData.CLOSING_YN == $ND.C_YES) {
+        $("#divDetail2").hide();
+        $("#divDetail1").css("border-width", "0");
+    } else {
+        $("#divDetail2").show();
+        $("#divDetail1").css("border-width", "0 1px 0 0");
+    }
+    $NC.onGlobalResize();
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+function grdDetail1OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "RECV_SEQ",
+        field: "RECV_SEQ",
+        name: "순번",
+        cssClass: "styRight",
+        resizable: false,
+        summaryTitle: "[합계]"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ERROR_DIV_D",
+        field: "ERROR_DIV_D",
+        name: "오류구분",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CRUD_FLAG",
+        field: "CRUD_FLAG",
+        name: "CRUD구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROC_BU_CD",
+        field: "PROC_BU_CD",
+        name: "처리사업부코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "END_PROCESS_CD",
+        field: "END_PROCESS_CD",
+        name: "종료프로세스코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CENTER_CD",
+        field: "CENTER_CD",
+        name: "물류센터코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_DATE",
+        field: "ORDER_DATE",
+        name: "출고예정일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_NO",
+        field: "ORDER_NO",
+        name: "출고예정번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LINE_NO",
+        field: "LINE_NO",
+        name: "순번",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INOUT_CD",
+        field: "INOUT_CD",
+        name: "출고구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INOUT_DATE",
+        field: "INOUT_DATE",
+        name: "수불일자"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST_CD",
+        field: "CUST_CD",
+        name: "고객사코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DELIVERY_CD",
+        field: "DELIVERY_CD",
+        name: "배송처코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RDELIVERY_CD",
+        field: "RDELIVERY_CD",
+        name: "실배송처코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DELIVERY_BATCH",
+        field: "DELIVERY_BATCH",
+        name: "운송차수"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ERP_BATCH",
+        field: "ERP_BATCH",
+        name: "ERP차수"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_DIV",
+        field: "ORDER_DIV",
+        name: "주문구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CAR_DIV",
+        field: "CAR_DIV",
+        name: "차량구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CAR_CD",
+        field: "CAR_CD",
+        name: "차량코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DIRECT_YN",
+        field: "DIRECT_YN",
+        name: "직송여부",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PLANED_DATETIME",
+        field: "PLANED_DATETIME",
+        name: "납품예정일시",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIP_RCP_NO",
+        field: "SHIP_RCP_NO",
+        name: "운송접수번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CSCL_REQ_YN",
+        field: "CSCL_REQ_YN",
+        name: "통관필수여부",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "전표별비고"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BRAND_CD",
+        field: "BRAND_CD",
+        name: "브랜드코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_STATE",
+        field: "ITEM_STATE",
+        name: "상품상태"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_LOT",
+        field: "ITEM_LOT",
+        name: "LOT번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VALID_DATE",
+        field: "VALID_DATE",
+        name: "유통기한",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BATCH_NO",
+        field: "BATCH_NO",
+        name: "제조배치번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDER_QTY",
+        field: "ORDER_QTY",
+        name: "예정수량",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SUPPLY_PRICE",
+        field: "SUPPLY_PRICE",
+        name: "공급단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DC_PRICE",
+        field: "DC_PRICE",
+        name: "할인단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "APPLY_PRICE",
+        field: "APPLY_PRICE",
+        name: "적용단가",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MARGIN_RATE",
+        field: "MARGIN_RATE",
+        name: "마진율",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SUPPLY_AMT",
+        field: "SUPPLY_AMT",
+        name: "공급금액",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VAT_YN",
+        field: "VAT_YN",
+        name: "부가세여부",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VAT_AMT",
+        field: "VAT_AMT",
+        name: "부가세금액",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DC_AMT",
+        field: "DC_AMT",
+        name: "할인금액",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "TOTAL_AMT",
+        field: "TOTAL_AMT",
+        name: "합계금액",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_ORDER_DIV",
+        field: "ITEM_ORDER_DIV",
+        name: "상품주문유형",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_DATE",
+        field: "BU_DATE",
+        name: "전표일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_NO",
+        field: "BU_NO",
+        name: "전표번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_LINE_NO",
+        field: "BU_LINE_NO",
+        name: "전표순번",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_KEY",
+        field: "BU_KEY",
+        name: "전표키"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORG_BU_NO",
+        field: "ORG_BU_NO",
+        name: "원전표번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_DATETIME",
+        field: "BU_DATETIME",
+        name: "전표일시",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_DATE",
+        field: "SO_DATE",
+        name: "주문일자"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_NO",
+        field: "SO_NO",
+        name: "주문번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_LINE_NO",
+        field: "SO_LINE_NO",
+        name: "주문순번"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SO_KEY",
+        field: "SO_KEY",
+        name: "주문키"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK2",
+        field: "REMARK2",
+        name: "순번별비고"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDERER_CD",
+        field: "ORDERER_CD",
+        name: "주문자코드",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("ID")
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDERER_NM",
+        field: "ORDERER_NM",
+        name: "주문자명",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("NM")
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDERER_TEL",
+        field: "ORDERER_TEL",
+        name: "주문자전화번호",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("TEL")
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDERER_HP",
+        field: "ORDERER_HP",
+        name: "주문자휴대폰",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("TEL")
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDERER_EMAIL",
+        field: "ORDERER_EMAIL",
+        name: "주문자메일",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("EMAIL")
+    });
+    $NC.setGridColumn(columns, {
+        id: "ORDERER_MSG",
+        field: "ORDERER_MSG",
+        name: "배송요청사항"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MALL_MSG",
+        field: "MALL_MSG",
+        name: "몰요청사항"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIPPER_NM",
+        field: "SHIPPER_NM",
+        name: "수령자명",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("NM")
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIPPER_TEL",
+        field: "SHIPPER_TEL",
+        name: "수령자전화번호",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("TEL")
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIPPER_HP",
+        field: "SHIPPER_HP",
+        name: "수령자휴대폰",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("TEL")
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIPPER_ZIP_CD",
+        field: "SHIPPER_ZIP_CD",
+        name: "수령자우편번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIPPER_ADDR_BASIC",
+        field: "SHIPPER_ADDR_BASIC",
+        name: "수령자기본주소"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SHIPPER_ADDR_DETAIL",
+        field: "SHIPPER_ADDR_DETAIL",
+        name: "수령자상세주소",
+        formatter: Slick.Formatters.Mask,
+        formatterOptions: $NC.getGridMaskColumnOptions("ALL")
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE1_NOTE",
+        field: "SPARE1_NOTE",
+        name: "예비1"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE2_NOTE",
+        field: "SPARE2_NOTE",
+        name: "예비2"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE3_NOTE",
+        field: "SPARE3_NOTE",
+        name: "예비3"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE4_NOTE",
+        field: "SPARE4_NOTE",
+        name: "예비4"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE5_NOTE",
+        field: "SPARE5_NOTE",
+        name: "예비5"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE6_NOTE",
+        field: "SPARE6_NOTE",
+        name: "예비6"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE7_NOTE",
+        field: "SPARE7_NOTE",
+        name: "예비7"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE8_NOTE",
+        field: "SPARE8_NOTE",
+        name: "예비8"
+    });
+    $NC.setGridColumn(columns, {
+        id: "SPARE9_NOTE",
+        field: "SPARE9_NOTE",
+        name: "예비9"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_USER_ID",
+        field: "RECV_USER_ID",
+        name: "수신자ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "RECV_DATETIME",
+        field: "RECV_DATETIME",
+        name: "수신일시",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST1_NOTE",
+        field: "CUST1_NOTE",
+        name: "고객사예비1"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST2_NOTE",
+        field: "CUST2_NOTE",
+        name: "고객사예비2"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST3_NOTE",
+        field: "CUST3_NOTE",
+        name: "고객사예비3"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST4_NOTE",
+        field: "CUST4_NOTE",
+        name: "고객사예비4"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST5_NOTE",
+        field: "CUST5_NOTE",
+        name: "고객사예비5"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST6_NOTE",
+        field: "CUST6_NOTE",
+        name: "고객사예비6"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST7_NOTE",
+        field: "CUST7_NOTE",
+        name: "고객사예비7"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST8_NOTE",
+        field: "CUST8_NOTE",
+        name: "고객사예비8"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST9_NOTE",
+        field: "CUST9_NOTE",
+        name: "고객사예비9"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 수신내역
+ */
+function grdDetail1Initialize() {
+
+    var options = {
+        frozenColumn: 2,
+        summaryRow: {
+            visible: true
+        },
+        specialRow: {
+            compareKey: "ERROR_DIV",
+            compareVal: "6",
+            compareOperator: "!=",
+            cssClass: "styError"
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail1", {
+        columns: grdDetail1OnGetColumns(),
+        queryId: "EDR04010E0.RS_DETAIL",
+        sortCol: "RECV_SEQ",
+        gridOptions: options
+    });
+    G_GRDDETAIL1.view.onSelectedRowsChanged.subscribe(grdDetail1OnAfterScroll);
+
+}
+
+function grdDetail1OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL1, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDDETAIL1.data.getItem(row);
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDDETAIL2);
+    // 파라메터 세팅
+    G_GRDDETAIL2.queryParams = {
+        P_BU_CD: rowData.BU_CD,
+        P_EDI_DIV: rowData.EDI_DIV,
+        P_DEFINE_NO: rowData.DEFINE_NO,
+        P_RECV_DATE: rowData.RECV_DATE,
+        P_RECV_NO: rowData.RECV_NO,
+        P_RECV_SEQ: rowData.RECV_SEQ
+    };
+    // 데이터 조회
+    $NC.serviceCall("/EDR04010E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL2), onGetDetail2);
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL1, row + 1);
+}
+
+function grdDetail2OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "ERROR_CD",
+        field: "ERROR_CD",
+        name: "오류코드",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ERROR_NM",
+        field: "ERROR_NM",
+        name: "오류명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 오류내역
+ */
+function grdDetail2Initialize() {
+
+    var options = {};
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail2", {
+        columns: grdDetail2OnGetColumns(),
+        queryId: "EDR04010E0.RS_SUB",
+        sortCol: "ERROR_CD",
+        gridOptions: options
+    });
+    G_GRDDETAIL2.view.onSelectedRowsChanged.subscribe(grdDetail2OnAfterScroll);
+}
+
+function grdDetail2OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL2, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL2, row + 1);
+}
+
+/**
+ * 수신처리 내역
+ * 
+ * @param ajaxData
+ */
+function onGetMaster(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTER, ajaxData);
+    if (!$NC.setInitGridAfterOpen(G_GRDMASTER, [
+        "RECV_DATE",
+        "RECV_NO"
+    ], true)) {
+        $NC.clearGridData(G_GRDDETAIL2);
+        $NC.clearGridData(G_GRDDETAIL1);
+    }
+
+    // 공통 버튼 활성화 처리
+    $NC.G_VAR.buttons._inquiry = "1";
+    $NC.G_VAR.buttons._new = "0";
+    $NC.G_VAR.buttons._save = "0";
+    $NC.G_VAR.buttons._cancel = "0";
+
+    if (G_GRDMASTER.data.getLength() == 0 || G_GRDMASTER.data.getItem(0).DATA_DIV == "01") {
+        $NC.G_VAR.buttons._delete = "0";
+    } else {
+        $NC.G_VAR.buttons._delete = "1";
+    }
+
+    $NC.G_VAR.buttons._print = "0";
+
+    $NC.setInitTopButtons($NC.G_VAR.buttons);
+    // 프로그램 사용 권한 설정
+    setUserProgramPermission();
+}
+
+/**
+ * 수신내역
+ */
+function onGetDetail1(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL1, ajaxData);
+    if (!$NC.setInitGridAfterOpen(G_GRDDETAIL1)) {
+        $NC.clearGridData(G_GRDDETAIL2);
+    }
+}
+
+/**
+ * 오류내역
+ */
+function onGetDetail2(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL2, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL2);
+}
+
+function onGetRecvProc(ajaxData) {
+
+    _Inquiry();
+}
+/**
+ * 오류내역처리버튼 처리내역
+ */
+function onGetRecvError(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: [
+            "RECV_DATE",
+            "RECV_NO"
+        ]
+    });
+    _Inquiry();
+    G_GRDMASTER.lastKeyVal = lastKeyVal;
+}
+
+/**
+ * 종결처리버튼 처리내역
+ */
+function onGetRecvClose(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: [
+            "RECV_DATE",
+            "RECV_NO"
+        ]
+    });
+    _Inquiry();
+    G_GRDMASTER.lastKeyVal = lastKeyVal;
+    alert($NC.getDisplayMsg("JS.EDR04010E0.009", "정상적으로 종결처리 되었습니다"));
+}
+
+/**
+ * 삭제버튼 처리내역
+ */
+function onGetDelete(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: [
+            "RECV_DATE",
+            "RECV_NO"
+        ]
+    });
+    _Inquiry();
+    G_GRDMASTER.lastKeyVal = lastKeyVal;
+    alert($NC.getDisplayMsg("JS.EDR04010E0.010", "정상적으로 삭제처리 되었습니다"));
+}
+
+/**
+ * 검색조건의 사업부 검색 이미지 클릭
+ */
+function showUserBuPopup() {
+
+    $NP.showUserBuPopup({
+        queryParams: {
+            P_USER_ID: $NC.G_USERINFO.USER_ID,
+            P_BU_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        },
+        addBase: $ND.C_BASE_BU_CD
+    }, onUserBuPopup, function() {
+        $NC.setFocus("#edtQBu_Cd", true);
+    });
+}
+
+/**
+ * 사업부 검색 결과 / 검색 실패 했을 경우(not found)
+ */
+function onUserBuPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQBu_Cd", resultInfo.BU_CD);
+        $NC.setValue("#edtQBu_Nm", resultInfo.BU_NM);
+    } else {
+        $NC.setValue("#edtQBu_Cd");
+        $NC.setValue("#edtQBu_Nm");
+        $NC.setFocus("#edtQBu_Cd", true);
+    }
+    onChangingCondition();
+    // 조회조건 - 수신정의 세팅
+    onGetDefineNo();
+}
+
+function btnRecvOnClick(e) {
+
+    // 저장권한
+    if (!$NC.getProgramPermission().canSave) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.011", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    if ($NC.isNull(BU_CD)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.003", "사업부를 입력하십시오."));
+        return;
+    }
+    var DATA_DIV = $NC.getValue("#cboQDefine_No");
+    if ($NC.isNull(DATA_DIV)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.012", "수신정의를 먼저 선택하십시오."));
+        return;
+    }
+    var DEFINE_NO = $NC.getValueCombo("#cboQDefine_No");
+
+    // 수신처리
+    var PROCESS_CD = $ND.C_EDI_PROCESS_CREATE;
+    // ComboBox 데이터에서 선택된 정의번호의 REMOTE_DIV 읽기
+    var REMOTE_DIV = $NC.getComboData("#cboQDefine_No", -1).REMOTE_DIV;
+    // 자료구분이 파일 형태일 경우(EXCEL, TEXT, XML, JSON) 원격송수신구분이 없으면 파일 선택
+    if (DATA_DIV.startsWith("3") && $NC.isNull(REMOTE_DIV)) {
+        var accept;
+        switch (DATA_DIV) {
+            // XLS
+            case $ND.C_DATA_DIV_EXCEL:
+                accept = ".xlsx, .xls";
+                break;
+            // TXT
+            case $ND.C_DATA_DIV_TEXT:
+                accept = ".txt";
+                break;
+            // XML
+            case $ND.C_DATA_DIV_XML:
+                accept = ".xml";
+                break;
+            // JSON
+            case $ND.C_DATA_DIV_JSON:
+                accept = ".json";
+                break;
+            default:
+                alert($NC.getDisplayMsg("JS.EDR04010E0.013", "자료구분 값이 잘못 지정되었습니다."));
+                return;
+        }
+        $NC.showUploadFilePopup(accept, function(view, fileName) {
+
+            var fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+            if (DATA_DIV == $ND.C_DATA_DIV_EXCEL) {
+                if (fileExt != "xlsx" && fileExt != "xls") {
+                    alert($NC.getDisplayMsg("JS.EDR04010E0.014", "엑셀 파일(*.xls, *.xlsx) 파일을 선택하십시오."));
+                    return;
+                }
+            } else if (DATA_DIV == $ND.C_DATA_DIV_TEXT) {
+                if (fileExt != "txt") {
+                    alert($NC.getDisplayMsg("JS.EDR04010E0.015", "텍스트 파일(*.txt) 파일을 선택하십시오."));
+                    return;
+                }
+            } else if (DATA_DIV == $ND.C_DATA_DIV_XML) {
+                if (fileExt != "xml") {
+                    alert($NC.getDisplayMsg("JS.EDR04010E0.016", "XML 파일(*.xml) 파일을 선택하십시오."));
+                    return;
+                }
+            } else if (DATA_DIV == $ND.C_DATA_DIV_JSON) {
+                if (fileExt != "json") {
+                    alert($NC.getDisplayMsg("JS.EDR04010E0.017", "JSON 파일(*.json) 파일을 선택하십시오."));
+                    return;
+                }
+            } else {
+                alert($NC.getDisplayMsg("JS.EDR04010E0.013", "자료구분 값이 잘못 지정되었습니다."));
+                return;
+            }
+
+            $NC.fileUpload("/EDR04010E0/recvFile.do", {
+                P_BU_CD: BU_CD,
+                P_EDI_DIV: $NC.G_VAR.EDI_DIV,
+                P_DEFINE_NO: DEFINE_NO,
+                P_RECV_DATE: null,
+                P_RECV_NO: null,
+                P_PROCESS_CD: PROCESS_CD,
+                P_DATA_DIV: DATA_DIV,
+                P_USER_ID: $NC.G_USERINFO.USER_ID
+            }, function(ajaxData) {
+                var resultData = $NC.toObject(ajaxData);
+                var oMsg = $NC.getOutMessage(resultData);
+                if (oMsg != $ND.C_OK) {
+                    alert(oMsg);
+                    return;
+                }
+
+                onGetRecvProc();
+            });
+        });
+    } else {
+        // ER_PROCESSING 호출 - DBLink, DBConnect, 자료구분이 파일 형태(EXCEL, TEXT, XML, JSON)이면서 원격송수신 지정된 수신정의
+        $NC.serviceCall("/EDR04010E0/recvProcessing.do", {
+            P_BU_CD: BU_CD,
+            P_EDI_DIV: $NC.G_VAR.EDI_DIV,
+            P_DEFINE_NO: DEFINE_NO,
+            P_RECV_DATE: null,
+            P_RECV_NO: null,
+            P_PROCESS_CD: PROCESS_CD,
+            P_DATA_DIV: DATA_DIV,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }, onGetRecvProc);
+    }
+}
+
+function btnErrorProcessAndColseOnClick(e) {
+
+    // 저장권한
+    if (!$NC.getProgramPermission().canSave) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.011", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.018", "처리할 대상을 선택하십시오."));
+        return;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    if (Number(rowData.RECV_CNT0) + Number(rowData.RECV_CNT1) + Number(rowData.RECV_CNT2) //
+        + Number(rowData.RECV_CNT3) + Number(rowData.RECV_CNT4) + Number(rowData.RECV_CNT5) == 0) {
+        alert($NC.getDisplayMsg("JS.EDR04010E0.019", "[오류/종결]처리 가능한 데이터를 선택하십시오."));
+        return;
+    }
+
+    var PROCESS_CD, onSuccess;
+    if (e.target.id == "btnErrorProcess") {
+        // 오류내역처리
+        PROCESS_CD = $ND.C_EDI_PROCESS_CHECKING;
+        onSuccess = onGetRecvError;
+    } else {
+        // 종결처리
+        PROCESS_CD = $ND.C_EDI_PROCESS_CLOSING;
+        onSuccess = onGetRecvClose;
+    }
+
+    // ER_PROCESSING 호출
+    $NC.serviceCall("/EDR04010E0/recvProcessing.do", {
+        P_BU_CD: rowData.BU_CD,
+        P_EDI_DIV: rowData.EDI_DIV,
+        P_DEFINE_NO: rowData.DEFINE_NO,
+        P_RECV_DATE: rowData.RECV_DATE,
+        P_RECV_NO: rowData.RECV_NO,
+        P_PROCESS_CD: PROCESS_CD,
+        P_DATA_DIV: rowData.DATA_DIV,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSuccess);
+}
+
+/**
+ * 조회조건 - 수신정의 세팅
+ */
+function onGetDefineNo() {
+
+    $NC.setInitCombo("/EDR04010E0/getDataSet.do", {
+        P_QUERY_ID: "EDCOMMON.POP_DEFINE_NO",
+        P_QUERY_PARAMS: {
+            P_BU_CD: $NC.getValue("#edtQBu_Cd"),
+            P_EDI_DIV: $NC.G_VAR.EDI_DIV
+        }
+    }, {
+        selector: "#cboQDefine_No",
+        codeField: "DATA_DIV",
+        fullNameField: "DEFINE_NO_F",
+        onComplete: function() {
+            $NC.setValue("#cboQDefine_No", 0);
+        }
+    });
+}
+
+/**
+ * 프로그램 사용 권한 설정
+ */
+function setUserProgramPermission() {
+
+    var permission = $NC.getProgramPermission();
+    var enable = G_GRDMASTER.data.getLength() > 0;
+
+    $NC.setEnable("#btnRecv", permission.canSave);
+    $NC.setEnable("#btnErrorProcess", permission.canSave && enable);
+    $NC.setEnable("#btnClose", permission.canSave && enable);
+}

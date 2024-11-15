@@ -1,0 +1,511 @@
+package nexos.dao.lo;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: LOF02010E0DAOImpl<br>
+ * Description: LOF02010E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2021-12-21    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("LOF02010E0DAO")
+public class LOF02010E0DAOImpl extends DaoSupport implements LOF02010E0DAO {
+
+    // private final Logger logger = LoggerFactory.getLogger(LOF02010E0DAOImpl.class);
+
+    final String PROGRAM_ID                      = "LOF02010E0";
+    final String PROGRAM_ID_LOB01010E0           = "LOB01010E0";
+    final String PROGRAM_ID_LOB02010E0           = "LOB02010E0";
+
+    final String TABLE_NM_LO010NM                = "LO010NM";
+    final String UPDATE_ID_LO010NM               = PROGRAM_ID_LOB01010E0 + ".UPDATE_" + TABLE_NM_LO010NM;
+
+    final String TABLE_NM_LO010ND                = "LO010ND";
+    final String UPDATE_ID_LO010ND               = PROGRAM_ID_LOB01010E0 + ".UPDATE_" + TABLE_NM_LO010ND;
+
+    final String TABLE_NM_LO020NM                = "LO020NM";
+    final String INSERT_ID_LO020NM               = PROGRAM_ID_LOB02010E0 + ".INSERT_" + TABLE_NM_LO020NM;
+    final String UPDATE_ID_LO020NM               = PROGRAM_ID_LOB02010E0 + ".UPDATE_" + TABLE_NM_LO020NM;
+
+    final String TABLE_NM_LO020ND                = "LO020ND";
+    final String INSERT_ID_LO020ND               = PROGRAM_ID_LOB02010E0 + ".INSERT_" + TABLE_NM_LO020ND;
+    final String UPDATE_ID_LO020ND               = PROGRAM_ID_LOB02010E0 + ".UPDATE_" + TABLE_NM_LO020ND;
+    final String DELETE_ID_LO020ND               = PROGRAM_ID_LOB02010E0 + ".DELETE_" + TABLE_NM_LO020ND;
+
+    final String TABLE_NM_LO030NM                = "LO030NM";
+    final String UPDATE_ID_LO030NM               = PROGRAM_ID_LOB02010E0 + ".UPDATE_" + TABLE_NM_LO030NM;
+
+    final String SP_ID_LO_020NM_GETNO            = "WT.LO_020NM_GETNO";
+    final String SP_ID_LO_020ND_GETNO            = "WT.LO_020ND_GETNO";
+    final String SP_ID_LO_POLICY_ENTRY_INIT      = "LO_POLICY_ENTRY_INIT";
+    final String SP_ID_LO_PROCESSING             = "LO_PROCESSING";
+    final String SP_ID_LO_020ND_QTY_UPDATE       = "LO_020ND_QTY_UPDATE";
+
+    final String SP_ID_GET_LO_PSTOCK_QTY         = "WF.GET_LO_PSTOCK_QTY";
+    final String SP_ID_LO_DELIVERY_BATCH_GETNO   = "WT.LO_DELIVERY_BATCH_GETNO";
+    final String SP_ID_LO_OUTBOUND_BATCH_GETNO   = "WT.LO_OUTBOUND_BATCH_GETNO";
+    final String SP_ID_LO_INOUT_DATE_UPDATE      = "LO_INOUT_DATE_UPDATE";
+    final String SP_ID_SET_WBNO_PRINT_CNT_UPDATE = "WB.SET_WBNO_PRINT_CNT_UPDATE";
+
+    /**
+     * 상품의 재고 취득
+     */
+    private void checkingPStockQty(Map<String, Object> rowData, int rownum) {
+
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        callParams.put("P_CENTER_CD", rowData.get("P_CENTER_CD"));
+        callParams.put("P_BU_CD", rowData.get("P_BU_CD"));
+        callParams.put("P_BRAND_CD", rowData.get("P_BRAND_CD"));
+        callParams.put("P_ITEM_CD", rowData.get("P_ITEM_CD"));
+        callParams.put("P_ITEM_STATE", rowData.get("P_ITEM_STATE"));
+        callParams.put("P_ITEM_LOT", rowData.get("P_ITEM_LOT"));
+        callParams.put("P_POLICY_LO310", "");
+        callParams.put("P_POLICY_LO320", "");
+        callParams.put("P_OUTBOUND_DATE", rowData.get("P_OUTBOUND_DATE"));
+        callParams.put("P_OUTBOUND_NO", rowData.get("P_OUTBOUND_NO"));
+
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_LO_PSTOCK_QTY, callParams);
+
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        int pstockQty = Util.toInt(resultMap.get("O_PSTOCK_QTY"));
+        int sumEntryQty = Util.toInt(rowData.get("P_SUM_ENTRY_QTY"));
+        int entryQty = Util.toInt(rowData.get("P_ENTRY_QTY"));
+        if (sumEntryQty > pstockQty) {
+            String errMsg = NexosMessage.getDisplayMsg("JAVA.LOF02010E0.001",
+                "[" + String.valueOf(rownum + 1) + "]행, 등록수량[" + String.valueOf(entryQty) + "], 출고가능량[" + String.valueOf(pstockQty)
+                    + "]\n출고가능량 보다 큰 출고수량을 등록하실 수 없습니다.",
+                new String[] {String.valueOf(rownum + 1), String.valueOf(entryQty), String.valueOf(pstockQty)});
+            throw new RuntimeException(errMsg);
+        }
+    }
+
+    /**
+     * 운송차수 채번
+     */
+    @Override
+    public Map<String, Object> getDeliveryBatch(Map<String, Object> params) {
+
+        Map<String, Object> resultMap = callProcedure(SP_ID_LO_DELIVERY_BATCH_GETNO, new HashMap<String, Object>(params));
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+        return resultMap;
+    }
+
+    /**
+     * 출고차수를 채번
+     */
+    @Override
+    public Map<String, Object> getOutboundBatch(Map<String, Object> params) {
+
+        Map<String, Object> resultMap = callProcedure(SP_ID_LO_OUTBOUND_BATCH_GETNO, new HashMap<String, Object>(params));
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * 출고등록 마스터/디테일 저장 처리
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void save(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> dsDetail = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+
+        // A: 예정 -> 등록, B: 등록 -> 수정, N: 신규 등록
+        String PROCESS_CD = (String)params.get(Consts.PK_PROCESS_CD);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        int dsCount = Util.getCount(dsDetail);
+
+        String CENTER_CD = (String)masterRowData.get("P_CENTER_CD");
+        String BU_CD = (String)masterRowData.get("P_BU_CD");
+        String OUTBOUND_DATE = (String)masterRowData.get("P_OUTBOUND_DATE");
+        String OUTBOUND_NO = (String)masterRowData.get("P_OUTBOUND_NO");
+        int LINE_NO;
+
+        // 등록자ID 입력
+        masterRowData.put(Consts.PK_USER_ID, USER_ID);
+
+        // 등록 처리
+        // A: 예정 > 등록, BC: 신규 등록
+        if (Consts.PROCESS_ORDER.equals(PROCESS_CD) || Consts.PROCESS_ENTRY_CREATE.equals(PROCESS_CD)) {
+
+            if (dsCount < 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.LOF02010E0.002", "출고등록 상세내역이 존재하지 않습니다."));
+            }
+
+            // 출고번호 채번
+            callParams.put("P_CENTER_CD", CENTER_CD);
+            callParams.put("P_BU_CD", BU_CD);
+            callParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE);
+
+            Map<String, Object> resultMap = callProcedure(SP_ID_LO_020NM_GETNO, callParams);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            OUTBOUND_NO = (String)resultMap.get("O_OUTBOUND_NO");
+            LINE_NO = 1;
+
+            // 운송차수 채번 및 CMNOBATCH 등록
+            // 등록버튼 클릭시의 운송차수가 "000"인 경우만 채번하고 그 외에는 선택한 운송차수로 등록처리한다.
+            if (Consts.BASE_BATCH_NO.equals(Util.nullToDefault(masterRowData.get("P_DELIVERY_BATCH"), Consts.BASE_BATCH_NO))) {
+                callParams.clear();
+                callParams.put("P_CENTER_CD", CENTER_CD);
+                callParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE);
+                callParams.put("P_DELIVERY_BATCH_NM", masterRowData.get("P_DELIVERY_BATCH_NM"));
+                callParams.put(Consts.PK_USER_ID, USER_ID);
+                Map<String, Object> deliveryBatchMap = getDeliveryBatch(callParams);
+
+                masterRowData.put("P_DELIVERY_BATCH", deliveryBatchMap.get("O_DELIVERY_BATCH"));
+            }
+
+            // 출고번호 세팅
+            masterRowData.put("P_OUTBOUND_NO", OUTBOUND_NO);
+            // 출고차수 기본값 000으로 수정.
+            masterRowData.put("P_OUTBOUND_BATCH", Consts.BASE_BATCH_NO);
+            // 송수신상태 기본값 설정.
+            masterRowData.put("P_SEND_STATE", Consts.BASE_STATE);
+            // 등록자/등록일시 세팅
+            masterRowData.put(Consts.PK_ENTRY_USER_ID, USER_ID);
+            masterRowData.put(Consts.PK_ENTRY_DATETIME, Consts.DV_SYSDATE);
+
+            // 마스터 생성, CRUD 체크 안함
+            insertSql(INSERT_ID_LO020NM, masterRowData);
+        }
+        // BU: 수정 처리
+        else {
+            // 출고순번 채번
+            callParams.put("P_CENTER_CD", CENTER_CD);
+            callParams.put("P_BU_CD", BU_CD);
+            callParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE);
+            callParams.put("P_OUTBOUND_NO", OUTBOUND_NO);
+
+            Map<String, Object> resultMap = callProcedure(SP_ID_LO_020ND_GETNO, callParams);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            LINE_NO = Util.toInt(resultMap.get("O_LINE_NO"), 1);
+
+            // 마스터 수정, 마스터를 수정했으면
+            if (Consts.DV_CRUD_U.equals(masterRowData.get(Consts.PK_CRUD))) {
+                updateSql(UPDATE_ID_LO020NM, masterRowData);
+            }
+        }
+
+        // 디테일이 변경되었으면 LO_PROCESSING 호출
+        if (dsCount > 0) {
+            // 지시 초기화
+            callParams.clear();
+            callParams.put("P_CENTER_CD", CENTER_CD);
+            callParams.put("P_BU_CD", BU_CD);
+            callParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE);
+            callParams.put("P_OUTBOUND_NO", OUTBOUND_NO);
+            callParams.put(Consts.PK_USER_ID, USER_ID);
+
+            Map<String, Object> resultMap = callProcedure(SP_ID_LO_POLICY_ENTRY_INIT, callParams);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            // LO020ND테이블에 추가/수정 전에 출고가능량 체크를 한다.
+            for (int i = 0; i < dsCount; i++) {
+                Map<String, Object> rowData = dsDetail.get(i);
+                this.checkingPStockQty(rowData, i); // 재고체크
+            }
+
+            // 디테일 처리
+            for (int i = 0; i < dsCount; i++) {
+                Map<String, Object> rowData = dsDetail.get(i);
+                rowData.put(Consts.PK_USER_ID, USER_ID);
+                String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+                if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                    rowData.put("P_OUTBOUND_NO", OUTBOUND_NO);
+                    if (Util.isNull(rowData.get("P_LINE_NO"))) {
+                        rowData.put("P_LINE_NO", LINE_NO);
+                        rowData.put("P_ORG_LINE_NO", LINE_NO);
+                        LINE_NO++;
+                    }
+                    rowData.put(Consts.PK_ENTRY_USER_ID, USER_ID);
+                    rowData.put(Consts.PK_ENTRY_DATETIME, Consts.DV_SYSDATE);
+                    insertSql(INSERT_ID_LO020ND, rowData);
+                } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                    updateSql(UPDATE_ID_LO020ND, rowData);
+                } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                    deleteSql(DELETE_ID_LO020ND, rowData);
+                }
+            }
+
+            callParams.clear();
+            callParams.put("P_CENTER_CD", CENTER_CD);
+            callParams.put("P_BU_CD", BU_CD);
+            callParams.put("P_OUTBOUND_DATE", OUTBOUND_DATE);
+            callParams.put("P_OUTBOUND_NO", OUTBOUND_NO);
+            callParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_ORDER.equals(PROCESS_CD) ? Consts.PROCESS_ENTRY_CREATE : PROCESS_CD);
+            callParams.put(Consts.PK_DIRECTION, Consts.DIRECTION_FW);
+            callParams.put(Consts.PK_USER_ID, USER_ID);
+
+            resultMap = callProcedure(SP_ID_LO_PROCESSING, callParams);
+            oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+            // 송장채번을 위한 출고번호 정보 리턴
+            params.put("O_OUTBOUND_DATE", OUTBOUND_DATE);
+            params.put("O_OUTBOUND_NO", OUTBOUND_NO);
+        }
+
+    }
+
+    /**
+     * 출고등록(개별) - 출고예정 저장
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void saveOrder(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsMaster = Util.getDataSet(params, Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        for (int rIndex = 0, rCount = dsMaster.size(); rIndex < rCount; rIndex++) {
+            Map<String, Object> rowData = dsMaster.get(rIndex);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_LO010NM, rowData);
+            }
+        }
+    }
+
+    /**
+     * 출고확정 저장
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveConfirm(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_SUB);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+
+        String rowCrud = (String)masterRowData.get(Consts.PK_CRUD);
+        if (Consts.DV_CRUD_U.equals(rowCrud)) {
+            masterRowData.put(Consts.PK_USER_ID, USER_ID);
+
+            updateSql(UPDATE_ID_LO020NM, masterRowData);
+        }
+
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        callParams.put(Consts.PK_USER_ID, USER_ID);
+
+        // INSERT/UPDATE/DELETE 처리
+        int dsCount = Util.getCount(dsSave);
+        for (int i = 0; i < dsCount; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, USER_ID);
+
+            rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_LO030NM, rowData);
+            }
+
+            // 출고등록 디테일 확정수량 수정 처리
+            callParams.put("P_CENTER_CD", rowData.get("P_CENTER_CD"));
+            callParams.put("P_BU_CD", rowData.get("P_BU_CD"));
+            callParams.put("P_OUTBOUND_DATE", rowData.get("P_OUTBOUND_DATE"));
+            callParams.put("P_OUTBOUND_NO", rowData.get("P_OUTBOUND_NO"));
+            callParams.put("P_LINE_NO", rowData.get("P_LINE_NO"));
+
+            Map<String, Object> resultMap = callProcedure(SP_ID_LO_020ND_QTY_UPDATE, callParams);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+    }
+
+    /**
+     * 배송완료의 상세정보 내용 저장(배송수량/미배송사유/미배송사유내역)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveDelivery(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+
+        int dsCount = Util.getCount(dsSave);
+        for (int i = 0; i < dsCount; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, USER_ID);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                if (updateSql(UPDATE_ID_LO020ND, rowData) == 0) {
+                    throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.LOF02010E0.003", "출고확정된 전표만 미배송 저장 처리가 가능합니다."));
+                }
+            }
+        }
+    }
+
+    /**
+     * 출고지시 화면에서 Confirm처리시 OUTBOUND_BATCH 저장후 처리
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void updateOutboundBatch(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        callParams.put("P_CENTER_CD", params.get("P_CENTER_CD"));
+        callParams.put("P_BU_CD", params.get("P_BU_CD"));
+        callParams.put("P_OUTBOUND_DATE", params.get("P_OUTBOUND_DATE"));
+        callParams.put("P_OUTBOUND_NO", params.get("P_OUTBOUND_NO"));
+        callParams.put("P_OUTBOUND_BATCH", params.get("P_OUTBOUND_BATCH"));
+        callParams.put("P_OUTBOUND_BATCH_NM", params.get("P_OUTBOUND_BATCH_NM"));
+        callParams.put("P_EQUIP_DIV", params.get("P_EQUIP_DIV"));
+        callParams.put(Consts.PK_USER_ID, params.get(Consts.PK_USER_ID));
+
+        // UPDATE처리
+        updateSql(UPDATE_ID_LO020NM, callParams);
+    }
+
+    /**
+     * 출고등록(일괄) 저장
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveEntryBT(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+
+        // INSERT/UPDATE/DELETE 처리
+        int dsCount = Util.getCount(dsSave);
+        for (int i = 0; i < dsCount; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, USER_ID);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                if (updateSql(UPDATE_ID_LO010ND, rowData) == 0) {
+                    throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.LOF02010E0.004",
+                        "[예정일자: " + rowData.get("P_ORDER_DATE").toString() + ",예정번호: " + rowData.get("P_ORDER_NO").toString() + ",순번: "
+                            + rowData.get("P_LINE_NO").toString() + "]\n해당 데이터는 진행상태가 변경되어 저장할 수 없습니다.",
+                        new String[] {rowData.get("P_ORDER_DATE").toString(), rowData.get("P_ORDER_NO").toString(),
+                            rowData.get("P_LINE_NO").toString()}));
+                }
+            }
+        }
+    }
+
+    /**
+     * 거래명세서일자 수정 처리
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void callInoutDateUpdate(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+
+        int dsCount = Util.getCount(dsSave);
+        for (int i = 0; i < dsCount; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            Map<String, Object> resultMap = callProcedure(SP_ID_LO_INOUT_DATE_UPDATE, rowData);
+
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+    }
+
+    /**
+     * 송장 출력 횟수 업데이트 처리
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> callSetWbnoPrintCntUpdate(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String USER_ID = (String)params.get(Consts.PK_USER_ID);
+
+        Map<String, Object> resultMap = null;
+        // DataSet 처리
+        int dsCount = Util.getCount(dsSave);
+        for (int i = 0; i < dsCount; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, USER_ID);
+
+            resultMap = callProcedure(SP_ID_SET_WBNO_PRINT_CNT_UPDATE, rowData);
+            String oMsg = Util.getOutMessage(resultMap);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+
+        return resultMap;
+    }
+}

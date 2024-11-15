@@ -1,0 +1,886 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : CSC01050E0
+ *  프로그램명         : 권한그룹프로그램관리
+ *  프로그램설명       : 권한그룹프로그램관리 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2022-05-17
+ *  버전               : 1.0
+ *
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2022-05-17    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#ctrMasterView",
+            grids: [
+                "#grdMaster",
+                "#grdDetail"
+            ],
+            exceptHeight: $NC.getViewHeight("#ctrMasterInfoView")
+        }
+    });
+
+    // 버튼 클릭 이벤트 연결
+    $("#btnSave").click(_Save);
+    $("#btnDeleteUser").click(_Delete);
+    $("#btnAddUser").click(_New);
+
+    // 팝업이 표시되면 저장권한은 체크 됨, 삭제권한만 체크
+    // $NC.setEnable("#btnDeleteUser", $NC.G_VAR.G_PARAMETER.P_PERMISSION.canDelete);
+
+    // 그리드 초기화
+    grdMasterInitialize();
+    grdDetailInitialize();
+
+    // 조회조건 - 권한그룹프로그램 구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "ROLE_GROUP_DIV",
+            P_COMMON_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQRole_Group_Div",
+        codeField: "COMMON_CD",
+        nameField: "COMMON_NM",
+        fullNameField: "COMMON_CD_F"
+    // addAll: true
+    });
+}
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+
+function _OnLoaded() {
+
+    // 스플리터 초기화
+    $NC.setInitSplitter("#ctrMasterView", "v", 600);
+}
+
+/**
+ * 화면 리사이즈 Offset 계산
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * 조회조건 Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnConditionChange(e, view, val) {
+
+    onChangingCondition();
+}
+
+function onChangingCondition() {
+
+    // 초기화
+    $NC.clearGridData(G_GRDMASTER);
+    $NC.clearGridData(G_GRDDETAIL);
+
+    // 공통 버튼 초기화 - 조회 버튼만 활성
+    $NC.setInitTopButtons();
+}
+
+/**
+ * 조회
+ */
+function _Inquiry() {
+
+    var ROLE_GROUP_DIV = $NC.getValue("#cboQRole_Group_Div");
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTER);
+    G_GRDMASTER.queryParams = {
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    };
+    // Master 데이터 조회
+    $NC.serviceCall("/CSC01050E0/getMenu.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDDETAIL);
+    G_GRDDETAIL.queryParams = {
+        P_ROLE_GROUP_DIV: ROLE_GROUP_DIV
+    };
+
+    $NC.serviceCall("/CSC01050E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL), onGetDetail);
+}
+
+/**
+ * 신규
+ */
+function _New() {
+
+    if (G_GRDMASTER.data.getLength() == 0) {
+        return;
+    }
+
+    var selectedRows = G_GRDMASTER.view.getSelectedRows();
+    if (selectedRows.length == 0) {
+        alert($NC.getDisplayMsg("JS.CSC01050E0.002", "등록할 프로그램를 선택하십시오."));
+        return;
+    }
+
+    var EXE_LEVEL1 = $NC.getValue("#chkExe_Level1");
+    var EXE_LEVEL2 = $NC.getValue("#chkExe_Level2");
+    var EXE_LEVEL3 = $NC.getValue("#chkExe_Level3");
+    var EXE_LEVEL4 = $NC.getValue("#chkExe_Level4");
+    var EXE_LEVEL5 = $NC.getValue("#chkExe_Level5");
+    var USER_ID = $NC.G_USERINFO.USER_ID;
+    var ROLE_GROUP_DIV = $NC.getValue("#cboQRole_Group_Div");
+
+    var rowData, newRowData;
+    G_GRDDETAIL.data.beginUpdate();
+    try {
+        for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+            rowData = G_GRDMASTER.data.getItem(selectedRows[rIndex]);
+
+            // 메뉴이면서 접혀 있으면 addSubProgramMenu 에서 처리
+            if (rowData.PROGRAM_DIV == "M") {
+                // if (rowData._collapsed) {
+                addSubProgramMenu(USER_ID, rowData, EXE_LEVEL1, EXE_LEVEL2, EXE_LEVEL3, EXE_LEVEL4, EXE_LEVEL5);
+                // }
+                continue;
+            } else {
+                // 중복 체크
+                if ($NC.getGridSearchRow(G_GRDDETAIL, {
+                    searchKey: [
+                        "PROGRAM_ID"
+                    ],
+                    searchVal: rowData.PROGRAM_ID,
+                    isAllData: true
+                }) != -1) {
+                    continue;
+                }
+            }
+
+            newRowData = {
+                USER_ID: USER_ID,
+                ROLE_GROUP_DIV: ROLE_GROUP_DIV,
+                PROGRAM_ID: rowData.PROGRAM_ID,
+                PROGRAM_NM: rowData.PROGRAM_NM,
+                EXE_LEVEL1: EXE_LEVEL1,
+                EXE_LEVEL2: EXE_LEVEL2,
+                EXE_LEVEL3: EXE_LEVEL3,
+                EXE_LEVEL4: EXE_LEVEL4,
+                EXE_LEVEL5: EXE_LEVEL5,
+                APPLICATION_DIV: rowData.APPLICATION_DIV,
+                APPLICATION_DIV_F: rowData.APPLICATION_DIV_F,
+                PROGRAM_DIV: rowData.PROGRAM_DIV,
+                PROGRAM_DIV_F: rowData.PROGRAM_DIV_F,
+                OLD_EXE_LEVEL1: null,
+                OLD_EXE_LEVEL2: null,
+                OLD_EXE_LEVEL3: null,
+                OLD_EXE_LEVEL4: null,
+                OLD_EXE_LEVEL5: null,
+                id: $NC.getGridNewRowId(),
+                CRUD: $ND.C_DV_CRUD_C
+            };
+            G_GRDDETAIL.data.addItem(newRowData);
+        }
+    } finally {
+        G_GRDDETAIL.data.endUpdate();
+    }
+    G_GRDDETAIL.data.refresh();
+
+    $NC.setGridSelectRow(G_GRDDETAIL, 0);
+
+    // 데이터가 추가되었을 경우만 저장 호출
+    if (!$NC.isGridModified(G_GRDDETAIL)) {
+        alert($NC.getDisplayMsg("JS.CSC01050E0.003", "선택한 메뉴는 이미 등록되어 있습니다."));
+        return;
+    }
+
+    _Save();
+}
+
+/**
+ * 저장
+ */
+function _Save() {
+
+    if (G_GRDDETAIL.data.getItems().length == 0) {
+        alert($NC.getDisplayMsg("JS.CSC01050E0.004", "저장할 데이터가 없습니다."));
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL)) {
+        return;
+    }
+
+    var dsTarget = G_GRDDETAIL.data.getItems();
+    var dsMaster = [];
+    var rowData;
+    for (var rIndex = 0, rCount = dsTarget.length; rIndex < rCount; rIndex++) {
+        rowData = dsTarget[rIndex];
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            continue;
+        }
+        dsMaster.push({
+            P_ROLE_GROUP_DIV: rowData.ROLE_GROUP_DIV,
+            P_PROGRAM_ID: rowData.PROGRAM_ID,
+            P_EXE_LEVEL1: rowData.EXE_LEVEL1,
+            P_EXE_LEVEL2: rowData.EXE_LEVEL2,
+            P_EXE_LEVEL3: rowData.EXE_LEVEL3,
+            P_EXE_LEVEL4: rowData.EXE_LEVEL4,
+            P_EXE_LEVEL5: rowData.EXE_LEVEL5,
+            P_OLD_EXE_LEVEL1: rowData.OLD_EXE_LEVEL1,
+            P_OLD_EXE_LEVEL2: rowData.OLD_EXE_LEVEL2,
+            P_OLD_EXE_LEVEL3: rowData.OLD_EXE_LEVEL3,
+            P_OLD_EXE_LEVEL4: rowData.OLD_EXE_LEVEL4,
+            P_OLD_EXE_LEVEL5: rowData.OLD_EXE_LEVEL5,
+            P_CRUD: rowData.CRUD
+        });
+    }
+
+    if (dsMaster.length == 0) {
+        alert($NC.getDisplayMsg("JS.CSC01050E0.005", "데이터 수정 후 저장하십시오."));
+        return;
+    }
+
+    $NC.serviceCall("/CSC01050E0/save.do", {
+        P_DS_MASTER: dsMaster,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave);
+}
+
+/**
+ * 삭제
+ */
+function _Delete() {
+
+    if (G_GRDDETAIL.data.getLength() == 0) {
+        return;
+    }
+
+    var selectedRows = G_GRDDETAIL.view.getSelectedRows();
+    if (selectedRows.length == 0) {
+        alert($NC.getDisplayMsg("JS.CSC01050E0.006", "삭제할 프로그램을 선택하십시오."));
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.CSC01050E0.007", "삭제 하시겠습니까?"))) {
+        return;
+    }
+
+    G_GRDDETAIL.data.beginUpdate();
+    try {
+        var rowData;
+        for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+            rowData = G_GRDDETAIL.data.getItem(selectedRows[rIndex]);
+            // 신규 데이터일 경우 그냥 삭제
+            if (rowData.CRUD == $ND.C_DV_CRUD_C || rowData.CRUD == $ND.C_DV_CRUD_N) {
+                G_GRDDETAIL.data.deleteItem(rowData.id);
+            } else {
+                rowData.CRUD = $ND.C_DV_CRUD_D;
+                G_GRDDETAIL.data.updateItem(rowData.id, rowData);
+            }
+        }
+    } finally {
+        G_GRDDETAIL.data.endUpdate();
+    }
+    G_GRDDETAIL.data.refresh();
+
+    if (G_GRDDETAIL.data.getLength() == 0) {
+        $NC.setGridDisplayRows(G_GRDDETAIL, 0, 0);
+    } else {
+        $NC.setGridSelectRow(G_GRDDETAIL, 0);
+    }
+
+    _Save();
+}
+
+function addSubProgramMenu(userId, rowData, exeLevel1, exeLevel2, exeLevel3, exeLevel4, exeLevel5) {
+
+    // 하위 메뉴 처리
+    var dsMaster = G_GRDMASTER.data.getItems();
+    var rCount = dsMaster.length;
+    var refRowData, newRowData, startIndex, rIndex;
+    var ROLE_GROUP_DIV = $NC.getValue("#cboQRole_Group_Div");
+
+    // 전체 데이터에서 현재 데이터 위치
+    for (rIndex = 0; rIndex < rCount; rIndex++) {
+        refRowData = dsMaster[rIndex];
+        if (rowData.MENU_ID == refRowData.MENU_ID) {
+            startIndex = rIndex;
+            break;
+        }
+    }
+    if ($NC.isNull(startIndex)) {
+        return;
+    }
+
+    // 현재 메뉴 데이터 처리
+    // 현재 데이터 위치부터 1단계 하위 메뉴 추가
+    var checkIndent = (Number(rowData.MENU_INDENT) + 1).toString();
+    for (rIndex = startIndex + 1; rIndex < rCount; rIndex++) {
+        refRowData = dsMaster[rIndex];
+        // 하위 단계 메뉴면 다음
+        if (refRowData.MENU_INDENT > checkIndent) {
+            continue;
+        }
+        // 상위 단계 메뉴면 멈춤
+        if (refRowData.MENU_INDENT < checkIndent) {
+            break;
+        }
+
+        // 메뉴이면서 접혀 있으면 addSubProgramMenu 에서 처리
+        if (refRowData.PROGRAM_DIV == "M") {
+            if (refRowData._collapsed) {
+                addSubProgramMenu(userId, refRowData, exeLevel1, exeLevel2, exeLevel3, exeLevel4, exeLevel5);
+            }
+            continue;
+        } else {
+            // 중복 체크
+            if ($NC.getGridSearchRow(G_GRDDETAIL, {
+                searchKey: [
+                    "PROGRAM_ID"
+                ],
+                searchVal: refRowData.PROGRAM_ID,
+                isAllData: true
+            }) != -1) {
+                continue;
+            }
+        }
+
+        newRowData = {
+            USER_ID: userId,
+            ROLE_GROUP_DIV: ROLE_GROUP_DIV,
+            PROGRAM_ID: refRowData.PROGRAM_ID,
+            PROGRAM_NM: refRowData.PROGRAM_NM,
+            EXE_LEVEL1: exeLevel1,
+            EXE_LEVEL2: exeLevel2,
+            EXE_LEVEL3: exeLevel3,
+            EXE_LEVEL4: exeLevel4,
+            EXE_LEVEL5: exeLevel5,
+            APPLICATION_DIV: refRowData.APPLICATION_DIV,
+            APPLICATION_DIV_F: refRowData.APPLICATION_DIV_F,
+            PROGRAM_DIV: refRowData.PROGRAM_DIV,
+            PROGRAM_DIV_F: refRowData.PROGRAM_DIV_F,
+            id: $NC.getGridNewRowId(),
+            CRUD: $ND.C_DV_CRUD_C
+        };
+
+        G_GRDDETAIL.data.addItem(newRowData);
+    }
+}
+
+/**
+ * grdMaster 데이터 필터링 이벤트
+ */
+function grdMasterOnFilter(item) {
+
+    if ($NC.isNotNull(item.parent)) {
+        var dsTarget = G_GRDMASTER.data.getItems();
+        var parent = dsTarget[G_GRDMASTER.data.getIdxById(item.parent)];
+        while ($NC.isNotNull(parent)) {
+            if (parent._collapsed) {
+                return false;
+            }
+            parent = dsTarget[G_GRDMASTER.data.getIdxById(parent.parent)];
+        }
+    }
+    return true;
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "PROGRAM_NM",
+        field: "PROGRAM_NM",
+        name: "프로그램명",
+        formatter: function(row, cell, value, columnDef, dataContext) {
+            var result = "<span class='slick-group-toggle";
+            if (dataContext.PROGRAM_DIV == "M") {
+                if (dataContext._collapsed) {
+                    result += " collapsed";
+                } else {
+                    result += " expanded";
+                }
+            }
+            result += " styIcoProgram" + dataContext.PROGRAM_DIV + "'" //
+                + "style='margin-left: " + (2 + 10 * dataContext.MENU_INDENT) + "px'></span>" + value;
+
+            return result;
+        }
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdMasterInitialize() {
+
+    var options = {
+        showColumnHeader: false,
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "CSC01050E0.RS_MASTER",
+        sortCol: "PROGRAM_ID",
+        redefineColumn: $ND.C_NO, // 컬럼 재정의 사용안함
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-all",
+            // helperMessageFormat: "선택 프로그램 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = dd.dragGridObject.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[프로그램: " + $NC.getDisplayCombo(rowData.PROGRAM_ID, rowData.PROGRAM_NM) + "]를 추가";
+                } else {
+                    result = "[프로그램: " + $NC.getDisplayCombo(rowData.PROGRAM_ID, rowData.PROGRAM_NM) + "] 외 " + (dd.dragCount - 1) + "건 추가";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                _Delete();
+            }
+        }
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+    G_GRDMASTER.view.onClick.subscribe(grdMasterOnClick);
+    G_GRDMASTER.view.onDblClick.subscribe(grdMasterOnDblClick);
+
+    // Grid 가로 스크롤바 숨김
+    $NC.hideGridHorzScroller(G_GRDMASTER);
+}
+
+/**
+ * grdMaster 클릭 이벤트
+ */
+function grdMasterOnClick(e, args) {
+
+    if (!$(e.target).hasClass("slick-group-toggle")) {
+        return;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(args.row);
+    if ($NC.isNull(rowData) || rowData.PROGRAM_DIV != "M") {
+        return;
+    }
+
+    // 메뉴 +/-
+    if (!rowData._collapsed) {
+        rowData._collapsed = true;
+    } else {
+        rowData._collapsed = false;
+    }
+    G_GRDMASTER.data.updateItem(rowData.id, rowData);
+
+    $NC.setGridSelectRow(G_GRDMASTER, args.row);
+    e.stopImmediatePropagation();
+}
+
+/**
+ * grdMaster 더블 클릭 이벤트
+ */
+function grdMasterOnDblClick(e, args) {
+
+    if ($(e.target).hasClass("slick-cell")) {
+        return;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(args.row);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+
+    // 메뉴
+    if (rowData.PROGRAM_DIV == "M") {
+        if (!rowData._collapsed) {
+            rowData._collapsed = true;
+        } else {
+            rowData._collapsed = false;
+        }
+        G_GRDMASTER.data.updateItem(rowData.id, rowData);
+        $NC.setGridSelectRow(G_GRDMASTER, args.row);
+
+        e.stopImmediatePropagation();
+    }
+    // 프로그램
+    else if (rowData.PROGRAM_DIV != "M") {
+        // 프로그램 더블클릭시 등록 프로그램 스크롤
+        var searchRow = $NC.getGridSearchRow(G_GRDDETAIL, {
+            searchKey: "PROGRAM_ID",
+            searchVal: rowData.PROGRAM_ID
+        });
+
+        if (searchRow == -1) {
+            if (!confirm($NC.getDisplayMsg("JS.CSC01050E0.008", "해당 사용자에게 등록되어 있지 않은 프로그램입니다. 등록하시겠습니까?"))) {
+                return;
+            }
+            _New();
+        } else {
+            $NC.setGridSelectRow(G_GRDDETAIL, searchRow);
+        }
+    }
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+/**
+ * 프로그램 메뉴 조회 완료 후.
+ */
+function onGetMaster(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTER, ajaxData, grdMasterOnFilter);
+    if (G_GRDMASTER.data.getLength() > 0) {
+        var rowData;
+        // lastKeyVal이 없을 경우 첫번째 Row 선택
+        if ($NC.isNull(G_GRDMASTER.lastKeyVal)) {
+            $NC.setGridSelectRow(G_GRDMASTER, 0);
+            rowData = G_GRDMASTER.data.getItem(0);
+            if ($NC.isNull(rowData)) {
+                return;
+            }
+
+            // 프로그램 메뉴 펼침
+            if (rowData.PROGRAM_ID == "HTML_MENU") {
+                rowData._collapsed = false;
+                G_GRDMASTER.data.updateItem(rowData.id, rowData);
+            }
+        }
+        // Tree 형태의 그리드는 접힌 메뉴는 검색이 되지 않기 때문에 메뉴를 펼침
+        else {
+            var lastKeyIndex = $NC.getGridSearchRow(G_GRDMASTER, {
+                searchKey: "PROGRAM_ID",
+                searchVal: G_GRDMASTER.lastKeyVal,
+                isAllData: true
+            });
+            if (lastKeyIndex == -1) {
+                $NC.setGridSelectRow(G_GRDMASTER, 0);
+                return;
+            }
+
+            var dsTarget = G_GRDMASTER.data.getItems();
+            rowData = dsTarget[lastKeyIndex];
+            while ($NC.isNotNull(rowData.parent)) {
+                rowData = dsTarget[G_GRDMASTER.data.getIdxById(rowData.parent)] || {};
+                if ($NC.isNotNull(rowData.id)) {
+                    if (rowData.MENU_DIV == "M" && rowData._collapsed) {
+                        rowData._collapsed = false;
+                        G_GRDMASTER.data.updateItem(rowData.id, rowData);
+                    }
+                }
+            }
+
+            if (rowData.MENU_DIV == "M" && rowData._collapsed) {
+                rowData._collapsed = false;
+                G_GRDMASTER.data.updateItem(rowData.id, rowData);
+            }
+
+            $NC.setGridSelectRow(G_GRDMASTER, {
+                selectKey: "PROGRAM_ID",
+                selectVal: G_GRDMASTER.lastKeyVal,
+                activeCell: true
+            });
+        }
+    }
+
+    // 공통 버튼 활성화 처리
+    $NC.G_VAR.buttons._inquiry = "1";
+    $NC.G_VAR.buttons._new = "0";
+    $NC.G_VAR.buttons._save = "1";
+    $NC.G_VAR.buttons._cancel = "0";
+    $NC.G_VAR.buttons._delete = "0";
+    $NC.G_VAR.buttons._print = "0";
+
+    $NC.setInitTopButtons($NC.G_VAR.buttons);
+}
+
+function grdDetailOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "APPLICATION_DIV_F",
+        field: "APPLICATION_DIV_F",
+        name: "애플리케이션구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROGRAM_ID",
+        field: "PROGRAM_ID",
+        name: "프로그램ID",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROGRAM_NM",
+        field: "PROGRAM_NM",
+        name: "프로그램명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROGRAM_DIV_F",
+        field: "PROGRAM_DIV_F",
+        name: "프로그램구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "EXE_LEVEL1",
+        field: "EXE_LEVEL1",
+        name: "저장권한",
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "EXE_LEVEL2",
+        field: "EXE_LEVEL2",
+        name: "삭제권한",
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "EXE_LEVEL3",
+        field: "EXE_LEVEL3",
+        name: "확정권한",
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "EXE_LEVEL4",
+        field: "EXE_LEVEL4",
+        name: "취소권한",
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "EXE_LEVEL5",
+        field: "EXE_LEVEL5",
+        name: "승인권한",
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdDetailInitialize() {
+
+    var options = {
+        editable: true,
+        autoEdit: true,
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail", {
+        columns: grdDetailOnGetColumns(),
+        queryId: "CSC01050E0.RS_DETAIL",
+        sortCol: "PROGRAM_ID",
+        gridOptions: options,
+        onFilter: grdDetailOnFilter,
+        dragOptions: {
+            dropMode: "drop-all",
+            // helperMessageFormat: "선택 프로그램 %d건 삭제",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = dd.dragGridObject.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[프로그램: " + $NC.getDisplayCombo(rowData.PROGRAM_ID, rowData.PROGRAM_NM) + "]를 삭제";
+                } else {
+                    result = "[프로그램: " + $NC.getDisplayCombo(rowData.PROGRAM_ID, rowData.PROGRAM_NM) + "] 외 " + (dd.dragCount - 1) + "건 삭제";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdMaster",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                _New();
+            }
+        }
+    });
+
+    G_GRDDETAIL.view.onSelectedRowsChanged.subscribe(grdDetailOnAfterScroll);
+    G_GRDDETAIL.view.onBeforeEditCell.subscribe(grdDetailOnBeforeEditCell);
+    G_GRDDETAIL.view.onCellChange.subscribe(grdDetailOnCellChange);
+}
+
+/**
+ * grdDetail 데이터 필터링 이벤트
+ */
+function grdDetailOnFilter(item) {
+
+    return item.CRUD != $ND.C_DV_CRUD_D;
+}
+
+function grdDetailOnNewRecord(args) {
+
+    $NC.setFocusGrid(G_GRDDETAIL, args.row, "ITEM_CD", true);
+}
+
+function grdDetailOnBeforeEditCell(e, args) {
+
+    return true;
+}
+
+function grdDetailOnCellChange(e, args) {
+
+    var rowData = args.item;
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDDETAIL, rowData);
+}
+
+function grdDetailOnBeforePost(row) {
+
+    // Validation 대상인지 체크, 아니면 True로 리턴
+    if (!$NC.isGridValidPostRow(G_GRDDETAIL, row)) {
+        return true;
+    }
+
+    return true;
+}
+
+function grdDetailOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL2.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL, G_GRDDETAIL.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL, row + 1);
+}
+
+/**
+ * Grid에서 CheckBox Formatter를 사용할 경우 CheckBox Click 이벤트 처리
+ * 
+ * @param e
+ * @param view
+ *        대상 Object
+ * @param args
+ *        grid, row, cell, val
+ */
+function _OnGridCheckBoxFormatterClick(e, view, args) {
+
+    var grdObject = $NC.getGridObject(args.grid);
+    if (!grdObject.isValid) {
+        return;
+    }
+
+    var columnId = grdObject.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "EXE_LEVEL1":
+        case "EXE_LEVEL2":
+        case "EXE_LEVEL3":
+        case "EXE_LEVEL4":
+        case "EXE_LEVEL5":
+            $NC.onGridCheckBoxFormatterChange(grdObject, e, args, true);
+            break;
+    }
+}
+
+function onGetDetail(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL, ajaxData, grdDetailOnFilter);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL, "PROGRAM_ID", true);
+}
+
+function onSave(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDDETAIL, {
+        selectKey: "PROGRAM_ID"
+    });
+    _Inquiry();
+    G_GRDDETAIL.lastKeyVal = lastKeyVal;
+}

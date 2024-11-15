@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2023-12-14T17:12:12 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LOM_HANJIN_WAYBILL_02" pageWidth="567" pageHeight="289" orientation="Landscape" columnWidth="567" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3ad374b1-c7f4-4aa4-ac8f-a7079e367d4e">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.415765000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NEXOS75"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Detail" fontSize="12"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_POLICY_LO450" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT WF.D_TO_CHAR(L4.OUTBOUND_DATE) AS OUTBOUND_DATE
+       ,L4.OUTBOUND_NO
+        ,L4.WB_NO
+        ,L4.BOX_NO
+        ,WB.DSP_WB_NO(L4.WB_NO, L4.HDC_DIV)                                            AS WB_NO1
+        ,L4.ORDERER_NM
+        ,L4.DELIVERY_NM
+        ,L4.ORDERER_MSG
+        ,L4.TEL_NO
+        ,WF.DSP_ADDRESS(L4.ADDR_BASIC ,L4.ADDR_DETAIL)                                 AS ADDRESS
+        ,L4.ZIP_CD
+        ,L4.SHIPPER_NM
+        ,L4.SHIPPER_NM1
+        ,NVL(L4.SHIPPER_TEL ,L4.SHIPPER_HP)                                            AS SHIPPER_TEL
+        ,NVL(DECODE(L4.SHIPPER_TEL ,NULL ,NULL ,L4.SHIPPER_TEL1)
+            ,DECODE(L4.SHIPPER_HP  ,NULL ,NULL ,L4.SHIPPER_HP1)
+            )                                                                          AS SHIPPER_TEL1
+        ,NVL(L4.SHIPPER_HP ,L4.SHIPPER_TEL)                                            AS SHIPPER_HP
+        ,DECODE(L4.SHIPPER_HP ,NULL ,L4.SHIPPER_TEL1 ,L4.SHIPPER_HP1)                  AS SHIPPER_HP1
+        ,WF.DSP_ADDRESS(L4.SHIPPER_ADDR_BASIC ,L4.SHIPPER_ADDR_DETAIL)                 AS SHIPPER_ADDR
+        ,L4.SHIPPER_ZIP_CD
+        ,L4.SHIPPER_ADDR_BASIC
+        ,L4.SHIPPER_ADDR_DETAIL
+        ,L4.HJ_TML_CD
+        ,L4.HJ_TML_NM
+        ,L4.HJ_CLASS1_CD
+        ,L4.HJ_CLASS2_CD
+        ,L4.HJ_CLASS3_CD
+        ,L4.HJ_ARR_NM
+        ,L4.HJ_ARR_SHOP_CD
+        ,L4.HJ_ARR_SHOP_NM
+        ,L4.HJ_DELIVER_NM
+        ,L4.HJ_SHIP_AIR_NM
+        ,DECODE(L4.HJ_SHIP_AIR_NM ,'7' ,'제주' ,'9' ,'도서')                           AS HJ_SHIP_AIR_NM1
+        ,L4.HJ_DELIVER_CLASS_CD
+        ,L4.HJ_GROUP_RANK
+        ,L4.HJ_PRINT_ADDR
+        ,L4.HJ_SEND_TML_CD
+        ,L4.HJ_SEND_TML_NM
+        ,L4.TO_DAY
+        ,L4.TO_DAY1
+        ,L4.ITEM_CNT
+        ,L4.ACS_ERROR_CD                                                               AS HJ_ERROR_CD
+        ,L4.OUTBOUND_QTY
+        ,L4.MALL_MSG
+        ,L4.SUM_CONFIRM_QTY                                                                         --추가
+        ,L4.MIN_ITEM_CD                                                                             --추가
+    FROM (
+          SELECT L3.OUTBOUND_DATE
+                ,L3.OUTBOUND_NO
+                ,L3.BU_CD
+                ,L3.BOX_NO
+                ,L3.HDC_DIV
+                ,L3.WB_NO
+                ,M3.SHIPPER_NM
+                ,M3.ORDERER_NM
+                ,SUBSTR(M3.SHIPPER_NM ,1 ,2) || '*'                                                             AS SHIPPER_NM1
+                ,WF.GET_DECSTR(M3.SHIPPER_TEL)                                                                  AS SHIPPER_TEL
+                ,WF.GET_DECSTR(M3.SHIPPER_HP)                                                                   AS SHIPPER_HP
+                ,SUBSTR(WF.GET_DECSTR(M3.SHIPPER_TEL) ,1 ,LENGTH(WF.GET_DECSTR(M3.SHIPPER_TEL)) - 4) || '****'  AS SHIPPER_TEL1
+                ,SUBSTR(WF.GET_DECSTR(M3.SHIPPER_HP)  ,1 ,LENGTH(WF.GET_DECSTR(M3.SHIPPER_HP))  - 4) || '****'  AS SHIPPER_HP1
+                ,WF.GET_DECSTR(M3.SHIPPER_ADDR_BASIC)                                                           AS SHIPPER_ADDR_BASIC
+                ,WF.GET_DECSTR(M3.SHIPPER_ADDR_DETAIL)                                                          AS SHIPPER_ADDR_DETAIL
+                ,M3.SHIPPER_ZIP_CD
+                ,M3.ORDERER_MSG
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_TML_CD      ,P1.HJ_TML_CD)                                      AS HJ_TML_CD
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_TML_NM      ,P1.HJ_TML_NM)                                      AS HJ_TML_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_CLASS1_CD   ,P1.HJ_CLASS1_CD)                                   AS HJ_CLASS1_CD
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_CLASS2_CD   ,P1.HJ_CLASS2_CD)                                   AS HJ_CLASS2_CD
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_CLASS3_CD   ,P1.HJ_CLASS3_CD)                                   AS HJ_CLASS3_CD
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_ARR_NM      ,P1.HJ_ARR_NM)                                      AS HJ_ARR_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_ARR_SHOP_CD ,P1.HJ_ARR_SHOP_CD)                                 AS HJ_ARR_SHOP_CD
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_ARR_SHOP_NM ,P1.HJ_ARR_SHOP_NM)                                 AS HJ_ARR_SHOP_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_DELIVER_NM  ,P1.HJ_DELIVER_NM)                                  AS HJ_DELIVER_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_SHIP_AIR_NM ,P1.HJ_SHIP_AIR_NM)                                 AS HJ_SHIP_AIR_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_DELIVER_CLASS_CD ,P1.HJ_DELIVER_CLASS_CD)                       AS HJ_DELIVER_CLASS_CD
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_GROUP_RANK  ,P1.HJ_GROUP_RANK)                                  AS HJ_GROUP_RANK
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.HJ_PRINT_ADDR  ,P1.HJ_PRINT_ADDR)                                  AS HJ_PRINT_ADDR
+                ,M2.HJ_SEND_TML_CD
+                ,M2.HJ_SEND_TML_NM
+                ,TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24')                                                            AS TO_DAY
+                ,'출력일자 ' || TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24')                                             AS TO_DAY1
+                ,M3.ACS_ERROR_CD
+                ,M3.MALL_MSG
+                ,L3.ITEM_CNT
+                ,DECODE($P{P_POLICY_LO450} ,'1' ,C1.CUST_FULL_NM
+                                       ,'2' ,B1.BU_FULL_NM
+                                       ,'4' ,C2.CARRIER_FULL_NM)                                                AS DELIVERY_NM
+                ,DECODE($P{P_POLICY_LO450} ,'1' ,C1.TEL_NO
+                                       ,'2' ,B1.TEL_NO
+                                       ,'4' ,C2.TEL_NO)                                                         AS TEL_NO
+                ,DECODE($P{P_POLICY_LO450} ,'1' ,C1.ADDR_BASIC
+                                       ,'2' ,B1.ADDR_BASIC
+                                       ,'4' ,C2.ADDR_BASIC)                                                     AS ADDR_BASIC
+                ,DECODE($P{P_POLICY_LO450} ,'1' ,C1.ADDR_DETAIL
+                                       ,'2' ,B1.ADDR_DETAIL
+                                       ,'4' ,C2.ADDR_DETAIL)                                                    AS ADDR_DETAIL
+                ,C3.ZIP_CD
+                ,L3.OUTBOUND_QTY
+                ,L3.SUM_CONFIRM_QTY                                                                 --추가
+                ,L3.MIN_ITEM_CD                                                                     --추가
+            FROM (
+                  SELECT L1.CENTER_CD
+                        ,L1.BU_CD
+                        ,L1.OUTBOUND_DATE
+                        ,L1.OUTBOUND_NO
+                        ,L1.BOX_NO
+                        ,L1.CARRIER_CD
+                        ,L1.HDC_DIV
+                        ,L1.WB_NO
+                        ,L1.MIN_ITEM_CD
+                        ,L1.ITEM_CNT
+                        ,L1.SUM_CONFIRM_QTY                                                     --추가
+                        ,L1.ITEM_CNT || ' / ' || SUM(L1.SUM_CONFIRM_QTY) OVER(PARTITION BY L1.OUTBOUND_DATE ,L1.OUTBOUND_NO ,L1.BOX_NO)
+                           || ' [건수/수량]'                                              AS OUTBOUND_QTY
+                    FROM (
+                          SELECT M1.CENTER_CD
+                                ,M1.BU_CD
+                                ,M1.OUTBOUND_DATE
+                                ,M1.OUTBOUND_NO
+                                ,M1.BOX_NO
+                                ,M1.CARRIER_CD
+                                ,M1.HDC_DIV
+                                ,M1.WB_NO
+                                ,MIN(M1.ITEM_CD)                           AS MIN_ITEM_CD
+                                ,COUNT(DISTINCT M1.BRAND_CD || M1.ITEM_CD) AS ITEM_CNT
+                                ,SUM(M1.CONFIRM_QTY)                       AS SUM_CONFIRM_QTY
+                            FROM LO050NM M1
+                           WHERE M1.CENTER_CD     = $P{P_CENTER_CD}
+                             AND M1.BU_CD         = $P{P_BU_CD}
+                             AND (M1.OUTBOUND_DATE
+                                 ,M1.OUTBOUND_NO
+                                 ,M1.BOX_NO)      IN (
+                                                      SELECT WF.GET_SPLITSTR(CHECK_VALUE ,1)
+                                                            ,WF.GET_SPLITSTR(CHECK_VALUE ,2)
+                                                            ,WF.GET_SPLITSTR(CHECK_VALUE ,3)
+                                                        FROM CTCHECKVALUE
+                                                     )
+                           GROUP BY M1.CENTER_CD
+                                   ,M1.BU_CD
+                                   ,M1.OUTBOUND_DATE
+                                   ,M1.OUTBOUND_NO
+                                   ,M1.BOX_NO
+                                   ,M1.CARRIER_CD
+                                   ,M1.HDC_DIV
+                                   ,M1.WB_NO
+                         ) L1
+                 ) L3
+                 JOIN LO020PM    M2 ON M2.CENTER_CD     = L3.CENTER_CD
+                                   AND M2.BU_CD         = L3.BU_CD
+                                   AND M2.OUTBOUND_DATE = L3.OUTBOUND_DATE
+                                   AND M2.OUTBOUND_NO   = L3.OUTBOUND_NO
+                 JOIN LO020NM    M3 ON M3.CENTER_CD     = L3.CENTER_CD
+                                   AND M3.BU_CD         = L3.BU_CD
+                                   AND M3.OUTBOUND_DATE = L3.OUTBOUND_DATE
+                                   AND M3.OUTBOUND_NO   = L3.OUTBOUND_NO
+                 JOIN CMCUST     C1 ON C1.CUST_CD       = M3.CUST_CD
+                 JOIN CMCARRIER  C2 ON C2.CARRIER_CD    = L3.CARRIER_CD
+                 JOIN CMBU       B1 ON B1.BU_CD         = L3.BU_CD
+            LEFT JOIN CMPOST     P1 ON P1.ZIP_CD        = REPLACE(M3.SHIPPER_ZIP_CD ,'-')
+                 JOIN CMDELIVERY D1 ON D1.DELIVERY_CD   = M3.RDELIVERY_CD
+                                   AND D1.CUST_CD       = M3.CUST_CD
+                 JOIN CMCENTER   C3 ON C3.CENTER_CD     = L3.CENTER_CD
+         ) L4
+     ORDER BY CASE WHEN ITEM_CNT = 1 AND SUM_CONFIRM_QTY = 1 THEN MIN_ITEM_CD ELSE NULL END         --추가(1품목1개인 경우는 상품코드순으로)
+             ,L4.OUTBOUND_NO
+             ,L4.BOX_NO
+             ,L4.WB_NO]]>
+	</queryString>
+	<field name="OUTBOUND_DATE" class="java.lang.String"/>
+	<field name="OUTBOUND_NO" class="java.lang.String"/>
+	<field name="WB_NO" class="java.lang.String"/>
+	<field name="BOX_NO" class="java.math.BigDecimal"/>
+	<field name="WB_NO1" class="java.lang.String"/>
+	<field name="ORDERER_NM" class="java.lang.String"/>
+	<field name="DELIVERY_NM" class="java.lang.String"/>
+	<field name="ORDERER_MSG" class="java.lang.String"/>
+	<field name="TEL_NO" class="java.lang.String"/>
+	<field name="ADDRESS" class="java.lang.String"/>
+	<field name="ZIP_CD" class="java.lang.String"/>
+	<field name="SHIPPER_NM" class="java.lang.String"/>
+	<field name="SHIPPER_NM1" class="java.lang.String"/>
+	<field name="SHIPPER_TEL" class="java.lang.String"/>
+	<field name="SHIPPER_TEL1" class="java.lang.String"/>
+	<field name="SHIPPER_HP" class="java.lang.String"/>
+	<field name="SHIPPER_HP1" class="java.lang.String"/>
+	<field name="SHIPPER_ADDR" class="java.lang.String"/>
+	<field name="SHIPPER_ZIP_CD" class="java.lang.String"/>
+	<field name="SHIPPER_ADDR_BASIC" class="java.lang.String"/>
+	<field name="SHIPPER_ADDR_DETAIL" class="java.lang.String"/>
+	<field name="HJ_TML_CD" class="java.lang.String"/>
+	<field name="HJ_TML_NM" class="java.lang.String"/>
+	<field name="HJ_CLASS1_CD" class="java.lang.String"/>
+	<field name="HJ_CLASS2_CD" class="java.lang.String"/>
+	<field name="HJ_CLASS3_CD" class="java.lang.String"/>
+	<field name="HJ_ARR_NM" class="java.lang.String"/>
+	<field name="HJ_ARR_SHOP_CD" class="java.lang.String"/>
+	<field name="HJ_ARR_SHOP_NM" class="java.lang.String"/>
+	<field name="HJ_DELIVER_NM" class="java.lang.String"/>
+	<field name="HJ_SHIP_AIR_NM" class="java.lang.String"/>
+	<field name="HJ_SHIP_AIR_NM1" class="java.lang.String"/>
+	<field name="HJ_DELIVER_CLASS_CD" class="java.lang.String"/>
+	<field name="HJ_GROUP_RANK" class="java.lang.String"/>
+	<field name="HJ_PRINT_ADDR" class="java.lang.String"/>
+	<field name="HJ_SEND_TML_CD" class="java.lang.String"/>
+	<field name="HJ_SEND_TML_NM" class="java.lang.String"/>
+	<field name="TO_DAY" class="java.lang.String"/>
+	<field name="TO_DAY1" class="java.lang.String"/>
+	<field name="ITEM_CNT" class="java.math.BigDecimal"/>
+	<field name="HJ_ERROR_CD" class="java.lang.String"/>
+	<field name="OUTBOUND_QTY" class="java.lang.String"/>
+	<field name="MALL_MSG" class="java.lang.String"/>
+	<field name="SUM_CONFIRM_QTY" class="java.math.BigDecimal"/>
+	<field name="MIN_ITEM_CD" class="java.lang.String"/>
+	<detail>
+		<band height="289">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport isUsingCache="false" runToBottom="false" overflowType="NoStretch">
+				<reportElement key="" mode="Opaque" x="2" y="72" width="275" height="141" isPrintWhenDetailOverflows="true" backcolor="rgba(255, 255, 255, 0.0)" uuid="6e842d49-e43c-4f4c-9e22-a9acd8408997"/>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SYSDATE">
+					<subreportParameterExpression><![CDATA[$P{P_SYSDATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_POLICY_LO450">
+					<subreportParameterExpression><![CDATA[$P{P_POLICY_LO450}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_OUTBOUND_DATE">
+					<subreportParameterExpression><![CDATA[$F{OUTBOUND_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_OUTBOUND_NO">
+					<subreportParameterExpression><![CDATA[$F{OUTBOUND_NO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BOX_NO">
+					<subreportParameterExpression><![CDATA[$F{BOX_NO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lo/LABEL_LOM_HANJIN_WAYBILL_02_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="510" y="97" width="44" height="29" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="59abfe5b-7a3c-437b-a873-a694ad7c7ddb"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="17" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_ARR_SHOP_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="356" y="96" width="73" height="29" isPrintWhenDetailOverflows="true" uuid="f321b8b2-1ebd-4bb5-ac36-0c760613547f"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="HY헤드라인M" size="22" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_DELIVER_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="425" y="169" width="121" height="17" forecolor="#000000" backcolor="#FFFFFF" uuid="e2f31a6c-ffc1-48af-ada8-44828f8ced8e"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="419" y="133" width="121" height="45" isRemoveLineWhenBlank="true" uuid="e71c55b0-a15b-45d1-b860-4ec9b69aefeb"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Int2of5" drawText="false" checksumRequired="false" barWidth="0" barHeight="40">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<staticText>
+				<reportElement x="477" y="186" width="29" height="12" isPrintWhenDetailOverflows="true" uuid="59382cd8-3344-4d03-affa-6abdc5ad9768">
+					<printWhenExpression><![CDATA[!($F{HJ_SEND_TML_CD}.isEmpty())]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[발지:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="500" y="186" width="60" height="12" isPrintWhenDetailOverflows="true" uuid="dd974138-5646-45f0-b744-fccea68197b6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{HJ_SEND_TML_CD}==null?"": $F{HJ_SEND_TML_CD})
++ "  "
++ ($F{HJ_SEND_TML_NM}==null?"": $F{HJ_SEND_TML_NM})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="429" y="97" width="83" height="29" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="b2d7f145-e42f-4c48-a38c-fccb49da30ac"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="25" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_CLASS1_CD} == null ? " " : $F{HJ_CLASS1_CD} + " " + $F{HJ_TML_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="303" y="141" width="105" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="eb4d9b60-f5aa-459e-903c-944d438a371d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TO_DAY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="304" y="120" width="105" height="21" isPrintWhenDetailOverflows="true" uuid="ced69732-792a-43a3-8684-94c0f1ae60d8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[신용]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="303" y="153" width="40" height="12" isPrintWhenDetailOverflows="true" uuid="ec70a8b8-1925-496b-97ae-204789eaf478"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[수량 : 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="153" width="59" height="12" isPrintWhenDetailOverflows="true" uuid="59f9502d-74ee-49ee-a6fa-1284fcde5cca"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[운임Type: A]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="310" y="72" width="251" height="24" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="57c7e9c3-66cd-41d5-bd98-206c61f91e6b">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="304" y="96" width="57" height="29" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="09a5b71d-9c10-48b7-b46b-fe8972c9d269"/>
+				<textElement verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="24" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_GROUP_RANK}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="313" y="240" width="251" height="49" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="e828045a-e53a-4b76-af3b-438b7104a337"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="19" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_PRINT_ADDR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="304" y="201" width="262" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="5ab12c3e-0d24-408e-b1ca-65e5d2b5d77f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERER_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement x="202" y="246" width="73" height="26" isPrintWhenDetailOverflows="true" uuid="67b8a1b3-4852-494e-9b75-1ed3a30b198c">
+					<printWhenExpression><![CDATA[!($F{HJ_SHIP_AIR_NM1}.isEmpty())]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="0">
+					<pen lineWidth="2.0"/>
+					<topPen lineWidth="2.0"/>
+					<leftPen lineWidth="2.0"/>
+					<bottomPen lineWidth="2.0"/>
+					<rightPen lineWidth="2.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="16" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_SHIP_AIR_NM1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="139" y="214" width="136" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="4837dbac-05a0-429d-a0d8-0a6c8dba1b73"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_QTY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="6" y="240" width="184" height="33" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="1cf5a9ea-d643-493e-9499-e4c3d5068e07"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERER_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="313" y="271" width="110" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="6e0ce2eb-fb7e-4451-b9d4-1c6a3205a3bf"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="312" y="214" width="92" height="17" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="27686c91-7801-4d56-b744-1546a53063bc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="484" y="214" width="80" height="17" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="7b976b44-fd18-445b-9331-a104084842e6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_HP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="463" y="271" width="99" height="12" isPrintWhenDetailOverflows="true" uuid="2601b610-91b6-4b5c-809d-32c7b2e6b2de"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="404" y="214" width="80" height="17" isPrintWhenDetailOverflows="true" uuid="7d787727-7271-465f-9060-56092abe8ae6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="6" y="214" width="130" height="21" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="935db60a-85dc-4844-8529-47a3f24fe99c"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MALL_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="311" y="229" width="251" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="510b04ce-9b3e-43c0-8923-637abdaac7ce"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page">
+				<reportElement x="102" y="273" width="50" height="15" isPrintWhenDetailOverflows="true" uuid="a5221ebf-097b-4c99-b8ce-0619d65e827d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="HY헤드라인M"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="171" y="273" width="50" height="15" isPrintWhenDetailOverflows="true" uuid="4063aa6d-8038-411f-bc3d-2e79415341bf">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="HY헤드라인M"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="152" y="273" width="19" height="15" isPrintWhenDetailOverflows="true" uuid="ad0d0860-6529-4261-b741-89b7196c11c1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="10" isBold="true" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="492" y="21" width="70" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="de146db5-48d9-42bc-a5a7-71c0b854551d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_HP1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="338" y="0" width="169" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="13564608-82a4-4fe6-a8f3-01d2f0fcf20c"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="189" y="42" width="86" height="25" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="99e3d438-df58-4449-a854-47dc20c4a24d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_DELIVER_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="99" y="45" width="51" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="dfbd58b7-f851-46db-99cb-bada131e433f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_ARR_SHOP_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="312" y="57" width="77" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="d45447f9-976b-40bf-8e5f-e32f9b2f4def"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="312" y="21" width="73" height="12" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="ccf7866d-8606-4c7f-96d6-ec65c0173e0b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="312" y="33" width="251" height="30" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="cd8cd142-cc9a-43d0-84c6-98e97c7aa2f3"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="492" y="57" width="70" height="12" isPrintWhenDetailOverflows="true" uuid="86a0f40a-6e4c-45ff-8df6-ebbeb99ba843"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="145" y="0" width="61" height="46" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="eaa0e8d7-6fd5-4601-9e9d-1a05e653f02d"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="40" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_CLASS2_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="186" y="0" width="88" height="46" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="f31ee314-aef4-43ea-a251-c1347062df64"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="40" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_DELIVER_CLASS_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="2" y="0" width="148" height="46" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="0bb0e661-c34b-43e9-b2a4-a6fdae83e1f7"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="40" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_CLASS1_CD} == null ? " " : $F{HJ_CLASS1_CD} + " " + $F{HJ_TML_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="422" y="21" width="70" height="12" isPrintWhenDetailOverflows="true" uuid="7f099005-bbc8-4ba3-a7dc-5ad8e2529bd0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="HY헤드라인M" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL1}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="4" y="49" width="95" height="17" isPrintWhenDetailOverflows="true" uuid="ce80f94d-1679-46d1-8be7-6ca914321268"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{HJ_TML_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="85" y="55" width="78" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="babccfdd-fb43-4a37-98ca-689352ed2553"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_ARR_SHOP_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="160" y="42" width="50" height="25" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF" uuid="e9bc2f75-253a-4fa0-95c7-92cb95ffdb3c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="HY헤드라인M" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HJ_GROUP_RANK}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

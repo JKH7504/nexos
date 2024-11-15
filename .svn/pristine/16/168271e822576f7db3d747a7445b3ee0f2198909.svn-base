@@ -1,0 +1,59 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LFC04021P0
+    프로그램명         : 전월데이터 복사 팝업
+    프로그램설명       : 전월데이터 복사 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-04-29
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-04-29    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LFC04021P0.css" /> -->
+<script src="js/LFC04021P0.js"></script>
+</head>
+<body>
+    <div id="divLeftView" class="ctrLeft" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_DestUser" class="lblTitle">복사대상 월</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblFrom_Month" class="lblKey">정산월</div>
+                <input id="mtpFrom_Month" class="edtKey" type="text" style="width: 150px;" />
+            </div>
+        </div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_NewUser" class="lblTitle">복사 월</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblTo_Month" class="lblKey">정산월</div>
+                <input id="mtpTo_Month" class="edtKey" type="text" style="width: 150px;" />
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnCopy" class="btnNormal" type="button" value="복사하기" style="width: 80px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

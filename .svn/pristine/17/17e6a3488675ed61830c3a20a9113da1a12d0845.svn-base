@@ -1,0 +1,75 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC05020E0
+    프로그램명         : 물류비정산
+    프로그램설명       : 물류비정산 화면(사이트) HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2020-12-24
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2020-12-24    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC05020E0.css" /> -->
+<script src="js/LDC05020E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCbo_Center_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 190px;"></select>
+                </td>
+                <td>
+                    <div id="lblQOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQOutbound_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_RDelivery_Cd" class="lblCondition">실배송처</div>
+                    <input id="edtQRDelivery_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQRDelivery_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQRDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQPopup_Area_Cd" class="lblCondition">운송권역</div>
+                    <input id="edtQArea_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQArea_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQArea_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 90px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Dept_Cd" class="lblCondition">부서</div>
+                    <input id="edtQDept_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQDept_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQDept_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">물류비정산</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

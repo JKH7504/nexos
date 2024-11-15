@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LFC_CONSIGNMENT_02" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" uuid="84f10716-8e92-486f-8151-2c521ab585be">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.8987491679162074"/>
+	<property name="ireport.x" value="27"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="268"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="724"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RD"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_BU_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RD"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ADJUST_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT .1
+  FROM DUAL]]>
+	</queryString>
+	<detail>
+		<band height="420">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="595" height="420" uuid="4dbd1c41-5591-421f-86c4-4d7692913222">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ADJUST_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_ADJUST_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SYSDATE">
+					<subreportParameterExpression><![CDATA[$P{P_SYSDATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lf/PAPER_LFC_CONSIGNMENT_02_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="420">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="595" height="420" uuid="da74823d-107c-42f7-8cc9-0db7381683a9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ADJUST_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_ADJUST_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lf/PAPER_LFC_CONSIGNMENT_02_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

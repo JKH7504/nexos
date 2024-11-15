@@ -1,0 +1,133 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : RIB02011P0
+    프로그램명         : 반입등록 팝업
+    프로그램설명       : 반입등록 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/RIB02011P0.css" /> -->
+<script src="js/RIB02011P0.js"></script>
+</head>
+<body>
+    <!-- 반입등록 마스터 -->
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCenter_Cd_F" class="lblNormal">물류센터</div>
+                    <input id="edtCenter_Cd_F" class="edtKey" type="text" disabled="disabled" style="width: 170px;" />
+                </td>
+                <td>
+                    <div id="lblInout_Cd" class="lblKey">반입구분</div>
+                    <select id="cboInout_Cd" class="cboKey" style="width: 210px;" tabindex="2"></select>
+                </td>
+                <td>
+                    <div id="lblOrder_Date" class="lblNormal">예정일자</div>
+                    <input id="edtOrder_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 95px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblPopup_Bu_Cd" class="lblNormal">사업부</div>
+                    <input id="edtBu_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 60px;" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 104px;" />
+                    <input id="edtCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblPopup_Delivery_Cd" class="lblKey">배송처</div>
+                    <input id="edtDelivery_Cd" class="edtKey" type="text" tabindex="3" style="width: 60px;" />
+                    <input id="btnDelivery_Cd" class="btnIcoPopup" type="button" tabindex="4" />
+                    <input id="edtDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblOrder_No" class="lblNormal">예정번호</div>
+                    <input id="edtOrder_No" class="edtDisplay" type="text" disabled="disabled" maxlength="30" style="width: 95px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblInbound_Date" class="lblKey">반입일자</div>
+                    <input id="dtpInbound_Date" class="dtpKey" type="text" tabindex="1" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="divRDelivery_Cd">
+                        <div id="lblPopup_RDelivery_Cd" class="lblKey">실배송처</div>
+                        <input id="edtRDelivery_Cd" class="edtKey" type="text" style="width: 60px;" />
+                        <input id="btnRDelivery_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtRDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    </div>
+                </td>
+                <td>
+                    <div id="lblBu_Date" class="lblNormal">전표일자</div>
+                    <input id="edtBu_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 95px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblInbound_No" class="lblNormal">반입번호</div>
+                    <input id="edtInbound_No" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblPopup_Car_Cd" class="lblNormal">차량코드</div>
+                    <input id="edtCar_Cd" class="edtNormal" type="text" tabindex="5" style="width: 60px;" />
+                    <input id="btnCar_Cd" class="btnIcoPopup" type="button" tabindex="6" />
+                    <input id="edtCar_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblBu_No" class="lblNormal">전표번호</div>
+                    <input id="edtBu_No" class="edtDisplay" type="text" disabled="disabled" style="width: 95px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblRemark1" class="lblNormal">비고</div>
+                    <input id="edtRemark1" class="edtNormal" type="text" tabindex="7" style="width: 170px;" />
+                </td>
+                <td>
+                    <div id="lblPallet_Id_Cnt" class="lblNormal" style="display: none;">파렛트ID수</div>
+                    <input id="edtPallet_Id_Cnt" class="edtKey" type="text" maxlength="4" style="width: 80px; display: none;" />
+                </td>
+                <td id="tdItem_State">
+                    <div id="lblItem_State" class="lblNormal">상태변경</div>
+                    <select id="cboItem_State" class="cboNormal" style="width: 95px;"></select>
+                    <input id="btnStateSwap" class="btnNormal" type="button" value="변경" style="width: 75px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 반입등록 디테일-->
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">반입등록 상세정보</td>
+                <td>
+                    <input id="btnEntryNew" class="btnIcoNew" type="button" />
+                    <input id="btnEntryDelete" class="btnIcoDelete" type="button" />
+                    <input id="btnEntrySave" class="btnIcoSave" type="button" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

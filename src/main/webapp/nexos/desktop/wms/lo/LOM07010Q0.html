@@ -1,0 +1,97 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOM07010Q0
+    프로그램명         : 출고모니터링조회[B2C]
+    프로그램설명       : 출고모니터링조회[B2C] 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2023-05-02
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2023-05-02    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOM07010Q0.css" /> -->
+<script src="js/LOM07010Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <div id="ctrQT1_Bu_Cd" class="ctrGroup">
+                        <select id="cboQT1_Bu_Cd" class="cboKey" style="width: 150px;"></select>
+                    </div>
+                    <div id="ctrQT2_Bu_Cd" class="ctrGroup">
+                        <input id="edtQT2_Bu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                        <input id="btnQT2_Bu_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtQT2_Bu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                        <input id="edtQT2_Cust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                    </div>
+                </td>
+                <td>
+                    <div id="lblQOutbound_Date" class="lblCondition">출고일자</div>
+                        <input id="dtpQOutbound_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                        <span class="lblTerm">▶</span>
+                        <input id="dtpQOutbound_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td id="ctrQT1_Inout_Cd">
+                    <div id="lblQInout_Cd" class="lblCondition">출고구분</div>
+                    <select id="cboQT1_Inout_Cd" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td id="ctrQT2_Delivery_Cd">
+                    <div id="lblQPopup_Delivery_Cd" class="lblCondition">배송처</div>
+                    <input id="edtQT2_Delivery_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQT2_Delivery_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQT2_Delivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">출고구분별 출고율</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">배송처별 출고율</a></li>
+        </ul>
+        <!-- 출고구분별 출고율 -->
+        <div id="divT1TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT1Master" class="lblTitle">출고구분별출고율</td>
+                    <td id="ctrRows_grdT1Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT1Master"></div>
+        </div>
+        <!-- 배송처별 출고율 -->
+        <div id="divT2TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT2Master" class="lblTitle">배송처별출고율</td>
+                    <td id="ctrRows_grdT2Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT2Master"></div>
+        </div>
+    </div>
+</body>
+</html>

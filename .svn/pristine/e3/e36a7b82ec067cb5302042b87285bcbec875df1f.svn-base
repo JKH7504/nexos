@@ -1,0 +1,274 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOM01011P1
+    프로그램명         : 출고예정등록 팝업[B2C] (의류)
+    프로그램설명       : 출고예정등록 팝업[B2C] (의류) 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-07-10
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-07-10    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOM01011P1.css" /> -->
+<script src="js/LOM01011P1.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCenter_Cd_F" class="lblNormal">물류센터</div>
+                    <input id="edtCenter_Cd_F" class="edtDisplay" type="text" disabled="disabled" style="width: 210px;" />
+                    <input id="edtCenter_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="dspTitle_Orderer" class="lblGroupTitle">온라인고객 - 주문자정보</div>
+                </td>
+                <td>
+                    <div id="dspTitle_Shipper" class="lblGroupTitle">온라인고객 - 수령자정보</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblPopup_Bu_Cd" class="lblNormal">사업부</div>
+                    <input id="edtBu_Cd" class="edtKey" type="text" disabled="disabled" style="width: 60px;" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 144px;" />
+                    <input id="edtCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblPopup_Delivery_Cd" class="lblKey">온라인몰</div>
+                    <input id="edtDelivery_Cd" class="edtKey" type="text" tabindex="8" style="width: 60px;" />
+                    <input id="btnDelivery_Cd" class="btnIcoPopup" type="button" tabindex="9" />
+                    <input id="edtDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblShipper_Nm" class="lblKey">수령자명</div>
+                    <input id="edtShipper_Nm" class="edtKey subData" type="text" tabindex="16" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_Date" class="lblKey">예정일자</div>
+                    <input id="dtpOrder_Date" class="dtpKey" type="text" tabindex="1" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblOrderer_Cd" class="lblNormal">주문자코드</div>
+                    <input id="edtOrderer_Cd" class="edtNormal subData" type="text" tabindex="10" style="width: 90px;" />
+                </td>
+                <td>
+                    <div id="lblShipper_Tel" class="lblNormal">전화번호</div>
+                    <input id="edtShipper_Tel" class="edtNormal subData" type="text" tabindex="17" style="width: 90px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_No" class="lblNormal">예정번호</div>
+                    <input id="edtOrder_No" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblOrderer_Nm" class="lblKey">주문자명</div>
+                    <input id="edtOrderer_Nm" class="edtKey subData" type="text" tabindex="11" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblShipper_Hp" class="lblKey">휴대폰번호</div>
+                    <input id="edtShipper_Hp" class="edtKey subData" type="text" tabindex="18" style="width: 90px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblInout_Cd" class="lblKey">출고구분</div>
+                    <select id="cboInout_Cd" class="cboKey" tabindex="2" style="width: 170px;"></select>
+                </td>
+                <td>
+                    <div id="lblOrderer_Tel" class="lblNormal">전화번호</div>
+                    <input id="edtOrderer_Tel" class="edtNormal subData" type="text" tabindex="12" style="width: 90px;" />
+                </td>
+                <td>
+                    <div id="lblShipper_Zip_Cd" class="lblKey">우편번호</div>
+                    <input id="edtShipper_Zip_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 90px;" />
+                    <input id="btnShipper_Zip_Cd" class="btnIcoPopup" type="button" tabindex="19" />
+                    <input id="btnShipper_Zip_Cd_Clear" class="btnIcoCancel" type="button" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_Div" class="lblNormal">주문구분</div>
+                    <select id="cboOrder_Div" class="cboNormal" tabindex="3" style="width: 170px;"></select>
+                </td>
+                <td>
+                    <div id="lblOrderer_Hp" class="lblKey">휴대폰번호</div>
+                    <input id="edtOrderer_Hp" class="edtKey subData" type="text" tabindex="13" style="width: 90px;" />
+                </td>
+                <td>
+                    <div id="lblShipper_Addr_Basic" class="lblKey">기본주소</div>
+                    <input id="edtShipper_Addr_Basic" class="edtDisplay" type="text" disabled="disabled" maxlength="150" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblCar_DIv" class="lblKey">차량구분</div>
+                    <select id="cboCar_Div" class="cboKey" tabindex="5" style="width: 170px;"></select>
+                </td>
+                <td>
+                    <div id="lblOrderer_Email" class="lblNormal">이메일</div>
+                    <input id="edtOrderer_Email" class="edtNormal subData" type="text" maxlength="100" tabindex="14" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblShipper_Addr_Detail" class="lblNormal">상세주소</div>
+                    <input id="edtShipper_Addr_Detail" class="edtNormal subData" type="text" maxlength="100" tabindex="20" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblRemark1" class="lblNormal">비고</div>
+                    <input id="edtRemark1" class="edtNormal" type="text" maxlength="255" tabindex="7" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblMall_Msg" class="lblNormal">몰메시지</div>
+                    <input id="edtMall_Msg" class="edtNormal subData" type="text" maxlength="125" tabindex="15" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblOrderer_Msg" class="lblNormal">배송메시지</div>
+                    <input id="edtOrderer_Msg" class="edtNormal subData" type="text" maxlength="125" tabindex="21" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div id="dspTitle_Bu_Order" class="lblGroupTitle">전표 정보</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ctrGroup">
+                        <div id="lblBu_Date" class="lblNormal">전표일자</div>
+                        <input id="edtBu_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 95px;" />
+                        <div id="lblBu_No" class="lblNormal">전표번호</div>
+                        <input id="edtBu_No" class="edtDisplay" type="text" disabled="disabled" maxlength="30" style="width: 95px;" />
+                        <div id="lblSo_Date" class="lblNormal">주문일자</div>
+                        <input id="edtSo_Date" class="edtDisplay" type="text" disabled="disabled" style="width: 95px;" />
+                        <div id="lblSo_No" class="lblNormal">주문번호</div>
+                        <input id="edtSo_No" class="edtDisplay" type="text" disabled="disabled" maxlength="30" style="width: 95px;" />
+                        <div id="lblInout_Date" class="lblNormal">거래명세서일자</div>
+                        <input id="edtInout_Date" class="edtNormal" type="text" disabled="disabled" style="width: 96px;" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 출고예정등록 디테일-->
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">출고예정 상세정보</td>
+                <td>
+                    <input id="btnEntryNew" class="btnIcoNew" type="button" />
+                    <input id="btnEntryDelete" class="btnIcoDelete" type="button" />
+                    <input id="btnEntrySave" class="btnIcoSave" type="button" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="ctrAdditional_grdDetail" class="ctrAdditional bottom">
+            <table class="ctrInner">
+                <tr>
+                    <td>
+                        <div id="lblStock_Qty" class="lblNormal">현재고</div>
+                        <input id="edtStock_Qty" class="edtNormal" type="text" readonly="readonly" style="width: 80px;" />
+                        <div id="lblVirtual_Qty" class="lblNormal">가입고량</div>
+                        <input id="edtVirtual_Qty" class="edtNormal" type="text" readonly="readonly" style="width: 80px;" />
+                        <div id="lblOut_Wait_Qty" class="lblNormal">출고대기</div>
+                        <input id="edtOut_Wait_Qty" class="edtNormal" type="text" readonly="readonly" style="width: 80px;" />
+                        <div id="lblPstock_Qty" class="lblNormal">출고가능</div>
+                        <input id="edtPstock_Qty" class="edtNormal" type="text" readonly="readonly" style="width: 80px;" />
+                    </td>
+                    <td class="styFillArea styRight">
+                        <input id="btnStockPopup" class="btnImgPopup" type="button" value="재고에서 선택" style="width: 115px;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <div id="lblOrderDeadline" class="lblDisplay styImportant" style="position: absolute; left: 5px; bottom: 5px; displey: none;">발주마감시간</div>
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+    <!-- 재고에서선택화면 Overlay -->
+    <div id=divStockOverlay style="display: none;">
+        <div class="ctrPopup">
+            <table class="ctrOverlayTitleBar">
+                <tr>
+                    <td class="lblTitle">재고에서 선택</td>
+                    <td>
+                        <input id="btnStockSearch" class="btnImgInquiry" type="button" value="재고 조회" style="width: 90px;" />
+                    </td>
+                    <td>
+                        <input id="btnStockAddItem" class="btnImgNormal" type="button" value="선택 내역 추가" style="width: 120px;" />
+                        <input id="btnStockOverlayClose" class="btnImgCancel" type="button" value="취소" style="width: 60px;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- 조회 조건 -->
+        <div class="ctrPopup ctrSubCondition">
+            <table class="ctrInner">
+                <tr>
+                    <td id="tdQDsp_Brand_Cd">
+                        <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                        <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                        <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    </td>
+                    <td>
+                        <div id="lblQItem_State" class="lblCondition">상태</div>
+                        <select id="cboQItem_State" class="cboNormal" style="width: 230px;"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblQItem_Cd" class="lblCondition">상품</div>
+                        <input id="edtQItem_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                        <input id="btnQItem_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtQItem_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    </td>
+                    <td>
+                        <div id="divViewDiv">
+                            <div id="lblQView_Div" class="lblCondition">검색구분</div>
+                            <div id="divStateYn" class="ctrGroupBox" style="width: 230px;">
+                                <input id="rgbQView_Div1" name="rgbQView_Div" class="rgbNormal" type="radio" value="1" />
+                                상품
+                                <input id="rgbQView_Div2" name="rgbQView_Div" class="rgbNormal" type="radio" value="2" />
+                                유통기한/제조배치번호
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="divStockView" class="ctrPopup">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdStock" class="lblTitle">재고내역</td>
+                    <td id="ctrRows_grdStock" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdStock"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,704 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : PDA_LIC02370E0
+ *  프로그램명         : PDA 입고작업비관리
+ *  프로그램설명       : PDA 입고작업비관리
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2023-04-20
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2023-04-20    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        // 자동 리사이즈 세팅
+        autoResizeFixedView: {
+            viewFirst: {
+                container: "#ctrMasterView",
+                grids: "#grdMaster"
+            },
+            viewSecond: {
+                container: "#ctrDetailView",
+                grids: "#grdDetail"
+            },
+            viewType: "v",
+            viewFixed: 200,
+            exceptHeight: function() {
+                return $NC.getViewHeight("#ctrMasterInfoView,#ctrDetailInfoView,#ctrActionBar");
+            }
+        }
+    });
+
+    // 컨테이너 클릭시 포커스 이동 처리
+    $("body").click(onContainerFocus);
+    // 이전버튼 클릭 -> 메인 종료로 처리
+    $("#btnClose").click($NC.G_MAIN.btnCloseOnClick);
+    // 취소버튼 클릭 -> _Cancel로 처리
+    $("#btnCancel").click(_Cancel);
+    // 취소버튼 클릭 -> _Cancel로 처리
+    $("#btnInquiry").click(_Inquiry);
+    // 저장버튼 클릭 -> _Save로 처리
+    $("#btnSave").click(_Save);
+
+    // 그리드 초기화
+    grdMasterInitialize();
+    grdDetailInitialize();
+
+    // 권한 설정
+    setUserProgramPermission();
+
+    // 작업구분 초기화
+    $NC.setValueRadioGroup("rgbQExtra_Work_Div", 0);
+
+    G_GRDMASTER.focused = true;
+}
+
+/**
+ * Window Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    // setFocusScan();
+    _Cancel();
+}
+
+/**
+ * Window Focus 시 호출 됨
+ */
+function _OnFocus() {
+
+    setFocusScan();
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * Condition Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnConditionChange(e, view, val) {
+
+    // 기본정보 변경, id는 무조건 기본정보 뷰의 id 기준
+    var id = view.prop("id").substr(3).toUpperCase();
+    switch (id) {
+        case "CENTER_CD":
+            setPolicyValInfo();
+            break;
+        case "BU_CD":
+            setPolicyValInfo();
+            break;
+        case "WORK_DATE":
+            break;
+        case "EXTRA_WORK_DIV1":
+        case "EXTRA_WORK_DIV2":
+        case "EXTRA_WORK_DIV3":
+            break;
+    }
+
+    // 조건 변경시 초기화
+    _Cancel($ND.C_CLEAR_TYPE_ALL);
+}
+
+/**
+ * Input, Select Change Event 처리
+ * 
+ * @param e
+ *        이벤트 핸들러
+ * @param view
+ *        대상 Object
+ */
+function _OnInputChange(e, view, val) {
+
+    var id = view.prop("id").substr(3).toUpperCase();
+
+    switch (id) {
+        case "BILL_PLT_QTY":
+        case "BILL_BOX_QTY":
+        case "BILL_EA_QTY":
+
+            // Enter Key로 Change가 발생하면 KeyUp은 무시
+            $NC.G_VAR.ignoreKeyUp = true;
+
+            var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+            var changeQty = $NC.toNumber(val, -1);
+            if (changeQty < 0) {
+                alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.001", "정산수량을 정확히 입력하십시오."));
+                $NC.setFocus(view);
+                return;
+            }
+
+            rowData[id] = changeQty;
+            rowData.TOT_BILL_QTY = rowData.BILL_PLT_QTY + rowData.BILL_BOX_QTY + rowData.BILL_EA_QTY;
+
+            // 선택 Row 수정 데이터 반영 및 상태 변경
+            $NC.setGridApplyChange(G_GRDMASTER, rowData);
+            break;
+        default:
+            grdDetailOnCellChange(e, {
+                view: view,
+                col: id,
+                val: val
+            });
+    }
+}
+
+/**
+ * Input KeyUp Event 처리
+ * 
+ * @param e
+ *        이벤트 핸들러
+ * @param view
+ *        대상 Object
+ */
+function _OnInputKeyUp(e, view) {
+
+    // Enter Key일 경우만 처리
+    if (e.keyCode != 13) {
+        return;
+    }
+
+    var id = view.prop("id").substr(3).toUpperCase();
+    switch (id) {
+        case "EXTRA_WORK_QTY":
+            // KeyUp 무시면 리턴
+            if ($NC.G_VAR.ignoreKeyUp) {
+                $NC.G_VAR.ignoreKeyUp = false;
+                return;
+            }
+            setFocusScan("#edtExtra_Work_Qty");
+            break;
+    }
+}
+
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+    var EXTRA_WORK_DIV = $NC.getValueRadioGroup("#rgbQExtra_Work_Div");
+
+    // 재조회 시, 그리드 포커스 초기화
+    grdMasterOnFocus();
+
+    $NC.serviceCall("/PDA_LIC02370E0/getDataSet.do", {
+        P_QUERY_ID: "PDA_LIC02370E0.RS_MASTER",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.G_USERINFO.CENTER_CD,
+            P_BU_CD: $NC.G_USERINFO.BU_CD,
+            P_INBOUND_DATE: $NC.G_USERINFO.WORK_DATE,
+            P_EXTRA_WORK_DIV: EXTRA_WORK_DIV
+        }
+    }, onGetMaster, onError);
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+    // 저장 전 Validation
+    if (G_GRDMASTER.data.getLength() == 0 || G_GRDDETAIL.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.002", "처리할 내역이 없습니다."));
+        setFocusScan();
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL)) {
+        return;
+    }
+
+    // 수정한 MASTER ROW check
+    var searchRow = $NC.getGridSearchRow(G_GRDMASTER, {
+        searchKey: "CRUD",
+        searchVal: $ND.C_DV_CRUD_U
+    });
+
+    // CHECKVALUE에 수정한 DETAIL값만 담기
+    var checkedData = $NC.getGridCheckedValues(G_GRDDETAIL, {
+        checkColumnId: $ND.C_NULL, // 체크없이 전체
+        compareFn: function(rowData) {
+            return rowData.CRUD == $ND.C_DV_CRUD_U;
+        },
+        dataType: "S", // 문자열 결합
+        valueColumns: [
+            "EXTRA_WORK_DIV",
+            "EXTRA_WORK_QTY"
+        ]
+    });
+
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+
+    // 업데이트 할 row가 없으면 return
+    if (searchRow == -1 && checkedData.checkedCount == 0) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.017", "수정한 작업비 내역이 없습니다."));
+        $NC.setFocus("#edtBill_Plt_Qty");
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.PDA_LIC02370E0.005", "처리하시겠습니까?"))) {
+        setFocusScan();
+        return;
+    }
+
+    $NC.serviceCall("/PDA_LIC02370E0/callLIProcExtraWorkDiv.do", {
+        P_CENTER_CD: refRowData.CENTER_CD,
+        P_BU_CD: refRowData.BU_CD,
+        P_INBOUND_DATE: refRowData.INBOUND_DATE,
+        P_INBOUND_NO: refRowData.INBOUND_NO,
+        P_BILL_PLT_QTY: refRowData.BILL_PLT_QTY,
+        P_BILL_BOX_QTY: refRowData.BILL_BOX_QTY,
+        P_BILL_EA_QTY: refRowData.BILL_EA_QTY,
+        P_CHECKED_VALUE: $NC.toJoin(checkedData.values),
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave, onError);
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel(clearType) {
+
+    // clearType
+    // C_CLEAR_TYPE_ALL: 0
+    // C_CLEAR_TYPE_MASTER: 1
+    // C_CLEAR_TYPE_DETAIL: 2
+    // C_CLEAR_TYPE_SUB: 3
+    // clearType가 취소 버튼 클릭 Event Object일 경우도 있음
+    if (clearType instanceof $.Event || $NC.isNull(clearType)) {
+        clearType = $ND.C_CLEAR_TYPE_ALL;
+    }
+
+    if (clearType <= $ND.C_CLEAR_TYPE_MASTER) {
+
+        // 값 초기화
+        $NC.setValue("#edtExtra_Work_Qty");
+        setMasterInputValue();
+
+        $NC.clearGridData(G_GRDMASTER);
+        $NC.clearGridData(G_GRDDETAIL);
+        // 모두 비활성
+        $NC.setEnableGroup("#ctrMasterInfoView", false);
+        $NC.setEnableGroup("#ctrDetailInfoView", false);
+    }
+
+    if (clearType == $ND.C_CLEAR_TYPE_DETAIL) {
+        setFocusScan("#edtExtra_Work_Qty");
+    } else {
+        setFocusScan();
+    }
+}
+
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+}
+
+/**
+ * 최상위 컨테이너 Click에 이벤트 바인딩하여 스캔 Edit로 포커스 이동 처리
+ * 
+ * @param e
+ * @returns
+ */
+function onContainerFocus(e) {
+
+    var $view = $(e.target);
+    // 하단 액션버튼은 처리 안함
+    if ($view.is("span") && $view.parent(".btnAction").length > 0) {
+        return;
+    }
+    // 그리드 셀 복사일 경우 처리 안함
+    if (e.ctrlKey && $view.is(".slick-cell")) {
+        return;
+    }
+    // 스캔 Element - 정산수량
+    if ($view.prop("id") == "edtBill_Plt_Qty") {
+        return;
+    }
+    // 스캔 Element - 추가작업수량
+    if ($view.prop("id") == "edtExtra_Work_Qty") {
+        return;
+    }
+
+    // 입력 Element가 아니면 스캔 Element에 포커스
+    if (!$view.is(":focus")) {
+        // 마스터그리드에 포커스 있을경우 정산수량에 포커스
+        if (G_GRDMASTER.focused) {
+            setFocusScan();
+        } else {
+            setFocusScan("#edtExtra_Work_Qty");
+        }
+    }
+}
+
+function setFocusScan(selector) {
+
+    var $view = $NC.getView($NC.isNull(selector) ? "#edtBill_Plt_Qty" : selector);
+    if ($NC.isEnable($view)) {
+        // Delay 처리
+        setTimeout(function() {
+            $view.focus();
+            $NC.hideSoftInput(); // 일단 스캔 항목 키보드 숨김 처리
+        }, $ND.C_TIMEOUT_FOCUS);
+    }
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "INBOUND_NO",
+        field: "INBOUND_NO",
+        name: "입고번호",
+        minWidth: 50,
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INBOUND_STATE_D",
+        field: "INBOUND_STATE_D",
+        name: "진행상태",
+        minWidth: 50,
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VENDOR_NM",
+        field: "VENDOR_NM",
+        name: "공급처",
+        minWidth: 100
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdMasterInitialize() {
+
+    var options = {
+        rowHeight: 30,
+        specialRow: {
+            compareFn: function(specialRow, rowData, column, row, cell, colspan) {
+                if (rowData.TOT_BILL_QTY != 0 || rowData.TOT_EXTRA_WORK_QTY != 0) {
+                    return "styDone";
+                }
+            }
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "PDA_LIC02370E0.RS_MASTER",
+        sortCol: "INBOUND_NO",
+        gridOptions: options
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+    G_GRDMASTER.view.onFocus.subscribe(grdMasterOnFocus);
+
+    // 최초 조회시 포커스 처리
+    G_GRDMASTER.focused = true;
+}
+
+function grdMasterOnFocus(e, args) {
+
+    if (G_GRDMASTER.focused) {
+        return;
+    }
+    G_GRDMASTER.focused = true;
+    G_GRDDETAIL.focused = false;
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    var row = args.rows[0];
+    var rowData = G_GRDMASTER.data.getItem(row);
+
+    // 조회시 전역 변수 값 초기화
+    $NC.clearGridData(G_GRDDETAIL);
+    G_GRDDETAIL.queryParams = {
+        P_CENTER_CD: rowData.CENTER_CD,
+        P_BU_CD: rowData.BU_CD,
+        P_INBOUND_DATE: rowData.INBOUND_DATE,
+        P_INBOUND_NO: rowData.INBOUND_NO
+    };
+    // 데이터 조회
+    $NC.serviceCall("/PDA_LIC02370E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL), onGetDetail);
+
+    // MASTER 그리드 textBox 세팅
+    setMasterInputValue(rowData);
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+function grdDetailOnCellChange(e, args) {
+
+    var rowData = G_GRDDETAIL.data.getItem(G_GRDDETAIL.lastRow);
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+
+    var changeQty;
+    switch (args.col) {
+        case "EXTRA_WORK_QTY":
+            // Enter Key로 Change가 발생하면 KeyUp은 무시
+            $NC.G_VAR.ignoreKeyUp = true;
+
+            changeQty = $NC.toNumber(args.val, -1);
+            if (changeQty < 0) {
+                alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.001", "추가작업비 수량을 정확히 입력하십시오."));
+                $NC.setFocus(args.view);
+                return;
+            }
+
+            rowData.EXTRA_WORK_QTY = changeQty;
+            // MASTER 추가작업비 총수량 UPDATE
+            refRowData.TOT_EXTRA_WORK_QTY = $NC.getGridSumVal(G_GRDDETAIL, {
+                sumKey: "EXTRA_WORK_QTY"
+            });
+            $NC.setGridApplyChange(G_GRDMASTER, refRowData);
+
+            // 추가작업비수량일 경우 포커스 유지
+            $NC.setFocus(args.view);
+            break;
+    }
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDDETAIL, rowData);
+}
+
+function setMasterInputValue(rowData) {
+
+    if ($NC.isNull(rowData)) {
+        // 초기화시 기본값 지정
+        rowData = {
+            CRUD: $ND.C_DV_CRUD_R
+        };
+    }
+
+    // Row 데이터로 에디터 세팅
+    $NC.setValue("#edtBill_Plt_Qty", rowData["BILL_PLT_QTY"]);
+    $NC.setValue("#edtBill_Box_Qty", rowData["BILL_BOX_QTY"]);
+    $NC.setValue("#edtBill_Ea_Qty", rowData["BILL_EA_QTY"]);
+
+    // 리사이즈 호출
+    $NC.onGlobalResize();
+}
+
+function grdDetailOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "EXTRA_WORK_DIV_D",
+        field: "EXTRA_WORK_DIV_D",
+        name: "구분",
+        minWidth: 70,
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "EXTRA_WORK_QTY",
+        field: "EXTRA_WORK_QTY",
+        name: "수량",
+        minWidth: 70,
+        cssClass: "styRight"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdDetailInitialize() {
+
+    var options = {
+        rowHeight: 30
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail", {
+        columns: grdDetailOnGetColumns(),
+        queryId: "PDA_LIC02370E0.RS_DETAIL",
+        sortCol: "EXTRA_WORK_DIV",
+        gridOptions: options
+    });
+
+    G_GRDDETAIL.view.onSelectedRowsChanged.subscribe(grdDetailOnAfterScroll);
+    G_GRDDETAIL.view.onFocus.subscribe(grdDetailOnFocus);
+}
+
+function grdDetailOnFocus(e, args) {
+
+    if (G_GRDDETAIL.focused) {
+        return;
+    }
+    G_GRDMASTER.focused = false;
+    G_GRDDETAIL.focused = true;
+}
+
+function grdDetailOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDDETAIL.data.getItem(row);
+    setTimeout(function() {
+        $NC.setValue("#edtExtra_Work_Qty", rowData.EXTRA_WORK_QTY);
+    });
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL, row + 1);
+}
+
+function grdDetailOnBeforePost(row) {
+
+    // Validation 대상인지 체크, 아니면 True로 리턴
+    if (!$NC.isGridValidPostRow(G_GRDDETAIL, row)) {
+        return true;
+    }
+
+    var rowData = G_GRDDETAIL.data.getItem(row);
+    if (rowData.CRUD != $ND.C_DV_CRUD_R) {
+        if ($NC.isNull(rowData.EXTRA_WORK_QTY)) {
+            alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.006", "작업 수량을 입력하십시오."));
+            $NC.setGridSelectRow(G_GRDDETAIL, row);
+            setFocusScan("#edtExtra_Work_Qty");
+            return false;
+        }
+        if (Number(rowData.EXTRA_WORK_QTY) < 0) {
+            alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.007", "작업 수량을 정확히 입력하십시오."));
+            $NC.setGridSelectRow(G_GRDDETAIL, row);
+            setFocusScan("#edtExtra_Work_Qty");
+            return false;
+        }
+    }
+
+    // 신규 데이터 업데이트, N -> C
+    $NC.setGridApplyPost(G_GRDDETAIL, rowData);
+    return true;
+}
+
+function onGetMaster(ajaxData) {
+
+    var dsResult = $NC.toArray(ajaxData);
+    // 기본 체크, 첫번째 ROW 데이터로
+    var resultData = dsResult[0];
+    if (dsResult.length == 0) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02370E0.008", "입고내역이 존재하지 않습니다."));
+        _Cancel();
+        return;
+    }
+
+    // 그리드 데이터 세팅
+    $NC.setInitGridData(G_GRDMASTER, dsResult);
+    $NC.setInitGridAfterOpen(G_GRDMASTER, "INBOUND_NO", true);
+
+    // 디테일 초기화
+    $NC.clearGridData(G_GRDDETAIL);
+
+    // 입력 활성, 값 세팅
+    setMasterInputValue(resultData);
+    $NC.setEnableGroup("#ctrMasterInfoView");
+}
+
+function onGetDetail(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+
+    // 그리드 데이터 세팅
+    $NC.setInitGridData(G_GRDDETAIL, resultData);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL);
+    $NC.setEnableGroup("#ctrDetailInfoView");
+    setFocusScan();
+
+    var rowData = resultData[0];
+    $NC.setValue("#edtExtra_Work_Qty", rowData.EXTRA_WORK_QTY);
+}
+
+function onSave(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: "INBOUND_NO"
+    });
+
+    // 저장 후 데이터 재조회
+    _Inquiry();
+
+    G_GRDMASTER.lastKeyVal = lastKeyVal;
+}
+
+function onError(ajaxData) {
+
+    $NC.onError(ajaxData);
+    _Cancel();
+    setFocusScan();
+}
+
+/**
+ * 프로그램 사용 권한 설정
+ */
+function setUserProgramPermission() {
+
+    var permission = $NC.getProgramPermission();
+
+    if (!permission.canSave) {
+        $("#btnSave").addClass("styDisabled");
+    }
+}
+
+/**
+ * 전역 변수에 정책 값 정보 세팅
+ */
+function setPolicyValInfo() {
+
+}

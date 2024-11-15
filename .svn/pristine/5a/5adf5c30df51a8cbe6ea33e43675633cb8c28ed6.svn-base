@@ -1,0 +1,25 @@
+package nexos.dao.cm;
+
+import java.util.Map;
+
+public interface CMC02010E0DAO {
+
+    /**
+     * 운송권역 내역 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void save(Map<String, Object> params) throws Exception;
+
+    /**
+     * 운송권역 복사 프로시저 호출
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> callAreaCopy(Map<String, Object> params) throws Exception;
+
+}

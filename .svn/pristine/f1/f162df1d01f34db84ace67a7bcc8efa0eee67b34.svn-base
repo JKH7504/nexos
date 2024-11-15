@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LFC_CONSIGNMENT_02" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" isSummaryWithPageHeaderAndFooter="true" uuid="84f10716-8e92-486f-8151-2c521ab585be">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.8987491679162074"/>
+	<property name="ireport.x" value="27"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="268"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="724"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RD"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_BU_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RD"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ADJUST_DATE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2023-06-01"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT M1.CENTER_CD
+          ,M1.BU_CD
+          ,M1.ADJUST_MONTH
+          ,WF.DSP_COMBO(M1.CENTER_CD ,C1.CENTER_NM)  AS CENTER_CD_F
+          ,WF.DSP_COMBO(M1.BU_CD     ,B1.BU_NM)      AS BU_CD_F  
+ FROM LF900NM M1
+       JOIN CMCENTER C1 ON C1.CENTER_CD = M1.CENTER_CD
+       JOIN CMBU     B1 ON B1.BU_CD     = M1.BU_CD
+WHERE  M1.CENTER_CD = $P{P_CENTER_CD} 
+	 AND M1.BU_CD = $P{P_BU_CD} 
+	 AND M1.ADJUST_MONTH = $P{P_ADJUST_DATE}
+GROUP BY M1.CENTER_CD
+               ,M1.BU_CD
+               ,M1.ADJUST_MONTH
+               ,C1.CENTER_NM
+               ,B1.BU_NM]]>
+	</queryString>
+	<field name="CENTER_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CENTER_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="CENTER_CD"/>
+	</field>
+	<field name="BU_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_CD"/>
+	</field>
+	<field name="ADJUST_MONTH" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ADJUST_MONTH"/>
+		<property name="com.jaspersoft.studio.field.label" value="ADJUST_MONTH"/>
+	</field>
+	<field name="CENTER_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CENTER_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="CENTER_CD_F"/>
+	</field>
+	<field name="BU_CD_F" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_CD_F"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_CD_F"/>
+	</field>
+	<variable name="SKU" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="TOT_SUM_TOT_AMT" class="java.math.BigDecimal" resetType="Group" resetGroup="GRP_PAGE" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOT_SUM_TOT_AMT}]]></variableExpression>
+	</variable>
+	<group name="GRP_PAGE" isStartNewPage="true" keepTogether="true">
+		<groupExpression><![CDATA[$F{CENTER_CD} + $F{BU_CD} + $F{ADJUST_MONTH}]]></groupExpression>
+		<groupHeader>
+			<band height="87">
+				<staticText>
+					<reportElement key="staticText-5" x="0" y="46" width="90" height="18" uuid="9964ae50-0508-4333-aeaf-69ef1c229f40"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[사   업   부   :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-4" x="91" y="46" width="99" height="18" uuid="98b55379-1a00-4e0c-98ea-6ffc6f331f41"/>
+					<box leftPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BU_CD_F}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-4" x="0" y="26" width="90" height="18" uuid="ab227514-acfa-451a-a839-7fd49de85110"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[물 류 센 터    :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-3" x="91" y="26" width="99" height="18" uuid="8035a0df-1fb2-45b0-b7a1-4fc995979268"/>
+					<box leftPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CENTER_CD_F}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-7" x="391" y="61" width="66" height="12" uuid="3d015066-37bd-438f-b37f-0bb90743e5da"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isUnderline="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[출력사용자 :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-2" x="457" y="61" width="109" height="12" uuid="792ad1fb-786d-4ba8-bb43-82ce93ed57df"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_USER_ID}+" - "+$P{P_USER_NM}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-6" x="391" y="75" width="66" height="12" uuid="1e0cbbb3-8413-4736-ac1f-62c0bfe26e55"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[출력일시   :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-1" x="457" y="75" width="109" height="12" uuid="4e50f83c-6b3f-4129-afbf-aebebf9af76d"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="567" height="26" uuid="cea41a20-342a-4732-a877-092a03639d3c"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="18" isBold="true" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-4" x="391" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="1e4f66fb-8eaf-478c-8243-7d1041f07c54">
+						<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[[레포트]세트작업지시서]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-5" x="0" y="65" width="90" height="18" uuid="cfdeb263-a917-4260-85de-d0f7338577f1"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[정   산   월   :]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-4" x="91" y="65" width="99" height="18" uuid="1e2edecd-7192-47d2-b096-0a9d333e02e4"/>
+					<box leftPadding="0" rightPadding="0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="D2Coding" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ADJUST_MONTH}.substring( 0, 7 )]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="52">
+				<staticText>
+					<reportElement key="staticText-4" x="370" y="0" width="194" height="23" uuid="584377de-5ea8-4be4-8c12-9740509e8d81">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[총합계금액]]></text>
+				</staticText>
+				<textField pattern="#,##0;" isBlankWhenNull="true">
+					<reportElement key="textField-18" mode="Transparent" x="370" y="23" width="194" height="25" isRemoveLineWhenBlank="true" uuid="98036ed5-731e-4596-86f1-a7688ee4d91f">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box leftPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="16" isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_SUM_TOT_AMT}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-1" x="391" y="51" width="175" height="1" uuid="f9563d55-2974-4b8b-a1ab-e73b173aafa0"/>
+					<graphicElement>
+						<pen lineStyle="Double"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement key="line-1" x="391" y="23" width="175" height="1" uuid="1ab4a057-465c-47ff-9d20-959e81ca9c12"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="95">
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="566" height="95" uuid="4dbd1c41-5591-421f-86c4-4d7692913222"/>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ADJUST_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_ADJUST_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="SUM_TOT_AMT" toVariable="TOT_SUM_TOT_AMT" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lf/PAPER_LFC_CONSIGNMENT_02_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="95">
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="566" height="95" uuid="bed581b3-cdb0-46f1-948e-8d1ee9783e45"/>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ADJUST_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_ADJUST_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="SUM_TOT_AMT" toVariable="TOT_SUM_TOT_AMT" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lf/PAPER_LFC_CONSIGNMENT_02_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="95">
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="566" height="95" uuid="ee370594-62dd-429a-8141-9984f6c0ce25"/>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ADJUST_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_ADJUST_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="SUM_TOT_AMT" toVariable="TOT_SUM_TOT_AMT" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lf/PAPER_LFC_CONSIGNMENT_02_subreport3.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="95">
+			<subreport isUsingCache="false" runToBottom="false">
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="566" height="95" uuid="b0b93e97-80ca-4d60-9dfc-dc845a71458d"/>
+				<subreportParameter name="P_USER_NM">
+					<subreportParameterExpression><![CDATA[$P{P_USER_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_BU_CD">
+					<subreportParameterExpression><![CDATA[$P{P_BU_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{P_SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CENTER_CD">
+					<subreportParameterExpression><![CDATA[$P{P_CENTER_CD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ADJUST_DATE">
+					<subreportParameterExpression><![CDATA[$P{P_ADJUST_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_REPORT_TITLE_NM">
+					<subreportParameterExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_CLIENT_IP">
+					<subreportParameterExpression><![CDATA[$P{P_CLIENT_IP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_USER_ID">
+					<subreportParameterExpression><![CDATA[$P{P_USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="SUM_TOT_AMT" toVariable="TOT_SUM_TOT_AMT" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{P_SUBREPORT_DIR} + "lf/PAPER_LFC_CONSIGNMENT_02_subreport4.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement key="line-3" x="0" y="0" width="567" height="1" uuid="5346083b-ae76-4e9a-8099-ebae3b62766e"/>
+			</line>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="293" y="6" width="58" height="12" uuid="8ce8403a-6bd6-4cf1-ae25-7813569c5ddd"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="224" y="6" width="50" height="12" uuid="db687795-ab9b-468d-96f1-1937d4111e69"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="274" y="6" width="19" height="12" uuid="922df260-58ee-4b5c-8c37-559dc57213b6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

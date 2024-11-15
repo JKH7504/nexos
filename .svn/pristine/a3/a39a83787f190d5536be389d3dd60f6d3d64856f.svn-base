@@ -1,0 +1,592 @@
+﻿/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : noticepopup
+ *  프로그램명         : 공지사항 팝업
+ *  프로그램설명       : 공지사항 팝업 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2016-12-14
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2016-12-14    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#ctrPopupView",
+            grids: "#grdMaster"
+        }
+    });
+
+    // 버튼 이벤트 연결
+    $("#btnDownload").click(btnDownloadOnClick);
+    $("#btnEntryReply").click(btnEntryReplyOnClick);
+    $("#btnModifyReply").click(btnModifyReplyOnClick);
+    $("#btnDeleteReply").click(btnDeleteReplyOnClick);
+    $("#btnRefresh").click(_Inquiry);
+    $("#btnClose").click(onCancel);
+    $("#btnNoticeInfoClose").click(function() {
+        $("#ctrNoticeOverlay").hide();
+    });
+
+    // 그리드 초기화
+    grdMasterInitialize();
+    grdDetailInitialize();
+
+    // 신규/삭제/저장 버튼 툴팁 세팅
+    $NC.setTooltip("#btnRefresh", $NC.getDisplayMsg("JS.NOTICEPOPUP.001", "새로고침"));
+    $NC.setTooltip("#btnDeleteReply", $NC.getDisplayMsg("JS.NOTICEPOPUP.002", "삭제"));
+}
+
+/**
+ * 등록팝업 Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    $NC.setInitGridData(G_GRDMASTER, $NC.G_VAR.G_PARAMETER.P_NOTICE_DS);
+    var lastKeyVal = G_GRDMASTER.lastKeyVal;
+    if ($NC.setInitGridAfterOpen(G_GRDMASTER, "WRITE_NO", true)) {
+        if ($NC.isNotNull(lastKeyVal)) {
+            showNoticeInfo(G_GRDMASTER.lastRow);
+            return;
+        }
+    }
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+    if (!$NC.isVisible("#ctrNoticeOverlay")) {
+        return;
+    }
+
+    var $parent = $("#ctrDetailView").parent();
+    $NC.resizeGridView("#ctrDetailView", "#grdDetail", null, $parent.height() - $NC.getViewHeight($parent.children().not("#ctrDetailView")));
+}
+
+/**
+ * 닫기,취소버튼 클릭 이벤트
+ */
+function onCancel() {
+
+    $NC.setPopupCloseAction($ND.C_CANCEL);
+    $NC.onPopupClose();
+}
+
+/**
+ * 저장,확인버튼 클릭 이벤트
+ */
+function onClose() {
+
+    $NC.setPopupCloseAction($ND.C_OK);
+    $NC.onPopupClose();
+}
+
+/**
+ * Input Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnInputChange(e, view, val) {
+
+}
+
+/**
+ * 조회
+ */
+function _Inquiry() {
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTER);
+
+    // 데이터 조회
+    G_GRDMASTER.queryParams = {
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    };
+    $NC.serviceCall("/WC/getDataSet.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+}
+
+/**
+ * 신규
+ */
+function _New() {
+
+}
+
+/**
+ * 저장
+ */
+function _Save() {
+
+}
+
+/**
+ * 삭제
+ */
+function _Delete() {
+
+}
+
+function btnDownloadOnClick() {
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.003", "첨부파일 다운로드할 대상을 선택하십시오."));
+        return;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    if ($NC.isNull(rowData.ATTACH_FILE_NM)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.004", "첨부파일이 없는 공지사항입니다."));
+        return;
+    }
+
+    $NC.fileDownload("/CSC01000E0/attachmentDownload.do", {
+        P_ATTACH_FILE_NM: rowData.ATTACH_FILE_NM
+    });
+}
+
+function btnEntryReplyOnClick() {
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.005", "덧글을 등록할 공지사항이 없습니다."));
+        return;
+    }
+
+    var CONTENT_TEXT = $NC.getValue("#edtReply_Content_Text");
+    if ($NC.isNull(CONTENT_TEXT)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.006", "덧글을 입력하십시오."));
+        $NC.setFocus("#edtReply_Content_Text");
+        return;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    var dsDetail = [
+        {
+            P_WRITE_NO: rowData.WRITE_NO,
+            P_REPLY_DIV: "1",
+            P_REPLY_NO: "",
+            P_CONTENT_HTML: "",
+            P_CONTENT_TEXT: CONTENT_TEXT,
+            P_CRUD: $ND.C_DV_CRUD_C
+        }
+    ];
+
+    $NC.serviceCall("/CSC01000E0/saveDetail.do", {
+        P_DS_DETAIL: dsDetail,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave, onSaveError);
+}
+
+function btnModifyReplyOnClick() {
+
+    if (G_GRDMASTER.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.007", "덧글을 수정할 공지사항이 없습니다."));
+        return;
+    }
+
+    if (G_GRDDETAIL.data.getLength() == 0 || $NC.isNull(G_GRDDETAIL.lastRow)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.008", "수정할 덧글이 없습니다."));
+        return;
+    }
+
+    var rowData = G_GRDDETAIL.data.getItem(G_GRDDETAIL.lastRow);
+    if (rowData.REG_USER_ID != $NC.G_USERINFO.USER_ID) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.007", "다른 사용자가 등록한 덧글입니다."));
+        return;
+    }
+
+    var CONTENT_TEXT = $NC.getValue("#edtReply_Content_Text");
+    if ($NC.isNull(CONTENT_TEXT)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.006", "덧글을 입력하십시오."));
+        $NC.setFocus("#edtReply_Content_Text");
+        return;
+    }
+
+    var dsDetail = [
+        {
+            P_WRITE_NO: rowData.WRITE_NO,
+            P_REPLY_DIV: rowData.REPLY_DIV,
+            P_REPLY_NO: rowData.REPLY_NO,
+            P_CONTENT_HTML: "",
+            P_CONTENT_TEXT: CONTENT_TEXT,
+            P_CRUD: $ND.C_DV_CRUD_U
+        }
+    ];
+
+    $NC.serviceCall("/CSC01000E0/saveDetail.do", {
+        P_DS_DETAIL: dsDetail,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave, onSaveError);
+}
+
+function btnDeleteReplyOnClick() {
+
+    if (G_GRDMASTER.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.007", "덧글을 수정할 공지사항이 없습니다."));
+        return;
+    }
+
+    if (G_GRDDETAIL.data.getLength() == 0 || $NC.isNull(G_GRDDETAIL.lastRow)) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.008", "수정할 덧글이 없습니다."));
+        return;
+    }
+
+    var rowData = G_GRDDETAIL.data.getItem(G_GRDDETAIL.lastRow);
+    if (rowData.REG_USER_ID != $NC.G_USERINFO.USER_ID) {
+        alert($NC.getDisplayMsg("JS.NOTICEPOPUP.009", "다른 사용자가 등록한 덧글입니다."));
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.NOTICEPOPUP.010", "덧글을 삭제 하시겠습니까?"))) {
+        return;
+    }
+
+    var dsDetail = [
+        {
+            P_WRITE_NO: rowData.WRITE_NO,
+            P_REPLY_DIV: rowData.REPLY_DIV,
+            P_REPLY_NO: rowData.REPLY_NO,
+            P_CRUD: $ND.C_DV_CRUD_D
+        }
+    ];
+
+    $NC.serviceCall("/CSC01000E0/saveDetail.do", {
+        P_DS_DETAIL: dsDetail,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave, onSaveError);
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [ ];
+    $NC.setGridColumn(columns, {
+        id: "WRITE_NO",
+        field: "WRITE_NO",
+        name: "공지번호",
+        resizable: false,
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "NOTICE_TITLE",
+        field: "NOTICE_TITLE",
+        name: "제목"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_CD_F",
+        field: "BU_CD_F",
+        name: "사업부"
+    });
+    $NC.setGridColumn(columns, {
+        id: "NEW_NOTICE_YN",
+        field: "NEW_NOTICE_YN",
+        name: "신규여부",
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox
+    });
+    $NC.setGridColumn(columns, {
+        id: "REG_USER_NM",
+        field: "REG_USER_NM",
+        name: "등록자"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REG_DATETIME",
+        field: "REG_DATETIME",
+        name: "등록일시",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "READ_CNT",
+        field: "READ_CNT",
+        name: "조회수",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REPLY_CNT",
+        field: "REPLY_CNT",
+        name: "덧글수",
+        cssClass: "styRight"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdMasterInitialize() {
+
+    var options = {
+        frozenColumn: 2
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "WC.POP_CSNOTICE",
+        sortCol: "WRITE_NO",
+        gridOptions: options
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+    G_GRDMASTER.view.onDblClick.subscribe(grdMasterOnDblClick);
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    setInputValue("#grdMaster");
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+function grdMasterOnDblClick(e, args) {
+
+    showNoticeInfo(args.row);
+}
+
+function grdDetailOnGetColumns() {
+
+    var columns = [ ];
+    $NC.setGridColumn(columns, {
+        id: "REPLY_NO",
+        field: "REPLY_NO",
+        name: "순번",
+        resizable: false,
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REG_USER_NM",
+        field: "REG_USER_NM",
+        name: "등록자"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CONTENT_TEXT",
+        field: "CONTENT_TEXT",
+        name: "덧글"
+    }, false);
+    $NC.setGridColumn(columns, {
+        id: "REG_DATETIME",
+        field: "REG_DATETIME",
+        name: "등록일시",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LAST_DATETIME",
+        field: "LAST_DATETIME",
+        name: "수정일시",
+        cssClass: "styCenter"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdDetailInitialize() {
+
+    var options = {
+        frozenColumn: 1,
+        specialRow: {
+            compareKey: "REG_USER_ID",
+            compareVal: $NC.G_USERINFO.USER_ID,
+            compareOperator: "==",
+            cssClass: "styEqual"
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail", {
+        columns: grdDetailOnGetColumns(),
+        queryId: "CSC01000E0.RS_DETAIL",
+        sortCol: "REPLY_NO",
+        gridOptions: options
+    });
+
+    G_GRDDETAIL.view.onSelectedRowsChanged.subscribe(grdDetailOnAfterScroll);
+}
+
+function grdDetailOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDDETAIL.data.getItem(row);
+
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    var canEntry = refRowData.NOTICE_TO_DATE >= $NC.G_USERINFO.LOGIN_DATE;
+    $NC.setEnable("#btnEntryReply", canEntry);
+    $NC.setEnable("#edtReply_Content_Text", canEntry);
+    $NC.setEnable("#btnModifyReply", canEntry);
+    $NC.setEnable("#btnDeleteReply", canEntry);
+
+    if (canEntry) {
+        var canModify = rowData.REG_USER_ID == $NC.G_USERINFO.USER_ID;
+        $NC.setEnable("#btnModifyReply", canModify);
+        $NC.setEnable("#btnDeleteReply", canModify);
+    }
+
+    if (rowData.REG_USER_ID == $NC.G_USERINFO.USER_ID) {
+        $NC.setValue("#edtReply_Content_Text", rowData.CONTENT_TEXT);
+    } else {
+        $NC.setValue("#edtReply_Content_Text");
+    }
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL, row + 1);
+}
+
+function onGetMaster(ajaxData) {
+
+    var lastKeyVal = G_GRDMASTER.lastKeyVal;
+    $NC.setInitGridData(G_GRDMASTER, ajaxData);
+    if ($NC.setInitGridAfterOpen(G_GRDMASTER, "WRITE_NO")) {
+        if ($NC.isNotNull(lastKeyVal)) {
+            showNoticeInfo(G_GRDMASTER.lastRow);
+        }
+    }
+}
+
+function onGetDetail(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL, ajaxData);
+    if (!$NC.setInitGridAfterOpen(G_GRDDETAIL, "REPLY_NO")) {
+        // 덧글이 한건도 없으면 Scroll 이벤트가 발생하지 않음
+        var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow) || {};
+        var canEntry = rowData.NOTICE_TO_DATE >= $NC.G_USERINFO.LOGIN_DATE;
+        $NC.setEnable("#btnEntryReply", canEntry);
+        $NC.setEnable("#edtReply_Content_Text", canEntry);
+    }
+}
+
+function onSave(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: "WRITE_NO"
+    });
+    _Inquiry();
+    G_GRDMASTER.lastKeyVal = lastKeyVal;
+}
+
+function onSaveError(ajaxData) {
+
+    $NC.onError(ajaxData);
+
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+    if (rowData.CRUD == $ND.C_DV_CRUD_D) {
+        // 마지막 선택 Row 수정 데이터 반영 및 상태 강제 변경
+        $NC.setGridApplyChange(G_GRDMASTER, rowData, true);
+    }
+}
+
+function showNoticeInfo(row) {
+
+    var rowData = G_GRDMASTER.data.getItem(row);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+
+    $NC.serviceCall("/CSC01000E0/readNotice.do", {
+        P_WRITE_NO: rowData.WRITE_NO,
+        P_REPLY_DIV: "2",
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, function(ajaxData) {
+        $NC.setInitCombo("/CSC01000E0/getDataSet.do", {
+            P_QUERY_ID: "CSC01000E0.RS_SUB2",
+            P_QUERY_PARAMS: {
+                P_WRITE_NO: rowData.WRITE_NO
+            }
+        }, {
+            selector: "#cboReadUser",
+            codeField: "USER_ID",
+            fullNameField: "USER_ID_F"
+        });
+    });
+
+    // 에디터 값 세팅
+    setInputValue("#grdMaster", rowData);
+
+    if (!$NC.isVisible("#ctrNoticeOverlay")) {
+        $NC.showOverlay("#ctrNoticeOverlay", {
+            onComplete: function() {
+                $NC.onGlobalResize();
+                G_GRDDETAIL.view.focus();
+            }
+        });
+    }
+}
+
+function setInputValue(grdSelector, rowData) {
+
+    if (grdSelector == "#grdMaster") {
+
+        $NC.setInitComboData({
+            selector: "#cboReadUser",
+            codeField: "USER_ID",
+            fullNameField: "USER_ID_F",
+            data: [ ]
+        });
+        if ($NC.isNull(rowData)) {
+            rowData = {
+                CRUD: $ND.C_DV_CRUD_R
+            };
+        }
+
+        // Row 데이터로 에디터 세팅
+        $NC.setValue("#edtWrite_No", rowData["WRITE_NO"]);
+        $NC.setValue("#edtBu_Cd", rowData["BU_CD"]);
+        $NC.setValue("#edtBu_Nm", rowData["BU_NM"]);
+        $NC.setValue("#edtNotice_Div", rowData["NOTICE_DIV"]);
+        $NC.setValue("#edtNotice_Div_D", rowData["NOTICE_DIV_D"]);
+        $NC.setValue("#edtUser_Id", rowData["REG_USER_ID"]);
+        $NC.setValue("#edtUser_Nm", rowData["REG_USER_NM"]);
+        $NC.setValue("#edtAttach_File_Nm", rowData["ATTACH_FILE_NM"]);
+        $NC.setValue("#edtAttach_File_Size", rowData["ATTACH_FILE_SIZE"]);
+        $NC.setValue("#edtNotice_Title", rowData["NOTICE_TITLE"]);
+        $NC.setValue("#edtContent_Text", rowData["CONTENT_TEXT"]);
+        $NC.setValue("#edtReg_Datetime", rowData["REG_DATETIME"]);
+
+        $NC.setEnable("#btnDownload", $NC.isNotNull(rowData["ATTACH_FILE_NM"]));
+        $NC.setEnable("#btnEntryReply", false);
+        $NC.setEnable("#btnModifyReply", false);
+        $NC.setEnable("#btnDeleteReply", false);
+        $NC.setEnable("#edtReply_Content_Text", false);
+        $NC.setValue("#edtReply_Content_Text");
+
+        if ($NC.isNotNull(rowData["WRITE_NO"])) {
+            $NC.setEnable("#cboReadUser");
+            // 데이터 조회
+            $NC.setInitGridVar(G_GRDDETAIL);
+            G_GRDDETAIL.queryParams = {
+                P_WRITE_NO: rowData.WRITE_NO
+            };
+            $NC.serviceCall("/CSC01000E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL), onGetDetail);
+        } else {
+            $NC.setEnable("#cboReadUser", false);
+            $NC.setInitGridData(G_GRDDETAIL);
+        }
+    }
+}

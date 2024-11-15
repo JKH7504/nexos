@@ -1,0 +1,78 @@
+package nexos.dao.scan;
+
+import java.util.Map;
+
+public interface SCAN_LOB03010E0DAO {
+
+    /**
+     * 출고 박스저장 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void callLOScanBoxSave(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고 팝업박스저장 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void callLOScanPopBoxSave(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고 TOTAL 일괄검수 저장 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void callLOScanBoxTotalInspection(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고스캔검수-박스 삭제(팝업화면에서)
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    String callLOScanBoxDelete(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고스캔검수-박스 통합(팝업화면에서)
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> callLOScanBoxMerge(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고스캔검수-검수 완료
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> callLOFWScanConfirm(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고스캔검수-검수 취소
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> callLOBWScanConfirm(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고스캔검수-송장 출력 횟수 업데이트 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> callSetWbNoPrintCntUpdate(Map<String, Object> params) throws Exception;
+}

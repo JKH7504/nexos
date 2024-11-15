@@ -1,0 +1,103 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : changeuserpwdpopup
+    프로그램명         : 사용자비밀번호변경 팝업
+    프로그램설명       : 사용자비밀번호변경 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../} -->
+<script src="../../framework/js/misc/sha.js"></script>
+<!-- PROGRAM CSS/JS -->
+<link rel="stylesheet" href="css/changeuserpwdpopup.css" />
+<script src="js/changeuserpwdpopup.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup ctrLinearLayout">
+        <form>
+            <table class="ctrInner">
+                <tr>
+                    <td colspan="2">
+                        <div class="ctrGroupRow">
+                            <div id="ctrChangePwdOverlay" style="padding: 10px; margin-bottom: 5px; border: 2px solid #fb4401; border-radius: 5px; box-sizing: border-box;">
+                                <span id="lblChangePwdComments" style="color: red; font-weight: bold; white-space: pre-line;"></span>
+                            </div>
+                        </div>
+                        <div id="ctrChangePwdRules" style="padding: 10px; border: 2px solid #b1b7b1; border-radius: 5px;">
+                            <span id="lblChangePwdRules" style="color: #673AB7; font-weight: bold; white-space: pre-line;"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblUser_Id" class="lblNormal">사용자ID</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtUser_Id" class="edtDisplay" type="text" autocomplete="username" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblUser_Nm" class="lblNormal">사용자명</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtUser_Nm" class="edtDisplay" type="text" autocomplete="" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblUser_Pwd" class="lblKey">현재 비밀번호</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtUser_Pwd" class="edtKey" type="password" autocomplete="current-password" maxlength="20" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblNew_User_Pwd1" class="lblKey">비밀번호 변경</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtNew_User_Pwd1" class="edtKey" type="password" autocomplete="new-password" maxlength="20" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblNew_User_Pwd2" class="lblKey">비밀번호 확인</div>
+                    </td>
+                    <td class="styFillArea">
+                        <input id="edtNew_User_Pwd2" class="edtKey" type="password" autocomplete="new-password" maxlength="20" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <table id="ctrPopupActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>종료</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+            <td>
+                <div id="btnOk" class="btnAction">
+                    <span>확인</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

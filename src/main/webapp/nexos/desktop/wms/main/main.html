@@ -1,0 +1,94 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : main
+    프로그램명         : MDI Main
+    프로그램설명       : MDI Main 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<title>neXos WMS</title>
+<!-- ${NEXOS_META} -->
+<meta name="viewport" content="width=600, initial-scale=1.0">
+<link rel="shortcut icon" href="css/image/favicon.ico" type="image/x-icon">
+<!-- ${NEXOS_LIBRARY} ${m} ${../../../} -->
+<script src="../../../framework/js/misc/crypto-js.js"></script>
+<!--  Popup JS -->
+<script src="../../../framework/js/popup.js"></script>
+<!-- Main CSS/JS -->
+<link rel="stylesheet" href="css/main.css">
+<script src="js/main.js"></script>
+</head>
+<body class="desktop">
+    <div id="ctrViewport" class="ctrViewport">
+        <div id="ctrMainView" tabIndex="0" style="outline: none;">
+            <!-- 상단 공통 버튼 -->
+            <table id="ctrTopMenuBar" class="ctrTopMenuBar">
+                <tr>
+                    <td id="ctrTopLogo" class="ctrTopLogo"><span id="lblLogin_Server" class="lblLoginServer"></span></td>
+                    <td id="ctrTopCommonButtons" style="text-align: left; min-width: 420px;">
+                        <input id="btnTopInquiry" class="btnTopInquiry" type="button" value="조회" disabled="disabled" />
+                        <input id="btnTopNew" class="btnTopNew" type="button" value="신규" disabled="disabled" />
+                        <input id="btnTopSave" class="btnTopSave" type="button" value="저장" disabled="disabled" />
+                        <input id="btnTopCancel" class="btnTopCancel" type="button" value="취소" disabled="disabled" />
+                        <input id="btnTopDelete" class="btnTopDelete" type="button" value="삭제" disabled="disabled" />
+                        <input id="btnTopReport" class="btnTopPrint" type="button" value="출력" style="display: none;" />
+                    </td>
+                    <td id="ctrTopFixedButtons" class="ctrTopFixedButtons">
+                        <input id="btnTopMenu" class="btnTopMenu" type="button" value="메뉴" />
+                        <input id="btnTopUser" class="btnTopUser" type="button" value="사용자" style="width: 100px;" />
+                        <input id="btnTopClose" class="btnSpecial" type="button" value=" 종료 " />
+                        <input id="btnTopLogout" class="btnNormal" type="button" value="로그아웃" />
+                    </td>
+                </tr>
+            </table>
+            <div id="ctrTopLineBar" class="imgLine top"></div>
+            <div id="ctrClientView">
+                <!-- 왼쪽 프로그램 메뉴 -->
+                <div id="ctrMenuView" class="ctrLeft" style="max-width: 198px;">
+                    <table id="ctrMenuTitleBar" class="ctrMenuTitleBar">
+                        <tr>
+                            <td id="ctrMenuTitle" class="lblMenuTitle" style="border-left: 0;">
+                                <span id="dspProgramMenuTitle" class="btnMenuTitle">메뉴</span> <span id="dspFavoriteMenuTitle" class="btnMenuTitle" style="width: 60px; max-width: 60px; display: none;">즐겨찾기</span>
+                            </td>
+                            <td id="ctrSearchMenu">
+                                <input id="edtSearchMenu" class="edtNormal ui-autocomplete-input" type="text" autocomplete="off" style="width: 105px;">
+                            </td>
+                            <td class="lblMenuTitle">
+                                <span id="btnReloadMenu" class="btnReloadMenu"></span>
+                            </td>
+                            <td id="ctrPinMenu" class="lblMenuTitle">
+                                <span id="btnPinMenu" class="btnPinMenu"></span>
+                            </td>
+                            <td class="lblMenuTitle">
+                                <span id="btnCloseMenu" class="btnCloseMenu"></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="grdProgramMenu"></div>
+                    <div id="grdFavoriteMenu" style="display: none;"></div>
+                </div>
+                <!-- 오른쪽 단위화면 컨테이너 -->
+                <div id="ctrWindows" class="ctrRight">
+                    <div id="sctProgram" class="scroll_tabs_theme_dark ctrScrollTabs"></div>
+                </div>
+            </div>
+            <div id="ctrBottomLineBar" class="imgLine bottom"></div>
+        </div>
+    </div>
+    <div id="ctrExtraView" class="ctrExtra">
+        <!-- ${NEXOS_INCLUDE} ${include/main_ctrExtraView.html} -->
+    </div>
+</body>
+</html>

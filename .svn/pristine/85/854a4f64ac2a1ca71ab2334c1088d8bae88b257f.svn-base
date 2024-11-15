@@ -1,0 +1,38 @@
+<!--
+    ==================================================================================================================================================
+    main include
+      <div id="ctrDefaultInfoLayer" class="ctrTopPopupOverlay" tabindex="1" style="display: none;">
+    ==================================================================================================================================================
+ -->
+<div id="ctrDefaultInfoTitleBar" class="ctrActionTitleBar">
+    <div id="lblDefaultInfoTitle" class="lblMenu layer condition">기본정보</div>
+    <div id="btnDefaultInfoClose" class="icoClose"></div>
+</div>
+<div id="ctrWCLayer" class="ctrLinearLayout globalOnChangeWCLayer">
+    <table class="ctrInner">
+        <tr>
+            <td>
+                <div id="lblL1_Center_Cd" class="lblKey">물류센터</div>
+            </td>
+            <td class="styFillArea">
+                <select id="cboL1_Center_Cd" class="cboKey"></select>
+            </td>
+        </tr>
+        <tr id="ctrL1_Bu_Cd">
+            <td>
+                <div id="lblL1_Bu_Cd" class="lblKey">사업부</div>
+            </td>
+            <td>
+                <select id="cboL1_Bu_Cd" class="cboKey"></select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="lblL1_Work_Date" class="lblKey">작업일자</div>
+            </td>
+            <td>
+                <input id="dtpL1_Work_Date" class="dtpKey" type="text" readonly="readonly" />
+            </td>
+        </tr>
+    </table>
+</div>

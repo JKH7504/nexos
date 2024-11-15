@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LI01010E_R02" printOrder="Horizontal" pageWidth="269" pageHeight="340" columnWidth="269" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="718b3d7a-6295-4bce-a324-ded339060709">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.000000000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="4"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="pSYSDATE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pUSER_ID" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="pUSER_NM" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0001" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0002" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0003" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0004" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0005" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0006" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0007" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0008" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="C0009" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT C1.CUST_FULL_NM                                                               AS CUST_NM
+        ,'[물류부] ' || C2.TEL_NO                                                      AS CENTER_TEL_NO
+        ,'[수량]   ' || L1.CONFIRM_QTY                                                 AS ITEM_INFO
+        ,'[전표] '   || TO_CHAR(L1.OUTBOUND_DATE ,'YYYYMMDD') || '-' || L1.OUTBOUND_BATCH || '-' || L1.OUTBOUND_NO AS OUTBOUND_NO
+        ,'[BOX] '    || TO_CHAR(L1.BOX_CNT) || '-' || LPAD(L1.BOX_NO ,3 ,'0')          AS BOX_INFO
+        ,'[' || D1.DELIVERY_FULL_NM || ']'                                             AS RDELIVERY_NM
+        ,WF.GET_TEL_NO(D1.TEL_NO)                                                      AS RDELIVERY_TEL_NO
+        ,W1.TML_NM                                                                     AS TML_NM
+        ,D1.TML_CD                                                                     AS TML_CD
+        ,L1.WB_NO
+        ,C3.COMMON_NM                                                                  AS DISTRIBUTE_DIV_NM
+    FROM (
+          SELECT M1.CENTER_CD
+                ,M1.BU_CD
+                ,M1.OUTBOUND_DATE
+                ,M1.OUTBOUND_NO
+                ,M2.CUST_CD
+                ,M2.OUTBOUND_BATCH
+                ,M2.RDELIVERY_CD
+                ,M1.BOX_NO
+                ,M1.WB_NO
+                ,SUM(M1.CONFIRM_QTY)                                              AS CONFIRM_QTY
+                ,MAX((
+                     SELECT COUNT(DISTINCT BOX_NO)
+                       FROM LO050NM
+                      WHERE CENTER_CD     = M1.CENTER_CD
+                        AND BU_CD         = M1.BU_CD
+                        AND OUTBOUND_DATE = M1.OUTBOUND_DATE
+                        AND OUTBOUND_NO   = M1.OUTBOUND_NO
+                     ))                                                           AS BOX_CNT
+            FROM LO050NM M1
+                 JOIN LO020NM    M2 ON M2.CENTER_CD     = M1.CENTER_CD
+                                   AND M2.BU_CD         = M1.BU_CD
+                                   AND M2.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                                   AND M2.OUTBOUND_NO   = M1.OUTBOUND_NO
+           WHERE M1.CENTER_CD     = 'A1'
+             AND M1.BU_CD         = '1100'
+             AND M1.OUTBOUND_DATE = '2018-08-09'
+--             AND (M1.OUTBOUND_NO
+--                 ,M1.BOX_NO)     IN (
+--                                     SELECT '0002'
+--                                           ,'1'
+--                                       FROM DUAL
+--                                    )
+           GROUP BY M1.CENTER_CD
+                   ,M1.BU_CD
+                   ,M1.OUTBOUND_DATE
+                   ,M1.OUTBOUND_NO
+                   ,M2.CUST_CD
+                   ,M2.OUTBOUND_BATCH
+                   ,M2.RDELIVERY_CD
+                   ,M1.BOX_NO
+                   ,M1.WB_NO
+         ) L1
+         JOIN CMCUST       C1 ON C1.CUST_CD     = L1.CUST_CD
+         JOIN CMCENTER     C2 ON C2.CENTER_CD   = L1.CENTER_CD
+         JOIN CMDELIVERY   D1 ON D1.CUST_CD     = L1.CUST_CD
+                             AND D1.DELIVERY_CD = L1.RDELIVERY_CD
+         JOIN CMCODE       C3 ON C3.COMMON_GRP  = WF.GET_COMMON_GRP('DISTRIBUTE_DIV')
+                             AND C3.COMMON_CD   = D1.DISTRIBUTE_DIV
+    LEFT JOIN CMWBTERMINAL W1 ON W1.TML_CD      = D1.TML_CD]]>
+	</queryString>
+	<field name="CUST_NM" class="java.lang.String"/>
+	<field name="CENTER_TEL_NO" class="java.lang.String"/>
+	<field name="ITEM_INFO" class="java.lang.String"/>
+	<field name="OUTBOUND_NO" class="java.lang.String"/>
+	<field name="BOX_INFO" class="java.lang.String"/>
+	<field name="RDELIVERY_NM" class="java.lang.String"/>
+	<field name="RDELIVERY_TEL_NO" class="java.lang.String"/>
+	<field name="TML_NM" class="java.lang.String"/>
+	<field name="TML_CD" class="java.lang.String"/>
+	<field name="WB_NO" class="java.lang.String"/>
+	<field name="DISTRIBUTE_DIV_NM" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="340" splitType="Prevent">
+			<textField>
+				<reportElement x="33" y="49" width="232" height="20" uuid="def1cebe-b1c7-47f3-a7c6-54d6b590f0de"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTER_TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="68" width="232" height="20" uuid="3bbbf19d-1d7b-4999-8a82-2bd860bc60e8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_INFO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="106" width="232" height="20" uuid="66f72bdf-5a59-4945-be47-980b717c47e9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOX_INFO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="155" width="127" height="20" uuid="8d5933d9-adbf-46ea-986a-7c6583d5adb9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RDELIVERY_TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="34" y="175" width="126" height="45" uuid="6168de62-6f90-4a61-a7d6-2e34fc73399d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="굴림체" size="36" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TML_NM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="34" y="279" width="143" height="35" uuid="c15f6530-026c-4efd-8c89-31ad7a1e6a83"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="24" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DISTRIBUTE_DIV_NM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="125" width="232" height="30" uuid="31176299-eed8-4ba8-ab6d-d6e725b03d77"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="24" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RDELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="34" y="213" width="126" height="70" uuid="928cf7c1-a8e2-4de0-a818-06318f297b83"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="굴림체" size="40" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TML_CD}]]></textFieldExpression>
+			</textField>
+			<elementGroup/>
+			<textField>
+				<reportElement x="33" y="30" width="232" height="20" uuid="88a7f516-d74f-4fe5-bd8e-d39887e20a52"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="17" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUST_NM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="87" width="232" height="20" uuid="08f0740a-59bb-41b4-8bb3-fc8268707588"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="굴림체" size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_NO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="155" width="22" height="159" uuid="a3fd3566-d8c4-448a-9544-3277d61c848e"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" rotation="Left">
+					<font fontName="굴림체" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="178" y="155" width="91" height="159" isRemoveLineWhenBlank="true" uuid="c7e190ef-5cff-488f-8ac4-a59f7f2b00b2"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="68" rotation="Right">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

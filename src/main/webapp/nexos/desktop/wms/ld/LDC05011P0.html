@@ -1,0 +1,49 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC05011P0
+    프로그램명         : 월지입료관리 기초데이터 생성 팝업
+    프로그램설명       : 월지입료관리 기초데이터 생성 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2020-10-07
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2020-10-07    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC05011P0.css" /> -->
+<script src="js/LDC05011P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <div class="ctrInner">
+            <div class="ctrGroupRow" id="divQCenter_Cd">
+                <div id="lblCenter_Cd" class="lblKey">물류센터</div>
+                <input id="edtCenter_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblAdjust_Month" class="lblKey">정산월</div>
+                <input id="mtpAdjust_Month" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblRunning_Cnt" class="lblKey">운행횟수</div>
+                <input id="edtRunning_Cnt" class="edtKey" type="text" style="width: 100px;" />
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnOk" class="btnNormal" type="button" value="적용" style="width: 60px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 60px;" />
+    </div>
+</body>
+</html>

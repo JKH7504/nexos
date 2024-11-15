@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LO_SAFETY_WAYBILL01" printOrder="Horizontal" pageWidth="255" pageHeight="340" columnWidth="255" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="4d1c1f8e-c4f1-40ff-990c-80f38cd160b5">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="FSUBTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPRINTTIME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPUSER" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPAGE" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT TO_CHAR(L1.OUTBOUND_DATE, 'YYYY-MM-DD')                                            AS OUTBOUND_DATE
+        ,T1.STYLE_CD || '/' || T1.COLOR_CD || '/' || T1.SIZE_CD                             AS ITEM_INFO
+        ,L1.CONFIRM_QTY
+        ,L1.CONFIRM_SUM
+        ,L1.BOX_NO || '-' || CEIL(L1.ITEM_RNK / 15)                                         AS BOX_INFO
+        ,SUBSTRB(D1.DELIVERY_FULL_NM, 1, 26)                                                AS DELIVERY_NM
+        ,D1.TEL_NO                                                                          AS DELIVERY_TEL_NO
+        ,A1.AREA_NM
+        ,SUBSTRB(T1.ITEM_NM || '/' || C4.COMMON_NM, 1, 20)                                  AS ITEM_NM_COLOR
+        ,L1.OUTBOUND_NO || L1.BOX_NO                                                        AS OUTBOUND_GRP
+    FROM (
+         SELECT M1.CENTER_CD
+               ,M1.BU_CD
+               ,M1.OUTBOUND_DATE
+               ,M1.OUTBOUND_NO
+               ,M2.RDELIVERY_CD
+               ,M2.CUST_CD
+               ,M2.DISTRIBUTE_DIV
+               ,M1.BOX_NO
+               ,M1.WB_NO
+               ,M1.BRAND_CD
+               ,M1.ITEM_CD
+               ,M1.CONFIRM_QTY
+               ,SUM(M1.CONFIRM_QTY) OVER(PARTITION BY M1.OUTBOUND_NO, M1.BOX_NO)        AS CONFIRM_SUM
+               ,RANK() OVER(PARTITION BY M1.OUTBOUND_NO ,M1.WB_NO ORDER BY M1.LINE_NO)  AS ITEM_RNK
+           FROM LO050NM M1
+                JOIN LO020NM M2 ON M2.CENTER_CD     = M1.CENTER_CD
+                               AND M2.BU_CD         = M1.BU_CD
+                               AND M2.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                               AND M2.OUTBOUND_NO   = M1.OUTBOUND_NO
+                JOIN LO020ND M3 ON M3.CENTER_CD     = M1.CENTER_CD
+                               AND M3.BU_CD         = M1.BU_CD
+                               AND M3.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                               AND M3.OUTBOUND_NO   = M1.OUTBOUND_NO
+                               AND M3.LINE_NO       = M1.LINE_NO
+          WHERE M1.CENTER_CD     = 'A1'
+            AND M1.BU_CD         = '1100'
+            AND M1.OUTBOUND_DATE = '2018-08-01'
+--            AND M1.CARRIER_CD    = P_CARRIER_CD
+--            AND M1.OUTBOUND_NO  IN (SELECT CHECK_VALUE FROM CTCHECKVALUE)
+          GROUP BY M1.CENTER_CD
+                  ,M1.BU_CD
+                  ,M1.OUTBOUND_DATE
+                  ,M1.OUTBOUND_NO
+                  ,M2.RDELIVERY_CD
+                  ,M2.CUST_CD
+                  ,M2.DISTRIBUTE_DIV
+                  ,M1.BOX_NO
+                  ,M1.WB_NO
+                  ,M1.BRAND_CD
+                  ,M1.ITEM_CD
+                  ,M1.CONFIRM_QTY
+                  ,M1.LINE_NO
+          ) L1
+          JOIN CMBU           B1 ON B1.BU_CD       = L1.BU_CD
+          JOIN CMCUST         C1 ON C1.CUST_CD     = L1.CUST_CD
+          JOIN CMCENTER       C2 ON C2.CENTER_CD   = L1.CENTER_CD
+          JOIN CMITEM         T1 ON T1.BRAND_CD    = L1.BRAND_CD
+                                AND T1.ITEM_CD     = L1.ITEM_CD
+          JOIN CMDELIVERY     D1 ON D1.CUST_CD     = L1.CUST_CD
+                                AND D1.DELIVERY_CD = L1.RDELIVERY_CD
+     LEFT JOIN CMCODE         C3 ON C3.COMMON_CD   = L1.DISTRIBUTE_DIV
+                                AND C3.COMMON_GRP  = WF.GET_COMMON_GRP('DISTRIBUTE_DIV')
+          JOIN CMCODE         C4 ON C4.COMMON_CD   = T1.COLOR_CD
+                                AND C4.COMMON_GRP  = WF.GET_COMMON_GRP('COLOR_CD')
+          JOIN CMDELIVERYAREA A1 ON A1.CENTER_CD   = 'A1'
+                                AND A1.AREA_CD     = D1.AREA_CD
+    ORDER BY OUTBOUND_NO
+            ,BOX_NO
+            ,WB_NO
+            ,ITEM_RNK]]>
+	</queryString>
+	<field name="OUTBOUND_DATE" class="java.lang.String"/>
+	<field name="ITEM_INFO" class="java.lang.String"/>
+	<field name="CONFIRM_QTY" class="java.math.BigDecimal"/>
+	<field name="CONFIRM_SUM" class="java.math.BigDecimal"/>
+	<field name="BOX_INFO" class="java.lang.String"/>
+	<field name="DELIVERY_NM" class="java.lang.String"/>
+	<field name="DELIVERY_TEL_NO" class="java.lang.String"/>
+	<field name="AREA_NM" class="java.lang.String"/>
+	<field name="ITEM_NM_COLOR" class="java.lang.String"/>
+	<field name="OUTBOUND_GRP" class="java.lang.String"/>
+	<variable name="CONFIRM_SUM" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONFIRM_QTY}]]></variableExpression>
+	</variable>
+	<group name="OUTBOUND_GRP" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{OUTBOUND_GRP}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="110" splitType="Stretch">
+			<staticText>
+				<reportElement x="21" y="97" width="86" height="13" uuid="f40f5f4f-3f17-43e3-8f74-6623af6fed36"/>
+				<textElement>
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[품번/컬러/사이즈]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="97" width="27" height="13" uuid="71299072-0eff-43d4-a2cd-e778dce4e37e"/>
+				<textElement textAlignment="Right">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="97" width="113" height="13" uuid="0e0580cc-ac40-45fd-bf77-7f0cfa136c16"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[품명]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="133" y="47" width="115" height="20" uuid="2b87e2d1-438c-4631-b35c-16ff5067280c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="21" y="37" width="112" height="30" uuid="117be7e1-f886-4497-8417-8842c7009a6f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AREA_NM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="21" y="67" width="178" height="30" uuid="703ac75a-0423-4667-979e-d1bfd0824901"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="21" y="109" width="227" height="1" uuid="2fba9fd6-7c6e-4b1a-a6f8-b33675d83bde"/>
+			</line>
+			<line>
+				<reportElement x="21" y="97" width="227" height="1" uuid="ef36493f-ef55-4e95-8e10-7658b51412bc"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Prevent">
+			<textField>
+				<reportElement x="22" y="0" width="85" height="12" uuid="ee0d3f5f-7ea0-4e06-941b-5a47b589126a"/>
+				<textElement>
+					<font fontName="D2Coding" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_INFO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="0" width="27" height="12" uuid="857a6284-e5a8-4c60-ba73-b2b100b34bb1"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="D2Coding" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONFIRM_QTY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="0" width="113" height="12" uuid="9d0beeb5-6993-4298-ae1a-7de630985801"/>
+				<textElement>
+					<font fontName="D2Coding" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_NM_COLOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<textField>
+				<reportElement x="22" y="0" width="86" height="13" uuid="58b5e829-4f6d-465d-af55-4af2ad7b0701"/>
+				<textElement textAlignment="Justified">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_DATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="0" width="53" height="13" uuid="0d42a6e9-c242-47c9-bd25-7bc270e0e723"/>
+				<textElement textAlignment="Center">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOX_INFO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="175" y="0" width="45" height="13" uuid="f8fa5a8c-8b9d-4ecc-b41f-01bd57ec87e4"/>
+				<textElement textAlignment="Right">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[총 수량 :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="21" y="0" width="227" height="1" uuid="969379b3-4f74-4cd2-8fbc-fbc28b7580cb"/>
+			</line>
+			<textField>
+				<reportElement x="220" y="0" width="27" height="13" uuid="ef3d19f7-af52-4380-9949-39df9e7c22f5"/>
+				<textElement textAlignment="Right">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONFIRM_SUM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

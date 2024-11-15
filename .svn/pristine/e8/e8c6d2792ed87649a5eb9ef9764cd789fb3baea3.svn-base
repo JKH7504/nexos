@@ -1,0 +1,52 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC09010Q0
+    프로그램명         : 쿼리실행기
+    프로그램설명       : 쿼리실행기 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC09010Q0.css" /> -->
+<script src="js/CSC09010Q0.js"></script>
+</head>
+<body>
+    <div id="divMasterView" class="ctrNormal">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_Query" class="lblTitle">조회할 쿼리</td>
+                    <td class="styFillArea styRight">
+                        <input id="btnOpenQuery" class="btnImgFile" type="button" value="쿼리열기" style="width: 80px;" />
+                        <input id="btnSaveQuery" class="btnImgFile" type="button" value="쿼리저장" style="width: 80px;" />
+                    </td>
+                </tr>
+            </table>
+            <textarea id="edtQQuery_Text" class="edtNormal" style="white-space: pre; word-wrap: normal; resize: none; overflow: scroll;"></textarea>
+        </div>
+        <div id="divBottomView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">조회 데이터</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+    </div>
+</body>
+</html>

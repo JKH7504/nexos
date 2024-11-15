@@ -1,0 +1,105 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC02010E0
+    프로그램명         : 도크지정
+    프로그램설명       : 도크지정 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC02010E0.css" /> -->
+<script src="js/LDC02010E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQDelivery_Batch" class="lblCondition">운송차수</div>
+                    <select id="cboQDelivery_Batch" class="cboKey" style="width: 150px;"></select>
+                    <input id="btnQDelivery_Batch" class="btnIcoRefresh" type="button" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">도크 정보</td>
+                    <td>
+                        <input id="btnChangeDock_Dock" class="btnImgPopup" type="button" value="도크변경" style="width: 80px;" />
+                    </td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <div id="divSubViewDetail" style="border: none;">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdDetail" class="lblTitle">도크 지정 배송처 정보</td>
+                        <td>
+                            <input id="btnChangeDock_Outbound" class="btnImgPopup" type="button" value="도크변경" style="width: 80px;" />
+                        </td>
+                        <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdDetail"></div>
+            </div>
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdSub" class="lblTitle">도크 미지정 배송처 정보</td>
+                        <td>
+                            <input id="btnChangeDock_Delivery" class="btnImgPopup" type="button" value="도크변경" style="width: 80px;" />
+                        </td>
+                        <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdSub"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 차량선택 Overlay -->
+    <div id="divDockMasterOverlay" style="display: none;">
+        <div id="divDockMasterView" class="ctrPopup">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdDockMaster" class="lblTitle">도크 정보</td>
+                    <td id="ctrRows_grdDockMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdDockMaster"></div>
+        </div>
+        <div class="ctrPopupActionBar">
+            <input id="btnDockSelect" class="btnNormal" type="button" value="도크변경" style="width: 80px;" />
+            <input id="btnDockMasterOverlayClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+        </div>
+    </div>
+</body>
+</html>

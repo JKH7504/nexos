@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LO_SHORTAGE_EXPECT" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="812" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" uuid="c6b45e19-517d-4e89-b49a-9b71a12ff633">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="39"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_CENTER_CD_F" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD_F" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_ORDER_DATE1" class="java.lang.String"/>
+	<parameter name="P_ORDER_DATE2" class="java.lang.String"/>
+	<parameter name="P_INOUT_CD" class="java.lang.String"/>
+	<parameter name="P_INOUT_CD_F" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_DELIVERY_CD" class="java.lang.String"/>
+	<parameter name="P_DELIVERY_CD_F" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_ITEM_CD" class="java.lang.String"/>
+	<parameter name="P_ITEM_CD_F" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_ITEM_NM" class="java.lang.String"/>
+	<parameter name="P_ITEM_NM_F" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FSUBTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="FTOTAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPRINTTIME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPUSER" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HPAGE" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[WITH T_ORDER AS
+         (--<1. 대상 예정전표 내역>-----------------------------------------------------------------
+          SELECT M1.CENTER_CD
+                ,M1.BU_CD
+                ,M1.ORDER_DATE
+                ,M1.ORDER_NO
+                ,M1.BACKORDER_YN
+                ,M1.INOUT_CD
+                ,M1.CUST_CD
+                ,M1.DELIVERY_CD
+                ,M1.RDELIVERY_CD
+                ,M1.BU_NO
+                ,M2.LINE_NO
+                ,M2.BRAND_CD
+                ,M2.ITEM_CD
+                ,M2.ITEM_STATE
+                ,M2.ITEM_LOT
+                ,C1.QTY_IN_BOX
+                ,M2.ORDER_QTY
+                ,WF.GET_B_BOX(M2.ORDER_QTY, C1.QTY_IN_BOX) AS ORDER_BOX
+                ,WF.GET_B_EA (M2.ORDER_QTY, C1.QTY_IN_BOX) AS ORDER_EA
+            FROM (
+                  SELECT M1.CENTER_CD
+                        ,M1.BU_CD
+                        ,M1.ORDER_DATE
+                        ,M1.ORDER_NO
+                        ,M1.BACKORDER_YN
+                        ,M1.INOUT_CD
+                        ,M1.CUST_CD
+                        ,M1.DELIVERY_CD
+                        ,M1.RDELIVERY_CD
+                        ,M1.BU_NO
+                    FROM LO010NM M1
+                         JOIN LO010ND M2 ON M2.CENTER_CD   = M1.CENTER_CD
+                                        AND M2.BU_CD       = M1.BU_CD
+                                        AND M2.ORDER_DATE  = M1.ORDER_DATE
+                                        AND M2.ORDER_NO    = M1.ORDER_NO
+                         JOIN CMCODE  C1 ON C1.COMMON_CD     = M1.INOUT_CD
+                                        AND C1.COMMON_GRP    = WF.GET_COMMON_GRP('INOUT_CD')
+                                        AND C1.ATTR01_CD    IN ('D1' ,'D2')
+                         JOIN CMITEM  T1 ON T1.BRAND_CD    = M2.BRAND_CD
+                                        AND T1.ITEM_CD     = M2.ITEM_CD
+                   WHERE M2.OUTBOUND_STATE   = WD.C_STATE_ORDER
+                     AND M1.HOLD_YN          = WD.C_NO
+                     AND ROWNUM < 100
+                   GROUP BY M1.CENTER_CD
+                           ,M1.BU_CD
+                           ,M1.ORDER_DATE
+                           ,M1.ORDER_NO
+                           ,M1.BACKORDER_YN
+                           ,M1.INOUT_CD
+                           ,M1.BU_NO
+                           ,M1.CUST_CD
+                           ,M1.DELIVERY_CD
+                           ,M1.RDELIVERY_CD
+                 ) M1
+                 JOIN LO010ND M2 ON M2.CENTER_CD   = M1.CENTER_CD
+                                AND M2.BU_CD       = M1.BU_CD
+                                AND M2.ORDER_DATE  = M1.ORDER_DATE
+                                AND M2.ORDER_NO    = M1.ORDER_NO
+                 JOIN CMITEM  C1 ON C1.BRAND_CD    = M2.BRAND_CD
+                                AND C1.ITEM_CD     = M2.ITEM_CD
+         )
+      ,T_STOCK AS
+         (--<2. 상품별 재고 내역>-------------------------------------------------------------------
+          SELECT --+ INDEX(LS010NM LS010NM_IDX01)
+                 BRAND_CD
+                ,ITEM_CD
+                ,ITEM_STATE
+                ,ITEM_LOT
+                ,WF.GET_MINUS_VAL(SUM(STOCK_QTY), SUM(OUT_WAIT_QTY)) AS STOCK_QTY
+            FROM LS010NM
+           WHERE HOLD_YN     = WD.C_NO
+             AND (BRAND_CD ,ITEM_CD ,ITEM_STATE ,ITEM_LOT)
+              IN (SELECT BRAND_CD ,ITEM_CD ,ITEM_STATE ,ITEM_LOT
+                    FROM T_ORDER
+                   GROUP BY BRAND_CD
+                           ,ITEM_CD
+                           ,ITEM_STATE
+                           ,ITEM_LOT
+                 )
+           GROUP BY BRAND_CD
+                   ,ITEM_CD
+                   ,ITEM_STATE
+                   ,ITEM_LOT
+         )
+      ,T_WAIT AS
+         (--<3. 상품별 입출고대기 내역>-------------------------------------------------------------
+          SELECT L1.BRAND_CD
+                ,L1.ITEM_CD
+                ,L1.ITEM_STATE
+                ,L1.ITEM_LOT
+                ,SUM(L1.OUTWAIT_QTY) AS OUTWAIT_QTY
+                ,SUM(L1.INORDER_QTY) AS INORDER_QTY
+                ,SUM(L1.INWAIT_QTY)  AS INWAIT_QTY
+            FROM (--<3.1. 출고대기 내역>------------------------------------------------------------
+                  SELECT BRAND_CD
+                        ,ITEM_CD
+                        ,ITEM_STATE
+                        ,ITEM_LOT
+                        ,SUM(ENTRY_QTY) AS OUTWAIT_QTY
+                        ,0              AS INORDER_QTY
+                        ,0              AS INWAIT_QTY
+                    FROM LO020ND
+                   WHERE OUTBOUND_STATE  = WD.C_STATE_ENTRY
+                     AND ROWNUM < 100
+                   GROUP BY BRAND_CD
+                           ,ITEM_CD
+                           ,ITEM_STATE
+                           ,ITEM_LOT
+                   UNION ALL
+                  --<3.4. 입고예정 내역>------------------------------------------------------------
+                  SELECT BRAND_CD
+                        ,ITEM_CD
+                        ,ITEM_STATE
+                        ,ITEM_LOT
+                        ,0                                AS OUTWAIT_QTY
+                        ,SUM(WF.GET_MINUS_VAL(ORDER_QTY
+                                             ,ENTRY_QTY)) AS INORDER_QTY
+                        ,0                                AS INWAIT_QTY
+                    FROM LI010ND
+                   WHERE ORDER_DATE    BETWEEN TRUNC(SYSDATE)
+                                           AND TRUNC(SYSDATE) + TO_NUMBER(NVL('0'/*V_POLICY_LO320*/, '0'))      --입고예정일자 범위 지정
+                     AND INBOUND_STATE       = WD.C_STATE_ORDER
+                     AND '2'/*V_POLICY_LO310*/      = WD.C_POLICY_VAL_3                                    --가입고 적용기준 - 3  입고예정포함
+                   GROUP BY BRAND_CD
+                           ,ITEM_CD
+                           ,ITEM_STATE
+                           ,ITEM_LOT
+                  UNION ALL
+                  --<3.5. 입고등록 내역>------------------------------------------------------------
+                  SELECT BRAND_CD
+                        ,ITEM_CD
+                        ,ITEM_STATE
+                        ,ITEM_LOT
+                        ,0              AS OUTWAIT_QTY
+                        ,0              AS INORDER_QTY
+                        ,SUM(ENTRY_QTY) AS INWAIT_QTY
+                    FROM LI020ND
+                   WHERE INBOUND_DATE   >= TRUNC(SYSDATE)
+                     AND INBOUND_STATE  IN (WD.C_STATE_ENTRY
+                                           ,WD.C_STATE_DIRECTIONS)
+                     AND '2'/*V_POLICY_LO310*/ IN (WD.C_POLICY_VAL_2
+                                           ,WD.C_POLICY_VAL_3)                                      --가입고 적용기준 - 2  입고미확정포함, 3  입고예정포함
+                   GROUP BY BRAND_CD
+                           ,ITEM_CD
+                           ,ITEM_STATE
+                           ,ITEM_LOT
+                 ) L1
+          GROUP BY L1.BRAND_CD
+                  ,L1.ITEM_CD
+                  ,L1.ITEM_STATE
+                  ,L1.ITEM_LOT
+         )
+      ,T_SHORTAGEITEM AS
+         (
+          --<L3. 가용재고부족 제품만 추출>----------------------------------------------------------
+          SELECT L2.*
+                ,WF.GET_MINUS_VAL(L2.STOCK_QTY + L2.INORDER_QTY + L2.INWAIT_QTY
+                                 ,L2.OUTWAIT_QTY) AS PSTOCK_QTY
+            FROM (--<L2. 가용재고 계산용 수량 계산>-------------------------------------------------
+                  SELECT L1.CENTER_CD
+                        ,L1.BU_CD
+                        ,L1.BRAND_CD
+                        ,L1.ITEM_CD
+                        ,L1.ITEM_STATE
+                        ,L1.ITEM_LOT
+                        ,L1.ORDER_QTY
+                        ,NVL(M1.STOCK_QTY,   0) AS STOCK_QTY
+                        ,NVL(M2.OUTWAIT_QTY, 0) AS OUTWAIT_QTY
+                        ,NVL(M2.INORDER_QTY, 0) AS INORDER_QTY
+                        ,NVL(M2.INWAIT_QTY,  0) AS INWAIT_QTY
+                    FROM (--<L1. 상품별 출고예정수량 합계 검색>-------------------------------------
+                          SELECT CENTER_CD
+                                ,BU_CD
+                                ,BRAND_CD
+                                ,ITEM_CD
+                                ,ITEM_STATE
+                                ,ITEM_LOT
+                                ,SUM(ORDER_QTY) AS ORDER_QTY
+                            FROM T_ORDER
+                           GROUP BY CENTER_CD
+                                   ,BU_CD
+                                   ,BRAND_CD
+                                   ,ITEM_CD
+                                   ,ITEM_STATE
+                                   ,ITEM_LOT
+                         ) L1
+                    LEFT JOIN T_STOCK M1 ON M1.BRAND_CD   = L1.BRAND_CD
+                                        AND M1.ITEM_CD    = L1.ITEM_CD
+                                        AND M1.ITEM_STATE = L1.ITEM_STATE
+                                        AND M1.ITEM_LOT   = L1.ITEM_LOT
+                    LEFT JOIN T_WAIT  M2 ON M1.BRAND_CD   = L1.BRAND_CD
+                                        AND M2.ITEM_CD    = L1.ITEM_CD
+                                        AND M2.ITEM_STATE = L1.ITEM_STATE
+                                        AND M2.ITEM_LOT   = L1.ITEM_LOT
+                 ) L2
+           WHERE L2.ORDER_QTY > (L2.STOCK_QTY - L2.OUTWAIT_QTY + L2.INORDER_QTY + L2.INWAIT_QTY)
+         )
+      ,T_ASSIGNEDBOX AS
+         (--<L1. 상품/오더별 할당 출고박스 결정>----------------------------------------------------
+          SELECT L1.BRAND_CD
+                ,L1.ITEM_CD
+                ,L1.ITEM_STATE
+                ,L1.ITEM_LOT
+                ,L1.QTY_IN_BOX
+                ,L1.CENTER_CD
+                ,L1.BU_CD
+                ,L1.CUST_CD
+                ,L1.DELIVERY_CD
+                ,L1.RDELIVERY_CD
+                ,L1.INOUT_CD
+                ,L1.BU_NO
+                ,L1.ORDER_DATE
+                ,L1.ORDER_NO
+                ,L1.BACKORDER_YN
+                ,L1.LINE_NO
+                ,L1.ORDER_QTY
+                ,SUM(L1.QTY_IN_BOX) AS ASSIGNED_QTY
+            FROM (--<L0. 상품/오더별로 출고박스 수량으로 데이터 복제 후 박스 수량 누계>-------------
+                  SELECT M1.BRAND_CD
+                        ,M1.ITEM_CD
+                        ,M1.ITEM_STATE
+                        ,M1.ITEM_LOT
+                        ,M2.QTY_IN_BOX
+                        ,WF.GET_B_BOX(M1.PSTOCK_QTY, M2.QTY_IN_BOX) AS PSTOCK_BOX
+                        ,M2.CENTER_CD
+                        ,M2.BU_CD
+                        ,M2.CUST_CD
+                        ,M2.DELIVERY_CD
+                        ,M2.RDELIVERY_CD
+                        ,M2.BU_NO
+                        ,M2.INOUT_CD
+                        ,M2.ORDER_DATE
+                        ,M2.ORDER_NO
+                        ,M2.BACKORDER_YN
+                        ,M2.LINE_NO
+                        ,M2.ORDER_QTY
+                        ,SUM(1) OVER(PARTITION BY M1.BRAND_CD
+                                                 ,M1.ITEM_CD
+                                                 ,M1.ITEM_STATE
+                                                 ,M1.ITEM_LOT
+                                         ORDER BY C1.NO
+                                                 ,M2.ORDER_QTY
+                                                 ,M2.DELIVERY_CD
+                                                 ,M2.ORDER_DATE
+                                                 ,M2.ORDER_NO
+                                                 ,M2.LINE_NO) AS ACC_ORDER_BOX
+                    FROM T_SHORTAGEITEM M1
+                         JOIN T_ORDER   M2 ON M2.CENTER_CD   = M1.CENTER_CD
+                                          AND M2.BU_CD       = M1.BU_CD
+                                          AND M2.BRAND_CD    = M1.BRAND_CD
+                                          AND M2.ITEM_CD     = M1.ITEM_CD
+                                          AND M2.ITEM_STATE  = M1.ITEM_STATE
+                                          AND M2.ITEM_LOT    = M1.ITEM_LOT
+                         JOIN CSNO      C1 ON C1.NO         <= M2.ORDER_BOX
+                   WHERE '3'/*V_POLICY_LO220*/ = WD.C_POLICY_VAL_2
+                 ) L1
+           WHERE L1.ACC_ORDER_BOX <= L1.PSTOCK_BOX                                                  --가용재고 박스수량으로 제한
+           GROUP BY L1.BRAND_CD
+                   ,L1.ITEM_CD
+                   ,L1.ITEM_STATE
+                   ,L1.ITEM_LOT
+                   ,L1.QTY_IN_BOX
+                   ,L1.CENTER_CD
+                   ,L1.BU_CD
+                   ,L1.CUST_CD
+                   ,L1.DELIVERY_CD
+                   ,L1.RDELIVERY_CD
+                   ,L1.INOUT_CD
+                   ,L1.BU_NO
+                   ,L1.ORDER_DATE
+                   ,L1.ORDER_NO
+                   ,L1.BACKORDER_YN
+                   ,L1.LINE_NO
+                   ,L1.ORDER_QTY
+         )
+  SELECT L6.ITEM_CD
+        ,T1.ITEM_NM
+        ,WF.DSP_COMBO(L6.ITEM_STATE ,C2.COMMON_NM) AS ITEM_STATE_F
+        ,T1.ITEM_SPEC
+        ,L6.ITEM_LOT
+        ,L6.BRAND_CD
+        ,B1.BRAND_NM
+        ,L6.DELIVERY_CD
+        ,D1.DELIVERY_NM
+        ,L6.RDELIVERY_CD
+        ,D2.DELIVERY_NM AS RDELIVERY_NM
+        ,L6.BU_NO
+        ,C1.COMMON_NM AS INOUT_NM
+        ,L6.ORDER_DATE
+        ,L6.ORDER_NO
+        ,L6.BACKORDER_YN
+        ,L6.LINE_NO
+        ,T1.QTY_IN_BOX
+        ,T1.BOX_WEIGHT
+        ,L6.ORDER_QTY                                                                               --예정수량
+        ,L6.PRE_ADJUST_QTY                                                                          --출고가능수량
+        ,L6.SHORTAGE_QTY                                                                            --미출예상수량
+
+        ,L6.CENTER_CD
+        ,L6.BU_CD
+        ,L6.CUST_CD
+        ,L6.INOUT_CD
+        ,L6.ITEM_STATE
+
+        ,WF.GET_B_BOX (L6.ORDER_QTY      ,T1.QTY_IN_BOX)                AS ORDER_BOX
+        ,WF.GET_B_EA  (L6.ORDER_QTY      ,T1.QTY_IN_BOX)                AS ORDER_EA
+        ,WF.GET_B_BOX (L6.PRE_ADJUST_QTY ,T1.QTY_IN_BOX)                AS PRE_ADJUST_BOX
+        ,WF.GET_B_EA  (L6.PRE_ADJUST_QTY ,T1.QTY_IN_BOX)                AS PRE_ADJUST_EA
+        ,WF.GET_B_BOX (L6.SHORTAGE_QTY   ,T1.QTY_IN_BOX)                AS SHORTAGE_BOX
+        ,WF.GET_B_EA  (L6.SHORTAGE_QTY   ,T1.QTY_IN_BOX)                AS SHORTAGE_EA
+
+        ,WF.GET_WEIGHT(L6.ORDER_QTY      ,T1.QTY_IN_BOX ,T1.BOX_WEIGHT) AS ORDER_WEIGHT
+        ,WF.GET_WEIGHT(L6.PRE_ADJUST_QTY ,T1.QTY_IN_BOX ,T1.BOX_WEIGHT) AS PRE_ADJUST_WEIGHT
+        ,WF.GET_WEIGHT(L6.SHORTAGE_QTY   ,T1.QTY_IN_BOX ,T1.BOX_WEIGHT) AS SHORTAGE_WEIGHT
+        ,WF.GET_LPAD(L6.BRAND_CD        ,10 ,'0')
+      || WF.GET_LPAD(L6.ITEM_CD         ,30 ,'0')
+      || L6.ITEM_STATE
+      || WF.GET_LPAD(L6.ITEM_LOT        ,20 ,'0')                       AS ITEM_GRP
+    FROM (
+          --<L5. 부족재고 자동할당>-----------------------------------------------------------------
+          SELECT L5.BRAND_CD
+                ,L5.ITEM_CD
+                ,L5.ITEM_STATE
+                ,L5.ITEM_LOT
+                ,L5.CENTER_CD
+                ,L5.BU_CD
+                ,L5.CUST_CD
+                ,L5.DELIVERY_CD
+                ,L5.RDELIVERY_CD
+                ,L5.BU_NO
+                ,L5.INOUT_CD
+                ,L5.ORDER_DATE
+                ,L5.ORDER_NO
+                ,L5.BACKORDER_YN
+                ,L5.LINE_NO
+                ,L5.ORDER_QTY
+                ,L5.ASSIGN_QTY AS PRE_ADJUST_QTY
+                ,L5.ORDER_QTY - L5.ASSIGN_QTY AS SHORTAGE_QTY
+            FROM (
+                  SELECT L4.*
+                         --<출고등록시 부족재고 조정기준(LO220)>------------------------------------
+                        ,CASE '3'/*V_POLICY_LO220*/
+                              --<1 - 일괄 균등분배 조정>--------------------------------------------
+                              --  출고예정수량의 백분율 * 가용재고
+                              WHEN WD.C_POLICY_VAL_1 THEN
+                                   CASE WHEN L4.ORDER_QTY < ROUND(L4.ORDER_QTY / L4.TOT_ORDER_QTY * L4.PSTOCK_QTY) THEN
+                                             L4.ORDER_QTY
+                                        ELSE ROUND(L4.ORDER_QTY / L4.TOT_ORDER_QTY * L4.PSTOCK_QTY)
+                                   END
+                              --<3 - 전표등록순 우선조정(전표 전체미등록)>--------------------------
+                              WHEN WD.C_POLICY_VAL_3 THEN
+                                   CASE --A. 누적예정수량 <= 가용재고 ==> 예정수량
+                                        WHEN L4.ACC_ORDER_QTY <= L4.PSTOCK_QTY THEN L4.ORDER_QTY
+                                        ELSE --B. 이전 누적 예정수량 < 가용재고 AND 가용재고 < 누적 예정수량 ==> 가용재고 - 이전 누적 예정수량
+                                             CASE WHEN (L4.ACC_ORDER_QTY - L4.ORDER_QTY) < L4.PSTOCK_QTY THEN L4.PSTOCK_QTY - (L4.ACC_ORDER_QTY - L4.ORDER_QTY)
+                                                  ELSE 0
+                                             END
+                                   END
+                         END AS ASSIGN_QTY
+                    FROM (--<L4. 전표별 예정수량 검색(정렬) 및 누적 예정수량 검색>------------------
+                          SELECT L3.BRAND_CD
+                                ,L3.ITEM_CD
+                                ,L3.ITEM_STATE
+                                ,L3.ITEM_LOT
+                                ,L3.ORDER_QTY  AS TOT_ORDER_QTY
+                                ,L3.PSTOCK_QTY
+                                ,M1.CENTER_CD
+                                ,M1.BU_CD
+                                ,M1.CUST_CD
+                                ,M1.DELIVERY_CD
+                                ,M1.RDELIVERY_CD
+                                ,M1.BU_NO
+                                ,M1.INOUT_CD
+                                ,M1.ORDER_DATE
+                                ,M1.ORDER_NO
+                                ,M1.BACKORDER_YN
+                                ,M1.LINE_NO
+                                ,M1.ORDER_QTY
+                                 --<출고등록시 부족재고 조정기준(LO220)>----------------------------
+                                 --   1 - 일괄 균등분배 조정은 예정수량이 큰 순으로
+                                 --   2 - 전표등록순 우선조정은 전표일자, 전표번호 순으로 정렬
+                                ,SUM(M1.ORDER_QTY) OVER(PARTITION BY L3.BRAND_CD
+                                                                    ,L3.ITEM_CD
+                                                                    ,L3.ITEM_STATE
+                                                                    ,L3.ITEM_LOT
+                                                            ORDER BY DECODE('3'/*V_POLICY_LO220*/, WD.C_POLICY_VAL_1, M1.ORDER_QTY * -1, 1)
+                                                                    ,M1.ORDER_DATE
+                                                                    ,M1.ORDER_NO
+                                                                    ,M1.LINE_NO) AS ACC_ORDER_QTY
+                            FROM T_SHORTAGEITEM L3
+                                 JOIN T_ORDER   M1 ON M1.CENTER_CD   = L3.CENTER_CD
+                                                  AND M1.BU_CD       = L3.BU_CD
+                                                  AND M1.BRAND_CD    = L3.BRAND_CD
+                                                  AND M1.ITEM_CD     = L3.ITEM_CD
+                                                  AND M1.ITEM_STATE  = L3.ITEM_STATE
+                                                  AND M1.ITEM_LOT    = L3.ITEM_LOT
+                           WHERE '3'/*V_POLICY_LO220*/ IN (WD.C_POLICY_VAL_1, WD.C_POLICY_VAL_3)
+                           ORDER BY L3.BRAND_CD
+                                   ,L3.ITEM_CD
+                                   ,L3.ITEM_STATE
+                                   ,L3.ITEM_LOT
+                                   ,DECODE('3'/*V_POLICY_LO220*/, WD.C_POLICY_VAL_1, M1.ORDER_QTY * -1, 1)
+                                   ,M1.ORDER_DATE
+                                   ,M1.ORDER_NO
+                                   ,M1.LINE_NO
+                         ) L4
+                 ) L5
+          UNION ALL
+          SELECT L4.BRAND_CD
+                ,L4.ITEM_CD
+                ,L4.ITEM_STATE
+                ,L4.ITEM_LOT
+                ,L4.CENTER_CD
+                ,L4.BU_CD
+                ,L4.CUST_CD
+                ,L4.DELIVERY_CD
+                ,L4.RDELIVERY_CD
+                ,L4.BU_NO
+                ,L4.INOUT_CD
+                ,L4.ORDER_DATE
+                ,L4.ORDER_NO
+                ,L4.BACKORDER_YN
+                ,L4.LINE_NO
+                ,L4.ORDER_QTY
+                ,L4.ASSIGN_QTY AS PRE_ADJUST_QTY
+                ,L4.ORDER_QTY - L4.ASSIGN_QTY AS SHORTAGE_QTY
+            FROM (
+                  SELECT L3.BRAND_CD
+                        ,L3.ITEM_CD
+                        ,L3.ITEM_STATE
+                        ,L3.ITEM_LOT
+                        ,L3.CENTER_CD
+                        ,L3.BU_CD
+                        ,L3.CUST_CD
+                        ,L3.DELIVERY_CD
+                        ,L3.RDELIVERY_CD
+                        ,L3.BU_NO
+                        ,L3.INOUT_CD
+                        ,L3.ORDER_DATE
+                        ,L3.ORDER_NO
+                        ,L3.BACKORDER_YN
+                        ,L3.LINE_NO
+                        ,L3.ORDER_QTY
+                        ,SUM(L3.ASSIGNED_QTY) AS ASSIGN_QTY
+                    FROM (
+                          SELECT L2.BRAND_CD
+                                ,L2.ITEM_CD
+                                ,L2.ITEM_STATE
+                                ,L2.ITEM_LOT
+                                ,L2.CENTER_CD
+                                ,L2.BU_CD
+                                ,L2.CUST_CD
+                                ,L2.DELIVERY_CD
+                                ,L2.RDELIVERY_CD
+                                ,L2.BU_NO
+                                ,L2.INOUT_CD
+                                ,L2.ORDER_DATE
+                                ,L2.ORDER_NO
+                                ,L2.BACKORDER_YN
+                                ,L2.LINE_NO
+                                ,L2.ORDER_QTY
+                                ,L2.ASSIGNED_QTY
+                            FROM T_ASSIGNEDBOX L2
+                          UNION ALL
+                          SELECT L2.BRAND_CD
+                                ,L2.ITEM_CD
+                                ,L2.ITEM_STATE
+                                ,L2.ITEM_LOT
+                                ,L2.CENTER_CD
+                                ,L2.BU_CD
+                                ,L2.CUST_CD
+                                ,L2.DELIVERY_CD
+                                ,L2.RDELIVERY_CD
+                                ,L2.BU_NO
+                                ,L2.INOUT_CD
+                                ,L2.ORDER_DATE
+                                ,L2.ORDER_NO
+                                ,L2.BACKORDER_YN
+                                ,L2.LINE_NO
+                                ,L2.ORDER_QTY
+                                ,SUM(1) AS ASSIGNED_QTY
+                            FROM (
+                                  SELECT L1.*
+                                        ,SUM(1) OVER(PARTITION BY L1.BRAND_CD
+                                                                 ,L1.ITEM_CD
+                                                                 ,L1.ITEM_STATE
+                                                                 ,L1.ITEM_LOT
+                                                         ORDER BY C1.NO
+                                                                 ,L1.ORDER_QTY
+                                                                 ,L1.DELIVERY_CD
+                                                                 ,L1.ORDER_DATE
+                                                                 ,L1.ORDER_NO
+                                                                 ,L1.LINE_NO) AS ACC_ORDER_QTY
+                                    FROM (
+                                          SELECT M1.BRAND_CD
+                                                ,M1.ITEM_CD
+                                                ,M1.ITEM_STATE
+                                                ,M1.ITEM_LOT
+                                                ,M1.PSTOCK_QTY
+                                                - NVL(SUM(M3.ASSIGNED_QTY) OVER(PARTITION BY M1.BRAND_CD
+                                                                                            ,M1.ITEM_CD
+                                                                                            ,M1.ITEM_STATE
+                                                                                            ,M1.ITEM_LOT)
+                                                     ,0) AS REMAIN_PSTOCK_QTY
+                                                ,M2.CENTER_CD
+                                                ,M2.BU_CD
+                                                ,M2.CUST_CD
+                                                ,M2.DELIVERY_CD
+                                                ,M2.RDELIVERY_CD
+                                                ,M2.BU_NO
+                                                ,M2.INOUT_CD
+                                                ,M2.ORDER_DATE
+                                                ,M2.ORDER_NO
+                                                ,M2.BACKORDER_YN
+                                                ,M2.LINE_NO
+                                                ,M2.ORDER_QTY
+                                                ,NVL(M3.ASSIGNED_QTY, 0)                AS ASSIGNED_QTY
+                                                ,M2.ORDER_QTY - NVL(M3.ASSIGNED_QTY, 0) AS REMAIN_ORDER_QTY
+                                            FROM T_SHORTAGEITEM M1
+                                                 JOIN T_ORDER       M2 ON M2.CENTER_CD   = M1.CENTER_CD
+                                                                      AND M2.BU_CD       = M1.BU_CD
+                                                                      AND M2.BRAND_CD    = M1.BRAND_CD
+                                                                      AND M2.ITEM_CD     = M1.ITEM_CD
+                                                                      AND M2.ITEM_STATE  = M1.ITEM_STATE
+                                                                      AND M2.ITEM_LOT    = M1.ITEM_LOT
+                                            LEFT JOIN T_ASSIGNEDBOX M3 ON M3.CENTER_CD   = M2.CENTER_CD
+                                                                      AND M3.BU_CD       = M2.BU_CD
+                                                                      AND M3.ORDER_DATE  = M2.ORDER_DATE
+                                                                      AND M3.ORDER_NO    = M2.ORDER_NO
+                                                                      AND M3.LINE_NO     = M2.LINE_NO
+                                           WHERE '3'/*V_POLICY_LO220*/ = WD.C_POLICY_VAL_2
+                                         ) L1
+                                         JOIN CSNO C1 ON C1.NO <= L1.REMAIN_ORDER_QTY
+                                   WHERE L1.REMAIN_PSTOCK_QTY > 0
+                                     AND L1.REMAIN_ORDER_QTY  > 0
+                                ) L2
+                           WHERE L2.ACC_ORDER_QTY <= L2.REMAIN_PSTOCK_QTY                           --가용재고수량 제한
+                           GROUP BY L2.BRAND_CD
+                                   ,L2.ITEM_CD
+                                   ,L2.ITEM_STATE
+                                   ,L2.ITEM_LOT
+                                   ,L2.CENTER_CD
+                                   ,L2.BU_CD
+                                   ,L2.CUST_CD
+                                   ,L2.DELIVERY_CD
+                                   ,L2.RDELIVERY_CD
+                                   ,L2.INOUT_CD
+                                   ,L2.BU_NO
+                                   ,L2.ORDER_DATE
+                                   ,L2.ORDER_NO
+                                   ,L2.BACKORDER_YN
+                                   ,L2.LINE_NO
+                                   ,L2.ORDER_QTY
+                         ) L3
+                   GROUP BY L3.BRAND_CD
+                           ,L3.ITEM_CD
+                           ,L3.ITEM_STATE
+                           ,L3.ITEM_LOT
+                           ,L3.CENTER_CD
+                           ,L3.BU_CD
+                           ,L3.CUST_CD
+                           ,L3.DELIVERY_CD
+                           ,L3.RDELIVERY_CD
+                           ,L3.INOUT_CD
+                           ,L3.BU_NO
+                           ,L3.ORDER_DATE
+                           ,L3.ORDER_NO
+                           ,L3.BACKORDER_YN
+                           ,L3.LINE_NO
+                           ,L3.ORDER_QTY
+                 ) L4
+         ) L6
+         JOIN CMCODE     C1 ON C1.COMMON_CD     = L6.INOUT_CD
+                           AND C1.COMMON_GRP    = WF.GET_COMMON_GRP('INOUT_CD')
+                           AND C1.ATTR01_CD    IN ('D1' ,'D2')
+         JOIN CMCODE     C2 ON C2.COMMON_CD     = L6.ITEM_STATE
+                           AND C2.COMMON_GRP    = WF.GET_COMMON_GRP('ITEM_STATE')
+         JOIN CMDELIVERY D1 ON D1.CUST_CD     = L6.CUST_CD
+                           AND D1.DELIVERY_CD = L6.DELIVERY_CD
+         JOIN CMDELIVERY D2 ON D2.CUST_CD     = L6.CUST_CD
+                           AND D2.DELIVERY_CD = L6.RDELIVERY_CD
+         JOIN CMBRAND    B1 ON B1.BRAND_CD    = L6.BRAND_CD
+         JOIN CMITEM     T1 ON T1.BRAND_CD    = L6.BRAND_CD
+                           AND T1.ITEM_CD     = L6.ITEM_CD
+   WHERE L6.SHORTAGE_QTY       > 0
+     AND ROWNUM < 100
+   ORDER BY ITEM_GRP
+           ,DELIVERY_CD
+           ,INOUT_CD
+           ,ORDER_DATE
+           ,ORDER_NO
+           ,LINE_NO]]>
+	</queryString>
+	<field name="ITEM_CD" class="java.lang.String"/>
+	<field name="ITEM_NM" class="java.lang.String"/>
+	<field name="ITEM_STATE_F" class="java.lang.String"/>
+	<field name="ITEM_SPEC" class="java.lang.String"/>
+	<field name="ITEM_LOT" class="java.lang.String"/>
+	<field name="BRAND_CD" class="java.lang.String"/>
+	<field name="BRAND_NM" class="java.lang.String"/>
+	<field name="DELIVERY_CD" class="java.lang.String"/>
+	<field name="DELIVERY_NM" class="java.lang.String"/>
+	<field name="RDELIVERY_CD" class="java.lang.String"/>
+	<field name="RDELIVERY_NM" class="java.lang.String"/>
+	<field name="BU_NO" class="java.lang.String"/>
+	<field name="INOUT_NM" class="java.lang.String"/>
+	<field name="ORDER_DATE" class="java.lang.String"/>
+	<field name="ORDER_NO" class="java.lang.String"/>
+	<field name="BACKORDER_YN" class="java.lang.String"/>
+	<field name="LINE_NO" class="java.math.BigDecimal"/>
+	<field name="QTY_IN_BOX" class="java.math.BigDecimal"/>
+	<field name="BOX_WEIGHT" class="java.math.BigDecimal"/>
+	<field name="ORDER_QTY" class="java.math.BigDecimal"/>
+	<field name="PRE_ADJUST_QTY" class="java.math.BigDecimal"/>
+	<field name="SHORTAGE_QTY" class="java.math.BigDecimal"/>
+	<field name="CENTER_CD" class="java.lang.String"/>
+	<field name="BU_CD" class="java.lang.String"/>
+	<field name="CUST_CD" class="java.lang.String"/>
+	<field name="INOUT_CD" class="java.lang.String"/>
+	<field name="ITEM_STATE" class="java.lang.String"/>
+	<field name="ORDER_BOX" class="java.math.BigDecimal"/>
+	<field name="ORDER_EA" class="java.math.BigDecimal"/>
+	<field name="PRE_ADJUST_BOX" class="java.math.BigDecimal"/>
+	<field name="PRE_ADJUST_EA" class="java.math.BigDecimal"/>
+	<field name="SHORTAGE_BOX" class="java.math.BigDecimal"/>
+	<field name="SHORTAGE_EA" class="java.math.BigDecimal"/>
+	<field name="ORDER_WEIGHT" class="java.math.BigDecimal"/>
+	<field name="PRE_ADJUST_WEIGHT" class="java.math.BigDecimal"/>
+	<field name="SHORTAGE_WEIGHT" class="java.math.BigDecimal"/>
+	<field name="ITEM_GRP" class="java.lang.String"/>
+	<group name="ITEM_GRP" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{ITEM_GRP}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<rectangle>
+					<reportElement x="0" y="0" width="812" height="20" backcolor="#F0EFEF" uuid="1f96bd3a-499a-418f-b0e2-e5ce5889b4bd"/>
+					<graphicElement>
+						<pen lineWidth="0.0"/>
+					</graphicElement>
+				</rectangle>
+				<textField isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="4" y="1" width="72" height="18" uuid="34d3b3d9-5baa-443a-b7a3-30ff308d9fe5"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="78" y="1" width="235" height="18" uuid="5c0323c1-857d-4772-8328-d177df1d96a5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="579" y="1" width="60" height="18" uuid="cc22c988-a157-4d5d-bcec-21605ef421a6"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ITEM_STATE_F}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="317" y="1" width="150" height="18" uuid="39de2eda-ff83-40da-be1f-45f6bb694cc3"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ITEM_SPEC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="644" y="1" width="80" height="18" uuid="34bccb70-e575-4fdc-8e9c-e8b87e0ad3fe"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ITEM_LOT}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement key="line-3" x="0" y="19" width="812" height="1" uuid="b5d564c9-c8d1-4740-8f3c-62677ab71e9b"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField isBlankWhenNull="true">
+					<reportElement key="staticText-4" x="469" y="1" width="97" height="18" uuid="ee5fc332-d4ca-4e5e-9c43-32f460fa8aa3"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+						<font fontName="D2Coding" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BRAND_NM}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="1">
+				<line>
+					<reportElement key="line-3" x="0" y="0" width="812" height="1" uuid="4ea07074-2e95-41ee-8b73-277d52d020f8"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="104" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-4" x="2" y="30" width="72" height="12" uuid="db1accdb-2633-4a6a-892a-9625057060bd"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[물류센터    :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="30" width="130" height="12" uuid="6247ccad-1b0e-4e99-a122-1ead7b79e2f6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CENTER_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-5" x="2" y="44" width="72" height="12" uuid="16e315e8-0888-49ab-8393-70a2701d6532"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[사업부      :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="44" width="130" height="12" uuid="66d736f1-ce4e-406c-83b5-a34aa75b0e94"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_BU_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-24" x="2" y="58" width="72" height="12" uuid="801ab005-d2ee-45e1-959e-d56f1e9274a9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고예정일자:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-2" x="75" y="58" width="209" height="12" uuid="f2d3ffaf-eb4b-4541-b749-af382a7e017b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ORDER_DATE1}+" ~ "+$P{P_ORDER_DATE2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-28" x="2" y="72" width="72" height="12" uuid="16ad954a-7265-4ac7-a4d7-3721358c8a69"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고구분    :]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="75" y="72" width="130" height="12" uuid="fc7e9019-f941-4d98-a6cd-83cb045e6ce5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_INOUT_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-28" x="233" y="72" width="50" height="12" uuid="d028b703-96cc-4ede-8574-940dc0738ee6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[배송처　:]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="284" y="72" width="130" height="12" uuid="7b6ba615-3564-4112-9a67-a746074c2935"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DELIVERY_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-28" x="2" y="86" width="72" height="12" uuid="cc82ae27-ec34-4440-b82e-653f97e3920e"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품코드    :]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="75" y="87" width="130" height="12" uuid="9517fab3-1b41-4211-ab7e-f7993cb2c37d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ITEM_CD_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-28" x="233" y="87" width="50" height="12" uuid="c124363a-7a9b-4d30-8423-0196c291785a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품명　:]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="284" y="87" width="130" height="12" uuid="20bd4da9-1bfe-4cae-86df-abc1056928a0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_ITEM_NM_F}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-7" x="632" y="58" width="70" height="14" uuid="da4f4e95-fa99-4892-aafe-2da8d25860f2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력사용자　:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-2" x="703" y="58" width="109" height="12" uuid="e1be1aa5-7c95-49f8-98dc-4e31bc324855"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USER_ID}+" - "+$P{P_USER_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-6" x="632" y="72" width="70" height="14" uuid="c1d84400-7916-4680-9498-41cc048738af"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[출력일시　　:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="703" y="72" width="109" height="14" uuid="bb76e028-a5cf-416d-b976-b9a617c7a37c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="0" y="102" width="812" height="1" uuid="629120a4-d635-4420-94bf-f32ca211392e"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="812" height="26" uuid="34d5163b-91ab-4452-8ca8-a02e2bda217a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="18" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_REPORT_TITLE_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="636" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="b26a8967-84b6-44fd-8af5-77f1b706068a">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]미출예상리스트]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<line>
+				<reportElement key="line-1" x="0" y="27" width="812" height="1" uuid="4bf935f5-9a35-4d3d-a7f2-0d29793a519a"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="2" y="1" width="73" height="12" uuid="8cd9d71d-8735-4c18-b34b-850381ef6a12"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="391" y="14" width="65" height="12" uuid="c96c5c53-5c21-4a9b-8da0-c6b6c4bc029c"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[예정일자]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="526" y="14" width="40" height="12" uuid="75bebdf9-8286-4d08-9f1a-4b4b66008f5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[순번]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="579" y="1" width="60" height="12" uuid="fe820be4-cd27-47ce-b7a3-befc860a8498"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상태]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="680" y="14" width="60" height="12" uuid="ce6a38d3-4b47-49f5-9982-3ab206b12a85"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고가능수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="621" y="14" width="50" height="12" uuid="c09a46c1-001e-4b04-ac71-b179cc8d4db6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[예정수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="315" y="14" width="70" height="12" uuid="0aa4d672-c27a-42d8-9149-748c37ab01ae"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고구분]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="578" y="14" width="35" height="12" uuid="05a7917f-ad6c-42af-bc66-363a575289d3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[입수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="76" y="1" width="235" height="12" uuid="f30abea0-2852-470c-9bae-f50784047a8a"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품명]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="644" y="1" width="80" height="12" uuid="1721290b-fd37-4220-b35c-df7397f8976d"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOT번호]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="315" y="1" width="150" height="12" uuid="90aafb99-aef1-4e93-80a6-a44486086106"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품규격]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="151" y="14" width="160" height="12" uuid="f61c8f50-849d-4b06-8585-4e4f45a5c910"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[배송처명]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="76" y="14" width="73" height="12" uuid="081db770-2c29-4695-b0f0-5d3ab8172a83"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[배송처]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="468" y="14" width="48" height="12" uuid="476cb979-432a-4948-88e9-a251aa28b73d"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[예정번호]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="748" y="14" width="60" height="12" uuid="8ec4f1a1-a594-4b4f-89b1-a2052e924f85"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[미출예상수량]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="469" y="1" width="97" height="12" uuid="5024cda2-7dc1-46ba-bef7-a718f833bdbf"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[브랜드]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="578" y="1" width="35" height="18" uuid="a7f116c1-b145-4fb1-a1cb-b26fd2b9b989"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QTY_IN_BOX}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="315" y="1" width="70" height="18" uuid="fe7b9e04-c4c1-4e77-a9e9-3cf39207bb88"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INOUT_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="391" y="1" width="65" height="18" uuid="e757f37b-57a1-40a1-81b5-5816a3c6011d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDER_DATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="621" y="1" width="50" height="18" uuid="992b24c7-bf44-4881-bdea-6f15f9145968"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDER_QTY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="680" y="1" width="60" height="18" uuid="f8040f39-9afa-4a72-b4db-2330ee2e694c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRE_ADJUST_QTY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="748" y="1" width="60" height="18" uuid="b523bbb7-2da8-4598-a096-c2813d0858e1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHORTAGE_QTY}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="76" y="1" width="73" height="18" uuid="a6d54d4e-cc62-4b44-8951-b233bfd4be41"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="151" y="1" width="160" height="18" uuid="224858b1-cae4-4f22-b348-2ea2b0cdb62e"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="468" y="1" width="48" height="18" uuid="7db09de6-68a9-4102-91db-837c2cbac0a4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDER_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="staticText-4" x="526" y="1" width="40" height="18" uuid="981b50cf-791f-47d7-b60f-88c113d9a817"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINE_NO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="19" splitType="Stretch">
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="357" y="3" width="50" height="12" uuid="2a837c40-3915-4de6-bacb-303384bbe219"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="428" y="3" width="50" height="12" uuid="0bee4259-bc69-4e56-81fd-d991b0ae97b7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField-19" x="408" y="3" width="19" height="12" uuid="d78e3a15-0898-49b2-8a35-74f5a4d3c37f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

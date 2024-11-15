@@ -1,0 +1,104 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC03070E0
+    프로그램명         : 로고이미지관리
+    프로그램설명       : 로고이미지관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC03070E0.css" /> -->
+<script src="js/CMC03070E0.js"></script>
+</head>
+<body>
+    <div id="divMasterView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">고객사</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+        <div id="ctrMasterLogoView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_CustLogo" class="lblTitle">고객사로고</td>
+                </tr>
+            </table>
+            <div class="ctrInner">
+                <div style="border-width: 1px; overflow: auto; text-align: center; line-height: 185px; max-height: 185px;">
+                    <img id="imgBICust" src="" style="vertical-align: middle;">
+                </div>
+                <div class="ctrGroupRow" style="text-align: right; padding: 5px 0 0 0;">
+                    <input id="btnBICustUpload" class="btnImgFile" type="button" value="이미지업로드" style="width: 105px;" />
+                    <input id="btnBICustRemove" class="btnImgCancel" type="button" value="이미지삭제" style="width: 95px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divDetailView" class="ctrMiddle">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">사업부</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+        <div id="ctrDetailLogoView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_BuLogo" class="lblTitle">사업부로고</td>
+                </tr>
+            </table>
+            <div class="ctrInner">
+                <div style="border-width: 1px; overflow: auto; text-align: center; line-height: 185px; max-height: 185px;">
+                    <img id="imgBIBu" src="" style="vertical-align: middle;">
+                </div>
+                <div class="ctrGroupRow" style="text-align: right; padding: 5px 0 0 0;">
+                    <input id="btnBIBuUpload" class="btnImgFile" type="button" value="이미지업로드" style="width: 105px;" />
+                    <input id="btnBIBuRemove" class="btnImgCancel" type="button" value="이미지삭제" style="width: 95px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divSubView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdSub" class="lblTitle">브랜드</td>
+                <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdSub"></div>
+        <div id="ctrSubLogoView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_BrandLogo" class="lblTitle">브랜드로고</td>
+                </tr>
+            </table>
+            <div class="ctrInner">
+                <div style="border-width: 1px; overflow: auto; text-align: center; line-height: 185px; max-height: 185px;">
+                    <img id="imgBIBrand" src="" style="vertical-align: middle;">
+                </div>
+                <div class="ctrGroupRow" style="text-align: right; padding: 5px 0 0 0;">
+                    <input id="btnBIBrandUpload" class="btnImgFile" type="button" value="이미지업로드" style="width: 105px;" />
+                    <input id="btnBIBrandRemove" class="btnImgCancel" type="button" value="이미지삭제" style="width: 95px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

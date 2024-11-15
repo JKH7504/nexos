@@ -1,0 +1,100 @@
+package nexos.dao.cs;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: CSC01040E0DAOImpl<br>
+ * Description: CSC01040E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("CSC01040E0DAO")
+public class CSC01040E0DAOImpl extends DaoSupport implements CSC01040E0DAO {
+
+    // private final Logger logger = LoggerFactory.getLogger(CSC01040E0DAOImpl.class);
+
+    final String PRORAM_ID                 = "CSC01040E0";
+
+    final String TABLE_NM_CSMENU           = "CSMENU";
+    final String INSERT_ID_CSMENU          = PRORAM_ID + ".INSERT_" + TABLE_NM_CSMENU;
+    final String UPDATE_ID_CSMENU          = PRORAM_ID + ".UPDATE_" + TABLE_NM_CSMENU;
+    final String DELETE_ID_CSMENU          = PRORAM_ID + ".DELETE_" + TABLE_NM_CSMENU;
+    final String DELETE_ID_CSMENU_SUB_MENU = PRORAM_ID + ".DELETE_" + TABLE_NM_CSMENU + "_SUB_MENU";
+
+    final String TABLE_NM_CSUSERPROGRAM    = "CSUSERPROGRAM";
+    final String INSERT_ID_CSUSERPROGRAM   = PRORAM_ID + ".INSERT_" + TABLE_NM_CSUSERPROGRAM;
+    final String UPDATE_ID_CSUSERPROGRAM   = PRORAM_ID + ".UPDATE_" + TABLE_NM_CSUSERPROGRAM;
+    final String DELETE_ID_CSUSERPROGRAM   = PRORAM_ID + ".DELETE_" + TABLE_NM_CSUSERPROGRAM;
+
+    final String MENU_DIV_MENU             = "M";
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void save(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        int dsCnt = dsSave.size();
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CSMENU, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_CSMENU, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                // 메뉴 삭제일 경우 하위 메뉴 전체 삭제 - 별도 쿼리ID
+                if (MENU_DIV_MENU.equals(rowData.get("P_MENU_DIV"))) {
+                    deleteSql(DELETE_ID_CSMENU_SUB_MENU, rowData);
+                }
+                deleteSql(DELETE_ID_CSMENU, rowData);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveUserProgram(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        int dsCnt = dsSave.size();
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_LAST_USER_ID, userId); // P_USER_ID 대신 P_LAST_USER_ID 사용, P_USER_ID는 일반 필드
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CSUSERPROGRAM, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_CSUSERPROGRAM, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                deleteSql(DELETE_ID_CSUSERPROGRAM, rowData);
+            }
+        }
+    }
+}

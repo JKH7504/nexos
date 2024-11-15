@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration>
+    <!-- 시스템 로그 설정 - 테스트(QA) -->
+    <!--
+        ==============================================================================================================================================
+        Log Level _______________________ TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+        FATAL ___________________________ 아주 심각한 에러가 발생한 상태를 나타냄.
+        _________________________________ 시스템적으로 심각한 문제가 발생해서 어플리케이션 작동이 불가능할 경우가 해당하는데,
+        _________________________________ 일반적으로는 어플리케이션에서는 사용할 일이 없음.
+        ERROR ___________________________ 요청을 처리하는중 문제가 발생한 상태를 나타냄.
+        WARN ____________________________ 처리 가능한 문제이지만, 향후 시스템 에러의 원인이 될 수 있는 경고성 메시지를 나타냄.
+        INFO ____________________________ 로그인, 상태변경과 같은 정보성 메시지를 나타냄.
+        DEBUG ___________________________ 개발시 디버그 용도로 사용한 메시지를 나타냄.
+        TRACE ___________________________ 디버그 레벨이 너무 광범위한 것을 해결하기 위해서 좀더 상세한 상태를 나타냄.
+        ==============================================================================================================================================
+    -->
+    <!--
+        ==============================================================================================================================================
+        Appender
+        ConsoleAppneder _________________ <Console> 콘솔에 출력
+        FileAppneder ____________________ <File> 파일에 출력
+        RollingFileAppneder _____________ <RollingFile> 조건에 따라 파일에 출력
+        JDBCAppender ____________________ <JDBC> RDB Table에 출력
+        ...
+        ==============================================================================================================================================
+    -->
+    <!--
+        ==============================================================================================================================================
+        PatternLayout ___________________ %로 시작하고 %뒤에는 format modifiers와 conversion character로 정의
+        c, logger _______________________ 로깅 이벤트를 발생시키기 위해 선택한 로거의 이름을 출력
+        C, class ________________________ 로깅 이벤트가 발생한 클래스의 풀네임명을 출력
+        M, method _______________________ 로깅 이벤트가 발생한 메서드명을 출력
+        F, file _________________________ 로깅 이벤트가 발생한 클래스의 파일명을 출력
+        l, location _____________________ 로깅 이벤트가 발생한 클래스의 풀네임명.메서드명(파일명:라인번호)를 출력
+        d, date _________________________ 로깅 이벤트의 일자와 시간을 출력
+        _________________________________ SimpleDateFormat클래스에 정의된 패턴으로 출력 포맷 지정가능
+        L, line _________________________ 로깅 이벤트가 발생한 라인 번호를 출력
+        m, msg, message _________________ 로그문에서 전달된 메시지를 출력
+        n _______________________________ 줄바꿈
+        p, level ________________________ 로깅 이벤트의 레벨을 출력
+        r, relative _____________________ 로그 처리시간 (milliseconds)
+        t, thread _______________________ 로깅 이벤트가 발생한 스레드명을 출력
+        %% ______________________________ %를 출력하기 위해 사용하는 패턴
+        ==============================================================================================================================================
+    -->
+    <properties>
+        <property name="file">NexosApp.${sys:NEXOS.WEBAPP.SALT}</property>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5p] [%c{2}:%-5L] - %m%n</property>
+        <!-- 2016-08-10 14:29:47.755 [INFO ] [context.ContextLoader:305 ] - Root WebApplicationContext: initialization started -->
+        <property name="path">${sys:NEXOS.WEBAPP.LOG}</property>
+    </properties>
+
+    <appenders>
+        <Console name="NEXOS-CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>${pattern}</pattern>
+            </PatternLayout>
+        </Console>
+
+        <RollingFile name="NEXOS-FILE" fileName="${path}/${file}.log" filePattern="${path}/${file}.%d{yyyyMMdd}.log.zip">
+            <PatternLayout>
+                <pattern>${pattern}</pattern>
+            </PatternLayout>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </appenders>
+
+    <Loggers>
+        <!--
+            <Logger name="nexos" level="debug" additivity="false">
+            <AppenderRef ref="NEXOS-CONSOLE" />
+            <AppenderRef ref="NEXOS-FILE" />
+            </Logger>
+        -->
+
+        <Root level="info">
+            <AppenderRef ref="NEXOS-CONSOLE" />
+            <AppenderRef ref="NEXOS-FILE" />
+        </Root>
+    </Loggers>
+</Configuration>

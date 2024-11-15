@@ -1,0 +1,70 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LVC02050Q0
+    프로그램명         : 재고위치파악
+    프로그램설명       : 재고위치파악 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${c} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LVC02050Q0.css" /> -->
+<script src="js/LVC02050Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblQItem_Cd" class="lblCondition">상품</div>
+                    <input id="edtQItem_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQItem_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQItem_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table id="ctrTitle_chtMaster" class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_CenterStock" class="lblTitle">센터별 재고현황</td>
+            </tr>
+        </table>
+        <div id="ctrAdditional_chtMaster" class="ctrAdditional bottom" style="border-bottom-width: 1px; text-align: right;">
+            <div id="lblTotal_Stock_Qty" class="lblNormal">보유재고</div>
+            <input id="edtTotal_Stock_Qty" class="edtNormal" type="text" readonly="readonly" style="width: 80px;" />
+        </div>
+        <div id="chtMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">로케이션별 재고현황</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

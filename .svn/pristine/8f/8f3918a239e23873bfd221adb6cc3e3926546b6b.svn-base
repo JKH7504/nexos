@@ -1,0 +1,331 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : EDR01011P0
+    프로그램명         : 인터페이스수신정의등록 팝업
+    프로그램설명       : 인터페이스수신정의등록 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<link rel="stylesheet" href="css/EDR01011P0.css" />
+<script src="js/EDR01011P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblPopup_Bu_Cd" class="lblKey">사업부</div>
+                    <input id="edtBu_Cd" class="edtDisplay" type="text" disabled="disabled" tabindex="1" style="width: 40px;" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" tabindex="2" style="width: 134px;" />
+                </td>
+                <td rowspan="13" style="vertical-align: top; max-width: 350px;">
+                    <div class="ctrGroupRow">
+                        <div id="lblLink_Db_Nm" class="lblNormal">[DBLINK]데이터베이스명</div>
+                        <input id="edtLink_Db_Nm" class="edtNormal" type="text" tabindex="7" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLink_Table_Nm" class="lblNormal">[DBLINK]테이블명</div>
+                        <input id="edtLink_Table_Nm" class="edtNormal" type="text" tabindex="8" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLink_Where_Text" class="lblNormal">[DBLINK]수신추가조건절</div>
+                        <textarea id="edtLink_Where_Text" class="edtNormal" tabindex="9" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblXls_First_Row" class="lblNormal">데이터첫행</div>
+                        <input id="edtXls_First_Row" class="edtNormal" type="text" tabindex="10" style="width: 50px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblDsp_Txt_Delimeter_Yn" class="lblNormal">[TEXT]구분자사용여부</div>
+                        <input id="chkTxt_Delimeter_Yn" name="chkTxt_Delimeter_Yn" class="chkNormal" type="checkbox" value="Y" tabindex="11" />
+                        사용
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblTxt_Col_Delimeter" class="lblNormal">[TEXT]구분자</div>
+                        <input id="edtTxt_Col_Delimeter" class="edtNormal" type="text" tabindex="12" style="width: 50px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblXml_Tag_Root" class="lblNormal">[XML]루트태그</div>
+                        <input id="edtXml_Tag_Root" class="edtNormal" type="text" tabindex="13" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblXml_Tag_Bunch" class="lblNormal">[XML]단위태그</div>
+                        <input id="edtXml_Tag_Bunch" class="edtNormal" type="text" tabindex="14" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblXml_Tag_Sub_Bunch" class="lblNormal">[XML]하위단위태그</div>
+                        <input id="edtXml_Tag_Sub_Bunch" class="edtNormal" type="text" tabindex="15" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblXml_Tag_Result" class="lblNormal">[XML]처리결과태그</div>
+                        <textarea id="edtXml_Tag_Result" class="edtNormal" tabindex="16" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblXml_Tag_Result_Map" class="lblNormal">[XML]처리결과매핑</div>
+                        <textarea id="edtXml_Tag_Result_Map" class="edtNormal" tabindex="17" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Root" class="lblNormal">[JSON]루트태그</div>
+                        <input id="edtJson_Tag_Root" class="edtNormal" type="text" tabindex="18" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Bunch" class="lblNormal">[JSON]단위태그</div>
+                        <input id="edtJson_Tag_Bunch" class="edtNormal" type="text" tabindex="19" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Sub_Bunch" class="lblNormal">[JSON]하위단위태그</div>
+                        <input id="edtJson_Tag_Sub_Bunch" class="edtNormal" type="text" tabindex="20" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Struct_Div" class="lblNormal">[JSON]태그구조구분</div>
+                        <select id="cboJson_Tag_Struct_Div" class="cboNormal" tabindex="21" style="width: 200px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Link_Map" class="lblNormal">[JSON]태그연결매핑</div>
+                        <textarea id="edtJson_Tag_Link_Map" class="edtNormal" tabindex="22" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Result" class="lblNormal">[JSON]처리결과태그</div>
+                        <textarea id="edtJson_Tag_Result" class="edtNormal" tabindex="23" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblJson_Tag_Result_Map" class="lblNormal">[JSON]처리결과매핑</div>
+                        <textarea id="edtJson_Tag_Result_Map" class="edtNormal" tabindex="24" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblSAP_Function_Nm" class="lblNormal">[SAP]펑션명</div>
+                        <input id="edtSAP_Function_Nm" class="edtNormal" type="text" tabindex="25" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblSAP_Table_Nm" class="lblNormal">[SAP]테이블명</div>
+                        <input id="edtSAP_Table_Nm" class="edtNormal" type="text" tabindex="26" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblSAP_Param_Map" class="lblNormal">[SAP]파라메터매핑</div>
+                        <textarea id="edtSAP_Param_Map" class="edtNormal" tabindex="27" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblSAP_Result_Map" class="lblNormal">[SAP]처리결과매핑</div>
+                        <textarea id="edtSAP_Result_Map" class="edtNormal" tabindex="28" style="resize: none; width: 200px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCustom_Method" class="lblNormal">수신처리메소드</div>
+                        <input id="edtCustom_Method" class="edtNormal" type="text" tabindex="29" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblEdi_Dir" class="lblNormal">서버파일경로</div>
+                        <input id="edtEdi_Dir" class="edtNormal" type="text" tabindex="30" style="width: 200px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemark1" class="lblNormal">비고</div>
+                        <input id="edtRemark1" class="edtNormal" type="text" tabindex="31" style="width: 200px;" />
+                    </div>
+                </td>
+                <td rowspan="13" style="vertical-align: top; min-width: 430px;">
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Div" class="lblNormal">원격수신구분</div>
+                        <select id="cboRemote_Div" class="cboNormal" tabindex="32" style="width: 295px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Div" class="lblNormal">웹서비스구분</div>
+                        <select id="cboWebService_Div" class="cboNormal" tabindex="33" style="width: 295px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Url" class="lblNormal">웹서비스URL</div>
+                        <input id="edtWebService_Url" class="edtNormal" type="text" tabindex="34" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Header_Val" class="lblNormal">웹서비스헤더값</div>
+                        <textarea id="edtWebService_Header_Val" class="edtNormal" tabindex="35" style="resize: none; width: 295px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_NS_Prefix" class="lblNormal">네임스페이스접두어</div>
+                        <input id="edtWebService_NS_Prefix" class="edtNormal" type="text" tabindex="36" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_NS_Uri" class="lblNormal">네임스페이스URI</div>
+                        <input id="edtWebService_NS_Uri" class="edtNormal" type="text" tabindex="37" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Method" class="lblNormal">웹서비스메소드</div>
+                        <input id="edtWebService_Method" class="edtNormal" type="text" tabindex="38" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Param_Nm" class="lblNormal">웹서비스파라메터명</div>
+                        <input id="edtWebService_Param_Nm" class="edtNormal" type="text" tabindex="39" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Param_Val" class="lblNormal">웹서비스파라메터값</div>
+                        <textarea id="edtWebService_Param_Val" class="edtNormal" tabindex="40" style="resize: none; width: 295px;"></textarea>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Tag_Result" class="lblNormal">웹서비스호출결과태그</div>
+                        <input id="edtWebService_Tag_Result" class="edtNormal" type="text" tabindex="41" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Auth_Div" class="lblNormal">웹서비스인증구분</div>
+                        <select id="cboWebService_Auth_Div" class="cboNormal" tabindex="42" style="width: 295px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Auth_Url" class="lblNormal">웹서비스인증URL</div>
+                        <input id="edtWebService_Auth_Url" class="edtNormal" type="text" tabindex="43" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Auth_Type" class="lblNormal">웹서비스인증타입</div>
+                        <input id="edtWebService_Auth_Type" class="edtNormal" type="text" tabindex="44" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Auth_CId" class="lblNormal">클라이언트ID</div>
+                        <input id="edtWebService_Auth_CId" class="edtNormal" type="text" tabindex="45" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWebService_Auth_CSecret" class="lblNormal">클라이언트비밀번호</div>
+                        <input id="edtWebService_Auth_CSecret" class="edtNormal" type="password" tabindex="46" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Ip" class="lblNormal">원격서버IP</div>
+                        <input id="edtRemote_Ip" class="edtNormal" type="text" tabindex="47" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Port" class="lblNormal">원격포트번호</div>
+                        <input id="edtRemote_Port" class="edtNormal" type="text" tabindex="48" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_User_Id" class="lblNormal">원격사용자ID</div>
+                        <input id="edtRemote_User_Id" class="edtNormal" type="text" tabindex="49" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_User_Pwd" class="lblNormal">원격비밀번호</div>
+                        <input id="edtRemote_User_Pwd" class="edtNormal" type="password" tabindex="50" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Passive_Yn" class="lblNormal">패시브모드</div>
+                        <input id="chkRemote_Passive_Yn" name="chkRemote_Passive_Yn" class="chkNormal" type="checkbox" value="Y" tabindex="51" />
+                        패시브모드
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Charset" class="lblNormal">원격캐릭터셋</div>
+                        <input id="edtRemote_Charset" class="edtNormal" type="text" tabindex="52" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Dir" class="lblNormal">원격파일경로</div>
+                        <input id="edtRemote_Dir" class="edtNormal" type="text" tabindex="53" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblPrefix_File_Nm" class="lblNormal">파일명접두사</div>
+                        <input id="edtPrefix_File_Nm" class="edtNormal" type="text" tabindex="54" style="width: 295px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Action_Type" class="lblNormal">원격액션타입</div>
+                        <select id="cboRemote_Action_Type" class="cboNormal" tabindex="55" style="width: 295px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemote_Param_Map" class="lblNormal">원격파라메터매핑</div>
+                        <textarea id="edtRemote_Param_Map" class="edtNormal" tabindex="56" style="resize: none; width: 295px;"></textarea>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblEdi_Div" class="lblKey">수신구분</div>
+                    <select id="cboEdi_Div" class="cboKey" tabindex="3" style="width: 180px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblDefine_No" class="lblKey">정의번호</div>
+                    <input id="edtDefine_No" class="edtKey" type="text" tabindex="4" style="width: 180px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblDefine_Nm" class="lblKey">정의명칭</div>
+                    <input id="edtDefine_Nm" class="edtKey" type="text" tabindex="5" style="width: 180px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblData_Div" class="lblKey">수신처리구분</div>
+                    <select id="cboData_Div" class="cboKey" tabindex="6" style="width: 180px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                        <div id="lblAuto_Exec_Yn" class="lblKey">자동실행여부</div>
+                        <input id="chkAuto_Exec_Yn" name="chkAuto_Exec_Yn" class="chkNormal" type="checkbox" value="Y" tabindex="57" />
+                        자동실행
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="7" style="vertical-align: top; height: 170px;">
+                    <div class="ctrGroupRow">
+                        <div id="lblData_Cycle_Div" class="lblNormal">수신주기구분</div>
+                        <select id="cboData_Cycle_Div" class="cboNormal" tabindex="58" style="width: 180px;"></select>
+                    </div>
+                    <div class="ctrGroupRow" style="height: 115px;">
+                        <div id="divDataCycleView1" style="border-width: 1px; margin-left: 115px;">
+                            <table class="ctrTitleBar">
+                                <tr>
+                                    <td id="ctrTitle_grdSub" class="lblTitle">수행주기</td>
+                                    <td style="padding-right: 10px;">
+                                        <input id="btnCycleNew" class="btnIcoNew" type="button" />
+                                        <input id="btnCycleDelete" class="btnIcoDelete" type="button" />
+                                    </td>
+                                    <td id="ctrRows_grdSub" class="lblRows" style="display: none;">0/0 Rows</td>
+                                </tr>
+                            </table>
+                            <div id="grdSub"></div>
+                        </div>
+                        <div id="divDataCycleView2">
+                            <div class="ctrGroupRow">
+                                <div id="lblStart_Time" class="lblNormal">시작시각</div>
+                                <input id="edtStart_Time" class="edtNormal" type="text" tabindex="59" style="width: 180px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblEnd_Time" class="lblNormal">종료시각</div>
+                                <input id="edtEnd_Time" class="edtNormal" type="text" tabindex="60" style="width: 180px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblRepeat_Time" class="lblNormal">수행주기(초)</div>
+                                <input id="edtRepeat_Time" class="edtNormal formatterInteger" type="text" tabindex="61" style="width: 180px;" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 수신정의 상세내역 -->
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">수신정의 상세내역</td>
+                <td>
+                    <input id="btnAddAllColumns" class="btnImgNormal" type="button" value="수신항목 전체추가" />
+                    <input id="btnEntrySave" class="btnIcoSave" type="button" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

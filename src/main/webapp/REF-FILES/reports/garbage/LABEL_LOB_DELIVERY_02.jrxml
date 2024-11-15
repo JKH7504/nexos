@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LO_DELIVERY" pageWidth="283" pageHeight="283" orientation="Landscape" columnWidth="253" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" uuid="da653a23-3e4e-40db-96d3-c459e3f38269">
+	<property name="ireport.zoom" value="2.415765000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="ITEM_NM_STYLE" fontSize="150">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() < 32]]></conditionExpression>
+			<style hAlign="Left" vAlign="Middle" fontName="D2Coding" fontSize="12" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() >=32 && $F{ITEM_NM_LEN}.intValue() <38]]></conditionExpression>
+			<style hAlign="Left" vAlign="Middle" fontName="D2Coding" fontSize="10" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() >=38 && $F{ITEM_NM_LEN}.intValue()<47]]></conditionExpression>
+			<style hAlign="Left" vAlign="Middle" fontName="D2Coding" fontSize="8" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ITEM_NM_LEN}.intValue() >= 47]]></conditionExpression>
+			<style hAlign="Left" vAlign="Middle" fontName="D2Coding" fontSize="7" isBold="true"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String"/>
+	<parameter name="P_BU_CD" class="java.lang.String"/>
+	<parameter name="P_OUTBOUND_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT C1.CENTER_NM
+      ,B1.BU_NM
+      ,L1.OUTBOUND_NO
+      ,L1.CENTER_CD
+      ,L1.BU_CD
+      ,L1.DELIVERY_CD
+      ,L1.CUST_CD
+      ,L1.OUTBOUND_DATE
+      ,L1.OUTBOUND_BATCH
+      ,L1.OUTBOUND_BATCH_NM
+      ,L1.LINE_NO
+      ,L1.ITEM_CD
+      ,L1.ITEM_NM
+      ,WF.DSP_ADDRESS(D1.ADDR_BASIC ,D1.ADDR_DETAIL) AS ADDR_FULL_NM
+      ,D1.TEL_NO
+      ,D1.DELIVERY_NM
+      ,D1.ADDR_BASIC
+      ,D1.ADDR_DETAIL
+      ,L1.CONFIRM_BOX
+      ,L1.CONFIRM_BOX || '-' || C2.NO AS DEL_LABEL
+      ,L1.SUM_CONFIRM_BOX
+        ,'(주)디피엘'                                  AS COMPANY_NM                                  -- 회사이름(임시)
+      ,LENGTHB(L1.ITEM_NM)                             AS ITEM_NM_LEN
+  FROM (
+        SELECT M1.OUTBOUND_NO       ,M1.CENTER_CD         ,M1.BU_CD
+              ,M1.DELIVERY_CD       ,M1.OUTBOUND_DATE     ,M1.CUST_CD
+              ,M1.OUTBOUND_BATCH    ,M1.OUTBOUND_BATCH_NM
+              ,M2.LINE_NO           ,T1.ITEM_CD           ,T1.ITEM_NM
+              ,WF.GET_B_BOX (M2.CONFIRM_QTY ,T1.QTY_IN_BOX)      AS CONFIRM_BOX
+              ,(
+                SELECT SUM(WF.GET_B_BOX (M3.CONFIRM_QTY ,T1.QTY_IN_BOX))
+                  FROM LO020ND M3
+                       JOIN CMITEM T1 ON T1.ITEM_CD       = M3.ITEM_CD
+                                     AND T1.BRAND_CD      = M3.BRAND_CD
+                 WHERE M3.CENTER_CD     = M1.CENTER_CD
+                   AND M3.OUTBOUND_NO   = M1.OUTBOUND_NO
+                   AND M3.BU_CD         = M1.BU_CD
+                   AND M3.OUTBOUND_DATE = M1.OUTBOUND_DATE
+               )                                                 AS SUM_CONFIRM_BOX
+          FROM LO020NM M1
+               JOIN LO020ND    M2 ON M2.CENTER_CD     = M1.CENTER_CD
+                                 AND M2.BU_CD         = M1.BU_CD
+                                 AND M2.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                                 AND M2.OUTBOUND_NO   = M1.OUTBOUND_NO
+               JOIN CMITEM     T1 ON T1.ITEM_CD       = M2.ITEM_CD
+                                 AND T1.BRAND_CD      = M2.BRAND_CD
+         WHERE M1.CENTER_CD     =$P{P_CENTER_CD}
+           AND M1.BU_CD         =$P{P_BU_CD}
+           AND M1.OUTBOUND_DATE =$P{P_OUTBOUND_DATE}
+         GROUP BY M1.OUTBOUND_NO       ,M1.CENTER_CD         ,M1.BU_CD
+                 ,M1.DELIVERY_CD       ,M1.CUST_CD           ,M1.OUTBOUND_DATE
+                 ,M1.OUTBOUND_BATCH    ,M1.OUTBOUND_BATCH_NM
+                 ,M2.CONFIRM_QTY       ,M2.LINE_NO           ,T1.QTY_IN_BOX
+                 ,T1.ITEM_CD           ,T1.ITEM_NM
+       ) L1
+       JOIN CSNO C2       ON C2.NO <= L1.CONFIRM_BOX
+       JOIN CMDELIVERY D1 ON D1.DELIVERY_CD = L1.DELIVERY_CD
+                         AND D1.CUST_CD     = L1.CUST_CD
+       JOIN CMCENTER   C1 ON C1.CENTER_CD   = L1.CENTER_CD
+       JOIN CMBU       B1 ON B1.BU_CD       = L1.BU_CD
+ ORDER BY OUTBOUND_NO
+         ,LINE_NO]]>
+	</queryString>
+	<field name="CENTER_NM" class="java.lang.String"/>
+	<field name="BU_NM" class="java.lang.String"/>
+	<field name="OUTBOUND_NO" class="java.lang.String"/>
+	<field name="CENTER_CD" class="java.lang.String"/>
+	<field name="BU_CD" class="java.lang.String"/>
+	<field name="DELIVERY_CD" class="java.lang.String"/>
+	<field name="CUST_CD" class="java.lang.String"/>
+	<field name="OUTBOUND_DATE" class="java.lang.String"/>
+	<field name="OUTBOUND_BATCH" class="java.lang.String"/>
+	<field name="OUTBOUND_BATCH_NM" class="java.lang.String"/>
+	<field name="LINE_NO" class="java.math.BigDecimal"/>
+	<field name="ITEM_CD" class="java.lang.String"/>
+	<field name="ITEM_NM" class="java.lang.String"/>
+	<field name="ADDR_FULL_NM" class="java.lang.String"/>
+	<field name="TEL_NO" class="java.lang.String"/>
+	<field name="DELIVERY_NM" class="java.lang.String"/>
+	<field name="ADDR_BASIC" class="java.lang.String"/>
+	<field name="ADDR_DETAIL" class="java.lang.String"/>
+	<field name="CONFIRM_BOX" class="java.math.BigDecimal"/>
+	<field name="DEL_LABEL" class="java.lang.String"/>
+	<field name="SUM_CONFIRM_BOX" class="java.math.BigDecimal"/>
+	<field name="COMPANY_NM" class="java.lang.String"/>
+	<field name="ITEM_NM_LEN" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="253" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="253" height="253" uuid="f77de227-99d6-4a40-8867-743a2cbc0d6b"/>
+			</rectangle>
+			<staticText>
+				<reportElement key="staticText-4" x="77" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="597af43d-733b-45ae-9dba-b898b316cb52">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]택배라벨(맨담코리아)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-12" x="0" y="105" width="54" height="17" uuid="4625389a-2930-4b7b-898e-32d887c8f49a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[전화번호]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="69" width="54" height="36" uuid="27b93f15-3487-4bd1-b2e9-56e995d77732"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[주소]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-16" x="54" y="105" width="199" height="17" uuid="69ffb1c7-6bb6-4cd9-a024-c6c9335be41a"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="253" height="69" uuid="7926a08b-2553-4019-9c41-8bba165ad613"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="D2Coding" size="26" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="54" y="69" width="199" height="36" uuid="4366c776-8c75-4071-82b7-c3b52e5e9991"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADDR_FULL_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-12" x="0" y="122" width="54" height="17" uuid="7156d291-6b59-43ae-b052-21752efc9a2f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고일자]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-12" x="135" y="122" width="54" height="17" uuid="bd818917-e90c-40b8-ad38-b9103478b4cb"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고번호]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="54" y="122" width="81" height="17" uuid="492a2b79-3bf6-4a5f-ad17-9e09438ffc04"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="189" y="122" width="64" height="17" uuid="73b62e10-9fdd-4302-9903-e2a95125324b"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OUTBOUND_NO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="173" width="85" height="22" uuid="83df6ad7-fdba-4372-b148-f33469d62813"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BU_NM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="195" width="85" height="35" uuid="e460c76f-55f0-4fb0-9112-7f154fea8d37"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CENTER_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="230" width="85" height="23" uuid="f3f1b6a5-69ec-4580-9bf2-94eb32a6f26d"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPANY_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-12" x="158" y="173" width="94" height="22" uuid="2bb804c4-2117-454a-a404-28c561436bde"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[아이템박스]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="158" y="195" width="95" height="58" uuid="cc777297-b6b2-4635-9cd1-9b2efd50f621"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="27" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEL_LABEL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="85" y="195" width="73" height="58" uuid="1571980e-6b67-4024-8af8-b99ed1e0a5b7"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUM_CONFIRM_BOX}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-12" x="85" y="173" width="73" height="22" uuid="10f17d3f-721c-4ff4-afc4-391d14510a29"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고총박스]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-16" x="54" y="139" width="199" height="17" uuid="70db85d7-8dd6-4be8-bb63-62c83150e20a"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_CD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-12" x="0" y="139" width="54" height="17" uuid="9b585c74-4061-4a3f-b1ff-f297fc7ab0f0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품코드]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-12" x="0" y="156" width="54" height="17" uuid="94caf7d5-163d-4903-bd43-3c1b6c6a1507"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[상품명]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="ITEM_NM_STYLE" x="54" y="156" width="199" height="17" uuid="2c011071-bdba-40c2-a672-bd801e5f3e38"/>
+				<box leftPadding="3">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ITEM_NM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

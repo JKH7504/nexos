@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<title>neXos WMS</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="noindex">
+<link rel="shortcut icon" href="./nexos/desktop/wms/main/css/image/favicon.ico" type="image/x-icon">
+<!-- JQuery JS -->
+<script src="./nexos/framework/js/jquery/jquery.js"></script>
+<script src="./nexos/framework/js/jquery/jquery.extend.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        // 브라우저 버전 체크
+        if ($.browser.msie && $.browser.versionNumber < 9) {
+            $("#ctrUnspported").show();
+            $("#lblBrowserVersion").text("Browser Version : " + navigator.userAgent);
+        } else {
+            window.location.replace("./nexos/desktop/wms/main/");
+        }
+    });
+</script>
+</head>
+<body style="padding: 0; margin: 0;">
+    <div id="ctrUnspported" style="position: absolute; padding: 30px; display: none;">
+        <img src="./nexos/desktop/wms/main/css/image/imgUnsupported.png" style="width: 16px; vertical-align: middle;"> <span style="font-size: 12px; font-weight: bold; color: red;">지원하지 않는 인터넷 브라우저입니다. 인터넷 브라우저를 업그레이드 하십시오.</span>
+        <br>
+        <span id="lblBrowserVersion" style="font-size: 12px; font-weight: bold; color: black;"></span>
+    </div>
+</body>
+</html>

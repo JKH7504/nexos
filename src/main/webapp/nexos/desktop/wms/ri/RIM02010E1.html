@@ -1,0 +1,319 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : RIM02010E1
+    프로그램명         : 반입작업 (의류)
+    프로그램설명       : 반입작업 (의류) 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-06-16
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-06-16    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/RIM02010E0.css" /> -->
+<script src="js/RIM02010E1_B.js"></script>
+<script src="js/RIM02010E1_C.js"></script>
+<script src="js/RIM02010E1_D.js"></script>
+<script src="js/RIM02010E1_E.js"></script>
+<script src="js/RIM02010E1.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <!-- 조회 조건 -->
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblQInbound_Date" class="lblCondition">반입일자</div>
+                    <input id="dtpQInbound_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td id="tdQOrder_Date">
+                    <div id="lblQOrder_Date" class="lblCondition">반입예정일자</div>
+                    <input id="dtpQOrder_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQOrder_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQInout_Cd" class="lblCondition">반입구분</div>
+                    <select id="cboQInout_Cd" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQOrderer_Nm" class="lblCondition">주문자명</div>
+                    <input id="edtQOrderer_Nm" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+        </table>
+        <!-- 추가 조건 -->
+        <table id="ctrAdditionalConditionView" class="ctrAdditionalCondition">
+            <tr>
+                <td>
+                    <div id="lblQBu_No" class="lblCondition">전표번호</div>
+                    <input id="edtQBu_No" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQPopup_Delivery_Cd" class="lblCondition">온라인몰</div>
+                    <input id="edtQDelivery_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQDelivery_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQShipper_Nm" class="lblCondition">수령자명</div>
+                    <input id="edtQShipper_Nm" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td id="tdQDsp_Brand_Cd">
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_Cd" class="lblCondition">상품코드</div>
+                    <input id="edtQItem_Cd" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_Nm" class="lblCondition">상품명</div>
+                    <input id="edtQItem_Nm" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_State" class="lblCondition">상품상태</div>
+                    <select id="cboQItem_State" class="cboNormal" style="width: 210px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQYear_Div" class="lblCondition">연도구분</div>
+                    <select id="cboQYear_Div" class="cboNormal" style="width: 210px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQSeason_Div" class="lblCondition">시즌구분</div>
+                    <select id="cboQSeason_Div" class="cboNormal" style="width: 210px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_Div" class="lblCondition">상품구분</div>
+                    <select id="cboQItem_Div" class="cboNormal" style="width: 210px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQState_Yn" class="lblCondition">검색구분</div>
+                    <div class="ctrGroupBox" style="width: 210px;">
+                        <input id="chkQState_Pre_Yn" name="chkQState_Yn" class="chkNormal" type="checkbox" />
+                        처리대상
+                        <input id="chkQState_Cur_Yn" name="chkQState_Yn" class="chkNormal" type="checkbox" />
+                        취소대상
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterInfoView" class="ctrInner" style="border-width: 0 1px;">
+        <div id="lblProcess_Level" class="lblKey">반입단계</div>
+        <input id="btnProcessA" class="btnNormal" type="button" value="반입예정" style="width: 80px;" />
+        <div id="divProcessCntA" class="lblSummary">0 / 0</div>
+        <input id="btnProcessB" class="btnNormal" type="button" value="반입등록" style="width: 80px;" />
+        <div id="divProcessCntB" class="lblSummary">0 / 0</div>
+        <input id="btnProcessC" class="btnNormal" type="button" value="반입지시" style="width: 80px;" />
+        <div id="divProcessCntC" class="lblSummary">0 / 0</div>
+        <input id="btnProcessD" class="btnNormal" type="button" value="반입확정" style="width: 80px;" />
+        <div id="divProcessCntD" class="lblSummary">0 / 0</div>
+        <input id="btnProcessE" class="btnNormal" type="button" value="반입적치" style="width: 80px;" />
+        <div id="divProcessCntE" class="lblSummary">0 / 0</div>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <!-- 반입등록 -->
+        <div id="divSubViewB" style="border: none; display: none;">
+            <div>
+                <div id="ctrAdditional_grdMasterB" class="ctrAdditional top">
+                    <div id="lblInbound_DateB" class="lblNormal">입고일자</div>
+                    <input id="dtpInbound_DateB" class="dtpKey" type="text" style="width: 100px;" />
+                </div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdMasterB" class="lblTitle">반입 정보</td>
+                        <td>
+                            <input id="btnProcessPreB" class="btnIcoPrior" type="button" />
+                            <input id="btnProcessNxtB" class="btnIcoNext" type="button" />
+                        </td>
+                        <td id="ctrRows_grdMasterB" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdMasterB"></div>
+            </div>
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdDetailB" class="lblTitle">반입 상세정보</td>
+                        <td id="ctrRows_grdDetailB" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdDetailB"></div>
+            </div>
+        </div>
+        <!-- 반입지시 -->
+        <div id="divSubViewC" style="border: none; display: none">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdMasterC" class="lblTitle">반입 정보</td>
+                        <td>
+                            <input id="btnProcessPreC" class="btnIcoPrior" type="button" />
+                            <input id="btnProcessNxtC" class="btnIcoNext" type="button" />
+                        </td>
+                        <td id="ctrRows_grdMasterC" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdMasterC"></div>
+            </div>
+            <div id="divSubViewCDetail" style="border: none;">
+                <div>
+                    <div id="divGrdPalletIdCView" class="ctrLeft" style="border-width: 0 1px 0 0;">
+                        <table class="ctrTitleBar">
+                            <tr>
+                                <td id="ctrTitle_grdPalletIdC" class="lblTitle">파렛트ID 정보</td>
+                                <td>
+                                    <input id="btnNewPalletIdC" class="btnIcoNew" type="button" />
+                                </td>
+                                <td id="ctrRows_grdPalletIdC" class="lblRows">0/0 Rows</td>
+                            </tr>
+                        </table>
+                        <div id="grdPalletIdC"></div>
+                    </div>
+                    <div id="divGrdDetailCView" class="ctrRight" style="border-width: 0 0 0 1px;">
+                        <table class="ctrTitleBar">
+                            <tr>
+                                <td id="ctrTitle_grdDetailC" class="lblTitle">반입 상세정보</td>
+                                <td id="ctrRows_grdDetailC" class="lblRows">0/0 Rows</td>
+                            </tr>
+                        </table>
+                        <div id="grdDetailC"></div>
+                    </div>
+                </div>
+                <div id="divGrdSubCView">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdSubC" class="lblTitle">반입지시 정보</td>
+                            <td>
+                                <input id="btnNewDirectionsC" class="btnIcoNew" type="button" />
+                                <input id="btnDeleteDirectionsC" class="btnIcoDelete" type="button" />
+                            </td>
+                            <td id="ctrRows_grdSubC" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdSubC"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 반입확정 -->
+        <div id="divSubViewD" style="border: none; display: none">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdMasterD" class="lblTitle">반입 정보</td>
+                        <td>
+                            <input id="btnProcessPreD" class="btnIcoPrior" type="button" />
+                            <input id="btnProcessNxtD" class="btnIcoNext" type="button" />
+                        </td>
+                        <td id="ctrRows_grdMasterD" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdMasterD"></div>
+            </div>
+            <div id="divSubViewDDetail" style="border: none;">
+                <div>
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetailD" class="lblTitle">반입 상세정보</td>
+                            <td id="ctrRows_grdDetailD" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetailD"></div>
+                </div>
+                <div>
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdSubD" class="lblTitle">반입 지시정보</td>
+                            <td id="ctrRows_grdSubD" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdSubD"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 반입적치 -->
+        <div id="divSubViewE" style="border: none; display: none">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdMasterE" class="lblTitle">반입 정보</td>
+                        <td>
+                            <input id="btnProcessPreE" class="btnIcoPrior" type="button" />
+                            <input id="btnProcessNxtE" class="btnIcoNext" type="button" />
+                        </td>
+                        <td id="ctrRows_grdMasterE" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdMasterE"></div>
+            </div>
+            <div id="divSubViewEDetail" style="border: none;">
+                <div>
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetailE" class="lblTitle">반입 상세정보</td>
+                            <td id="ctrRows_grdDetailE" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetailE"></div>
+                </div>
+                <div>
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdSubE" class="lblTitle">반입 지시정보</td>
+                            <td id="ctrRows_grdSubE" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdSubE"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

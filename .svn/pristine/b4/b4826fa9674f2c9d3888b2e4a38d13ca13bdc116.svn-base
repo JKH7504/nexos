@@ -1,0 +1,1863 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // WMS Function 관련 Package
+  // Author : ASETEC
+  // Date : 2023-05-02
+  // Description
+  // WMS Function 관련 Package Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_package_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PACKAGE_MAPPER('WF' ,NULL ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  //====================================================================================================================
+  // ※ Package 호출 관련 Mapper의 Namespace는 "Package명" 으로 처리
+  //====================================================================================================================
+  -->
+<mapper namespace="WF">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="WF_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!--
+  //====================================================================================================================
+  // PROCEDURE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - WF.CHK_LC_PROCESS_STATE -->
+  <select id="CHK_LC_PROCESS_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LC_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ETC_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ETC_NO                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_STATE           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LC_PROCESS_STATE -->
+
+
+  <!-- [S] - WF.CHK_LC_PROCESS_YN -->
+  <select id="CHK_LC_PROCESS_YN" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LC_PROCESS_YN
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ETC_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ETC_NO                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_YN              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_DIV             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LC_PROCESS_YN -->
+
+
+  <!-- [S] - WF.CHK_LI_PROCESS_STATE -->
+  <select id="CHK_LI_PROCESS_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LI_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_STATE           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LI_PROCESS_STATE -->
+
+
+  <!-- [S] - WF.CHK_LOCATION_01 -->
+  <select id="CHK_LOCATION_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LOCATION
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LOCATION_01 -->
+
+
+  <!-- [S] - WF.CHK_LOCATION_02 -->
+  <select id="CHK_LOCATION_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LOCATION
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LOCATION_02 -->
+
+
+  <!-- [S] - WF.CHK_LOORDER_DEADLINE -->
+  <select id="CHK_LOORDER_DEADLINE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LOORDER_DEADLINE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDER_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_GRP               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ORDER_YN                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_DEADLINE_TIME           ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LOORDER_DEADLINE -->
+
+
+  <!-- [S] - WF.CHK_LO_PROCESS_STATE -->
+  <select id="CHK_LO_PROCESS_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_LO_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_STATE           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_LO_PROCESS_STATE -->
+
+
+  <!-- [S] - WF.CHK_RI_PROCESS_STATE -->
+  <select id="CHK_RI_PROCESS_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_RI_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_STATE           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_RI_PROCESS_STATE -->
+
+
+  <!-- [S] - WF.CHK_RO_PROCESS_STATE -->
+  <select id="CHK_RO_PROCESS_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.CHK_RO_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_STATE           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.CHK_RO_PROCESS_STATE -->
+
+
+  <!-- [S] - WF.C_TO_DATE -->
+  <select id="C_TO_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.C_TO_DATE
+      (#{P_DATE                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATE_FORMAT             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.C_TO_DATE -->
+
+
+  <!-- [S] - WF.C_TO_DATETIME -->
+  <select id="C_TO_DATETIME" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.C_TO_DATETIME
+      (#{P_DATE                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DATETIME_FORMAT         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.C_TO_DATETIME -->
+
+
+  <!-- [S] - WF.C_TO_NUMBER -->
+  <select id="C_TO_NUMBER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.C_TO_NUMBER
+      (#{P_NUMBER                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEFAULT                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.C_TO_NUMBER -->
+
+
+  <!-- [S] - WF.DSP_ADDRESS -->
+  <select id="DSP_ADDRESS" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_ADDRESS
+      (#{P_ADDR_BASIC              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ADDR_DETAIL             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_ADDRESS -->
+
+
+  <!-- [S] - WF.DSP_BUSINESS_NO -->
+  <select id="DSP_BUSINESS_NO" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_BUSINESS_NO
+      (#{P_BUSINESS_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_BUSINESS_NO -->
+
+
+  <!-- [S] - WF.DSP_COMBO -->
+  <select id="DSP_COMBO" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_COMBO
+      (#{P_COMMON_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_COMMON_NM               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_COMBO -->
+
+
+  <!-- [S] - WF.DSP_ITEM_NM -->
+  <select id="DSP_ITEM_NM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_ITEM_NM
+      (#{P_ITEM_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_SPEC               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_ITEM_NM -->
+
+
+  <!-- [S] - WF.DSP_LOCATION_01 -->
+  <select id="DSP_LOCATION_01" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_LOCATION
+      (#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIRTUAL_YN              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_IN_GRP                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_LOCATION_01 -->
+
+
+  <!-- [S] - WF.DSP_LOCATION_02 -->
+  <select id="DSP_LOCATION_02" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_LOCATION
+      (#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_CM120            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIRTUAL_YN              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_IN_GRP                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_LOCATION_02 -->
+
+
+  <!-- [S] - WF.DSP_NUMBER -->
+  <select id="DSP_NUMBER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_NUMBER
+      (#{P_NUM                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.DSP_NUMBER -->
+
+
+  <!-- [S] - WF.DSP_SHORT_BARCD -->
+  <select id="DSP_SHORT_BARCD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_SHORT_BARCD
+      (#{P_ITEM_BAR_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_DIV_ATTR02         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SIZE_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_SHORT_BARCD -->
+
+
+  <!-- [S] - WF.DSP_TI_HI -->
+  <select id="DSP_TI_HI" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_TI_HI
+      (#{P_PLT_PLACE               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PLT_STAIR               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.DSP_TI_HI -->
+
+
+  <!-- [S] - WF.DSP_ZIP_CD -->
+  <select id="DSP_ZIP_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DSP_ZIP_CD
+      (#{P_ZIP_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DSP_ZIP_CD -->
+
+
+  <!-- [S] - WF.DT_TO_CHAR -->
+  <select id="DT_TO_CHAR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.DT_TO_CHAR
+      (#{P_DATE                    ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DATETIME_FORMAT         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.DT_TO_CHAR -->
+
+
+  <!-- [S] - WF.D_TO_CHAR -->
+  <select id="D_TO_CHAR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.D_TO_CHAR
+      (#{P_DATE                    ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_DATE_FORMAT             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.D_TO_CHAR -->
+
+
+  <!-- [S] - WF.D_TO_TIMEMILLIS -->
+  <select id="D_TO_TIMEMILLIS" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.D_TO_TIMEMILLIS
+      (#{P_DATE                    ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WF.D_TO_TIMEMILLIS -->
+
+
+  <!-- [S] - WF.GET_ADJUST_TERM -->
+  <select id="GET_ADJUST_TERM" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_ADJUST_TERM
+      (#{P_CONTRACT_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLOSE_MONTH             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_CLOSE_SDATE             ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_CLOSE_EDATE             ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_ADJUST_TERM -->
+
+
+  <!-- [S] - WF.GET_AREA_CENTER_CD -->
+  <select id="GET_AREA_CENTER_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_AREA_CENTER_CD
+      (#{P_POLICY_CM510            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_AREA_CENTER_CD -->
+
+
+  <!-- [S] - WF.GET_ASSIGN_VAL_01 -->
+  <select id="GET_ASSIGN_VAL_01" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_ASSIGN_VAL
+      (#{P_ASSIGN_QTY              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TOT_AVAILABLE_QTY       ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PRE_ASSIGNED_QTY        ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_ASSIGN_VAL_01 -->
+
+
+  <!-- [S] - WF.GET_ASSIGN_VAL_02 -->
+  <select id="GET_ASSIGN_VAL_02" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_ASSIGN_VAL
+      (#{P_RANK                    ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ASSIGN_QTY              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TOT_AVAILABLE_QTY       ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ACC_AVAILABLE_QTY       ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_ASSIGN_VAL_02 -->
+
+
+  <!-- [S] - WF.GET_AVAILABLE_QTY_01 -->
+  <select id="GET_AVAILABLE_QTY_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_AVAILABLE_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_AVAILABLE_QTY           ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_AVAILABLE_QTY_01 -->
+
+
+  <!-- [S] - WF.GET_AVAILABLE_QTY_02 -->
+  <select id="GET_AVAILABLE_QTY_02" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_AVAILABLE_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WF.GET_AVAILABLE_QTY_02 -->
+
+
+  <!-- [S] - WF.GET_BASE_DATE -->
+  <select id="GET_BASE_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.GET_BASE_DATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WF.GET_BASE_DATE -->
+
+
+  <!-- [S] - WF.GET_BASE_DATE_QTY -->
+  <select id="GET_BASE_DATE_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_BASE_DATE_QTY
+      (#{P_BASE_DATE               ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_QTY               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_BASE_DATE_QTY -->
+
+
+  <!-- [S] - WF.GET_BASE_LOCATION_CD -->
+  <select id="GET_BASE_LOCATION_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_BASE_LOCATION_CD
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_POLICY_VAL              ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_BASE_LOCATION_CD -->
+
+
+  <!-- [S] - WF.GET_BILL_AMT -->
+  <select id="GET_BILL_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_BILL_AMT
+      (#{P_BILL_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_UNIT_PRICE              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CALC_AMT_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_BILL_AMT -->
+
+
+  <!-- [S] - WF.GET_BILL_FINAL_AMT -->
+  <select id="GET_BILL_FINAL_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_BILL_FINAL_AMT
+      (#{P_FINAL_AMT               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TAX_DIV_ATTR01          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_BILL_FINAL_AMT -->
+
+
+  <!-- [S] - WF.GET_BILL_QTY -->
+  <select id="GET_BILL_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_BILL_QTY
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_IN_PLT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_WEIGHT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_CBM                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_UNIT_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CALC_QTY_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_BILL_QTY -->
+
+
+  <!-- [S] - WF.GET_BILL_TOTAL_AMT -->
+  <select id="GET_BILL_TOTAL_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_BILL_TOTAL_AMT
+      (#{P_FINAL_AMT               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TAX_DIV_ATTR01          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_BILL_TOTAL_AMT -->
+
+
+  <!-- [S] - WF.GET_BILL_VAT_AMT -->
+  <select id="GET_BILL_VAT_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_BILL_VAT_AMT
+      (#{P_FINAL_AMT               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TAX_DIV_ATTR01          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_BILL_VAT_AMT -->
+
+
+  <!-- [S] - WF.GET_B_BOX -->
+  <select id="GET_B_BOX" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_B_BOX
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_B_BOX -->
+
+
+  <!-- [S] - WF.GET_B_EA -->
+  <select id="GET_B_EA" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_B_EA
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_B_EA -->
+
+
+  <!-- [S] - WF.GET_B_RBOX -->
+  <select id="GET_B_RBOX" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_B_RBOX
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_B_RBOX -->
+
+
+  <!-- [S] - WF.GET_CAR_INFO -->
+  <select id="GET_CAR_INFO" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_CAR_INFO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_AREA_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_GRP               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_CAR_INFO -->
+
+
+  <!-- [S] - WF.GET_CBM -->
+  <select id="GET_CBM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_CBM
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_CBM                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_CBM -->
+
+
+  <!-- [S] - WF.GET_CLOSE_TERM -->
+  <select id="GET_CLOSE_TERM" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_CLOSE_TERM
+      (#{P_CONTRACT_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLOSE_MONTH             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_CLOSE_SDATE             ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_CLOSE_EDATE             ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_CLOSE_TERM -->
+
+
+  <!-- [S] - WF.GET_COMMON_GRP -->
+  <select id="GET_COMMON_GRP" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_COMMON_GRP
+      (#{P_COLUMN_NAME             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_COMMON_GRP -->
+
+
+  <!-- [S] - WF.GET_DATA_DEFAULT -->
+  <select id="GET_DATA_DEFAULT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_DATA_DEFAULT
+      (#{P_TABLE_NAME              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_COLUMN_NAME             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_DATA_DEFAULT -->
+
+
+  <!-- [S] - WF.GET_DATA_EXIST_YN -->
+  <select id="GET_DATA_EXIST_YN" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_DATA_EXIST_YN
+      (#{P_TABLE_NM                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM_NAMES             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM_VALUES            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_EXIST_YN                ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_DATA_EXIST_YN -->
+
+
+  <!-- [S] - WF.GET_DECSTR -->
+  <select id="GET_DECSTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_DECSTR
+      (#{P_ENC_MSG                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_DECSTR -->
+
+
+  <!-- [S] - WF.GET_DISTRIBUTE_ORDER_CNT -->
+  <select id="GET_DISTRIBUTE_ORDER_CNT" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_DISTRIBUTE_ORDER_CNT
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_TOTAL_ORDER_CNT         ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_TOTAL_COMPLETE_CNT      ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_TOTAL_REMAIN_CNT        ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_DISTRIBUTE_ORDER_CNT -->
+
+
+  <!-- [S] - WF.GET_ENCSTR -->
+  <select id="GET_ENCSTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_ENCSTR
+      (#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_ENCSTR -->
+
+
+  <!-- [S] - WF.GET_ERRMSG -->
+  <select id="GET_ERRMSG" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_ERRMSG
+      (#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_ERRMSG -->
+
+
+  <!-- [S] - WF.GET_ERRSUBMSG -->
+  <select id="GET_ERRSUBMSG" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_ERRSUBMSG
+      (#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_ERRSUBMSG -->
+
+
+  <!-- [S] - WF.GET_FEE_PRIORITY -->
+  <select id="GET_FEE_PRIORITY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_FEE_PRIORITY
+      (#{P_KEEP_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_FEE_PRIORITY -->
+
+
+  <!-- [S] - WF.GET_FEE_PRIORITY_JOIN -->
+  <select id="GET_FEE_PRIORITY_JOIN" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_FEE_PRIORITY_JOIN
+      (#{P_PRIORITY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_KEEP_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CMITEM_KEEP_DIV         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CMITEM_DEPART_CD        ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CMITEM_LINE_CD          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CMITEM_CLASS_CD         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CMITEM_BRAND_CD         ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CMITEM_ITEM_CD          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_FEE_PRIORITY_JOIN -->
+
+
+  <!-- [S] - WF.GET_FORMAT_NO -->
+  <select id="GET_FORMAT_NO" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_FORMAT_NO
+      (#{P_NO                      ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_LEN_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_FORMAT_NO -->
+
+
+  <!-- [S] - WF.GET_GROUP_VAL -->
+  <select id="GET_GROUP_VAL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_GROUP_VAL
+      (#{P_LENGTH_VAL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL1              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL2              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL3              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL4              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL5              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL6              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL7              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL8              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GROUP_VAL9              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_GROUP_VAL -->
+
+
+  <!-- [S] - WF.GET_IF_CUST_CD -->
+  <select id="GET_IF_CUST_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_IF_CUST_CD
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_IF_CODE_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_IF_OWNER_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_IF_CUST_CD -->
+
+
+  <!-- [S] - WF.GET_IF_OWNER_CD -->
+  <select id="GET_IF_OWNER_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_IF_OWNER_CD
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_IF_CODE_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_IF_CUST_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_IF_OWNER_CD -->
+
+
+  <!-- [S] - WF.GET_IN_ORDER -->
+  <select id="GET_IN_ORDER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_IN_ORDER
+      (#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_IN_ORDER -->
+
+
+  <!-- [S] - WF.GET_ITEM_AMT -->
+  <select id="GET_ITEM_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_ITEM_AMT
+      (#{P_ITEM_PRICE              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_APPLY_PRICE             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_VAT_YN                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_AMT                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_POLICY_VAL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_ITEM_AMT -->
+
+
+  <!-- [S] - WF.GET_LC_CONFIRM_YN -->
+  <select id="GET_LC_CONFIRM_YN" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_LC_CONFIRM_YN
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ETC_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ETC_NO                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TABLE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_CONFIRM_YN              ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LC_CONFIRM_YN -->
+
+
+  <!-- [S] - WF.GET_LC_ETC_STATE -->
+  <select id="GET_LC_ETC_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_LC_ETC_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ETC_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_ETC_NO                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ETC_STATE               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LC_ETC_STATE -->
+
+
+  <!-- [S] - WF.GET_LIKE -->
+  <select id="GET_LIKE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_LIKE
+      (#{P_PARAM                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM_STRING            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LIKE -->
+
+
+  <!-- [S] - WF.GET_LINK_INOUT_CD -->
+  <select id="GET_LINK_INOUT_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_LINK_INOUT_CD
+      (#{P_INOUT_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LINK_INOUT_CD -->
+
+
+  <!-- [S] - WF.GET_LI_INBOUND_STATE -->
+  <select id="GET_LI_INBOUND_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_LI_INBOUND_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_INBOUND_STATE           ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LI_INBOUND_STATE -->
+
+
+  <!-- [S] - WF.GET_LOCATION -->
+  <select id="GET_LOCATION" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_LOCATION
+      (#{P_LOCATION                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_ZONE_CD                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_BANK_CD                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_BAY_CD                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LEV_CD                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LOCATION -->
+
+
+  <!-- [S] - WF.GET_LO_OUTBOUND_STATE -->
+  <select id="GET_LO_OUTBOUND_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_LO_OUTBOUND_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_OUTBOUND_STATE          ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LO_OUTBOUND_STATE -->
+
+
+  <!-- [S] - WF.GET_LO_PSTOCK_QTY -->
+  <select id="GET_LO_PSTOCK_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_LO_PSTOCK_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_STOCK_QTY               ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_OUT_WAIT_QTY            ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_VIRTUAL_QTY             ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_PSTOCK_QTY              ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LO_PSTOCK_QTY -->
+
+
+  <!-- [S] - WF.GET_LPAD -->
+  <select id="GET_LPAD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_LPAD
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEN                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CHAR                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_LPAD -->
+
+
+  <!-- [S] - WF.GET_LSTR -->
+  <select id="GET_LSTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_LSTR
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEN                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_LSTR -->
+
+
+  <!-- [S] - WF.GET_LSTRB -->
+  <select id="GET_LSTRB" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_LSTRB
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEN                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_LSTRB -->
+
+
+  <!-- [S] - WF.GET_MADE_DATE -->
+  <select id="GET_MADE_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.GET_MADE_DATE
+      (#{P_VALID_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_VALID_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_VAL                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_MADE_DATE -->
+
+
+  <!-- [S] - WF.GET_MASK_ADDRESS -->
+  <select id="GET_MASK_ADDRESS" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_ADDRESS
+      (#{P_ADDR_BASIC              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ADDR_DETAIL             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_ADDRESS -->
+
+
+  <!-- [S] - WF.GET_MASK_ALL -->
+  <select id="GET_MASK_ALL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_ALL
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEC_YN                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_ALL -->
+
+
+  <!-- [S] - WF.GET_MASK_EMAIL -->
+  <select id="GET_MASK_EMAIL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_EMAIL
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_EMAIL -->
+
+
+  <!-- [S] - WF.GET_MASK_ID -->
+  <select id="GET_MASK_ID" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_ID
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_ID -->
+
+
+  <!-- [S] - WF.GET_MASK_IP -->
+  <select id="GET_MASK_IP" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_IP
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_IP -->
+
+
+  <!-- [S] - WF.GET_MASK_NM -->
+  <select id="GET_MASK_NM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_NM
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_NM -->
+
+
+  <!-- [S] - WF.GET_MASK_OTHER -->
+  <select id="GET_MASK_OTHER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_OTHER
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEC_YN                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_OTHER -->
+
+
+  <!-- [S] - WF.GET_MASK_RRN -->
+  <select id="GET_MASK_RRN" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_RRN
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_RRN -->
+
+
+  <!-- [S] - WF.GET_MASK_TEL -->
+  <select id="GET_MASK_TEL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_MASK_TEL
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_MASK_TEL -->
+
+
+  <!-- [S] - WF.GET_MINUS_VAL -->
+  <select id="GET_MINUS_VAL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_MINUS_VAL
+      (#{P_BASE_VAL                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_MINUS_VAL               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_MINUS_VAL -->
+
+
+  <!-- [S] - WF.GET_MIN_VAL -->
+  <select id="GET_MIN_VAL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_MIN_VAL
+      (#{P_CHECK_VAL1              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CHECK_VAL2              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_MIN_VAL -->
+
+
+  <!-- [S] - WF.GET_PARAM -->
+  <select id="GET_PARAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PARAM
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POSITION                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SEPARATOR               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PARAM -->
+
+
+  <!-- [S] - WF.GET_PARAM_CNT -->
+  <select id="GET_PARAM_CNT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_PARAM_CNT
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SEPARATOR               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PARAM_CNT -->
+
+
+  <!-- [S] - WF.GET_PERIOD_DATE -->
+  <select id="GET_PERIOD_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.GET_PERIOD_DATE
+      (#{P_VALID_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_VALID_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_VAL                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_PERIOD_DATE -->
+
+
+  <!-- [S] - WF.GET_POLICY_VAL_01 -->
+  <select id="GET_POLICY_VAL_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_POLICY_VAL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_POLICY_VAL              ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_POLICY_VAL_01 -->
+
+
+  <!-- [S] - WF.GET_POLICY_VAL_02 -->
+  <select id="GET_POLICY_VAL_02" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_POLICY_VAL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_POLICY_VAL_02 -->
+
+
+  <!-- [S] - WF.GET_PROCESS_CD -->
+  <select id="GET_PROCESS_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PROCESS_CD
+      (#{P_PROCESS_STATE           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_CD -->
+
+
+  <!-- [S] - WF.GET_PROCESS_STATE_01 -->
+  <select id="GET_PROCESS_STATE_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_PRE_STATE               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_CUR_STATE               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_NXT_STATE               ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_STATE_01 -->
+
+
+  <!-- [S] - WF.GET_PROCESS_STATE_02 -->
+  <select id="GET_PROCESS_STATE_02" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PROCESS_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_STATE_02 -->
+
+
+  <!-- [S] - WF.GET_PROCESS_STATE_CUR -->
+  <select id="GET_PROCESS_STATE_CUR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PROCESS_STATE_CUR
+      (#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_STATE_CUR -->
+
+
+  <!-- [S] - WF.GET_PROCESS_STATE_FWBW -->
+  <select id="GET_PROCESS_STATE_FWBW" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_PROCESS_STATE_FWBW
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_STATE_CONFIRM           ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_STATE_CANCEL            ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_STATE_FWBW -->
+
+
+  <!-- [S] - WF.GET_PROCESS_STATE_NXT -->
+  <select id="GET_PROCESS_STATE_NXT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PROCESS_STATE_NXT
+      (#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_STATE_NXT -->
+
+
+  <!-- [S] - WF.GET_PROCESS_STATE_PRE -->
+  <select id="GET_PROCESS_STATE_PRE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PROCESS_STATE_PRE
+      (#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROCESS_STATE_PRE -->
+
+
+  <!-- [S] - WF.GET_PROTECT -->
+  <select id="GET_PROTECT" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_PROTECT
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROTECT_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PROTECT -->
+
+
+  <!-- [S] - WF.GET_PSTOCK_IN_WAIT_QTY -->
+  <select id="GET_PSTOCK_IN_WAIT_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_PSTOCK_IN_WAIT_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PSTOCK_IN_WAIT_QTY -->
+
+
+  <!-- [S] - WF.GET_PSTOCK_OUT_WAIT_QTY -->
+  <select id="GET_PSTOCK_OUT_WAIT_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_PSTOCK_OUT_WAIT_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WF.GET_PSTOCK_OUT_WAIT_QTY -->
+
+
+  <!-- [S] - WF.GET_PSTOCK_QTY -->
+  <select id="GET_PSTOCK_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_PSTOCK_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{O_STOCK_QTY               ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_OUT_WAIT_QTY            ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_VIRTUAL_QTY             ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_PSTOCK_QTY              ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PSTOCK_QTY -->
+
+
+  <!-- [S] - WF.GET_PSTOCK_STOCK_QTY -->
+  <select id="GET_PSTOCK_STOCK_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_PSTOCK_STOCK_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WF.GET_PSTOCK_STOCK_QTY -->
+
+
+  <!-- [S] - WF.GET_PSTOCK_VIRTUAL_QTY -->
+  <select id="GET_PSTOCK_VIRTUAL_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_PSTOCK_VIRTUAL_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_PSTOCK_VIRTUAL_QTY -->
+
+
+  <!-- [S] - WF.GET_PSTOCK_YN -->
+  <select id="GET_PSTOCK_YN" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_PSTOCK_YN
+      (#{P_VALID_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_VALID_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_VAL                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_RESTRICT_OUT_DAY        ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WF.GET_PSTOCK_YN -->
+
+
+  <!-- [S] - WF.GET_P_BOX -->
+  <select id="GET_P_BOX" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_P_BOX
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_IN_PLT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_P_BOX -->
+
+
+  <!-- [S] - WF.GET_P_EA -->
+  <select id="GET_P_EA" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_P_EA
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_IN_PLT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_P_EA -->
+
+
+  <!-- [S] - WF.GET_P_PLT -->
+  <select id="GET_P_PLT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_P_PLT
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_IN_PLT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_P_PLT -->
+
+
+  <!-- [S] - WF.GET_QUOTEDSTR -->
+  <select id="GET_QUOTEDSTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_QUOTEDSTR
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DIV                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_QUOTEDSTR -->
+
+
+  <!-- [S] - WF.GET_RECOMMEND_LOCATION_01 -->
+  <select id="GET_RECOMMEND_LOCATION_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_RECOMMEND_LOCATION
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_KEEP_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BASE_LOCATION_CD        ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LI310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LI311            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LI312            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LOCATION_CD             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RECOMMEND_LOCATION_01 -->
+
+
+  <!-- [S] - WF.GET_RECOMMEND_LOCATION_02 -->
+  <select id="GET_RECOMMEND_LOCATION_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_RECOMMEND_LOCATION
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE_GRP          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_KEEP_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VENDOR_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BASE_LOCATION_CD_LI     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BASE_LOCATION_CD_RI     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LI310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LI311            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LI312            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_RI310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_LOCATION_CD             ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RECOMMEND_LOCATION_02 -->
+
+
+  <!-- [S] - WF.GET_RESULT_MSG -->
+  <select id="GET_RESULT_MSG" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_RESULT_MSG
+      (#{P_MSG_ID                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEFAULT_MSG             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM_MSG               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RESULT_MSG -->
+
+
+  <!-- [S] - WF.GET_RESULT_PARAM -->
+  <select id="GET_RESULT_PARAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_RESULT_PARAM
+      (#{P_PARAM1                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM2                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM3                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM4                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM5                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM6                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM7                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM8                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PARAM9                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RESULT_PARAM -->
+
+
+  <!-- [S] - WF.GET_RI_INBOUND_STATE -->
+  <select id="GET_RI_INBOUND_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_RI_INBOUND_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_INBOUND_NO              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_INBOUND_STATE           ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RI_INBOUND_STATE -->
+
+
+  <!-- [S] - WF.GET_RO_OUTBOUND_STATE -->
+  <select id="GET_RO_OUTBOUND_STATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_RO_OUTBOUND_STATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_NO                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PROCESS_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STATE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_OUTBOUND_STATE          ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RO_OUTBOUND_STATE -->
+
+
+  <!-- [S] - WF.GET_RO_PSTOCK_QTY -->
+  <select id="GET_RO_PSTOCK_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_RO_PSTOCK_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO310            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LO320            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_STOCK_QTY               ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_OUT_WAIT_QTY            ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_VIRTUAL_QTY             ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_PSTOCK_QTY              ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RO_PSTOCK_QTY -->
+
+
+  <!-- [S] - WF.GET_RPAD -->
+  <select id="GET_RPAD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_RPAD
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEN                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CHAR                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_RPAD -->
+
+
+  <!-- [S] - WF.GET_RSTR -->
+  <select id="GET_RSTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_RSTR
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEN                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_RSTR -->
+
+
+  <!-- [S] - WF.GET_RSTRB -->
+  <select id="GET_RSTRB" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_RSTRB
+      (#{P_STR                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEN                     ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_RSTRB -->
+
+
+  <!-- [S] - WF.GET_R_BOX -->
+  <select id="GET_R_BOX" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_R_BOX
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_R_BOX -->
+
+
+  <!-- [S] - WF.GET_R_PLT -->
+  <select id="GET_R_PLT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_R_PLT
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_IN_PLT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_R_PLT -->
+
+
+  <!-- [S] - WF.GET_SPLITSTR -->
+  <select id="GET_SPLITSTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_SPLITSTR
+      (#{P_TEXT                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POSITION                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SEPARATOR               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_SPLITSTR -->
+
+
+  <!-- [S] - WF.GET_SQL_VAL -->
+  <select id="GET_SQL_VAL" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.GET_SQL_VAL
+      (#{P_SQL_TEXT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_APOSTROPHE_REPLACE_YN   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_SQL_VAL                 ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_SQL_VAL -->
+
+
+  <!-- [S] - WF.GET_STOCK_ID -->
+  <select id="GET_STOCK_ID" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_STOCK_ID
+      (#{P_POLICY_LS210            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_LS220            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VALID_DATE              ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_BATCH_NO                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PALLET_ID               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIRTUAL_SEQ             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_STOCK_ID -->
+
+
+  <!-- [S] - WF.GET_TEL_NO -->
+  <select id="GET_TEL_NO" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_TEL_NO
+      (#{P_TEL_NO                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TEL_NO_DIV              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_TEL_NO -->
+
+
+  <!-- [S] - WF.GET_TOTAL_AMT -->
+  <select id="GET_TOTAL_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_TOTAL_AMT
+      (#{P_ITEM_PRICE              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_APPLY_PRICE             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_AMT                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_VAT_YN                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VAT_AMT                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_DC_AMT                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_TOTAL_AMT               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_POLICY_VAL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_TOTAL_AMT -->
+
+
+  <!-- [S] - WF.GET_USE_DATE -->
+  <select id="GET_USE_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.GET_USE_DATE
+      (#{P_INBOUND_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_TERM_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TERM_VAL                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_USE_DATE -->
+
+
+  <!-- [S] - WF.GET_VAT_AMT -->
+  <select id="GET_VAT_AMT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_VAT_AMT
+      (#{P_ITEM_PRICE              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_APPLY_PRICE             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_ITEM_AMT                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_VAT_YN                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VAT_AMT                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_POLICY_VAL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_VAT_AMT -->
+
+
+  <!-- [S] - WF.GET_WEIGHT -->
+  <select id="GET_WEIGHT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=NUMERIC    ,javaType=BigDecimal} = call WF.GET_WEIGHT
+      (#{P_ITEM_QTY                ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_QTY_IN_BOX              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_BOX_WEIGHT              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.GET_WEIGHT -->
+
+
+  <!-- [S] - WF.GET_ZIP_CD -->
+  <select id="GET_ZIP_CD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.GET_ZIP_CD
+      (#{P_ZIP_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZIP_CD_DIV              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.GET_ZIP_CD -->
+
+
+  <!-- [S] - WF.IIF -->
+  <select id="IIF" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.IIF
+      (#{P_IF_TEXT                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TRUE_VALUE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_FALSE_VALUE             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.IIF -->
+
+
+  <!-- [S] - WF.IS_NUMBER -->
+  <select id="IS_NUMBER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.IS_NUMBER
+      (#{P_NUM_STR                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.IS_NUMBER -->
+
+
+  <!-- [S] - WF.N_TO_CHAR -->
+  <select id="N_TO_CHAR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    } = call WF.N_TO_CHAR
+      (#{P_NUMBER                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_NUMBER_FORMAT           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.N_TO_CHAR -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_01 -->
+  <select id="SET_ERRMSG_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_02 -->
+  <select id="SET_ERRMSG_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_02 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_C_01 -->
+  <select id="SET_ERRMSG_C_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_C
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_C_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_C_02 -->
+  <select id="SET_ERRMSG_C_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_C
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_C_02 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_CANCEL_01 -->
+  <select id="SET_ERRMSG_CANCEL_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_CANCEL
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_CANCEL_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_CANCEL_02 -->
+  <select id="SET_ERRMSG_CANCEL_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_CANCEL
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_CANCEL_02 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_COPY_01 -->
+  <select id="SET_ERRMSG_COPY_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_COPY
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_COPY_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_COPY_02 -->
+  <select id="SET_ERRMSG_COPY_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_COPY
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_COPY_02 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_D_01 -->
+  <select id="SET_ERRMSG_D_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_D
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_D_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_D_02 -->
+  <select id="SET_ERRMSG_D_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_D
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_D_02 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_PROCESSING_01 -->
+  <select id="SET_ERRMSG_PROCESSING_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_PROCESSING
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_PROCESSING_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_PROCESSING_02 -->
+  <select id="SET_ERRMSG_PROCESSING_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_PROCESSING
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_PROCESSING_02 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_U_01 -->
+  <select id="SET_ERRMSG_U_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_U
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_U_01 -->
+
+
+  <!-- [S] - WF.SET_ERRMSG_U_02 -->
+  <select id="SET_ERRMSG_U_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRMSG_U
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRMSG_U_02 -->
+
+
+  <!-- [S] - WF.SET_ERRSUBMSG_01 -->
+  <select id="SET_ERRSUBMSG_01" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRSUBMSG
+      (#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SQLCODE                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_SQLERRM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRSUBMSG_01 -->
+
+
+  <!-- [S] - WF.SET_ERRSUBMSG_02 -->
+  <select id="SET_ERRSUBMSG_02" statementType="CALLABLE" parameterType="hashmap">
+    {  call WF.SET_ERRSUBMSG
+      (#{O_MSG                     ,mode=INOUT ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MSG                     ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WF.SET_ERRSUBMSG_02 -->
+
+
+  <!-- [S] - WF.TM_TO_DATE -->
+  <select id="TM_TO_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT                  ,mode=OUT   ,jdbcType=TIMESTAMP  ,javaType=Date      } = call WF.TM_TO_DATE
+      (#{P_TIME_MILLIS             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - WF.TM_TO_DATE -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+
+
+</mapper>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_ITEM_BAR_CD" printOrder="Horizontal" pageWidth="153" pageHeight="124" orientation="Landscape" columnWidth="145" leftMargin="5" rightMargin="3" topMargin="5" bottomMargin="2" uuid="00fbc03d-c943-404a-9a41-703d901e2bfd">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="4.287177620000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="ALTERNATIVE_ROW">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{REPORT_COLOR_YN}.equals("Y")]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#000000">
+				<pen lineWidth="2.0"/>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="ALTERNATIVE_ROW_1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{POLLUTION_YN}.equals("Y")]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#000000">
+				<pen lineWidth="2.0"/>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT M1.*
+        ,T1.ITEM_DIV
+        ,C1.COMMON_NM   AS ITEM_DIV_NM
+        ,T1.ITEM_BAR_CD
+        ,T1.YEAR_DIV
+        ,C2.COMMON_NM   AS YEAR_DIV_NM
+        ,T1.SEASON_DIV
+        ,C3.COMMON_NM   AS SEASON_DIV_NM
+        ,T1.STYLE_CD
+        ,T1.COLOR_CD
+        ,T1.COLOR_NM
+        ,T1.SIZE_CD
+        ,T1.ITEM_NO
+        ,T1.ITEM_SEQ
+        ,T1.RETURN_BATCH_DIV
+        ,T1.RETURN_CELL_NO
+,WD.C_NO                     AS POLLUTION_YN
+        ,TO_CHAR(SYSDATE ,'HH24 MI') AS PRINT_TIME
+        ,'20210812'      AS PRINT_DATE
+        ,DECODE(T1.RETURN_BATCH_DIV ,'1' ,WD.C_YES ,WD.C_NO) AS REPORT_COLOR_YN
+    FROM SCANINVEST M1
+         JOIN CMITEM T1 ON T1.BRAND_CD   = M1.BRAND_CD
+                       AND T1.ITEM_CD    = M1.ITEM_CD
+    LEFT JOIN CMCODE C1 ON C1.COMMON_CD  = T1.ITEM_DIV
+                       AND C1.COMMON_GRP = WF.GET_COMMON_GRP('ITEM_DIV')
+    LEFT JOIN CMCODE C2 ON C2.COMMON_CD  = T1.YEAR_DIV
+                       AND C2.COMMON_GRP = WF.GET_COMMON_GRP('YEAR_DIV')
+    LEFT JOIN CMCODE C3 ON C3.COMMON_CD  = T1.SEASON_DIV
+                       AND C3.COMMON_GRP = WF.GET_COMMON_GRP('SEASON_DIV')
+ WHERE M1.CENTER_CD = 'A1'
+   AND M1.BU_CD     = '0000']]>
+	</queryString>
+	<field name="CENTER_CD" class="java.lang.String"/>
+	<field name="BU_CD" class="java.lang.String"/>
+	<field name="INVEST_DATE" class="java.sql.Timestamp"/>
+	<field name="BOX_NO" class="java.math.BigDecimal"/>
+	<field name="LINE_NO" class="java.math.BigDecimal"/>
+	<field name="DATA_DIV" class="java.lang.String"/>
+	<field name="REPORT_DIV" class="java.lang.String"/>
+	<field name="DELIVERY_CD" class="java.lang.String"/>
+	<field name="BRAND_CD" class="java.lang.String"/>
+	<field name="ITEM_CD" class="java.lang.String"/>
+	<field name="INVEST_QTY" class="java.math.BigDecimal"/>
+	<field name="REG_USER_ID" class="java.lang.String"/>
+	<field name="REG_DATETIME" class="java.sql.Timestamp"/>
+	<field name="LAST_USER_ID" class="java.lang.String"/>
+	<field name="LAST_DATETIME" class="java.sql.Timestamp"/>
+	<field name="ITEM_DIV" class="java.lang.String"/>
+	<field name="ITEM_DIV_NM" class="java.lang.String"/>
+	<field name="ITEM_BAR_CD" class="java.lang.String"/>
+	<field name="YEAR_DIV" class="java.lang.String"/>
+	<field name="YEAR_DIV_NM" class="java.lang.String"/>
+	<field name="SEASON_DIV" class="java.lang.String"/>
+	<field name="SEASON_DIV_NM" class="java.lang.String"/>
+	<field name="STYLE_CD" class="java.lang.String"/>
+	<field name="COLOR_CD" class="java.lang.String"/>
+	<field name="COLOR_NM" class="java.lang.String"/>
+	<field name="SIZE_CD" class="java.lang.String"/>
+	<field name="ITEM_NO" class="java.lang.String"/>
+	<field name="ITEM_SEQ" class="java.lang.String"/>
+	<field name="RETURN_BATCH_DIV" class="java.lang.String"/>
+	<field name="RETURN_CELL_NO" class="java.lang.String"/>
+	<field name="POLLUTION_YN" class="java.lang.String"/>
+	<field name="PRINT_TIME" class="java.lang.String"/>
+	<field name="PRINT_DATE" class="java.lang.String"/>
+	<field name="REPORT_COLOR_YN" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="117" splitType="Stretch">
+			<rectangle>
+				<reportElement style="ALTERNATIVE_ROW_1" x="5" y="0" width="140" height="27" uuid="612c289f-f416-4bf1-96fd-51951038cffb">
+					<printWhenExpression><![CDATA[$F{POLLUTION_YN}.equals("Y")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement style="ALTERNATIVE_ROW" x="20" y="65" width="21" height="21" uuid="f5382fad-59c4-44ee-aff8-c43a2530d124">
+					<printWhenExpression><![CDATA[$F{REPORT_COLOR_YN}.equals("Y")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="-12" width="176" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="aa9dae5f-a9d8-47c4-9b51-180b07246052">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[라벨]재고검수]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ALTERNATIVE_ROW_1" x="91" y="2" width="11" height="25" uuid="54553149-7e6d-405f-a0bf-70de3aaf03b6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="13"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="ALTERNATIVE_ROW_1" x="42" y="0" width="49" height="29" uuid="6c6bb0e9-b70e-49e4-8d20-ef2805cf1e3f"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="D2Coding" size="25" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_NO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="ALTERNATIVE_ROW_1" x="102" y="2" width="43" height="25" uuid="21d87ae1-74cd-42a9-8bbf-cea5b3882aa2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="19" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_SEQ}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="ALTERNATIVE_ROW" x="20" y="66" width="22" height="16" uuid="83b01ec3-8763-4ac7-9089-0b9347eec678">
+					<printWhenExpression><![CDATA[!$F{RETURN_BATCH_DIV}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RETURN_BATCH_DIV}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="10" y="89" width="135" height="28" uuid="26481c95-38e3-4187-bbdb-6f379d0049a4"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{ITEM_BAR_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="10" y="89" width="135" height="28" uuid="7c972b35-ff36-411a-a46b-6a82448bfdc8"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{ITEM_BAR_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement x="10" y="89" width="135" height="28" uuid="34668821-984d-425c-9c34-827083cf0a0d"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barWidth="0" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{ITEM_BAR_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="41" y="61" width="38" height="25" uuid="02170af8-8400-437d-a400-1949c9b01526"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="19" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_DIV_NM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="74" y="40" width="26" height="28" uuid="1646136f-dddd-4042-aebc-522c4d07c250"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{YEAR_DIV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="40" width="45" height="28" uuid="2ed35006-5fc0-4afa-8172-a660121e0200"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="D2Coding" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEASON_DIV_NM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="42" y="44" width="32" height="15" uuid="e4e1da89-a55c-4d93-959c-4b2e383228ba"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="D2Coding" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRINT_DATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="44" width="34" height="15" uuid="bce76042-0f61-4495-af65-c32d9b580ce0">
+					<printWhenExpression><![CDATA[!$F{DELIVERY_CD}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DELIVERY_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="10" y="52" width="35" height="15" uuid="7dea4d43-5a20-449a-bf8a-858da5d655db"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_USER_ID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="27" width="68" height="18" uuid="c8881652-d78d-4700-8ec4-1232cf651e19"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{STYLE_CD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="73" y="27" width="38" height="18" uuid="2e257e1b-4401-4db2-aab8-702b46854f4c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COLOR_CD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="111" y="27" width="34" height="18" uuid="40cf9e08-1c9d-40b5-9d1a-a749b18d6618"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SIZE_CD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="79" y="62" width="66" height="27" uuid="42d923e9-b2d5-4a0e-9097-e10c5dff1c7c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="23" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RETURN_CELL_NO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="42" y="52" width="31" height="10" uuid="f1fcf43b-ae40-4e98-aa04-be3b7a284791"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="D2Coding" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRINT_TIME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="ALTERNATIVE_ROW_1" x="5" y="0" width="37" height="27" uuid="56832eab-af29-4fbd-b79c-6d55f32b326d">
+					<printWhenExpression><![CDATA[$F{POLLUTION_YN}.equals("Y")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="D2Coding" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[오염]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,917 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_LOM_POST_WAYBILL_03" pageWidth="476" pageHeight="303" orientation="Landscape" columnWidth="476" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="3ad374b1-c7f4-4aa4-ac8f-a7079e367d4e">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5026296018031562"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SPIGEN"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Detail" fontSize="12"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT L4.OUTBOUND_NO
+        ,L4.WB_NO
+        ,L4.BOX_NO
+        ,WB.DSP_WB_NO(L4.WB_NO ,L4.HDC_DIV)                                            AS WB_NO1
+        ,L4.ORDERER_NM                        AS ORDERER_NM
+        ,'고객 주문처 : ' || L4.DELIVERY_NM                                            AS DELIVERY_NM
+        ,L4.DELIVERY_URL
+        ,'문의처 : 0000-0000 고객사명(주)'                                             AS DELIVERY_TEL
+        ,'중량: 1000g  용적: 60cm  요금: 계약요금'                                       AS FARE_MSG
+        ,NVL(L4.ORDERER_MSG ,'')                                    AS ORDERER_MSG
+        ,L4.NM
+        ,'T : ' || L4.TEL_NO                                                           AS TEL_NO
+        ,'H : '                                                      AS HP_NO
+        ,L4.ADDRESS
+        ,L4.ZIP_CD
+        ,L4.SHIPPER_NM
+        ,L4.SHIPPER_NM1
+        ,NVL(L4.SHIPPER_TEL ,L4.SHIPPER_HP)                                            AS SHIPPER_TEL
+        ,NVL(DECODE(L4.SHIPPER_TEL ,NULL ,NULL ,L4.SHIPPER_TEL1)
+            ,DECODE(L4.SHIPPER_HP  ,NULL ,NULL ,L4.SHIPPER_HP1)
+            )                                                                          AS SHIPPER_TEL1
+        ,NVL(L4.SHIPPER_HP ,L4.SHIPPER_TEL)                                            AS SHIPPER_HP
+        ,DECODE(L4.SHIPPER_HP ,NULL ,L4.SHIPPER_TEL1 ,L4.SHIPPER_HP1)                  AS SHIPPER_HP1
+        ,WF.DSP_ADDRESS(L4.SHIPPER_ADDR_BASIC ,L4.SHIPPER_ADDR_DETAIL)                 AS SHIPPER_ADDR
+        ,L4.SHIPPER_ZIP_CD
+        ,L4.SHIPPER_ADDR_BASIC
+        ,L4.SHIPPER_ADDR_DETAIL
+        ,L4.EP_TML_NM
+        ,L4.EP_ARR_SHOP_NM
+        ,L4.EP_ARR_CD
+        ,SUBSTR(L4.EP_ARR_CD ,0, 1) AS EP_ARR_CD1
+        ,L4.TO_DAY
+        ,L4.ITEM_LIST
+        ,L4.ACS_ERROR_CD AS CJ_ERROR_CD
+        ,TO_CHAR(L4.PAGE_NO)                                                           AS PAGE_NO
+        ,L4.TOTAL_CONFIRM_QTY
+        ,TO_CHAR(COUNT(L4.PAGE_NO) OVER(PARTITION BY WB_NO ,BOX_NO))                   AS PAGE_CNT
+        ,L4.PICK_DIV
+        ,L4.BU_NO
+        ,L4.ITEM_MSG
+        ,L4.MALL_MSG
+    FROM (
+          SELECT L3.OUTBOUND_NO
+                ,L3.BU_CD
+                ,L3.BOX_NO
+                ,L3.HDC_DIV
+                ,L3.WB_NO
+                ,M3.SHIPPER_NM
+                ,M3.ORDERER_NM
+                ,SUBSTR(M3.SHIPPER_NM ,1 ,2) || '*'                                                             AS SHIPPER_NM1
+                ,WF.GET_DECSTR(M3.SHIPPER_TEL)                                                                  AS SHIPPER_TEL
+                ,WF.GET_DECSTR(M3.SHIPPER_HP)                                                                   AS SHIPPER_HP
+                ,SUBSTR(WF.GET_DECSTR(M3.SHIPPER_TEL) ,1 ,LENGTH(WF.GET_DECSTR(M3.SHIPPER_TEL)) - 4) || '****'  AS SHIPPER_TEL1
+                ,SUBSTR(WF.GET_DECSTR(M3.SHIPPER_HP)  ,1 ,LENGTH(WF.GET_DECSTR(M3.SHIPPER_HP))  - 4) || '****'  AS SHIPPER_HP1
+                ,WF.GET_DECSTR(M3.SHIPPER_ADDR_BASIC)                                                           AS SHIPPER_ADDR_BASIC
+                ,WF.GET_DECSTR(M3.SHIPPER_ADDR_DETAIL)                                                          AS SHIPPER_ADDR_DETAIL
+                ,M3.SHIPPER_ZIP_CD
+                ,M3.ORDERER_MSG
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.EP_TML_NM      ,P1.EP_TML_NM)                                  AS EP_TML_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.EP_ARR_SHOP_NM ,P1.EP_ARR_SHOP_NM)                             AS EP_ARR_SHOP_NM
+                ,DECODE(M3.ACS_ERROR_CD ,'0' ,M2.EP_ARR_CD)                                                     AS EP_ARR_CD
+                ,TO_CHAR(SYSDATE, 'YYYY.MM.DD')                                                                 AS TO_DAY
+                ,L3.ITEM_LIST
+                ,M3.ACS_ERROR_CD
+                ,M3.MALL_MSG
+                ,L3.PAGE_NO
+                ,L3.TOTAL_CONFIRM_QTY
+                ,M3.PICK_DIV
+                ,D1.DELIVERY_NM
+                ,DECODE(1 ,'1' ,C1.CUST_FULL_NM
+                                       ,'2' ,B1.BU_FULL_NM
+                                       ,'3' ,B2.BRAND_FULL_NM
+                                       ,'4' ,C2.CARRIER_FULL_NM)                                                AS NM
+                ,DECODE(1 ,'1' ,C1.TEL_NO
+                                       ,'2' ,B1.TEL_NO
+                                       ,'3' ,B2.TEL_NO
+                                       ,'4' ,C2.TEL_NO)                                                         AS TEL_NO
+                ,DECODE(1 ,'1' ,C1.CHARGE_NM
+                                       ,'2' ,B1.CHARGE_NM
+                                       ,'3' ,B2.CHARGE_NM
+                                       ,'4' ,C2.CHARGE_NM)                                                      AS DELIVERY_URL
+                ,DECODE(1 ,'1' ,WF.DSP_ADDRESS(C1.ADDR_BASIC ,C1.ADDR_DETAIL)
+                                       ,'2' ,WF.DSP_ADDRESS(B1.ADDR_BASIC ,B1.ADDR_DETAIL)
+                                       ,'3' ,WF.DSP_ADDRESS(B2.ADDR_BASIC ,B2.ADDR_DETAIL)
+                                       ,'4' ,WF.DSP_ADDRESS(C2.ADDR_BASIC ,C2.ADDR_DETAIL))                     AS ADDRESS
+                ,C1.ZIP_CD
+                ,C1.ADDR_BASIC
+                ,C1.ADDR_DETAIL
+                ,L3.ITEM_MSG
+                ,(SELECT MAX(S1.BU_NO)
+                    FROM LO020ND S1
+                   WHERE S1.CENTER_CD     = L3.CENTER_CD
+                     AND S1.BU_CD         = L3.BU_CD
+                     AND S1.OUTBOUND_DATE = L3.OUTBOUND_DATE
+                     AND S1.OUTBOUND_NO   = L3.OUTBOUND_NO)                                                     AS BU_NO
+            FROM (
+                  SELECT L2.CENTER_CD
+                        ,L2.BU_CD
+                        ,L2.OUTBOUND_DATE
+                        ,L2.OUTBOUND_NO
+                        ,L2.BOX_NO
+                        ,L2.CARRIER_CD
+                        ,L2.HDC_DIV
+                        ,L2.WB_NO
+                        ,L2.BRAND_CD
+                        ,LISTAGG(L2.ITEM_INFO ,WD.C_CR) WITHIN GROUP(ORDER BY L2.RNUM) AS ITEM_LIST
+                        ,L2.PAGE_NO
+                        ,L2.TOTAL_CONFIRM_QTY
+                        ,MAX(L2.ITEM_MSG)                                              AS ITEM_MSG
+                    FROM (
+                          SELECT L1.CENTER_CD
+                                ,L1.BU_CD
+                                ,L1.OUTBOUND_DATE
+                                ,L1.OUTBOUND_NO
+                                ,L1.BOX_NO
+                                ,L1.CARRIER_CD
+                                ,L1.HDC_DIV
+                                ,L1.WB_NO
+                                ,L1.BRAND_CD
+                                ,SUM(L1.CONFIRM_QTY) OVER(PARTITION BY L1.OUTBOUND_NO ,L1.BOX_NO) AS TOTAL_CONFIRM_QTY
+                                ,CEIL(L1.RNUM / 10)          AS PAGE_NO
+                                ,L1.ITEM_NM || ', 수량:' || L1.CONFIRM_QTY AS ITEM_INFO
+                                ,L1.RNUM
+                                ,MAX(DECODE(L1.RNUM ,1 ,L1.ITEM_CD || ' ' || L1.CONFIRM_QTY || 'EA' ,NULL)) OVER(PARTITION BY L1.WB_NO)
+                                   || CASE WHEN L1.ITEM_CNT > 1 THEN '외 총' || SUM(L1.CONFIRM_QTY) OVER(PARTITION BY L1.WB_NO) || 'EA' 
+                                      ELSE '' END                                                                                   AS ITEM_MSG
+                            FROM (
+                                  SELECT M1.CENTER_CD
+                                        ,M1.BU_CD
+                                        ,M1.OUTBOUND_DATE
+                                        ,M1.OUTBOUND_NO
+                                        ,1 AS BOX_NO
+                                        ,M1.CARRIER_CD
+                                        ,M1.HDC_DIV
+                                        ,M1.WB_NO
+                                        ,M2.BRAND_CD
+                                        ,M2.ITEM_CD
+                                        ,I1.ITEM_NM
+                                        ,I1.ITEM_BAR_CD
+                                        ,SUM(M2.CONFIRM_QTY)                                                AS CONFIRM_QTY
+                                        ,ROW_NUMBER() OVER(PARTITION BY M1.OUTBOUND_NO ORDER BY M2.ITEM_CD) AS RNUM
+                                        ,COUNT(DISTINCT M2.ITEM_CD) OVER(PARTITION BY M1.OUTBOUND_NO)       AS ITEM_CNT
+                                    FROM LO020NM M1
+                                         JOIN LO020ND M2 ON M2.CENTER_CD     = M1.CENTER_CD
+                                                        AND M2.BU_CD         = M1.BU_CD
+                                                        AND M2.OUTBOUND_DATE = M1.OUTBOUND_DATE
+                                                        AND M2.OUTBOUND_NO   = M1.OUTBOUND_NO
+                                         JOIN CMITEM  I1 ON I1.BRAND_CD      = M2.BRAND_CD
+                                                        AND I1.ITEM_CD       = M2.ITEM_CD
+                                   WHERE M1.CENTER_CD     = 'RD'
+                                     AND M1.BU_CD         = 'RD'
+                                     AND M1.OUTBOUND_DATE = '2023-06-22'
+                                     AND M1.OUTBOUND_NO  IN (
+                                                             SELECT '000002'
+                                                               FROM DUAL
+                                                            )
+                                   GROUP BY M1.CENTER_CD
+                                           ,M1.BU_CD
+                                           ,M1.OUTBOUND_DATE
+                                           ,M1.OUTBOUND_NO
+                                           ,M1.CARRIER_CD
+                                           ,M1.HDC_DIV
+                                           ,M1.WB_NO
+                                           ,M2.BRAND_CD
+                                           ,M2.ITEM_CD
+                                           ,I1.ITEM_NM
+                                           ,I1.ITEM_BAR_CD
+                                 ) L1
+                         ) L2
+                   GROUP BY L2.CENTER_CD
+                           ,L2.BU_CD
+                           ,L2.OUTBOUND_DATE
+                           ,L2.OUTBOUND_NO
+                           ,L2.BOX_NO
+                           ,L2.CARRIER_CD
+                           ,L2.HDC_DIV
+                           ,L2.WB_NO
+                           ,L2.BRAND_CD
+                           ,L2.PAGE_NO
+                           ,L2.TOTAL_CONFIRM_QTY
+                 ) L3
+                 JOIN LO020PM    M2 ON M2.CENTER_CD     = L3.CENTER_CD
+                                   AND M2.BU_CD         = L3.BU_CD
+                                   AND M2.OUTBOUND_DATE = L3.OUTBOUND_DATE
+                                   AND M2.OUTBOUND_NO   = L3.OUTBOUND_NO
+                 JOIN LO020NM    M3 ON M3.CENTER_CD     = L3.CENTER_CD
+                                   AND M3.BU_CD         = L3.BU_CD
+                                   AND M3.OUTBOUND_DATE = L3.OUTBOUND_DATE
+                                   AND M3.OUTBOUND_NO   = L3.OUTBOUND_NO
+                 JOIN CMCUST     C1 ON C1.CUST_CD       = M3.CUST_CD
+                 JOIN CMCARRIER  C2 ON C2.CARRIER_CD    = L3.CARRIER_CD
+                 JOIN CMBU       B1 ON B1.BU_CD         = L3.BU_CD
+                 JOIN CMBRAND    B2 ON B2.BRAND_CD      = L3.BRAND_CD
+            LEFT JOIN CMPOST     P1 ON P1.ZIP_CD        = REPLACE(M3.SHIPPER_ZIP_CD ,'-')
+                 JOIN CMDELIVERY D1 ON D1.DELIVERY_CD   = M3.RDELIVERY_CD
+                                   AND D1.CUST_CD       = M3.CUST_CD
+                 JOIN CMCENTER   C3 ON C3.CENTER_CD     = L3.CENTER_CD
+           WHERE L3.PAGE_NO = 1                                                                     --한페이지만 표시 되도록 수정
+         ) L4
+   ORDER BY DECODE(L4.PICK_DIV ,'20' ,L4.TOTAL_CONFIRM_QTY ,L4.BOX_NO)]]>
+	</queryString>
+	<field name="OUTBOUND_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="OUTBOUND_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="OUTBOUND_NO"/>
+	</field>
+	<field name="WB_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="WB_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="WB_NO"/>
+	</field>
+	<field name="BOX_NO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_NO"/>
+	</field>
+	<field name="WB_NO1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="WB_NO1"/>
+		<property name="com.jaspersoft.studio.field.label" value="WB_NO1"/>
+	</field>
+	<field name="ORDERER_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ORDERER_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="ORDERER_NM"/>
+	</field>
+	<field name="DELIVERY_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DELIVERY_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="DELIVERY_NM"/>
+	</field>
+	<field name="DELIVERY_URL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DELIVERY_URL"/>
+		<property name="com.jaspersoft.studio.field.label" value="DELIVERY_URL"/>
+	</field>
+	<field name="DELIVERY_TEL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DELIVERY_TEL"/>
+		<property name="com.jaspersoft.studio.field.label" value="DELIVERY_TEL"/>
+	</field>
+	<field name="FARE_MSG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FARE_MSG"/>
+		<property name="com.jaspersoft.studio.field.label" value="FARE_MSG"/>
+	</field>
+	<field name="ORDERER_MSG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ORDERER_MSG"/>
+		<property name="com.jaspersoft.studio.field.label" value="ORDERER_MSG"/>
+	</field>
+	<field name="NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="NM"/>
+	</field>
+	<field name="TEL_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TEL_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="TEL_NO"/>
+	</field>
+	<field name="HP_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="HP_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="HP_NO"/>
+	</field>
+	<field name="ADDRESS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ADDRESS"/>
+		<property name="com.jaspersoft.studio.field.label" value="ADDRESS"/>
+	</field>
+	<field name="ZIP_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ZIP_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="ZIP_CD"/>
+	</field>
+	<field name="SHIPPER_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_NM"/>
+	</field>
+	<field name="SHIPPER_NM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_NM1"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_NM1"/>
+	</field>
+	<field name="SHIPPER_TEL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_TEL"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_TEL"/>
+	</field>
+	<field name="SHIPPER_TEL1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_TEL1"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_TEL1"/>
+	</field>
+	<field name="SHIPPER_HP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_HP"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_HP"/>
+	</field>
+	<field name="SHIPPER_HP1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_HP1"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_HP1"/>
+	</field>
+	<field name="SHIPPER_ADDR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_ADDR"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_ADDR"/>
+	</field>
+	<field name="SHIPPER_ZIP_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_ZIP_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_ZIP_CD"/>
+	</field>
+	<field name="SHIPPER_ADDR_BASIC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_ADDR_BASIC"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_ADDR_BASIC"/>
+	</field>
+	<field name="SHIPPER_ADDR_DETAIL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SHIPPER_ADDR_DETAIL"/>
+		<property name="com.jaspersoft.studio.field.label" value="SHIPPER_ADDR_DETAIL"/>
+	</field>
+	<field name="EP_TML_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EP_TML_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="EP_TML_NM"/>
+	</field>
+	<field name="EP_ARR_SHOP_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EP_ARR_SHOP_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="EP_ARR_SHOP_NM"/>
+	</field>
+	<field name="EP_ARR_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EP_ARR_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="EP_ARR_CD"/>
+	</field>
+	<field name="EP_ARR_CD1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EP_ARR_CD1"/>
+		<property name="com.jaspersoft.studio.field.label" value="EP_ARR_CD1"/>
+	</field>
+	<field name="TO_DAY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TO_DAY"/>
+		<property name="com.jaspersoft.studio.field.label" value="TO_DAY"/>
+	</field>
+	<field name="ITEM_LIST" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_LIST"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_LIST"/>
+	</field>
+	<field name="CJ_ERROR_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CJ_ERROR_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="CJ_ERROR_CD"/>
+	</field>
+	<field name="PAGE_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PAGE_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="PAGE_NO"/>
+	</field>
+	<field name="TOTAL_CONFIRM_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TOTAL_CONFIRM_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL_CONFIRM_QTY"/>
+	</field>
+	<field name="PAGE_CNT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PAGE_CNT"/>
+		<property name="com.jaspersoft.studio.field.label" value="PAGE_CNT"/>
+	</field>
+	<field name="PICK_DIV" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PICK_DIV"/>
+		<property name="com.jaspersoft.studio.field.label" value="PICK_DIV"/>
+	</field>
+	<field name="BU_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_NO"/>
+	</field>
+	<field name="ITEM_MSG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_MSG"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_MSG"/>
+	</field>
+	<field name="MALL_MSG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MALL_MSG"/>
+		<property name="com.jaspersoft.studio.field.label" value="MALL_MSG"/>
+	</field>
+	<detail>
+		<band height="292" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="1" y="42" width="169" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7210992c-bb07-4ef4-b720-43035aa47bed">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FARE_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="195" y="106" width="163" height="24" forecolor="#000000" backcolor="#FFFFFF" uuid="cf56d15a-bdd2-4b23-87f5-304a11c83144"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="22" y="94" width="128" height="23" forecolor="#000000" backcolor="#FFFFFF" uuid="56210eca-85a4-4ee6-a0b9-bfbc44cf3d9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ZIP_CD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="195" y="132" width="18" height="15" uuid="fc63a0e6-b465-4d8d-b808-7f1a5859b0b5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="굴림체" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[T :]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="217" y="132" width="93" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="b08d05a1-b7ab-4995-a46c-9fb6e33882f6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="4" y="272" width="420" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="1065c6c7-3749-41f1-bbd1-270d2ae6ad4b"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERER_MSG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="247" y="217" width="167" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="8f0de641-ac0f-408c-be28-4332dc484ca7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="195" y="163" width="215" height="50" forecolor="#000000" backcolor="#FFFFFF" uuid="0460fc3a-0ec9-44d6-83b5-2f5c153d2ceb"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="굴림체" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="188" y="217" width="58" height="14" uuid="697a16ba-1768-495d-88c0-41ced3cff5b3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="굴림체" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[등기번호:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="253" width="139" height="15" uuid="0e585777-7c7c-4648-b29d-980791618c02">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="굴림체" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[- - - - - - - - -총 내품 수량:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="141" y="253" width="29" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="81e9acd6-1d42-47b6-ad75-e321dfacea0b"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_CONFIRM_QTY} + "개"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="335" y="45" width="66" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="015ec6d5-7bb0-470b-86fd-c0c1ab5fec5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ZIP_CD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="194" y="74" width="96" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="b411dd1d-d635-4ecb-a085-13d684f740c8"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="329" y="63" width="91" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="9f4fe266-0ae5-4cd7-b2ab-96ccf53305fc"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="441" y="8" width="16" height="69" forecolor="#000000" backcolor="#FFFFFF" uuid="4ac847a0-cded-4b17-988e-25d4cb08ae71">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="Left" markup="none">
+					<font fontName="굴림체" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WB_NO1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="78" width="39" height="12" uuid="112f85f2-d43a-4bca-b615-679f2af77825">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="굴림체" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[주문번호:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="40" y="78" width="118" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1097fae6-78fb-49a0-b954-3b9665f11a03"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BU_NO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="171" y="1" width="60" height="38" forecolor="#030303" backcolor="#FFFFFF" uuid="fe32c31c-a647-464e-b701-f26bd9c9515a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="27" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_ARR_CD}.substring( 0, 2 )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="194" y="43" width="136" height="31" forecolor="#000000" backcolor="#FFFFFF" uuid="fbb99e24-3a0e-46e2-9205-1aa7c7a54f9b"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADDRESS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="32" y="55" width="130" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="bb784af6-f6d0-46d7-8a60-68100e2a8405"/>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERER_NM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="30" width="57" height="12" uuid="8a82befd-4428-419e-b59a-708b90c1141e"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="굴림체" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[접수국:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="30" width="30" height="12" uuid="81348e42-682f-4ffe-a778-37bb4c813bc2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="굴림체" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[신청일:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="222" y="10" width="43" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="33df43c6-dfe2-4099-9970-af7ba9346390"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_TML_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="255" y="1" width="60" height="38" forecolor="#000000" backcolor="#FFFFFF" uuid="48065a2f-4d7d-4494-b3ec-46eef318382c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="27" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_ARR_CD}.substring( 2, 5 )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="311" y="10" width="45" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="76425c4f-e45f-4b87-b321-b80434e7006f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_ARR_SHOP_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="351" y="3" width="40" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="d7b97a8b-2ba9-42af-a373-0ec40f5b2557"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_ARR_CD}.substring( 5, 7 )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="383" y="3" width="40" height="25" forecolor="#000000" backcolor="#FFFFFF" uuid="4682412a-4b0f-40e7-b627-afda940cc62f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="20" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_ARR_CD}.substring( 7, 9 )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="3" y="164" width="167" height="88" forecolor="#000000" backcolor="#FFFFFF" uuid="adab2280-dc12-4f50-9fc7-dc9f32f2ab75">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="굴림체" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_LIST}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="32" y="67" width="130" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="2485ed53-6847-4d67-878a-4d5ddab6f1b0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="55" width="30" height="12" uuid="d05d4304-08f3-4330-b3d0-2a7ea14b69dd">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="굴림체" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[주문인:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="67" width="30" height="12" uuid="36b8945f-2485-429d-ad79-db8fb3f6a303"/>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="굴림체" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[연락처:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="329" y="76" width="91" height="13" forecolor="#000000" backcolor="#FFFFFF" uuid="2659a561-7332-4730-b34e-aa66f7ecf2ee"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_NO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="195" y="147" width="18" height="15" uuid="1b05722b-5415-4529-9828-84f4c2fcd240"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="굴림체" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[H :]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="217" y="147" width="93" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="9a018464-7d99-4e91-88ed-ceb3c5698fc1"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_HP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="432" y="5" width="13" height="284" forecolor="#000000" backcolor="#FFFFFF" uuid="570b1df3-0156-402e-b94c-3f5394367ff3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="0" bottomPadding="6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="none">
+					<font fontName="굴림체" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_ADDR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="454" y="223" width="13" height="66" forecolor="#000000" backcolor="#FFFFFF" uuid="d760a87a-07ef-4fc1-b117-944a78898f2c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="0" bottomPadding="6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="none">
+					<font fontName="굴림체" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_TEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="30" width="50" height="12" uuid="2aa03dda-4f6f-4a82-ac6c-e72603abaa72">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="굴림체" size="8" isBold="true" pdfFontName="malgun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="38" y="21" width="76" height="12" uuid="a2912aef-34af-4b4a-8907-aa83dfbbf451">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font fontName="굴림체" size="8" isBold="true" pdfFontName="malgun.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SYSDATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="21" width="38" height="12" uuid="1e1e6a3c-c3e6-41f0-b71a-68937a0cd947">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="굴림체" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출력일:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="178" y="2" width="45" height="37" backcolor="#030303" uuid="20569c43-6362-4d68-900e-9fb71894a0a0">
+					<printWhenExpression><![CDATA[$F{EP_ARR_CD1}.equals("A") || $F{EP_ARR_CD1}.equals("B") || $F{EP_ARR_CD1}.equals("C")]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="171" y="1" width="60" height="38" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="74709ad6-0fdd-48ce-a619-e465555dbe10">
+					<printWhenExpression><![CDATA[$F{EP_ARR_CD1}.equals("A") || $F{EP_ARR_CD1}.equals("B") || $F{EP_ARR_CD1}.equals("C")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="굴림체" size="27" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EP_ARR_CD}.substring( 0, 2 )]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="123" y="8" width="36" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="fd35ab69-c6b9-4c3a-8b8c-a5c42ae7312b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="맑은 고딕" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAGE_NO} + " / " + $F{PAGE_CNT}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="127" y="18" width="30" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="4132b2c7-5dc1-476c-836a-ac743b15be2e"/>
+				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="맑은 고딕" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["/" + $V{PAGE_NUMBER} + "]"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page" pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="80" y="18" width="48" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="54ce4f65-d2b5-46b1-a2bf-6ac737384ca7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="맑은 고딕" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["[" +  $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="95" y="10" width="28" height="12" uuid="876007e5-8611-4f45-99a7-a07cd487d353">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="굴림체" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Page:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="123" y="70" width="28" height="17" uuid="bd8f0102-0056-4098-adeb-69f590b84db6"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="굴림체" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[선불]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="443" y="187" width="13" height="102" forecolor="#000000" backcolor="#FFFFFF" uuid="e77a3b52-4e24-474d-b197-881ed5efe2a7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="0" bottomPadding="6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="Left" markup="none">
+					<font fontName="굴림체" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPPER_NM}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="20" y="132" width="150" height="20" uuid="ff339c75-c88b-4022-9629-43e993bf5fca"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{SHIPPER_ZIP_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="20" y="126" width="150" height="20" uuid="22436b2f-70d7-481f-a6a5-fbbf0b3270a4"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{SHIPPER_ZIP_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="20" y="119" width="150" height="20" uuid="da9571a8-0cf8-4c91-9e3e-e5c10f32df08"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{SHIPPER_ZIP_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="20" y="138" width="150" height="20" uuid="7a3c941c-4de1-4f09-b281-a6b303c0c8dc"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{SHIPPER_ZIP_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="456" y="6" width="15" height="100" uuid="cb485e71-1bb4-441f-86bb-e9f15cd2d09e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false" rotation="Left">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="451" y="6" width="15" height="100" uuid="d1689b6e-31a2-40f1-8c42-df39bb2f6a04">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false" rotation="Left">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="461" y="6" width="15" height="100" uuid="83f171c4-637a-4270-b786-b3b46d612425">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false" rotation="Left">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="466" y="6" width="10" height="100" uuid="22c22248-2e99-4d85-b17d-c3a9db639242">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false" rotation="Left">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="187" y="231" width="150" height="20" uuid="f5d77843-96c2-4d42-b64c-6f13ea16e11b"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="187" y="238" width="150" height="20" uuid="5daa2acb-4c4b-4464-b6fa-75619854ec01"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="187" y="246" width="150" height="20" uuid="6c9d730d-4f1a-4b0b-ac66-143b789460c7"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="187" y="254" width="150" height="14" uuid="fefaf826-56c6-4193-8f6f-f946722e0b2e"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<componentElement>
+				<reportElement isPrintRepeatedValues="false" x="187" y="256" width="150" height="12" uuid="95013371-d627-4771-8849-55cb9bf522aa"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128A" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA[$F{WB_NO}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,85 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01001P0
+    프로그램명         : 공지사항 팝업
+    프로그램설명       : 공지사항 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01001P0.css" /> -->
+<script src="js/CSC01001P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblWrite_No" class="lblNormal">공지번호</div>
+                    <input id="edtWrite_No" class="edtDisplay" type="text" disabled="disabled" style="width: 70px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblBu_Cd" class="lblNormal">사업부</div>
+                    <input id="edtBu_Cd" class="edtNormal" type="text" style="width: 70px;" />
+                    <input id="btnBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblNotice_Div" class="lblKey">공지구분</div>
+                    <select id="cboNotice_Div" class="cboKey" style="width: 220px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblNotice_Date" class="lblKey">공지기간</div>
+                    <input id="dtpNotice_From_Date" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpNotice_To_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblFile_Nm" class="lblNormal">첨부파일</div>
+                    <input id="edtFile_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 428px;" />
+                    <input id="btnFileAttachment" class="btnNormal" type="button" value="파일선택" style="width: 75px;" />
+                    <input id="btnFileRemove" class="btnNormal" type="button" value="파일삭제" style="width: 75px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblNotice_Title" class="lblKey">제목</div>
+                    <input id="edtNotice_Title" class="edtKey" type="text" style="width: 590px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblContent_Text" class="lblNormal" style="vertical-align: top;">내용</div>
+                    <textarea id="edtContent_Text" class="edtNormal" style="resize: none; width: 590px; height: 240px;"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnSave" class="btnNormal" type="button" value="저장" style="width: 80px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

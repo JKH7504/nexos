@@ -1,0 +1,33 @@
+package nexos.dao.lc;
+
+import java.util.Map;
+
+public interface LCC02090E0DAO {
+
+    /**
+     * 가공작업관리 마스터/디테일 저장 처리 (Map-List)
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void save(Map<String, Object> params) throws Exception;
+
+    /**
+     * 가공작업관리 마스터/디테일 저장 처리 (List-List)
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void updateConfirmQty(Map<String, Object> params) throws Exception;
+
+    /**
+     * 가공작업관리 상태 업데이트
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void processPreNxt(Map<String, Object> params) throws Exception;
+}

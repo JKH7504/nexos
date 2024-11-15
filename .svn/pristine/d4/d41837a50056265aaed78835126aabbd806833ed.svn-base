@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LABEL_BOX_CD" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" isFloatColumnFooter="true" uuid="fc58417d-d8f2-49b2-a12f-0422b2ac7d6b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SPIGEN_NEXOX_V75"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT M1.BU_CD
+        ,M1.BOX_SIZE_CD
+        ,M1.BOX_SIZE_NM
+        ,M1.BOX_WIDTH
+        ,M1.BOX_LENGTH
+        ,M1.BOX_HEIGHT
+        ,M1.BOX_CBM
+        ,M1.DEAL_DIV
+        ,M1.OPEN_DATE
+        ,M1.CLOSE_DATE
+        ,'BL' || M1.BOX_SIZE_CD  AS BOX_CD
+    FROM CMBOX M1
+   WHERE M1.BU_CD    = 'RD'
+     AND M1.DEAL_DIV = '1'
+     AND TO_CHAR(SYSDATE ,'YYYY-MM-DD')  BETWEEN NVL(M1.OPEN_DATE ,WD.C_NULL_DATE) AND NVL(M1.CLOSE_DATE ,TO_CHAR(SYSDATE ,'YYYY-MM-DD'))
+   ORDER BY BOX_SIZE_CD]]>
+	</queryString>
+	<field name="BU_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BU_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BU_CD"/>
+	</field>
+	<field name="BOX_SIZE_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_SIZE_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_SIZE_CD"/>
+	</field>
+	<field name="BOX_SIZE_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_SIZE_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_SIZE_NM"/>
+	</field>
+	<field name="BOX_WIDTH" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_WIDTH"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_WIDTH"/>
+	</field>
+	<field name="BOX_LENGTH" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_LENGTH"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_LENGTH"/>
+	</field>
+	<field name="BOX_HEIGHT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_HEIGHT"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_HEIGHT"/>
+	</field>
+	<field name="BOX_CBM" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_CBM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_CBM"/>
+	</field>
+	<field name="DEAL_DIV" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEAL_DIV"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEAL_DIV"/>
+	</field>
+	<field name="OPEN_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="OPEN_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="OPEN_DATE"/>
+	</field>
+	<field name="CLOSE_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="CLOSE_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="CLOSE_DATE"/>
+	</field>
+	<field name="BOX_CD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BOX_CD"/>
+		<property name="com.jaspersoft.studio.field.label" value="BOX_CD"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="95" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="1" width="140" height="59" isRemoveLineWhenBlank="true" uuid="12a7cbfd-2f3a-4503-8330-6ac52871fdba"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{BOX_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="0" y="50" width="140" height="35" uuid="e936318b-cfbe-4ca8-bfa4-1c99c7230e95"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="D2Coding" size="22" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOX_SIZE_CD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-4" x="36" y="-12" width="104" height="12" isPrintInFirstWholeBand="true" forecolor="#999999" uuid="262f25e1-cfc1-4426-845e-5216f41c8c2c">
+					<printWhenExpression><![CDATA[1 != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true" isItalic="false" isUnderline="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[[레포트]포장박스라벨]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="11" width="140" height="59" isRemoveLineWhenBlank="true" uuid="40294372-9d3d-4b7f-909f-c903d34a2326"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="2" barHeight="0">
+					<jr:codeExpression><![CDATA[$F{BOX_CD}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

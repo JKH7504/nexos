@@ -1,0 +1,131 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOF03040Q0
+    프로그램명         : 집계출고내역[B2CF]
+    프로그램설명       : 집계출고내역 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-12-24
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-12-24    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOF03040Q0.css" /> -->
+<script src="js/LOF03040Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblQOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQOutbound_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQInout_Cd" class="lblCondition">출고구분</div>
+                    <select id="cboQInout_Cd" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td id="tdQDsp_Brand_Cd">
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">상품별 출고내역</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">온라인몰별 출고내역</a></li>
+        </ul>
+        <!-- 상품별 출고내역 -->
+        <div id="divT1TabSheetView">
+            <div id="ctrAdditional_grdT1Master" class="ctrAdditional top ctrSubCondition">
+                <table class="ctrInner">
+                    <tr>
+                        <td>
+                            <div id="lblQT1_Item_Cd" class="lblCondition">상품코드</div>
+                            <input id="edtQT1_Item_Cd" class="edtNormal" type="text" style="width: 90px;" />
+                        </td>
+                        <td>
+                            <div id="lblQT1_Item_Bar_Cd" class="lblCondition">상품바코드</div>
+                            <input id="edtQT1_Item_Bar_Cd" class="edtNormal" type="text" style="width: 100px;" />
+                        </td>
+                        <td>
+                            <div id="lblQT1_Item_Nm" class="lblCondition">상품명</div>
+                            <input id="edtQT1_Item_Nm" class="edtNormal" type="text" style="width: 150px;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT1Master" class="lblTitle">상품별 출고내역</td>
+                    <td id="ctrRows_grdT1Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT1Master"></div>
+        </div>
+        <!-- 온라인몰별 출고내역 -->
+        <div id="divT2TabSheetView" style="display: none;">
+            <div id="ctrAdditional_grdT2Master" class="ctrAdditional top ctrSubCondition">
+                <table class="ctrInner">
+                    <tr>
+                        <td>
+                            <div id="lblQT2Popup_Delivery_Cd" class="lblCondition">온라인몰</div>
+                            <input id="edtQT2_Delivery_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                            <input id="btnQT2_Delivery_Cd" class="btnIcoPopup" type="button" />
+                            <input id="edtQT2_Delivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                        </td>
+                        <td>
+                            <div id="lblQT2_Orderer_Nm" class="lblCondition">주문자명</div>
+                            <input id="edtQT2_Orderer_Nm" class="edtNormal" type="text" style="width: 150px;" />
+                        </td>
+                        <td>
+                            <div id="lblQT2_Shipper_Nm" class="lblCondition">수령자명</div>
+                            <input id="edtQT2_Shipper_Nm" class="edtNormal" type="text" style="width: 150px;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT2Master" class="lblTitle">온라인몰별 출고내역</td>
+                    <td id="ctrRows_grdT2Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT2Master"></div>
+        </div>
+    </div>
+</body>
+</html>

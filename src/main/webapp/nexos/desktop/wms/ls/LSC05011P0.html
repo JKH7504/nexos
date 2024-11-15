@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LSC05011P0.css" /> -->
+<script src="js/LSC05011P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblItem_Cd" class="lblNormal">상품코드</div>
+                    <input id="edtItem_Cd" class="edtNormal" type="text" disabled="disabled" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblItem_State" class="lblNormal">상품상태</div>
+                    <input id="edtItem_State" class="edtNormal" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblValid_Date" class="lblNormal">사용기한</div>
+                    <input id="edtValid_Date" class="edtNormal" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Nm" class="lblNormal">상품명</div>
+                    <input id="edtItem_Nm" class="edtNormal" type="text" disabled="disabled" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblItem_Spec" class="lblNormal">규격</div>
+                    <input id="edtItem_Spec" class="edtNormal" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblBatch_No" class="lblNormal">제조배치</div>
+                    <input id="edtBatch_No" class="edtNormal" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">제조번호/사용기한별 출고내역</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 5,
+        "sourceType": "script"
+    },
+    "env": {
+        "browser": true,
+        "jquery": true
+    },
+    "globals": {
+        "$NC": false,
+        "$ND": false,
+        "$NP": false,
+        "$Android": false,
+        "Slick": false,
+        "Nexos": false,
+        "jsSHA": false,
+        "daum": false,
+        "naver": false,
+        "SockJS": false,
+        // Grid Global Variables
+        "G_GRDMASTER": false,
+        "G_GRDMASTERB": false,
+        "G_GRDMASTERBT": false,
+        "G_GRDMASTERC": false,
+        "G_GRDMASTERD": false,
+        "G_GRDMASTERE": false,
+        "G_GRDMASTER1": false,
+        "G_GRDMASTER2": false,
+        "G_GRDMASTER3": false,
+        "G_GRDMASTER4": false,
+        "G_GRDMASTER5": false,
+        "G_GRDMASTER6": false,
+        "G_GRDT1MASTER": false,
+        "G_GRDT2MASTER": false,
+        "G_GRDT2MASTERA": false,
+        "G_GRDT2MASTERB": false,
+        "G_GRDT2MASTERC": false,
+        "G_GRDT2MASTERD": false,
+        "G_GRDT2MASTERE": false,
+        "G_GRDT3MASTER": false,
+        "G_GRDT4MASTER": false,
+        "G_GRDT5MASTER": false,
+        "G_GRDT6MASTER": false,
+        "G_GRDDETAIL": false,
+        "G_GRDDETAIL1": false,
+        "G_GRDDETAIL2": false,
+        "G_GRDDETAIL3": false,
+        "G_GRDDETAIL4": false,
+        "G_GRDDETAIL5": false,
+        "G_GRDDETAIL6": false,
+        "G_GRDDETAILB": false,
+        "G_GRDDETAILBT": false,
+        "G_GRDDETAILC": false,
+        "G_GRDDETAILD": false,
+        "G_GRDDETAILE": false,
+        "G_GRDT1DETAIL": false,
+        "G_GRDT2DETAIL": false,
+        "G_GRDT2DETAILA": false,
+        "G_GRDT2DETAILB": false,
+        "G_GRDT2DETAILC": false,
+        "G_GRDT2DETAILD": false,
+        "G_GRDT2DETAILE": false,
+        "G_GRDT3DETAIL": false,
+        "G_GRDT4DETAIL": false,
+        "G_GRDT5DETAIL": false,
+        "G_GRDT6DETAIL": false,
+        "G_GRDSUB": false,
+        "G_GRDSUB1": false,
+        "G_GRDSUB2": false,
+        "G_GRDSUB3": false,
+        "G_GRDSUB4": false,
+        "G_GRDSUB5": false,
+        "G_GRDSUB6": false,
+        "G_GRDSUBB": false,
+        "G_GRDSUBBT": false,
+        "G_GRDSUBC": false,
+        "G_GRDSUBD": false,
+        "G_GRDSUBE": false,
+        "G_GRDT1SUB": false,
+        "G_GRDT2SUB": false,
+        "G_GRDT3SUB": false,
+        "G_GRDT4SUB": false,
+        "G_GRDT5SUB": false,
+        "G_GRDT6SUB": false,
+        "G_GRDREPORT": false,
+        "G_GRDPROGRAMMENU": false,
+        "G_GRDFAVORITEMENU": false,
+        "G_GRDZONE": false,
+        "G_GRDBANK": false,
+        "G_GRDBAY": false,
+        "G_GRDLEV": false,
+        "G_GRDDEPART": false,
+        "G_GRDLINE": false,
+        "G_GRDCLASS": false,
+        "G_GRDITEM": false,
+        "G_GRDCARMASTER": false,
+        "G_GRDDOCKMASTER": false,
+        "G_GRDNOTICE": false,
+        "G_GRDNOCONFIRM": false,
+        "G_GRDPALLETIDC": false,
+        "G_GRDSTOCK": false,
+        "G_GRDOUTWAIT": false,
+        "G_GRDROTATEDAY": false,
+        "G_GRDHITRATE": false
+    },
+    "rules": {
+        // -------------------------------------------------------------------------------------------------------------
+        // 0 false, 1 warn, 2 error
+        // -------------------------------------------------------------------------------------------------------------
+        // Possible Errors
+        // -------------------------------------------------------------------------------------------------------------
+        // for 루프가 무한대로 실행되는 것을 방지, Tern-Eclipse-IDE(eslint v2.3.0) 미지원
+        // "for-direction": 2,
+        // -0에 대한 비교 허용 여부, Tern-Eclipse-IDE(eslint v2.3.0) 미지원
+        // "no-compare-neg-zero": 2,
+        // 조건문에서 할당 연산자 허용 여부
+        "no-cond-assign": 2,
+        // 조건에서 상수 표현을 허용 여부
+        // "no-constant-condition": 2,
+        // function 정의에서 중복 인수를 허용 여부
+        "no-dupe-args": 2,
+        // 객체 리터럴에서 중복 키 허용 여부
+        "no-dupe-keys": 2,
+        // switch 문에 case 절에 중복 된 테스트 표현식 허용 여부
+        "no-duplicate-case": 2,
+        // 빈 블록 문을 허용 여부, warn으로 조정
+        "no-empty": 1,
+        // catch 절에서 예외를 재 할당 허용 여부
+        "no-ex-assign": 2,
+        // 불필요한 boolean 형 캐스트 금지 여부, warn으로 조정
+        "no-extra-boolean-cast": 1,
+        // 불필요한 괄호를 허용 여부, warn으로 조정, 함수표현식 주위에만 불필요한 괄호 허용 안함으로 조정
+        "no-extra-parens": [1, "functions"],
+        // 불필요한 세미콜론 허용 여부
+        "no-extra-semi": 2,
+        // function 선언 재지정 허용 여부
+        "no-func-assign": 2,
+        // 전역 객체 속성을 함수로 호출하는 것 허용 여부
+        "no-obj-calls": 2,
+        // return , throw , continue 및 break 문 다음에 도달 할 수 없는 코드 허용 여부
+        "no-unreachable": 2,
+        // 관계 연산자의 왼쪽 피연산자를 무효화하지 못하도록 함, Tern-Eclipse-IDE(eslint v2.3.0) 미지원
+        // "no-unsafe-negation": 2,
+        // -------------------------------------------------------------------------------------------------------------
+        // Best Practices
+        // -------------------------------------------------------------------------------------------------------------
+        // 변수가 정의 된 블록 외부에서 사용될 때 경고
+        "block-scoped-var": 1,
+        // case / default 절에서 선언( let , const , function 및 class )을 허용 여부, warn으로 조정
+        "no-case-declarations": 1,
+        // switch 문에서 case에 break, return이 없어 다음 case로 넘어 가는 것 허용 여부, 무시하려면 // falls through 주석 사용
+        "no-fallthrough": 1,
+        // 숫자 리터럴의 선행 또는 후행 소수점 허용 안 함, .1, 1. -> 0.1, 1.0
+        "no-floating-decimal": 1,
+        // 네이티브 객체 또는 읽기 전용 전역 변수에 대한 할당 허용 여부, Tern-Eclipse-IDE(eslint v2.3.0) 미지원
+        // "no-global-assign": 2,
+        // 불필요하게 중첩 된 블록 허용 여부
+        "no-lone-blocks": 2,
+        // 루프 문 안에 function 선언과 표현 허용 여부
+        "no-loop-func": 2,
+        // 변수에 할당하지 않는 생성자 허용 여부
+        "no-new": 2,
+        // 8진수 리터럴 허용 여부
+        "no-octal": 2,
+        // 변수의 재선언을 허용 여부, warn, built-in global variables check로 조정
+        "no-redeclare": [1, {"builtinGlobals": true}],
+        // return 문에서 할당 연산자 허용 여부
+        "no-return-assign": 2,
+        // 자기 할당 금지
+        "no-self-assign": 2,
+        // 쉼표 연산자 사용 금지
+        "no-sequences": 2,
+        // 수정되지 않은 루프 조건 허용 여부
+        "no-unmodified-loop-condition": 2,
+        // 사용되지 않는 표현식 사용 여부
+        "no-unused-expressions": 2,
+        // 문자열의 불필요한 연결 허용 여부, warn으로 조정
+        "no-useless-concat": 1,
+        // 불필요한 escape 사용 허용 여부, Tern-Eclipse-IDE(eslint v2.3.0) 미지원
+        // "no-useless-escape": 2,
+        // void 연산자 허용 여부
+        "no-void": 2,
+        // with문 허용 여부
+        "no-with": 2,
+        // var 선언을 범위의 맨 위에 배치
+        // "vars-on-top": 1,
+        // 즉시실행 함수 function 호출을 둘러싼 괄호 사용, var x = (function () { return { y: 1 };})();
+        "wrap-iife": [2, "inside"],
+        // 변수와 이름을 공유하는 레이블 허용 여부
+        "no-label-var": 2,
+        // -------------------------------------------------------------------------------------------------------------
+        // Variables
+        // -------------------------------------------------------------------------------------------------------------
+        // 외부 범위의 shadowing 변수를 catch 절 매개 변수로 허용 여부
+        "no-catch-shadow": 2,
+        // 외부 범위의 shadowing 변수를 로컬 변수로 선언을 허용 여부
+        "no-shadow": 2, 
+        // 식별자가 제한된 이름 허용 여부
+        "no-shadow-restricted-names": 2,
+        // /*global */ comments에 언급되지 않은 한 선언되지 않은 변수의 사용 허용 여부
+        "no-undef": 1,
+        // 사용되지 않는 변수 허용 여부
+        "no-unused-vars": [1, { "vars": "local", "args": "none" }],
+        // 정의되기 전에 변수 사용 허용 여부, 변수만 체크
+        "no-use-before-define": [2, { "functions": false, "classes": false }],
+        // -------------------------------------------------------------------------------------------------------------
+        // Stylistic Issues
+        // -------------------------------------------------------------------------------------------------------------
+        // camelcase 명명 규칙 적용
+        "camelcase": 1,
+        // 객체 및 배열 리터럴에서 후미 쉼표를 일관되게 사용하도록 강제
+        "comma-dangle": [1, "never"],
+        // 현재 실행 컨텍스트를 캡처 할 때 일관된 이름 지정, 사용 안함
+        "consistent-this": 0,
+        // 인수없이 생성자를 호출 할 때 괄호가 필요
+        "new-parens": 2,
+        // 비트 연산자 허용 여부
+        "no-bitwise": 2,
+        // 의미 없는 continue 명령문 허용 여부, 체크가 이상해서 사용 안함
+        // "no-continue": 1,
+        // else 문에서 유일한 문으로 if 문 허용 여부, warn으로 조정, 가독성이 좋지 않아 사용 안함
+        // "no-lonely-if": 1,
+        // 혼합된 2진수 연산자 허용 여부, Tern-Eclipse-IDE(eslint v2.3.0) 미지원
+        // "no-mixed-operators": 2,
+        // 중첩된 삼항 표현식 허용 여부
+        "no-nested-ternary": 2, 
+        // Object 생성자 허용 여부
+        "no-new-object": 2,
+        // 더 간단한 대안이 있을 때 삼항 연산자 사용 허용 여부, warn으로 조정
+        "no-unneeded-ternary": 1,
+        // 속성 앞에 공백 허용 여부
+        "no-whitespace-before-property": 2,
+        // 일관된 위치에 operator 사용
+        "operator-linebreak": [1, "before"],
+        // 객체 리터럴 속성 명칭 따옴표 사용 여부, 필요할 경우는 모두 지정
+        "quote-props": [1, "consistent"],
+        // 문자열을 쌍따옴표로만 사용 함
+        "quotes": [1, "double"],
+        // 세미콜론의 일관된 사용
+        "semi": [1, "always"],
+        // 정규식 리터럴 주위에 괄호 사용 함
+        "wrap-regex": 1
+    }
+}

@@ -1,0 +1,208 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC04010E0
+    프로그램명         : 운행일지
+    프로그램설명       : 운행일지 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2019-11-25    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC04010E0.css" /> -->
+<script src="js/LDC04010E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCbo_Center_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 190px;"></select>
+                </td>
+                <td>
+                    <div id="divQT1_Delivery_Date" class="ctrGroup">
+                        <div id="lblQT1_Delivery_Date" class="lblCondition">운송일자</div>
+                        <input id="dtpQDelivery_Date" class="dtpKey" type="text" style="width: 100px;" />
+                    </div>
+                    <div id="divQT2_Delivery_Date" class="ctrGroup">
+                        <div id="lblQT2_Delivery_Date" class="lblCondition">운송일자</div>
+                        <input id="dtpQDelivery_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                        <span class="lblTerm">▶</span>
+                        <input id="dtpQDelivery_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                    </div>
+                </td>
+                <td style="width: 100%; text-align: right;">
+                    <input id="btnFuelPriceT" class="btnImgPopup" type="button" value="유류단가 일괄적용" style="width: 140px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQPopup_Car_Cd" class="lblCondition">차량코드</div>
+                    <input id="edtQCar_Cd" class="edtNormal" type="text" style="width: 70px;" />
+                    <input id="btnQCar_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCar_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 90px;" />
+                </td>
+                <td>
+                    <div id="lblQArea_Cd" class="lblCondition">운송권역코드</div>
+                    <input id="edtQArea_Cd" class="edtNormal" type="text" style="width: 150;" />
+                </td>
+                <td>
+                    <div id="lblQArea_Nm" class="lblCondition">운송권역명</div>
+                    <input id="edtQArea_Nm" class="edtNormal" type="text" style="width: 150px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">운행일지 등록</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">운행일지 내역</a></li>
+        </ul>
+        <!-- 운행일지등록 -->
+        <div id="divT1TabSheetView">
+            <div id="divLeftView" class="ctrLeft" style="border-width: 0 1px 0 0;">
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdT1Master" class="lblTitle">운행일지</td>
+                        <td id="ctrRows_grdT1Master" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdT1Master"></div>
+            </div>
+            <div id="divRightView" class="ctrRight" style="border-width: 0 0 0 1px;">
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="dspDetailInfo" class="lblTitle">기본정보</td>
+                    </tr>
+                </table>
+                <div id="divMasterInfoView" class="ctrInner">
+                    <div class="ctrGroupRow">
+                        <div id="lblDelivery_Date" class="lblKey alignInContent">운행일자</div>
+                        <input id="dtpDelivery_Date" class="dtpKey" type="text" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Car_Cd" class="lblKey alignInContent">차량코드</div>
+                        <input id="edtCar_Cd" class="edtKey" type="text" style="width: 110px;" />
+                        <input id="btnCar_Cd" class="btnIcoPopup" type="button" />
+                        <input id="edtCar_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 191px;" />
+                    </div>
+                    <div class="ctrGroupRow inContent">
+                        <div id="dspTitle_Delivery_Area" class="lblGroupTitle">차량정보</div>
+                        <div class="ctrGroupContent">
+                            <div class="ctrGroupRow">
+                                <div id="lblDriver_Nm" class="lblNormal">기사성명</div>
+                                <input id="edtDriver_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblArea_Cd" class="lblNormal">운송권역</div>
+                                <input id="edtArea_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblArea_Nm" class="lblNormal">운송권역명</div>
+                                <input id="edtArea_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblFuel_Rate" class="lblNormal">연비</div>
+                                <input id="edtFuel_Rate" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                                ㎞／ℓ
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow inContent">
+                        <div id="dspTitle_Deliver" class="lblGroupTitle">운행정보</div>
+                        <div class="ctrGroupContent">
+                            <div class="ctrGroupRow">
+                                <div id="lblFuel_Price" class="lblNormal">유류단가</div>
+                                <input id="edtFuel_Price" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblDistance_Qty" class="lblNormal">운행거리</div>
+                                <input id="edtDistance_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                                ㎞
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblFuel_Amt" class="lblNormal">유류금액</div>
+                                <input id="edtFuel_Amt" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblToll_Cost" class="lblNormal">도로비</div>
+                                <input id="edtToll_Cost" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblEtc_Cost" class="lblNormal">기타비</div>
+                                <input id="edtEtc_Cost" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblTotal_Cost" class="lblNormal">총금액</div>
+                                <input id="edtTotal_Cost" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow inContent">
+                        <div id="dspTitle_Pallet_Out" class="lblGroupTitle">파렛트정보-출고</div>
+                        <div class="ctrGroupContent">
+                            <div class="ctrGroupRow">
+                                <div id="lblPltkpp_Out_Qty" class="lblNormal">출고-KPP</div>
+                                <input id="edtPltkpp_Out_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblPltaj_Out_Qty" class="lblNormal">출고-AJ</div>
+                                <input id="edtPltaj_Out_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblPltetc_Out_Qty" class="lblNormal">출고-기타</div>
+                                <input id="edtPltetc_Out_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow inContent">
+                        <div id="dspTitle_Pallet_In" class="lblGroupTitle">파렛트정보-입고</div>
+                        <div class="ctrGroupContent">
+                            <div class="ctrGroupRow">
+                                <div id="lblPltkpp_In_Qty" class="lblNormal">입고-KPP</div>
+                                <input id="edtPltkpp_In_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblPltaj_In_Qty" class="lblNormal">입고-AJ</div>
+                                <input id="edtPltaj_In_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                            <div class="ctrGroupRow">
+                                <div id="lblPltetc_In_Qty" class="lblNormal">입고-기타</div>
+                                <input id="edtPltetc_In_Qty" class="edtNormal" type="text" style="width: 110px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblRemark1" class="lblNormal alignInContent">비고</div>
+                        <input id="edtRemark1" class="edtNormal" type="text" style="width: 331px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 운행일지내역 -->
+        <div id="divT2TabSheetView">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdT2Master" class="lblTitle">운행일지내역</td>
+                    <td id="ctrRows_grdT2Master" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdT2Master"></div>
+        </div>
+    </div>
+</body>
+</html>

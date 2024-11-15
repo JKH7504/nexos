@@ -1,0 +1,1182 @@
+package nexos.service.ed.common;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import nexos.dao.ed.common.EDCommonDAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.security.AuthenticationUtil;
+import nexos.framework.support.ServiceSupport;
+import nexos.framework.web.NexosURLStreamHandler;
+
+/**
+ * Class: EDSOAPService<br>
+ * Description: SOAP 관련 인터페이스 처리를 담당하는 공통 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+
+@Service
+public class EDSOAPService extends ServiceSupport {
+
+    // private final Logger logger = LoggerFactory.getLogger(EDSOAPService.class);
+
+    final String                  SELECT_ID_GET_CJ_ADDRESS_INFO      = "WI.GET_CJ_ADDRESS_INFO";
+    final String                  SP_ID_SET_CJ_ADDRESS_INFO_UPDATE   = "WI.SET_CJ_ADDRESS_INFO_UPDATE";
+    final String                  SELECT_ID_GET_KPIS_STD_CD_INFO     = "WI.GET_KPIS_STD_CD_INFO";
+    final String                  SELECT_ID_GET_KPIS_RFID_INFO       = "WI.GET_KPIS_RFID_INFO";
+    final String                  SELECT_ID_GET_KPIS_BNO_INFO        = "WI.GET_KPIS_BNO_INFO";
+    final String                  SELECT_ID_GET_KPIS_SNO_INFO        = "WI.GET_KPIS_SNO_INFO";
+    final String                  SELECT_ID_GET_KPIS_SNO_DETAIL_INFO = "WI.GET_KPIS_SNO_DETAIL_INFO";
+
+    @Autowired
+    private EDCommonDAO           dao;
+
+    private MessageFactory        messageFactory;
+    // private TransformerFactory transformerFactory;
+    private SOAPConnectionFactory soapConnectionFactory;
+
+    public EDSOAPService() throws Exception {
+
+        this.messageFactory = MessageFactory.newInstance();
+        // this.transformerFactory = TransformerFactory.newInstance();
+        this.soapConnectionFactory = SOAPConnectionFactory.newInstance();
+    }
+
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    public Map<String, Object> getXMLResultInfo() {
+
+        return dao.getXMLResultInfo(null, null);
+    }
+
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
+    public Map<String, Object> receiveXML(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+
+        String buCd = (String)params.get("P_BU_CD");
+        String ediDiv = (String)params.get("P_EDI_DIV");
+        String defineNo = (String)params.get("P_DEFINE_NO");
+        String returnAfterDataInsertYn = (String)params.get("P_RETURN_AFTER_DATA_INSERT");
+        try {
+            List<Map<String, Object>> lstDefineInfo = dao.getDefineRemoteInfo(params);
+            if (lstDefineInfo == null || lstDefineInfo.size() == 0) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.042",
+                    "[사업부,수신구분,수신정의번호: " + buCd + "," + ediDiv + "," + defineNo + "]수신정의 정보가 존재하지 않습니다. 확인 후 작업하십시오.",
+                    new String[] {Util.toString(buCd), Util.toString(ediDiv), Util.toString(defineNo)}));
+            }
+            Map<String, Object> defineInfo = lstDefineInfo.get(0);
+
+            params.put("P_DATA_DIV", Consts.DATA_DIV_XML);
+            Map<String, Object> xmlResultInfo = dao.getXMLResultInfo((String)defineInfo.get("XML_TAG_RESULT"), //
+                (String)defineInfo.get("XML_TAG_RESULT_MAP"));
+            params.put("P_XML_RESULT_INFO", xmlResultInfo);
+            if (Util.isNull(returnAfterDataInsertYn)) {
+                returnAfterDataInsertYn = (String)xmlResultInfo.get("P_RETURN_AFTER_DATA_INSERT");
+            }
+
+            // Json parsing -> Insert EDI Table
+            TransactionStatus ts = beginTrans();
+            try {
+                resultMap = dao.recvDataProcessing(params);
+
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+                throw new RuntimeException(Util.getErrorMessage(e));
+            }
+
+            params.put("P_RECV_DATE", resultMap.get("P_RECV_DATE"));
+            params.put("P_RECV_NO", resultMap.get("P_RECV_NO"));
+
+            if (Consts.YES.equals(returnAfterDataInsertYn)) {
+                receiveXMLTask(params);
+            } else {
+                // ER_PROCESSING 호출
+                ts = beginTrans();
+                try {
+                    params.put(Consts.PK_PROCESS_CD, Consts.PROCESS_EDI_CHECKING);
+                    resultMap = dao.callERProcessing(params);
+
+                    String oMsg = Util.getOutMessage(resultMap);
+                    if (!Consts.OK.equals(oMsg)) {
+                        throw new RuntimeException(oMsg);
+                    }
+                    commitTrans(ts);
+                } catch (Exception e) {
+                    rollbackTrans(ts);
+                    throw new RuntimeException(Util.getErrorMessage(e));
+                }
+
+                // ER_PROCESSING_AFTER 호출
+                ts = beginTrans();
+                try {
+                    resultMap = dao.callERProcessingAfter(params);
+
+                    String oMsg = Util.getOutMessage(resultMap);
+                    if (!Consts.OK.equals(oMsg)) {
+                        throw new RuntimeException(oMsg);
+                    }
+                    commitTrans(ts);
+                } catch (Exception e) {
+                    rollbackTrans(ts);
+                    throw new RuntimeException(Util.getErrorMessage(e));
+                }
+            }
+            Util.setOutMessage(params, Consts.OK);
+        } catch (Exception e) {
+            Util.setOutMessage(params, Util.getErrorMessage(e));
+        }
+        return params;
+    }
+
+    private void receiveXMLTask(Map<String, Object> params) {
+
+        final HashMap<String, Object> callParams = new HashMap<String, Object>(params);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                AuthenticationUtil.configureAuthentication();
+                try {
+                    TransactionStatus ts = null;
+                    Map<String, Object> resultMap;
+                    // ER_PROCESSING 호출
+                    ts = beginTrans();
+                    try {
+                        callParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_EDI_CHECKING);
+                        resultMap = dao.callERProcessing(callParams);
+
+                        String oMsg = Util.getOutMessage(resultMap);
+                        if (!Consts.OK.equals(oMsg)) {
+                            throw new RuntimeException(oMsg);
+                        }
+                        commitTrans(ts);
+                    } catch (Exception e) {
+                        rollbackTrans(ts);
+                        throw new RuntimeException(Util.getErrorMessage(e));
+                    }
+
+                    // ER_PROCESSING_AFTER 호출
+                    ts = beginTrans();
+                    try {
+                        resultMap = dao.callERProcessingAfter(callParams);
+
+                        String oMsg = Util.getOutMessage(resultMap);
+                        if (!Consts.OK.equals(oMsg)) {
+                            throw new RuntimeException(oMsg);
+                        }
+                        commitTrans(ts);
+                    } catch (Exception e) {
+                        rollbackTrans(ts);
+                        throw new RuntimeException(Util.getErrorMessage(e));
+                    }
+                } catch (Exception e) {
+                } finally {
+                    AuthenticationUtil.clearAuthentication();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 데이터의 키/값을 서비스 호출 데이터 키/값으로 변경 처리
+     * 
+     * @param rowData
+     *        변경 처리할 데이터 맵
+     * @param dataValues
+     *        SOAP 서비스호출 데이터 키/값 맵
+     * @param callParams
+     *        결과반영 호출 파라메터 맵
+     */
+    private void setParameter(Map<String, Object> rowData, Map<String, Object> dataValues, Map<String, Object> callParams) {
+
+        callParams.clear();
+        dataValues.clear();
+        for (Map.Entry<String, Object> entry : rowData.entrySet()) {
+            String key = entry.getKey();
+            // 서비스호출 데이터 키/값
+            if (key.startsWith("DV_")) {
+                dataValues.put(key, entry.getValue());
+            }
+            // 결과반영 호출 기본 파라메터
+            else if (key.startsWith("P_")) {
+                callParams.put(key, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * SOAP Request Message 생성
+     * <pre style="font-family: GulimChe; font-size: 12px;">
+     * <b>Sample message</b><br>
+     * {@code
+     * <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+     *     xmlns:ns1="http://endpoint.sample.com/">
+     *     <soapenv:Header/>
+     *     <soapenv:Body>
+     *         <ns1:getMsg>
+     *             <arg0>Send message</arg0>
+     *          </ns1:getMsg>
+     *      </soapenv:Body>
+     *  </soapenv:Envelope>
+     * }
+     * </pre>
+     * 
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          SOAP Url
+     * P_METHOD_NM               SOAP Method Name
+     * P_NS_PREFIX               SOAP Message Namespace prefix Name
+     * P_NS_URI                  SOAP Message Namespace Uri
+     * P_ACCEPT_ENCODING         SOAP 호출 ACCEPT_ENCODING, 기본값 없음
+     * P_CONTENT_TYPE            SOAP 호출 CONTENT_TYPE, 기본값 application/soap+xml; charset=utf-8
+     * P_DATA_TAG                SOAP 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_LIST_TAG         결과 정보가 리스트형태일 경우 읽을 태그명
+     * P_RESULT_SUB_NODE_YN      리스트 결과 정보에서 값을 읽을 경우 서브 노드에서 읽을지 현재 노드에서 읽을지 여부
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        SOAP 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @return SOAPMessage
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    private SOAPMessage getSOAPRequestMessage(Map<String, Object> serviceParams, Map<String, Object> callParams) throws Exception {
+
+        SOAPMessage resultMessage = messageFactory.createMessage();
+        resultMessage.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, Consts.CHARSET);
+
+        SOAPPart soapPart = resultMessage.getSOAPPart();
+        SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
+
+        // Namespace 체크
+        // xmlns:ns1="http://endpoint.sample.com/"
+        String nsPrefix = (String)serviceParams.get("P_NS_PREFIX");
+        String nsUri = (String)serviceParams.get("P_NS_URI");
+
+        if (Util.isNull(nsPrefix) || Util.isNull(nsUri)) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.052", "Namespace Prefix[P_NS_PREFIX] 또는 Uri[P_NS_URI]가 지정되지 않았습니다."));
+        }
+        // 호출 Method 체크
+        // <ns1:getMsg>
+        String methodNm = (String)serviceParams.get("P_METHOD_NM");
+        if (Util.isNull(methodNm)) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.053", "Method Name[P_METHOD_NM]이 지정되지 않았습니다."));
+        }
+        String dataTag = (String)serviceParams.get("P_DATA_TAG");
+        if (Util.isNull(dataTag)) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.054", "Data Tag[P_DATA_TAG]가 지정되지 않았습니다."));
+        }
+
+        // 데이터 체크
+        // <arg0>Send message</arg0>
+        Map<String, Object> sendParams = (Map<String, Object>)callParams.get("P_SEND_PARAMS");
+        if (Util.isNull(sendParams)) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.055", "SOAP 전송 데이터[P_SEND_PARAMS]가 지정되지 않았습니다."));
+        }
+
+        soapEnvelope.addNamespaceDeclaration(nsPrefix, nsUri);
+        SOAPBody soapBody = soapEnvelope.getBody();
+        SOAPElement methodElement = soapBody.addChildElement(methodNm, nsPrefix);
+        // 전송 데이터 입력
+        SOAPElement dataElement = methodElement.addChildElement(dataTag);
+        Object sendParamValue;
+        for (Map.Entry<String, Object> sendParam : sendParams.entrySet()) {
+            // CamelCase로 변경 - > DV_COLUMN_NM - > columnNm
+            sendParamValue = sendParam.getValue();
+            dataElement.addChildElement(Util.toCamelCase(sendParam.getKey().substring(3))) //
+                .addTextNode(sendParamValue == null ? "" : sendParamValue.toString());
+        }
+
+        // 기본 헤더 정보 세팅
+        MimeHeaders mimeHeaders = resultMessage.getMimeHeaders();
+        String acceptEncoding = (String)serviceParams.get("P_ACCEPT_ENCODING");
+        if (Util.isNotNull(acceptEncoding)) {
+            mimeHeaders.addHeader(HttpHeaders.ACCEPT_ENCODING, acceptEncoding);
+        }
+        String contentType = (String)serviceParams.get("P_CONTENT_TYPE");
+        if (Util.isNotNull(contentType)) {
+            mimeHeaders.addHeader(HttpHeaders.CONTENT_TYPE, contentType);
+        } else {
+            mimeHeaders.addHeader(HttpHeaders.CONTENT_TYPE, "application/soap+xml; charset=" + Consts.CHARSET);
+        }
+        // mimeHeaders.addHeader(HttpHeaders.CONNECTION, "Keep-Alive");
+        mimeHeaders.addHeader(HttpHeaders.CONNECTION, "close");
+        // 추가 헤더 정보 세팅
+        Map<String, Object> headerParams = (Map<String, Object>)serviceParams.get("P_HEADER_PARAMS");
+        if (Util.isNotNull(headerParams)) {
+            for (Map.Entry<String, Object> headerParam : headerParams.entrySet()) {
+                mimeHeaders.addHeader(headerParam.getKey(), headerParam.getValue().toString());
+            }
+        }
+        resultMessage.saveChanges();
+
+        return resultMessage;
+    }
+
+    /**
+     * SOAP Response Message 생성
+     * <pre style="font-family: GulimChe; font-size: 12px;">
+     * <b>Sample message</b><br>
+     * {@code
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+     *     <S:Body>
+     *         <ns2:getMsgResponse xmlns:ns2="http://endpoint.sample.com/">
+     *             <return>Response message</return>
+     *         </ns2:getMsgResponse>
+     *     </S:Body>
+     * </S:Envelope>
+     * }
+     * </pre>
+     * 
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          SOAP Url
+     * P_METHOD_NM               SOAP Method Name
+     * P_NS_PREFIX               SOAP Message Namespace prefix Name
+     * P_NS_URI                  SOAP Message Namespace Uri
+     * P_ACCEPT_ENCODING         SOAP 호출 ACCEPT_ENCODING, 기본값 없음
+     * P_CONTENT_TYPE            SOAP 호출 CONTENT_TYPE, 기본값 application/soap+xml; charset=utf-8
+     * P_DATA_TAG                SOAP 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_LIST_TAG         결과 정보가 리스트형태일 경우 읽을 태그명
+     * P_RESULT_SUB_NODE_YN      리스트 결과 정보에서 값을 읽을 경우 서브 노드에서 읽을지 현재 노드에서 읽을지 여부
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        SOAP 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @param soapResponse
+     * @return Map
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getSOAPResponseMessage(Map<String, Object> serviceParams, Map<String, Object> callParams, SOAPMessage soapResponse) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>(callParams);
+        Util.setOutMessage(resultMap, Consts.OK);
+        try {
+            SOAPMessage resultMessage = soapResponse;
+            // GZip 압출 체크, 변경
+            MimeHeaders mimeHeaders = soapResponse.getMimeHeaders();
+            String[] encodings = mimeHeaders.getHeader(HttpHeaders.CONTENT_ENCODING);
+            if (encodings != null) {
+                for (int i = 0; i < encodings.length; i++) {
+                    if (encodings[i].toLowerCase().equals("gzip")) {
+                        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+                        resultMessage.writeTo(byteArrayStream);
+                        GZIPInputStream gzipStream = new GZIPInputStream(new ByteArrayInputStream(byteArrayStream.toByteArray()));
+                        resultMessage = messageFactory.createMessage(mimeHeaders, gzipStream);
+                        byteArrayStream.close();
+                        gzipStream.close();
+                        break;
+                    }
+                }
+            }
+
+            // Result Tag Mapping 정보, 매핑정보가 없으면 XML 태그 정보로 리턴
+            Map<String, Object> resultTagParams = (Map<String, Object>)serviceParams.get("P_RESULT_TAG_PARAMS");
+            if (resultTagParams == null) {
+                resultTagParams = new HashMap<String, Object>();
+            }
+
+            // Body Parsing
+            SOAPBody soapBody = resultMessage.getSOAPBody();
+            if (soapBody.hasFault()) {
+                SOAPFault fault = soapBody.getFault();
+                throw new RuntimeException(String.format(NexosMessage.getDisplayMsg("JAVA.ED.056", "웹서비스 호출 오류\n오류코드: %s, 오류내역: %s"),
+                    fault.getFaultCode(), fault.getFaultString()));
+            } else {
+                String resultTag = (String)serviceParams.get("P_RESULT_TAG");
+                String resultListTag = (String)serviceParams.get("P_RESULT_LIST_TAG");
+                String resultSubNodeYn = Util.nullToDefault(serviceParams.get("P_RESULT_SUB_NODE_YN"), Consts.YES);
+                NodeList resultTagNodes = soapBody.getElementsByTagName(resultTag);
+                if (resultTagNodes == null || resultTagNodes.getLength() == 0) {
+                    throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.057", "Result Tag[P_RESULT_TAG]에 해당하는 데이터가 없습니다."));
+                }
+
+                // 1 레코드, 멀티 레코드 기본 Result Tag에서 기본 처리
+                for (int row = 0; row < resultTagNodes.getLength(); row++) {
+                    // Result Tag Node
+                    NodeList resultTagNode = (NodeList)resultTagNodes.item(row);
+                    for (int col = 0; col < resultTagNode.getLength(); col++) {
+                        // Result Tag Sub Node
+                        Node node = resultTagNode.item(col);
+                        resultMap.put(Util.nullToDefault(resultTagParams.get(node.getNodeName()), node.getNodeName()), node.getTextContent());
+                    }
+                }
+
+                // 멀티 레코드일 경우 List에서 추가 처리
+                if (Util.isNotNull(resultListTag)) {
+                    // Result Tag에서 매핑정보에 해당하는 항목 검색하여 Map에 입력
+                    for (int row = 0; row < resultTagNodes.getLength(); row++) {
+                        // Result Tag Node
+                        NodeList resultTagNode = (NodeList)resultTagNodes.item(row);
+                        for (int col = 0; col < resultTagNode.getLength(); col++) {
+                            // Result Tag Sub Node
+                            Node node = resultTagNode.item(col);
+                            resultMap.put(Util.nullToDefault(resultTagParams.get(node.getNodeName()), node.getNodeName()), node.getTextContent());
+                        }
+                    }
+
+                    // Result List Tag에서 매핑정보에 해당하는 항목 검색하여 List에 입력
+                    ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+                    NodeList resultListTagNodes = soapBody.getElementsByTagName(resultListTag);
+                    // Result List Tag에서 값을 읽을 때 SubNode에서 읽을 경우
+                    if (Consts.YES.equals(resultSubNodeYn)) {
+                        for (int row = 0; row < resultListTagNodes.getLength(); row++) {
+                            // Result List Tag Node
+                            NodeList resultListTagNode = (NodeList)resultListTagNodes.item(row);
+                            Map<String, Object> resultListTagSubNode = new HashMap<String, Object>();
+                            for (int col = 0; col < resultListTagNode.getLength(); col++) {
+                                // Result List Tag Sub Node
+                                Node node = resultListTagNode.item(col);
+                                resultListTagSubNode.put(Util.nullToDefault(resultTagParams.get(node.getNodeName()), node.getNodeName()),
+                                    node.getTextContent());
+                            }
+                            resultList.add(resultListTagSubNode);
+                        }
+                    }
+                    // Result List Tag명으로 값이 들어 있을 경우
+                    else {
+                        // Result List Tag -> ResultMap Key 명칭
+                        String resultListTagKey = Util.nullToDefault(resultTagParams.get(resultListTag), resultListTag);
+                        for (int row = 0; row < resultListTagNodes.getLength(); row++) {
+                            // Result List Tag Node
+                            Node node = resultListTagNodes.item(row);
+                            Map<String, Object> resultListItem = new HashMap<String, Object>();
+                            resultListItem.put(resultListTagKey, node.getTextContent());
+                            resultList.add(resultListItem);
+                        }
+                    }
+                    resultMap.put(resultListTag, resultList);
+                }
+            }
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * SOAP Message 전송<br>
+     * <pre style="font-family: GulimChe; font-size: 12px;">
+     * <b>Sample message</b><br>
+     * {@code
+     * ----------SOAP Request------------
+     * 
+     *  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+     *      xmlns:ns1="http://endpoint.sample.com/">
+     *      <soapenv:Header/>
+     *      <soapenv:Body>
+     *          <ns1:getMsg>
+     *              <arg0>Send message</arg0>
+     *          </ns1:getMsg>
+     *      </soapenv:Body>
+     *  </soapenv:Envelope>
+     * 
+     *  ----------SOAP Response-----------
+     * 
+     *  <?xml version="1.0" encoding="UTF-8"?>
+     *  <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+     *      <S:Body>
+     *          <ns2:getMsgResponse xmlns:ns2="http://endpoint.sample.com/">
+     *              <return>Response message</return>
+     *          </ns2:getMsgResponse>
+     *      </S:Body>
+     *  </S:Envelope>
+     *  }
+     * </pre>
+     * 
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          SOAP Url
+     * P_METHOD_NM               SOAP Method Name
+     * P_NS_PREFIX               SOAP Message Namespace prefix Name
+     * P_NS_URI                  SOAP Message Namespace Uri
+     * P_ACCEPT_ENCODING         SOAP 호출 ACCEPT_ENCODING, 기본값 없음
+     * P_CONTENT_TYPE            SOAP 호출 CONTENT_TYPE, 기본값 application/soap+xml; charset=utf-8
+     * P_DATA_TAG                SOAP 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_LIST_TAG         결과 정보가 리스트형태일 경우 읽을 태그명
+     * P_RESULT_SUB_NODE_YN      리스트 결과 정보에서 값을 읽을 경우 서브 노드에서 읽을지 현재 노드에서 읽을지 여부
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        SOAP 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @return Map
+     */
+    public Map<String, Object> sendSOAPMessage(Map<String, Object> serviceParams, Map<String, Object> callParams) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        SOAPConnection soapConnection = null;
+        try {
+            String webServiceUrl = (String)serviceParams.get("P_WEBSERVICE_URL");
+            if (Util.isNull(webServiceUrl)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.058", "SOAP 전송 Url[P_WEBSERVICE_URL]이 지정되지 않았습니다."));
+            }
+            int connectTimeout = Math.min(Util.toInt(serviceParams.get("P_CONN_TIMEOUT"), 5), 5);
+            int readTimeout = Math.min(Util.toInt(serviceParams.get("P_READ_TIMEOUT"), 20), 20);
+
+            // Connection 생성
+            soapConnection = soapConnectionFactory.createConnection();
+            // 호출 Request 생성
+            SOAPMessage soapRequest = getSOAPRequestMessage(serviceParams, callParams);
+            // Request 메시지 로그 기록
+            // if (logger.isInfoEnabled()) {
+            // ByteArrayOutputStream baos = null;
+            // try {
+            // baos = new ByteArrayOutputStream();
+            // soapRequest.writeTo(baos);
+            // logger.debug("SOAP Request" + Consts.CRLF + baos.toString());
+            // } catch (Exception e) {
+            // } finally {
+            // if (baos != null) {
+            // try {
+            // baos.close();
+            // } catch (IOException ioe) {
+            // }
+            // }
+            // }
+            // }
+            // 호출
+            // SOAPMessage soapResponse = soapConnection.call(soapRequest, webServiceUrl);
+            // Timeout 세팅을 위해 호출 방법 변경
+            URL endpoint = new URL(null, webServiceUrl, new NexosURLStreamHandler(connectTimeout, readTimeout));
+            SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+            // Response 메시지 로그 기록
+            // if (logger.isInfoEnabled()) {
+            // ByteArrayOutputStream baos = null;
+            // try {
+            // baos = new ByteArrayOutputStream();
+            // soapResponse.writeTo(baos);
+            // logger.debug("SOAP Response" + Consts.CRLF + baos.toString());
+            // } catch (Exception e) {
+            // } finally {
+            // if (baos != null) {
+            // try {
+            // baos.close();
+            // } catch (IOException ioe) {
+            // }
+            // }
+            // }
+            // }
+            // 결과 파싱
+            resultMap = getSOAPResponseMessage(serviceParams, callParams, soapResponse);
+            // logger.debug("sendSoapMessage[Result]: " + resultMap.toString());
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        } finally {
+            if (soapConnection != null) {
+                try {
+                    soapConnection.close();
+                } catch (SOAPException e) {
+                }
+            }
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * [CJ대한통운] 주소정제 웹서비스 호출<br>
+     * 별도 쓰레드로 동작 함
+     * 
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 출고정보<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부
+     * @return
+     */
+    public void callCJGetAddressInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsAddress = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsAddress = getDataList(SELECT_ID_GET_CJ_ADDRESS_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsAddress == null || dsAddress.size() == 0) {
+            return;
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        if (Consts.YES.equals(threadYn)) {
+            final List<Map<String, Object>> dsThreadAddress = dsAddress;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callCJGetAddressInformation(params, dsThreadAddress);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+        } else {
+            callCJGetAddressInformation(params, dsAddress);
+        }
+    }
+
+    /**
+     * CJ대한통운 SOAP 서비스 호출
+     * 
+     * @param params
+     * @param dsAddress
+     */
+    private void callCJGetAddressInformation(Map<String, Object> params, List<Map<String, Object>> dsAddress) {
+
+        // 서비스 호출 기본정보 처리, 첫번째 Record에만 존재 함
+        Map<String, Object> defineInfo = dsAddress.get(0);
+        // 서비스 호출 기본정보 - 컬럼명 SP_로 시작, 입력시 P_로 변경하여 입력
+        Map<String, Object> serviceParams = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : defineInfo.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("SP_")) {
+                serviceParams.put(key.replaceFirst("SP_", "P_"), entry.getValue());
+            }
+        }
+        // 서비스 호출 결과 파라메터 매핑 정보 파싱
+        Map<String, Object> resultTagParams = Util.toKeyValues((String)serviceParams.get("P_RESULT_TAG_PARAM_MAP"));
+        if (resultTagParams.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.032", "[RESULT_TAG_PARAM_MAP]파라메터 매핑 정보가 존재하지 않습니다."));
+        }
+        // 서비스 호출 헤더 매핑정보 파싱
+        Map<String, Object> headerParams = Util.toKeyValues((String)serviceParams.get("P_HEADER_PARAM_MAP"));
+
+        serviceParams.put("P_RESULT_TAG_PARAMS", resultTagParams);
+        serviceParams.put("P_HEADER_PARAMS", headerParams);
+
+        String responseTimeParamNm = (String)serviceParams.get("P_PARAM_RESPONSE_TIME");
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        // 전표 단위 처리
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        Map<String, Object> dataValues = new HashMap<String, Object>();
+        for (Map<String, Object> rowData : dsAddress) {
+            // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+            setParameter(rowData, dataValues, callParams);
+
+            TransactionStatus ts = beginTrans();
+            try {
+                // 추가 정보 파라메터에 추가
+                callParams.put(Consts.PK_USER_ID, userId);
+                callParams.put("P_SEND_PARAMS", dataValues);
+
+                long startTime = System.currentTimeMillis();
+                Map<String, Object> resultMap = sendSOAPMessage(serviceParams, callParams);
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                }
+                resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+
+                Map<String, Object> callResultMap = callProcedure(SP_ID_SET_CJ_ADDRESS_INFO_UPDATE, resultMap);
+                oMsg = Util.getOutMessage(callResultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+            }
+        }
+    }
+
+    /**
+     * [심평원] 표준코드 조회 웹서비스 호출
+     * 
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 표준코드<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부<br>
+     *        P_QUERY_ID: 결과 반영할 쿼리ID, 쓰레드로 동작할려면 결과반영할 쿼리ID가 존재해야 함, 없으면 오류
+     * @return
+     */
+    public Map<String, Object> callKPISGetStdCdInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsKPIS = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsKPIS = getDataList(SELECT_ID_GET_KPIS_STD_CD_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsKPIS == null || dsKPIS.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.059", "표준코드 조회 서비스를 호출할 표준코드 데이터가 존재하지 않습니다."));
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        String queryId = (String)params.get("P_QUERY_ID");
+        if (Consts.YES.equals(threadYn)) {
+            if (Util.isNull(queryId)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.060", "쓰레드로 동작하기 위해선 쿼리ID를 지정해야 합니다."));
+            }
+
+            final List<Map<String, Object>> dsThreadKPIS = dsKPIS;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callKPISSOAPService(params, dsThreadKPIS);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+            return null;
+        } else {
+            if (dsKPIS.size() > 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.061", "처리 결과를 받을 경우 1건만 처리 가능합니다."));
+            }
+            return callKPISSOAPService(params, dsKPIS);
+        }
+    }
+
+    /**
+     * [심평원] RFID 조회 웹서비스 호출
+     * 
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: RFID태그코드;RFID일련번호<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부<br>
+     *        P_QUERY_ID: 결과 반영할 쿼리ID, 쓰레드로 동작할려면 결과반영할 쿼리ID가 존재해야 함, 없으면 오류
+     * @return
+     */
+    public Map<String, Object> callKPISGetRFIDInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsKPIS = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsKPIS = getDataList(SELECT_ID_GET_KPIS_RFID_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsKPIS == null || dsKPIS.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.062", "RFID 조회 서비스를 호출할 태그/일련번호 데이터가 존재하지 않습니다."));
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        String queryId = (String)params.get("P_QUERY_ID");
+        if (Consts.YES.equals(threadYn)) {
+            if (Util.isNull(queryId)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.060", "쓰레드로 동작하기 위해선 쿼리ID를 지정해야 합니다."));
+            }
+
+            final List<Map<String, Object>> dsThreadKPIS = dsKPIS;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callKPISSOAPService(params, dsThreadKPIS);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+            return null;
+        } else {
+            if (dsKPIS.size() > 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.061", "처리 결과를 받을 경우 1건만 처리 가능합니다."));
+            }
+            return callKPISSOAPService(params, dsKPIS);
+        }
+    }
+
+    /**
+     * [심평원] 묶음번호(최소박스) 조회 웹서비스 호출
+     * 
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 묶음번호(상위묶음번호)<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부<br>
+     *        P_QUERY_ID: 결과 반영할 쿼리ID, 쓰레드로 동작할려면 결과반영할 쿼리ID가 존재해야 함, 없으면 오류
+     * @return
+     */
+    public Map<String, Object> callKPISGetBNoInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsKPIS = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsKPIS = getDataList(SELECT_ID_GET_KPIS_BNO_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsKPIS == null || dsKPIS.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.063", "묶음번호(최소박스) 조회 서비스를 호출할 묶음번호(상위묶음번호) 데이터가 존재하지 않습니다."));
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        String queryId = (String)params.get("P_QUERY_ID");
+        if (Consts.YES.equals(threadYn)) {
+            if (Util.isNull(queryId)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.060", "쓰레드로 동작하기 위해선 쿼리ID를 지정해야 합니다."));
+            }
+
+            final List<Map<String, Object>> dsThreadKPIS = dsKPIS;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callKPISSOAPService(params, dsThreadKPIS);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+            return null;
+        } else {
+            if (dsKPIS.size() > 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.061", "처리 결과를 받을 경우 1건만 처리 가능합니다."));
+            }
+            return callKPISSOAPService(params, dsKPIS);
+        }
+    }
+
+    /**
+     * [심평원] 묶음번호(일련번호) 조회 웹서비스 호출
+     * 
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 묶음번호(최소묶음(박스)번호)<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부<br>
+     *        P_QUERY_ID: 결과 반영할 쿼리ID, 쓰레드로 동작할려면 결과반영할 쿼리ID가 존재해야 함, 없으면 오류
+     * @return
+     */
+    public Map<String, Object> callKPISGetSNoInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsKPIS = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsKPIS = getDataList(SELECT_ID_GET_KPIS_SNO_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsKPIS == null || dsKPIS.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.064", "묶음번호(일련번호) 조회 서비스를 호출할 묶음번호(최소묶음(박스)번호) 데이터가 존재하지 않습니다."));
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        String queryId = (String)params.get("P_QUERY_ID");
+        if (Consts.YES.equals(threadYn)) {
+            if (Util.isNull(queryId)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.060", "쓰레드로 동작하기 위해선 쿼리ID를 지정해야 합니다."));
+            }
+
+            final List<Map<String, Object>> dsThreadKPIS = dsKPIS;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callKPISSOAPService(params, dsThreadKPIS);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+            return null;
+        } else {
+            if (dsKPIS.size() > 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.061", "처리 결과를 받을 경우 1건만 처리 가능합니다."));
+            }
+            return callKPISSOAPService(params, dsKPIS);
+        }
+    }
+
+    /**
+     * [심평원] 묶음번호(일련번호) 상세 조회 웹서비스 호출
+     * 
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 최소묶음(박스)번호<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부<br>
+     *        P_QUERY_ID: 결과 반영할 쿼리ID, 쓰레드로 동작할려면 결과반영할 쿼리ID가 존재해야 함, 없으면 오류
+     * @return
+     */
+    public Map<String, Object> callKPISGetSNoDetailInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsKPIS = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsKPIS = getDataList(SELECT_ID_GET_KPIS_SNO_DETAIL_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsKPIS == null || dsKPIS.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.065", "묶음번호(일련번호) 상세 조회 서비스를 호출할 최소묶음(박스)번호 데이터가 존재하지 않습니다."));
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        String queryId = (String)params.get("P_QUERY_ID");
+        if (Consts.YES.equals(threadYn)) {
+            if (Util.isNull(queryId)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.060", "쓰레드로 동작하기 위해선 쿼리ID를 지정해야 합니다."));
+            }
+
+            final List<Map<String, Object>> dsThreadKPIS = dsKPIS;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callKPISSOAPService(params, dsThreadKPIS);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+            return null;
+        } else {
+            if (dsKPIS.size() > 1) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.061", "처리 결과를 받을 경우 1건만 처리 가능합니다."));
+            }
+            return callKPISSOAPService(params, dsKPIS);
+        }
+    }
+
+    /**
+     * 심평원 SOAP 서비스 호출
+     * 
+     * @param params
+     * @param dsKPIS
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> callKPISSOAPService(Map<String, Object> params, List<Map<String, Object>> dsKPIS) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Util.setOutMessage(resultMap, Consts.OK);
+        try {
+            String queryId = (String)params.get("P_QUERY_ID");
+            // SOAP 호출 기본 정보 처리, 첫번째 Record에만 존재 함
+            Map<String, Object> defineInfo = dsKPIS.get(0);
+            // SOAP 호출 기본 정보 - 컬럼명 SP_로 시작, 입력시 P_로 변경하여 입력
+            Map<String, Object> serviceParams = new HashMap<String, Object>();
+            for (Map.Entry<String, Object> entry : defineInfo.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith("SP_")) {
+                    serviceParams.put(key.replaceFirst("SP_", "P_"), entry.getValue());
+                }
+            }
+            // 호출 결과 파라메터 매핑 정보 파싱
+            Map<String, Object> resultTagParams = Util.toKeyValues((String)serviceParams.get("P_RESULT_TAG_PARAM_MAP"));
+            if (resultTagParams.size() == 0) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.032", "[RESULT_TAG_PARAM_MAP]파라메터 매핑 정보가 존재하지 않습니다."));
+            }
+            // SOAP 호출 헤더 메핑 정보 파싱
+            Map<String, Object> headerParams = Util.toKeyValues((String)serviceParams.get("P_HEADER_PARAM_MAP"));
+
+            serviceParams.put("P_RESULT_TAG_PARAMS", resultTagParams);
+            serviceParams.put("P_HEADER_PARAMS", headerParams);
+
+            String responseTimeParamNm = (String)serviceParams.get("P_PARAM_RESPONSE_TIME");
+            String userId = (String)params.get(Consts.PK_USER_ID);
+
+            resultMap.put(Consts.PK_SERVICE_PARAMS, serviceParams);
+            // 레코드 단위 처리
+            Map<String, Object> callParams = new HashMap<String, Object>();
+            Map<String, Object> dataValues = new HashMap<String, Object>();
+            // 결과 List로 리턴
+            if (Util.isNull(queryId)) {
+                for (Map<String, Object> rowData : dsKPIS) {
+                    // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+                    setParameter(rowData, dataValues, callParams);
+
+                    // 추가 정보 파라메터에 추가
+                    callParams.put(Consts.PK_USER_ID, userId);
+                    callParams.put("P_SEND_PARAMS", dataValues);
+
+                    // long startTime = System.currentTimeMillis();
+                    resultMap = sendSOAPMessage(serviceParams, callParams);
+                    String oMsg = Util.getOutMessage(resultMap);
+                    if (!Consts.OK.equals(oMsg)) {
+                        resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                        resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                    }
+                    // resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+                }
+            }
+            // 결과 DB에 반영
+            else {
+                for (Map<String, Object> rowData : dsKPIS) {
+                    // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+                    setParameter(rowData, dataValues, callParams);
+
+                    TransactionStatus ts = beginTrans();
+                    try {
+                        // 추가 정보 파라메터에 추가
+                        callParams.put(Consts.PK_USER_ID, userId);
+                        callParams.put("P_SEND_PARAMS", dataValues);
+
+                        long startTime = System.currentTimeMillis();
+                        resultMap = sendSOAPMessage(serviceParams, callParams);
+                        String oMsg = Util.getOutMessage(resultMap);
+                        if (!Consts.OK.equals(oMsg)) {
+                            resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                            resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                        }
+                        resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+
+                        List<Map<String, Object>> dsSOAPResult = (List<Map<String, Object>>)resultMap.get(serviceParams.get("P_RESULT_LIST_TAG"));
+                        Map<String, Object> soapResultParams = new HashMap<String, Object>();
+                        for (int i = 0; i < dsSOAPResult.size(); i++) {
+                            soapResultParams.clear();
+                            // 기본 파라메터 추가
+                            soapResultParams.putAll(callParams);
+                            // 서비스 호출 결과 데이터 파라메터로 추가
+                            soapResultParams.putAll(dsSOAPResult.get(i));
+                            Map<String, Object> callResultMap = callProcedure(queryId, soapResultParams);
+                            oMsg = Util.getOutMessage(callResultMap);
+                            if (!Consts.OK.equals(oMsg)) {
+                                throw new RuntimeException(oMsg);
+                            }
+                        }
+                        commitTrans(ts);
+                    } catch (Exception e) {
+                        rollbackTrans(ts);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        }
+        return resultMap;
+    }
+}

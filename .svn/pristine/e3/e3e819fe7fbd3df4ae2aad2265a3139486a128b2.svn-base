@@ -1,0 +1,50 @@
+/*
+ *======================================================================================================================
+ * Loading Message
+ *======================================================================================================================
+ */
+div.ctrLoadingOverlay {
+    position: fixed;
+    outline: none;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+div.ctrLoadingOverlay .ctrOuter {
+    display: table;
+    background: url("../../main/css/image/imgLoadingBG.png");
+    outline: none;
+    z-index: 2001;
+    width: 100%;
+    height: 100%;
+}
+
+div.ctrLoadingOverlay .ctrInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+div.ctrLoadingOverlay .ctrContent {
+    display: inline-block;
+    position: relative;
+    background-color: #2e2e2e;;
+    border: 2px solid #1c1c1c;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    line-height: 50px;
+    width: 400px;
+    height: 50px;
+}
+
+div.ctrLoadingOverlay .ctrContent.printing {
+    font-size: 12px;
+    width: 400px;
+}

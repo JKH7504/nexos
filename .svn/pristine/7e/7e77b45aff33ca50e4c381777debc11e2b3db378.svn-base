@@ -1,0 +1,134 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC01010E0
+    프로그램명         : 배차조정
+    프로그램설명       : 배차조정 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC01010E0.css" /> -->
+<script src="js/LDC01010E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQDelivery_Batch" class="lblCondition">운송차수</div>
+                    <select id="cboQDelivery_Batch" class="cboKey" style="width: 150px;"></select>
+                    <input id="btnQDelivery_Batch" class="btnIcoRefresh" type="button" />
+                </td>
+                <td class="styFillArea styRight">
+                    <input id="btnInitTransRoute_M" class="btnImgNormal" type="button" value="운송루트 초기화" style="width: 130px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">차량 정보</td>
+                    <td>
+                        <input id="btnChangeCar_Car" class="btnImgPopup" type="button" value="차량변경" style="width: 80px;" />
+                    </td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <div id="divSubViewDetail" style="border: none;">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdDetail" class="lblTitle">배송처 정보</td>
+                        <td>
+                            <input id="btnMoveUpRoute" class="btnImgNormal" type="button" value="위로" style="width: 70px;" />
+                            <input id="btnMoveDownRoute" class="btnImgNormal" type="button" value="아래로" style="width: 70px;" />
+                            <input id="btnInitTransRoute_D" class="btnImgNormal" type="button" value="초기화" style="width: 70px;" />
+                            <input id="btnChangeCar_Outbound" class="btnImgPopup" type="button" value="차량변경" style="width: 80px;" />
+                        </td>
+                        <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="ctrAdditional_grdDetail" class="ctrAdditional bottom styRight">
+                    <div id="lblL1_Checked_Summary" class="lblNormal" style="width: auto; min-width: 22px;">선택 합계정보</div>
+                    <div id="lblL1_Total_Weight" class="lblDisplay" style="width: auto; min-width: 22px;">KG</div>
+                    <input id="edtL1_Total_Weight" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                    <div id="lblL1_Total_Cbm" class="lblDisplay" style="width: auto; min-width: 22px;">CBM</div>
+                    <input id="edtL1_Total_Cbm" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                    <div id="lblL1_Total_Plt" class="lblDisplay" style="width: auto; min-width: 22px;">PLT</div>
+                    <input id="edtL1_Total_Plt" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                    <div id="lblL1_Total_Box" class="lblDisplay" style="width: auto; min-width: 22px;">BOX</div>
+                    <input id="edtL1_Total_Box" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                </div>
+                <div id="grdDetail"></div>
+            </div>
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdSub" class="lblTitle">상품 정보</td>
+                        <td>
+                            <input id="btnChangeCar_Line" class="btnImgPopup" type="button" value="차량변경" style="width: 80px;" />
+                            <input id="btnSplitOrder" class="btnImgPopup" type="button" value="전표분할" style="width: 80px;" />
+                        </td>
+                        <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="ctrAdditional_grdSub" class="ctrAdditional bottom styRight">
+                    <div id="lblL2_Checked_Summary" class="lblNormal" style="width: auto; min-width: 22px;">선택 합계정보</div>
+                    <div id="lblL2_Total_Weight" class="lblDisplay" style="width: auto; min-width: 22px;">KG</div>
+                    <input id="edtL2_Total_Weight" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                    <div id="lblL2_Total_Cbm" class="lblDisplay" style="width: auto; min-width: 22px;">CBM</div>
+                    <input id="edtL2_Total_Cbm" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                    <div id="lblL2_Total_Plt" class="lblDisplay" style="width: auto; min-width: 22px;">PLT</div>
+                    <input id="edtL2_Total_Plt" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                    <div id="lblL2_Total_Box" class="lblDisplay" style="width: auto; min-width: 22px;">BOX</div>
+                    <input id="edtL2_Total_Box" class="edtDisplay" type="text" value="0" disabled="disabled" style="width: 80px;" />
+                </div>
+                <div id="grdSub"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 차량선택 Overlay -->
+    <div id="divCarMasterOverlay" style="display: none;">
+        <div id="divCarMasterView" class="ctrPopup">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdCarMaster" class="lblTitle">차량 정보</td>
+                    <td id="ctrRows_grdCarMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdCarMaster"></div>
+        </div>
+        <div class="ctrPopupActionBar">
+            <input id="btnCarSelect" class="btnNormal" type="button" value="차량변경" style="width: 80px;" />
+            <input id="btnCarMasterOverlayClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+        </div>
+    </div>
+</body>
+</html>

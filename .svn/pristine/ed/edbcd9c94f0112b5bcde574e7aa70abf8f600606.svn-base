@@ -1,0 +1,207 @@
+package nexos.dao.lc;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: LCC02090E0DAOImpl<br>
+ * Description: LCC02090E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2023-04-18    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("LCC02090E0DAO")
+public class LCC02090E0DAOImpl extends DaoSupport implements LCC02090E0DAO {
+
+    final String PROGRAM_ID          = "LCC02090E0";
+
+    final String TABLE_NM_LC110NM    = "LC110NM";
+    final String INSERT_ID_LC110NM   = PROGRAM_ID + ".INSERT_" + TABLE_NM_LC110NM;
+    final String UPDATE_ID_LC110NM   = PROGRAM_ID + ".UPDATE_" + TABLE_NM_LC110NM;
+    final String DELETE_ID_LC110NM   = PROGRAM_ID + ".DELETE_" + TABLE_NM_LC110NM;
+
+    final String TABLE_NM_LC110ND    = "LC110ND";
+    final String INSERT_ID_LC110ND   = PROGRAM_ID + ".INSERT_" + TABLE_NM_LC110ND;
+    final String UPDATE_ID_LC110ND   = PROGRAM_ID + ".UPDATE_" + TABLE_NM_LC110ND;
+    final String DELETE_ID_LC110ND   = PROGRAM_ID + ".DELETE_" + TABLE_NM_LC110ND;
+
+    final String SP_ID_LC110NM_GETNO = "WT.LC_110NM_GETNO";
+    final String SP_ID_GET_PROTECT   = "WF.GET_PROTECT";
+
+    /*
+     * 팝업에서 데이터 수정 및 화면에서 삭제 시, 배열/리스트 형식으로 담아 처리
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void save(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> dsDetail = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+
+        String processCd = (String)params.get(Consts.PK_PROCESS_CD);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+        String processingNo = null;
+
+        Map<String, Object> callParams;
+
+        // 보안 설정 CHECK SP 호출
+        callParams = new HashMap<String, Object>();
+        callParams.put("P_CENTER_CD", masterRowData.get("P_CENTER_CD"));
+        callParams.put("P_BU_CD", masterRowData.get("P_BU_CD"));
+        callParams.put("P_PROTECT_DATE", masterRowData.get("P_PROCESSING_DATE"));
+
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_PROTECT, callParams);
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        // 신규/수정 등록
+        if (Consts.DV_CRUD_C.equals(processCd) || Consts.DV_CRUD_U.equals(processCd)) {
+
+            // 등록자ID 입력
+            masterRowData.put(Consts.PK_USER_ID, userId);
+            int dsDetailCount = dsDetail.size();
+
+            // 신규일 경우 가공번호 채번
+            if (Consts.DV_CRUD_C.equals(processCd)) {
+
+                if (dsDetailCount < 1) {
+                    throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.LCC02090E0.001", "가공작업등록 상세내역이 존재하지 않습니다."));
+                }
+
+                resultMap = callProcedure(SP_ID_LC110NM_GETNO, masterRowData);
+                oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                processingNo = (String)resultMap.get("O_PROCESSING_NO");
+                masterRowData.put("P_PROCESSING_NO", processingNo);
+
+                // 마스터 생성, CRUD 체크 안함
+                masterRowData.put(Consts.PK_REG_USER_ID, userId);
+                masterRowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_LC110NM, masterRowData);
+            } else {
+                // 수정일 경우 기존 가공번호 가져옴
+                processingNo = (String)masterRowData.get("P_PROCESSING_NO");
+                // 마스터 수정
+                if (Consts.DV_CRUD_U.equals(masterRowData.get(Consts.PK_CRUD))) {
+                    updateSql(UPDATE_ID_LC110NM, masterRowData);
+                }
+
+                // Detail row가 없을 경우 return
+                if (dsDetailCount == 0) {
+                    return;
+                }
+            }
+
+            // 디테일 처리
+            for (int i = 0; i < dsDetailCount; i++) {
+                Map<String, Object> rowData = dsDetail.get(i);
+                rowData.put(Consts.PK_USER_ID, userId);
+
+                String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+                if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                    rowData.put("P_PROCESSING_NO", processingNo);
+                    rowData.put(Consts.PK_REG_USER_ID, userId);
+                    rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                    insertSql(INSERT_ID_LC110ND, rowData);
+                } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                    updateSql(UPDATE_ID_LC110ND, rowData);
+                } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                    deleteSql(DELETE_ID_LC110ND, rowData);
+                }
+            }
+        }
+
+        // 삭제
+        else if (Consts.DV_CRUD_D.equals(processCd)) {
+            deleteSql(DELETE_ID_LC110ND, masterRowData);
+            deleteSql(DELETE_ID_LC110NM, masterRowData);
+        }
+    }
+
+    /*
+     * 화면에서 데이터 수정 시, 리스트/리스트 형식으로 담아 처리
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void updateConfirmQty(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        List<Map<String, Object>> dsMaster = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> dsDetail = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        int dsMasterCnt = dsMaster.size();
+        int dsDetailrCnt = dsDetail.size();
+
+        // 가공작업 수정 처리
+        for (int i = 0; i < dsMasterCnt; i++) {
+            Map<String, Object> rowData = dsMaster.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_LC110NM, rowData);
+            }
+        }
+
+        // 가공작업상세 수정 처리
+        for (int i = 0; i < dsDetailrCnt; i++) {
+            Map<String, Object> rowData = dsDetail.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_LC110ND, rowData);
+            }
+        }
+    }
+
+    /*
+     * 가공작업관리 상태 업데이트
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void processPreNxt(Map<String, Object> params) throws Exception {
+
+        // 파라메터 처리
+        Map<String, Object> dsMaster = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+
+        String processState = (String)params.get(Consts.PK_PROCESS_STATE_FW);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        dsMaster.put(Consts.PK_USER_ID, userId);
+
+        // 확정 데이터 업데이트
+        if (Consts.DIRECTION_FW.equals(processState)) {
+            dsMaster.put("P_CONFIRM_DATETIME", Consts.DV_SYSDATE);
+        } else {
+            dsMaster.put("P_CONFIRM_DATETIME", "");
+        }
+        updateSql(UPDATE_ID_LC110ND, dsMaster);
+        updateSql(UPDATE_ID_LC110NM, dsMaster);
+    }
+}

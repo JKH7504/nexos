@@ -1,0 +1,64 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOB07021P0
+    프로그램명         : 송장추가발행 팝업
+    프로그램설명       : 송장추가발행 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOB07021P0.css" /> -->
+<script src="js/LOB07021P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCarrier_Cd" class="lblNormal">운송사</div>
+                    <input id="edtCarrier_Cd" class="edtDisplay" type="text" disabled="disabled" tabindex="1" style="width: 60px;">
+                    <input id="edtCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" tabindex="2" style="width: 150px;">
+                </td>
+                <td></td>
+                <td class="styFillArea styRight">
+                    <div class="lblNormal" style="width: 125px;">운송장 추가 발행매수</div>
+                    <input id="edtWb_No_Cnt" class="edtKey formatterInteger" type="text" style="width: 60px;" />
+                    <input id="btnAddWbNo" class="btnNormal" type="button" value="추가발행" style="width: 70px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblWb_No" class="lblNormal">운송장번호</div>
+                    <input id="edtWb_No" class="edtDisplay" type="text" disabled="disabled" tabindex="3" style="width: 216px;">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">운송장 상품내역</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnImgCancel" type="button" value="닫기" style="width: 60px;" />
+    </div>
+</body>
+</html>

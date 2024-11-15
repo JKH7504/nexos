@@ -1,0 +1,622 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : PDA_LIC02350E0
+ *  프로그램명         : PDA 입고적치[단일상품매핑]
+ *  프로그램설명       : PDA 입고적치[단일상품매핑] 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2018-02-27
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2018-02-27    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#ctrMasterView",
+            exceptHeight: function() {
+                return $NC.getViewHeight("#ctrActionBar");
+            }
+        },
+        ignoreKeyUp: false,
+        lastPalletId: null,
+        lastLocationCd: null,
+        masterData: null,
+
+        // 체크할 정책 값
+        policyVal: {
+            LI230: "", // 파렛트ID 매핑 기준
+            LS210: "" // 재고 관리 기준
+        }
+    });
+
+    $NC.setVisible("#tdQDsp_Brand_Nm", false);
+    // 컨테이너 클릭시 포커스 이동 처리
+    $("body").click(onContainerFocus);
+    // 이전버튼 클릭 -> 메인 종료로 처리
+    $("#btnClose").click($NC.G_MAIN.btnCloseOnClick);
+    // 취소버튼 클릭 -> _Cancel로 처리
+    $("#btnCancel").click(_Cancel);
+    // 처리버튼 클릭 -> _Save로 처리
+    $("#btnSave").click(_Save);
+    // 로케이션 입력
+    $("#lblPutaway_Location_Cd").click(onLocationApply);
+
+    // 정책 값 읽기
+    setPolicyValInfo();
+    // 권한 설정
+    setUserProgramPermission();
+}
+
+/**
+ * Window Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    // setFocusScan();
+    _Cancel();
+}
+
+/**
+ * Window Focus 시 호출 됨
+ */
+function _OnFocus() {
+
+    setFocusScan();
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * Condition Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnConditionChange(e, view, val) {
+
+    // 기본정보 변경, id는 무조건 기본정보 뷰의 id 기준
+    var id = view.prop("id").substr(3).toUpperCase();
+    switch (id) {
+        case "CENTER_CD":
+            setPolicyValInfo();
+            break;
+        case "BU_CD":
+            setPolicyValInfo();
+            break;
+        case "WORK_DATE":
+            break;
+    }
+
+    // 조건 변경시 초기화
+    _Cancel($ND.C_CLEAR_TYPE_ALL);
+}
+
+/**
+ * Input, Select Change Event 처리
+ * 
+ * @param e
+ *        이벤트 핸들러
+ * @param view
+ *        대상 Object
+ */
+function _OnInputChange(e, view, val) {
+
+    var id = view.prop("id").substr(3).toUpperCase();
+    switch (id) {
+        case "PALLET_ID":
+            // Enter Key로 Change가 발생하면 KeyUp은 무시
+            $NC.G_VAR.ignoreKeyUp = true;
+            onPalletScan(view, val);
+            break;
+        case "PUTAWAY_LOCATION_CD":
+            // Enter Key로 Change가 발생하면 KeyUp은 무시
+            $NC.G_VAR.ignoreKeyUp = true;
+            onLocationScan(view, val);
+            break;
+    }
+}
+
+/**
+ * Input KeyUp Event 처리
+ * 
+ * @param e
+ *        이벤트 핸들러
+ * @param view
+ *        대상 Object
+ */
+function _OnInputKeyUp(e, view) {
+
+    // Enter Key일 경우만 처리
+    if (e.keyCode != 13) {
+        return;
+    }
+
+    var id = view.prop("id").substr(3).toUpperCase();
+    switch (id) {
+        case "PALLET_ID":
+            // KeyUp 무시면 리턴
+            if ($NC.G_VAR.ignoreKeyUp) {
+                $NC.G_VAR.ignoreKeyUp = false;
+                return;
+            }
+            onPalletScan(view, $NC.getValue(view));
+            break;
+        case "PUTAWAY_LOCATION_CD":
+            // KeyUp 무시면 리턴
+            if ($NC.G_VAR.ignoreKeyUp) {
+                $NC.G_VAR.ignoreKeyUp = false;
+                return;
+            }
+            if ($NC.G_VAR.ignoreKeyUp) {
+                $NC.G_VAR.ignoreKeyUp = false;
+                return;
+            }
+            onLocationScan(view, $NC.getValue(view));
+            break;
+    }
+}
+
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+    // 저장 전 Validation
+    if ($NC.isNull($NC.G_VAR.masterData)) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "파렛트ID를 먼저 스캔하십시오."));
+        setFocusScan();
+        return;
+    }
+
+    // 파렛트ID는 masterData가 존재하므로 추가 체크하지 않음
+    // 적치 로케이션 체크
+    if ($NC.isNull($NC.G_VAR.lastLocationCd)) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "적치 로케이션을 먼저 스캔하십시오."));
+        setFocusScan("#edtPutaway_Location_Cd");
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "적치 처리하시겠습니까?"))) {
+        setFocusScan();
+        return;
+    }
+
+    $NC.serviceCall("/PDA_LIC02350E0/callLIProcPutawayT1.do", {
+        P_CENTER_CD: $NC.G_VAR.masterData.CENTER_CD,
+        P_BU_CD: $NC.G_VAR.masterData.BU_CD,
+        P_INBOUND_DATE: $NC.G_VAR.masterData.INBOUND_DATE,
+        P_INBOUND_NO: $NC.G_VAR.masterData.INBOUND_NO,
+        P_LINE_NO: $NC.G_VAR.masterData.LINE_NO,
+        P_PALLET_ID: $NC.G_VAR.masterData.PALLET_ID,
+        P_PUTAWAY_LOCATION_CD: $NC.G_VAR.lastLocationCd,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave, onLocationError);
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel(clearType) {
+
+    // clearType
+    // C_CLEAR_TYPE_ALL: 0
+    // C_CLEAR_TYPE_MASTER: 1
+    // C_CLEAR_TYPE_DETAIL: 2
+    // C_CLEAR_TYPE_SUB: 3
+    // clearType가 취소 버튼 클릭 Event Object일 경우도 있음
+    if (clearType instanceof $.Event || $NC.isNull(clearType)) {
+        clearType = $ND.C_CLEAR_TYPE_ALL;
+    }
+
+    // 로케이션은 무조건 초기화
+    $NC.G_VAR.lastLocationCd = null;
+    $NC.setValue("#edtPutaway_Location_Cd");
+
+    if (clearType <= $ND.C_CLEAR_TYPE_MASTER) {
+        // 전역 변수 초기화
+        $NC.G_VAR.masterData = null;
+        $NC.G_VAR.lastPalletId = null;
+        $NC.G_VAR.lastLocationCd = null;
+        $NC.setValue("#edtPallet_Id");
+
+        // 모두 비활성
+        setInputValue();
+        $NC.setEnableGroup("#ctrMasterView", false);
+
+        // 스캔만 활성, 포커스
+        $NC.setEnable("#edtPallet_Id");
+        setFocusScan();
+    } else {
+        // 로케이션에 포커스
+        setFocusScan("#edtPutaway_Location_Cd");
+    }
+}
+
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+}
+
+/**
+ * 최상위 컨테이너 Click에 이벤트 바인딩하여 스캔 Edit로 포커스 이동 처리
+ * 
+ * @param e
+ * @returns
+ */
+function onContainerFocus(e) {
+
+    var $view = $(e.target);
+    // 하단 액션버튼은 처리 안함
+    if ($view.is("span") && $view.parent(".btnAction").length > 0) {
+        return;
+    }
+    // 스캔 Element - 파렛트ID
+    if ($view.prop("id") == "edtPallet_Id") {
+        return;
+    }
+    // 스캔 Element - 로케이션
+    if ($view.prop("id") == "edtPutaway_Location_Cd") {
+        // 비활성이면 파렛트ID로
+        if (!$NC.isEnable($view)) {
+            setFocusScan();
+        }
+        return;
+    }
+    // 입력 Element가 아니면 스캔 Element에 포커스
+    if (!$view.is(":focus")) {
+        // 파렛트ID 스캔하여 정상 조회되어 있으면 로케이션에 포커
+        if ($NC.isNull($NC.G_VAR.lastPalletId)) {
+            setFocusScan();
+        } else {
+            setFocusScan("#edtPutaway_Location_Cd");
+        }
+    }
+}
+
+function setFocusScan(selector) {
+
+    var $view = $NC.getView($NC.isNull(selector) ? "#edtPallet_Id" : selector);
+    if ($NC.isEnable($view)) {
+        // Delay 처리
+        setTimeout(function() {
+            $view.focus();
+            $NC.hideSoftInput(); // 일단 스캔 항목 키보드 숨김 처리
+        }, $ND.C_TIMEOUT_FOCUS);
+    }
+}
+
+function setInputValue(rowData) {
+
+    if ($NC.isNull(rowData)) {
+        // 초기화시 기본값 지정
+        rowData = {
+            CRUD: $ND.C_DV_CRUD_R
+        };
+    }
+
+    // Row 데이터로 에디터 세팅
+    $NC.setValue("#edtInbound_Date", rowData["INBOUND_DATE"]);
+    $NC.setValue("#edtInbound_No", rowData["INBOUND_NO"]);
+    $NC.setValue("#edtVendor_Nm", rowData["VENDOR_NM"]);
+    $NC.setValue("#edtItem_Cd", rowData["ITEM_CD"]);
+    $NC.setValue("#edtItem_Nm", rowData["ITEM_NM"]);
+    $NC.setValue("#edtBrand_Nm", rowData["BRAND_NM"]);
+    $NC.setValue("#edtItem_State", rowData["ITEM_STATE_F"]);
+    $NC.setValue("#edtValid_Date", rowData["VALID_DATE"]);
+    $NC.setValue("#edtBatch_No", rowData["BATCH_NO"]);
+    $NC.setValue("#edtQty_In_Box", rowData["QTY_IN_BOX"]);
+    $NC.setValue("#edtBox_In_Plt", rowData["BOX_IN_PLT"]);
+    $NC.setValue("#edtPlt_Tihi", rowData["PLT_TIHI"]);
+    $NC.setValue("#edtKeep_Div", rowData["KEEP_DIV_D"]);
+    $NC.setValue("#edtRec_Location_Cd", rowData["PUTAWAY_LOCATION_CD"]);
+    $NC.setValue("#edtConfirm_Box", rowData["CONFIRM_BOX"]);
+    $NC.setValue("#edtConfirm_Ea", rowData["CONFIRM_EA"]);
+    $NC.setValue("#edtConfirm_Qty", rowData["CONFIRM_QTY"]);
+}
+
+function onGetMaster(ajaxData) {
+
+    var dsResult = $NC.toArray(ajaxData);
+    if (dsResult.length == 0) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "파렛트ID 정보가 없습니다."));
+        _Cancel();
+        return;
+    }
+    var resultData = dsResult[0];
+    if (resultData.INBOUND_STATE != $ND.C_STATE_DIRECTIONS && resultData.INBOUND_STATE != $ND.C_STATE_CONFIRM) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "입고진행 상태 : [" + resultData.INBOUND_STATE + "] 적치가능한 상태가 아닙니다.", resultData.INBOUND_STATE));
+        _Cancel();
+        return;
+    }
+    if (resultData.CENTER_CD != $NC.G_USERINFO.CENTER_CD) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "물류센터: [" + resultData.CENTER_CD + "] 설정된 물류센터와 다른 물류센터의 파렛트ID입니다.", resultData.BU_CD));
+        _Cancel();
+        return;
+    }
+    if (resultData.BU_CD != $NC.G_USERINFO.BU_CD) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "사업부: [" + resultData.BU_CD + "] 설정된 사업부와 다른 사업부의 파렛트ID입니다.", resultData.BU_CD));
+        _Cancel();
+        return;
+    }
+    // if (resultData.INBOUND_DATE != $NC.G_USERINFO.WORK_DATE) {
+    // alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "입고일자: [" + resultData.INBOUND_DATE + "] 설정된 작업일자와 다른 입고일자의 파렛트ID입니다.",
+    // resultData.INBOUND_DATE));
+    // _Cancel();
+    // return;
+    // }
+    if (resultData.INSPECT_YN == $ND.C_NO) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "검수작업 하지 않은 파렛트ID 입니다. 검수작업 후 입고적치하십시오."));
+        _Cancel();
+        return;
+    }
+
+    if (resultData.PUTAWAY_YN == $ND.C_YES) {
+        if (!confirm($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "적치 처리된 파렛트ID입니다.\n재적치 처리하시겠습니까?"))) {
+            _Cancel();
+            return;
+        }
+    }
+
+    // 출고지시된 재고는 적치 처리 안되도록... ???
+    if (resultData.OUT_WAIT_QTY > 0) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "BOX : " + resultData.OUT_WAIT_BOX + ", EA : " + resultData.OUT_WAIT_EA
+            + " 해당 수량 만큼 출고지시 되었습니다.", resultData.OUT_WAIT_BOX, resultData.OUT_WAIT_EA));
+        _Cancel();
+        return;
+    }
+
+    // 값 세팅
+    $NC.G_VAR.masterData = resultData;
+    $NC.setEnableGroup("#ctrMasterView");
+    setInputValue($NC.G_VAR.masterData);
+
+    setFocusScan("#edtPutaway_Location_Cd");
+}
+
+function onGetDetail(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+    // 리턴 값이 없으면 다시
+    if ($NC.isEmpty(resultData)) {
+        alert($NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "로케이션 존재여부를 확인하지 못했습니다. 다시 스캔하십시오."));
+        _Cancel($ND.C_CLEAR_TYPE_DETAIL);
+        return;
+    }
+    var oMsg = $NC.getOutMessage(resultData);
+    if (oMsg != $ND.C_OK) {
+        alert(oMsg);
+        _Cancel($ND.C_CLEAR_TYPE_DETAIL);
+        return;
+    }
+
+    setFocusScan("#edtPutaway_Location_Cd");
+}
+
+function onPalletScan($scan, scanVal) {
+
+    if ($NC.isNull($scan)) {
+        $scan = $("#edtPallet_Id");
+        scanVal = $NC.getValue($scan);
+    }
+
+    // 파렛트ID
+    if ($NC.isNull(scanVal)) {
+        _Cancel();
+        return;
+    }
+
+    // 초기화
+    _Cancel();
+
+    $NC.G_VAR.lastPalletId = scanVal;
+    $NC.setValue($scan, scanVal);
+
+    // 데이터 조회
+    $NC.serviceCall("/PDA_LIC02350E0/getDataSet.do", {
+        P_QUERY_ID: "PDA_LIC02350E0.RS_MASTER",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.G_USERINFO.CENTER_CD,
+            P_BU_CD: $NC.G_USERINFO.BU_CD,
+            P_PALLET_ID: $NC.G_VAR.lastPalletId
+        }
+    }, onGetMaster, onPalletError);
+}
+
+function onLocationScan($scan, scanVal) {
+
+    if ($NC.isNull($scan)) {
+        $scan = $("#edtPutaway_Location_Cd");
+        scanVal = $NC.getValue($scan);
+    }
+
+    // 로케이션
+    if ($NC.isNull(scanVal)) {
+        _Cancel($ND.C_CLEAR_TYPE_DETAIL);
+        setFocusScan($scan);
+        return;
+    }
+
+    // 초기화
+    _Cancel($ND.C_CLEAR_TYPE_DETAIL);
+
+    $NC.G_VAR.lastLocationCd = scanVal;
+    $NC.setValue($scan, scanVal);
+
+    $NC.serviceCall("/PDA_COMMON/getData.do", {
+        P_QUERY_ID: "PDA_COMMON.CM_LOCATION_CHECK",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.G_USERINFO.CENTER_CD,
+            P_LOCATION_CD: $NC.G_VAR.lastLocationCd,
+            P_INOUT_DIV: "1"
+        }
+    }, onGetDetail, onLocationError);
+}
+
+function onSave(ajaxData) {
+
+    var title = $NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "확인"), //
+    message = $NC.getDisplayMsg("JS.PDA_LIC02350E0.XXX", "정상 처리되었습니다."), //
+    buttons = {};
+    buttons[title] = function() {
+        _Cancel();
+    };
+
+    $NC.showMessage({
+        title: title,
+        message: message,
+        width: 300,
+        height: 150,
+        autoCloseDelayTime: $ND.C_TIMEOUT_CLOSE,
+        buttons: buttons
+    });
+}
+
+function onPalletError(ajaxData) {
+
+    $NC.onError(ajaxData);
+    _Cancel();
+    setFocusScan();
+}
+
+function onLocationError(ajaxData) {
+
+    $NC.onError(ajaxData);
+    _Cancel($ND.C_CLEAR_TYPE_DETAIL);
+    setFocusScan("#edtPutaway_Location_Cd");
+}
+
+// 로케이션을 권장로케이션 값으로 UPDATE
+function onLocationApply() {
+
+    if ($NC.isNull($NC.G_VAR.lastPalletId)) {
+        setFocusScan();
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData)) {
+        setFocusScan();
+        return;
+    }
+
+    $NC.G_VAR.lastLocationCd = $NC.G_VAR.masterData.PUTAWAY_LOCATION_CD;
+
+    $NC.setValue("#edtPutaway_Location_Cd", $NC.G_VAR.lastLocationCd);
+
+    $NC.serviceCall("/PDA_COMMON/getData.do", {
+        P_QUERY_ID: "PDA_COMMON.CM_LOCATION_CHECK",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.G_USERINFO.CENTER_CD,
+            P_LOCATION_CD: $NC.G_VAR.lastLocationCd,
+            P_INOUT_DIV: "1"
+        }
+    }, onGetDetail, onLocationError);
+}
+
+/**
+ * 프로그램 사용 권한 설정
+ */
+function setUserProgramPermission() {
+
+    var permission = $NC.getProgramPermission();
+
+    if (!permission.canSave) {
+        $("#btnSave").addClass("styDisabled");
+    }
+}
+
+/**
+ * 전역 변수에 정책 값 정보 세팅
+ */
+function setPolicyValInfo() {
+
+    $NC.setPolicyValInfo({
+        P_CENTER_CD: $NC.G_USERINFO.CENTER_CD,
+        P_BU_CD: $NC.G_USERINFO.BU_CD
+    }, function() {
+        // 재고관리기준에 따라 유효일자/배치번호별 표시/비표시
+        // 1 - 입고일자별, 2 - 입고일자, 유효일자/배치번호별
+        if ($NC.G_VAR.policyVal.LS210 == "2") {
+            $NC.setVisible("#ctrValidDate");
+            // $NC.setVisible("#ctrBatchNo");
+        } else {
+            $NC.setVisible("#ctrValidDate", false);
+            // $NC.setVisible("#ctrBatchNo", false);
+        }
+        // 파렛트ID 매핑 기준 정책값에 따라 화면 강제 종료
+        // 단일화면이므로 멀티는 종료
+        switch ($NC.G_VAR.policyVal.LI230) {
+            // 입고검수 - 단일
+            case "1":
+                break;
+            // 입고검수 - 멀티
+            // case "2":
+            // case "3":
+            // break;
+            default:
+                alert("해당 사업부는 사용할 수 없는 프로그램입니다. 프로그램을 종료합니다.");
+                $NC.G_MAIN.hideDefaultInfoLayer();
+                setTimeout(function() {
+                    $("#btnClose").click();
+                }, $ND.C_TIMEOUT_CLOSE_FAST);
+                return;
+        }
+    });
+}

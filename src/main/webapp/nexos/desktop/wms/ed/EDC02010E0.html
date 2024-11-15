@@ -1,0 +1,63 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : EDC02010E0
+    프로그램명         : 송수신 스케줄링
+    프로그램설명       : 송수신 스케줄링 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/EDC02010E0.css" /> -->
+<script src="js/EDC02010E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <div id="ctrAdditional_grdMaster" class="ctrAdditional top" style="text-align: right;">
+            <div class="ctrGroup styRight">
+                <div id="lblQSchedulerStartedYN" class="lblKey" style="width: auto; margin-right: 20px;">스케줄실행여부: 미확인</div>
+                <input id="btnStartScheduler" class="btnImgNormal" type="button" value="스케줄러 실행" style="width: 115px;" />
+                <input id="btnStopScheduler" class="btnImgCancel" type="button" value="스케줄러 중지" style="width: 115px;" />
+            </div>
+            <div id="divSAPServer" class="ctrGroup styRight">
+                <div id="lblQSAPServerStartedYN" class="lblKey" style="width: auto; margin: 0 20px;">SAP서버실행여부: 미확인</div>
+                <input id="btnStartSAPServer" class="btnImgNormal" type="button" value="SAP서버 실행" style="width: 110px;" />
+                <input id="btnStopSAPServer" class="btnImgCancel" type="button" value="SAP서버 중지" style="width: 110px;" />
+            </div>
+        </div>
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">송수신 스케줄링</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

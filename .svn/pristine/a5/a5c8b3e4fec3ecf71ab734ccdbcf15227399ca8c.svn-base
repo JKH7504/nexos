@@ -1,0 +1,181 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : PDA_LCC02010E0
+    프로그램명         : PDA 상태변환
+    프로그램설명       : PDA 상태변환 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-02-27
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-02-27    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/PDA_LCC02010E0.css" /> -->
+<script src="js/PDA_LCC02010E0.js"></script>
+</head>
+<body>
+    <div id="ctrMasterInfoView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblLocation_Cd" class="lblKey">로케이션</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtLocation_Cd" class="edtKey" type="text" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">로케이션 상품정보</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrDetailView" class="ctrLinearLayout">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblItem_Bar_Cd" class="lblKey">바코드</div>
+                </td>
+                <td class="styFillArea" colspan="3">
+                    <input id="edtItem_Bar_Cd" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_Nm" class="lblNormal">상품명</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtItem_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr id="tdQDsp_Brand_Nm">
+                <td>
+                    <div id="lblBrand_Nm" class="lblNormal">브랜드</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtBrand_Nm" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr id="ctrValidDate">
+                <td>
+                    <div id="lblValid_Date" class="lblNormal">유통기한</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtValid_Date" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblBatch_No" class="lblNormal">제조배치</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtBatch_No" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblItem_State" class="lblNormal">상품상태</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtItem_State" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblLink_Item_State" class="lblNormal">변환상태</div>
+                </td>
+                <td class="styHalfArea">
+                    <select id="cboLink_Item_State" class="cboKey"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQty_In_Box" class="lblNormal">박스입수</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtQty_In_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblBox_In_Plt" class="lblNormal" style="width: 80px;">PLT입수</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtBox_In_Plt" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblStock_Qty" class="lblNormal">재고수량</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtStock_Box" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <input id="edtStock_Ea" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtStock_Qty" class="edtDisplay" type="text" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblConfirm_Qty" class="lblKey">변환수량</div>
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtConfirm_Box" class="edtKey" type="text" />
+                </td>
+                <td>
+                    <input id="edtConfirm_Ea" class="edtKey" type="text" />
+                </td>
+                <td class="styHalfArea">
+                    <input id="edtConfirm_Qty" class="edtKey" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblLink_Location_Cd" class="lblNormal">이동로케이션</div>
+                </td>
+                <td colspan="3">
+                    <input id="edtLink_Location_Cd" class="edtKey" type="text" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table id="ctrActionBar" class="ctrBottomActionBar">
+        <tr>
+            <td>
+                <div id="btnClose" class="btnAction">
+                    <span>이전</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnCancel" class="btnAction">
+                    <span>취소</span>
+                </div>
+            </td>
+            <td class="styFillArea"></td>
+            <td>
+                <div id="btnAll" class="btnAction">
+                    <span>전체</span>
+                </div>
+            </td>
+            <td>
+                <div id="btnSave" class="btnAction">
+                    <span>처리</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

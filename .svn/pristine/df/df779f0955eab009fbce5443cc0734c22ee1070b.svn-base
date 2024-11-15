@@ -1,0 +1,190 @@
+package nexos.service.lo;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+
+import nexos.dao.lo.LOF07020E0DAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.ServiceSupport;
+
+/**
+ * Class: LOF07020E0Service<br>
+ * Description: 운송장내역[B2CF](LOF07020E0) 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2021-12-24    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class LOF07020E0Service extends ServiceSupport {
+
+    final String          SP_ID_GET_LO_OUTBOUND_STATE = "WF.GET_LO_OUTBOUND_STATE";
+
+    @Autowired
+    private LOF07020E0DAO dao;
+
+    /**
+     * 추가 발행 운송장 삭제 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    public String delete(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.delete(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 송장추가발행
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOWbNoAdd(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOWbNoAdd(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-송장 출력 횟수 업데이트 처리
+     *
+     * @param params
+     */
+    public Map<String, Object> callSetWbNoPrintCntUpdate(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callSetWbNoPrintCntUpdate(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 저장/삭제시 상태를 체크해서 "30"이 아닐경우 저장/삭제 불가
+     *
+     * @param params
+     * @param checkState
+     * @return
+     */
+    public String canProcessingdState(Map<String, Object> params, String checkState) {
+
+        String result = Consts.OK;
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_LO_OUTBOUND_STATE, params);
+
+        String oMsg = Util.getOutMessage(resultMap);
+        if (Consts.OK.equals(oMsg)) {
+            String oOutboundState = (String)resultMap.get("O_OUTBOUND_STATE");
+            if (!checkState.equals(oOutboundState)) {
+                result = NexosMessage.getDisplayMsg("JAVA.STATE.001", "[진행상태 : " + oOutboundState + "] 처리할 수 있는 상태가 아닙니다.",
+                    new String[ ] {oOutboundState});
+            } else {
+                result = oMsg;
+            }
+        } else {
+            result = oMsg;
+        }
+        return result;
+    }
+
+    /**
+     * 반입요청 저장 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    public String returnSave(Map<String, Object> params) throws Exception {
+
+        // 신규 등록이 아닐 경우 저장 전 입고진행상태 체크
+        // Map<String, Object> dsMaster = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+
+        // 저장 처리
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.returnSave(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 송장 확정 처리
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOWbConfirm(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOWbConfirm(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+}

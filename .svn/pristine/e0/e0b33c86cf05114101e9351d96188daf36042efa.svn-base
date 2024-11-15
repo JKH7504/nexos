@@ -1,0 +1,9 @@
+# Maven
+target/
+
+# Ant
+**/META-INF/resources/
+
+# Spring
+.sts4-cache/
+.springBeans

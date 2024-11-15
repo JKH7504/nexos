@@ -1,0 +1,120 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : PDA Main
+    프로그램명         : PDA Main
+    프로그램설명       : PDA Main 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<title>neXos PDA</title>
+<!-- ${NEXOS_META} -->
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="shortcut icon" href="css/image/favicon.ico" type="image/x-icon">
+<!-- ${NEXOS_LIBRARY} ${m} ${../../../} -->
+<!--  Popup JS -->
+<script src="../../../framework/js/popup.js"></script>
+<!-- Main CSS/JS -->
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/main_mainmenu.css">
+<script src="js/main_mainmenu.js"></script>
+<script src="js/main.js"></script>
+</head>
+<body class="mobile">
+    <!-- <div id="ctrDisplaySize" style="position: fixed; background-color: #fff; top: 0; z-index: 9999;"></div> -->
+    <div id="ctrViewport" class="ctrViewport">
+        <div id="ctrMainView" class="ctrMain" tabIndex="0" style="display: none;">
+            <table id="ctrTopTitleBar" class="ctrTopTitleBar">
+                <tr>
+                    <td id="btnTopLogo" class="ctrLogo"><span id="lblLogin_Server" class="lblLoginServer"></span></td>
+                    <td id="btnTopUser" class="ctrUser"></td>
+                </tr>
+            </table>
+            <div id="ctrClientView" class="ctrClient">
+                <div id="ctrMenuView">
+                    <div id="ctrMainMenu" class="ctrMainMenu">
+                        <div id="ctrMenuItems" class="ctrMenuBar">
+                            <div id="mnuWC" class="menu active default">
+                                <span class="actionItem">기본정보</span>
+                            </div>
+                        </div>
+                        <div id="ctrMenuViews" class="ctrMenuPanel">
+                            <div id="ctrWC" class="panel default globalOnChangeWC">
+                                <div class="ctrLinearLayout">
+                                    <table class="ctrInner">
+                                        <tr>
+                                            <td>
+                                                <div id="lblCenter_Cd" class="lblKey">물류센터</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <select id="cboCenter_Cd" class="cboKey"></select>
+                                            </td>
+                                        </tr>
+                                        <tr id="ctrWC_Bu_Cd">
+                                            <td>
+                                                <div id="lblBu_Cd" class="lblKey">사업부</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <select id="cboBu_Cd" class="cboKey"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div id="lblWork_Date" class="lblKey">작업일자</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input id="dtpWork_Date" class="dtpKey" type="text" readonly="readonly" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="actionItem" style="padding-top: 8px;">
+                                    <div id="btnMenuRefresh" class="btnAction">
+                                        <span>메뉴새로고침</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="floatClear"></div>
+                    </div>
+                    <table id="ctrMenuActionBar" class="ctrBottomActionBar" style="border-top-width: 1px;">
+                        <tr>
+                            <td>
+                                <div id="btnLogout" class="btnAction icoLogout">
+                                    <span>로그아웃</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- 단위화면 컨테이너 -->
+                <div id="ctrWindows" style="display: none;"></div>
+            </div>
+        </div>
+        <!-- 로그인 Dialog -->
+        <div id="ctrLoginLayer" class="ctrLoginOverlay" tabindex="1">
+            <!-- ${NEXOS_INCLUDE} ${include/main_ctrLoginLayer.html} -->
+        </div>
+    </div>
+    <div id="ctrExtraView">
+        <!-- ${NEXOS_INCLUDE} ${include/main_ctrExtraView.html} -->
+    </div>
+</body>
+</html>

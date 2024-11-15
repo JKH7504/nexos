@@ -1,0 +1,76 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC01021P0
+    프로그램명         : 배차현황 상세내역 팝업
+    프로그램설명       : 배차현황 상세내역 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2019-11-20
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2019-11-20    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC01021P0.css" /> -->
+<script src="js/LDC01021P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblArea_Cd" class="lblNormal">운송권역</div>
+                    <input id="edtArea_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+                    <input id="edtArea_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 170px;" />
+                </td>
+                <td>
+                    <div id="lblCar_Div_D" class="lblNormal">차량구분</div>
+                    <input id="edtCar_Div_D" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;" />
+                </td>
+                <td>
+                    <div id="lblCar_Nm" class="lblNormal">차량번호</div>
+                    <input id="edtCar_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblPopup_RDelivery_Cd" class="lblNormal">실배송처</div>
+                    <input id="edtRDelivery_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 100px;" />
+                    <input id="edtRDelivery_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 170px;" />
+                </td>
+                <td>
+                    <div id="lblDriver_Nm" class="lblNormal">성명</div>
+                    <input id="edtDriver_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 80px;" />
+                </td>
+                <td>
+                    <div id="lblDriver_Hp" class="lblNormal">휴대전화번호</div>
+                    <input id="edtDriver_Hp" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 배차현황 디테일-->
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">배차현황 상세정보</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

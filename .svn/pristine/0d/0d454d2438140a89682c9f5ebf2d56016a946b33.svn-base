@@ -1,0 +1,146 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC04060E0
+    프로그램명         : 공급처상품관리
+    프로그램설명       : 공급처상품관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC04060E0.css" /> -->
+<script src="js/CMC04060E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Cust_Cd" class="lblCondition">고객사</div>
+                    <input id="edtQCust_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQCust_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Vendor_Cd" class="lblCondition">공급처</div>
+                    <input id="edtQVendor_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQVendor_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQVendor_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">공급처기준상품관리</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">상품기준공급처관리</a></li>
+        </ul>
+        <!-- 공급처기준상품관리 -->
+        <div id="divT1TabSheetView">
+            <!-- split 상단-->
+            <div id="divT1Splitter">
+                <div id="divT1Master" class="ctrLeft" style="border-width: 0 1px 0 0;">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdT1Master" class="lblTitle">공급처마스터</td>
+                            <td id="ctrRows_grdT1Master" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdT1Master"></div>
+                </div>
+                <div id="divT1Detail" class="ctrRight" style="border-width: 0 0 0 1px;">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdT1Detail" class="lblTitle">상품마스터</td>
+                            <td>
+                                <input id="btnT1AddItem" class="btnImgNormal" type="button" value="상품추가" style="width: 80px;" />
+                            </td>
+                            <td id="ctrRows_grdT1Detail" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdT1Detail"></div>
+                </div>
+            </div>
+            <!-- split 하단-->
+            <div id="divT1Sub">
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdT1Sub" class="lblTitle">공급처별 할당상품</td>
+                        <td id="ctrRows_grdT1Sub" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdT1Sub"></div>
+            </div>
+        </div>
+        <!-- 상품기준공급사관리 -->
+        <div id="divT2TabSheetView">
+            <!-- split 상단-->
+            <div id="divT2Splitter">
+                <div id="divTopView" class="ctrInner">
+                    <div id="lblQSelect_Div" class="lblCondition">조회조건</div>
+                    <div class="ctrGroupBox">
+                        <input id="rgbQSelect_Div1" name="rgbQSelect_Div" class="rgbNormal" type="radio" value="1" style="width: 20px;" />
+                        전체
+                        <input id="rgbQSelect_Div2" name="rgbQSelect_Div" class="rgbNormal" type="radio" value="2" style="width: 20px;" />
+                        공급처미할당
+                        <input id="rgbQSelect_Div3" name="rgbQSelect_Div" class="rgbNormal" type="radio" value="3" style="width: 20px;" />
+                        발주비율100%이하
+                    </div>
+                </div>
+                <div id="divT2Master" class="ctrLeft" style="border-width: 0 1px 0 0;">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdT2Master" class="lblTitle">상품마스터</td>
+                            <td id="ctrRows_grdT2Master" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdT2Master"></div>
+                </div>
+                <div id="divT2Detail" class="ctrRight" style="border-width: 0 0 0 1px;">
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdT2Detail" class="lblTitle">공급처마스터</td>
+                            <td>
+                                <input id="btnT2AddVendor" class="btnImgNormal" type="button" value="공급처추가" style="width: 95px;" />
+                            </td>
+                            <td id="ctrRows_grdT2Detail" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdT2Detail"></div>
+                </div>
+            </div>
+            <!-- split 하단-->
+            <div id="divT2Sub">
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdT2Sub" class="lblTitle">상품별 할당상품</td>
+                        <td id="ctrRows_grdT2Sub" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdT2Sub"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

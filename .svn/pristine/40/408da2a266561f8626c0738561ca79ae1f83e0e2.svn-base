@@ -1,0 +1,39 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : previewpopup
+    프로그램명         : 출력미리보기 팝업
+    프로그램설명       : 출력미리보기 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../} -->
+<!-- Print Preview Popup CSS/JS -->
+<link rel="stylesheet" href="css/previewpopup.css" />
+<script src="js/previewpopup.js"></script>
+</head>
+<body style="background-color: #565656;">
+    <div id="ctrPrintingLayer" class="ctrLoadingOverlay" tabindex="1">
+        <div class="ctrOuter">
+            <div class="ctrInner">
+                <div class="ctrContent printing">출력 문서를 생성 중 입니다. 잠시만 기다려 주십시오...</div>
+            </div>
+        </div>
+    </div>
+    <form id="frmReport" name="frmReport"></form>
+    <!-- Report Preview -->
+    <iframe id="ifmReportPreview" name="ifmReportPreview" src="about:blank" style="margin: 0; padding: 0; background-color: gray; border: none; width: 800px; height: 500px; overflow: hidden;"></iframe>
+</body>
+</html>

@@ -1,0 +1,104 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LFC03010E0
+    프로그램명         : 일반단가관리
+    프로그램설명       : 일반단가관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-03-24
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-03-24    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LFC03010E0.css" /> -->
+<script src="js/LFC03010E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQContract_Date" class="lblCondition">계약일자</div>
+                    <input id="dtpQContract_Date" class="dtpNormal" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Contract_No" class="lblCondition">계약번호</div>
+                    <input id="edtQContract_No" class="edtNormal" type="text" style="width: 80px;" />
+                    <input id="btnQContract_No" class="btnIcoPopup" type="button" />
+                    <input id="edtQContract_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Bill_Div" class="lblCondition">정산구분</div>
+                    <input id="edtQBill_Div" class="edtNormal" type="text" style="width: 80px;" />
+                    <input id="btnQBill_Div" class="btnIcoPopup" type="button" />
+                    <input id="edtQBill_Div_D" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 작업영역 (가로 split)-->
+    <div id="divSplitterArea1">
+        <!-- split 상단-->
+        <div>
+            <!-- 사업부별 보관수수료 기준 -->
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">사업부 수수료기준</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <!-- split 하단-->
+        <div id="divSplitterArea2" style="border: 0;">
+            <!-- split 좌측-->
+                <!-- 작업영역 (가로 split)-->
+                <div id="divSplitterArea3" style="border: 0;">
+                    <div>
+                        <!-- 보관유형별 보관수수료 기준 -->
+                        <table class="ctrTitleBar">
+                            <tr>
+                                <td id="ctrTitle_grdDetail1" class="lblTitle">보관유형별 수수료기준</td>
+                                <td id="ctrRows_grdDetail1" class="lblRows">0/0 Rows</td>
+                            </tr>
+                        </table>
+                        <div id="grdDetail1"></div>
+                    </div>
+                    <div>
+                        <!-- 상품그룹별 보관수수료 기준 -->
+                        <table class="ctrTitleBar">
+                            <tr>
+                                <td id="ctrTitle_grdDetail2" class="lblTitle">상품그룹별 수수료기준</td>
+                                <td id="ctrRows_grdDetail2" class="lblRows">0/0 Rows</td>
+                            </tr>
+                        </table>
+                        <div id="grdDetail2"></div>
+                    </div>
+                </div>
+                <!-- split 우측-->
+                <div>
+                    <!-- 상품별 보관수수료 기준 -->
+                    <table class="ctrTitleBar">
+                        <tr>
+                            <td id="ctrTitle_grdDetail3" class="lblTitle">상품별 수수료기준</td>
+                            <td id="ctrRows_grdDetail3" class="lblRows">0/0 Rows</td>
+                        </tr>
+                    </table>
+                    <div id="grdDetail3"></div>
+                </div>
+        </div>
+    </div>
+</body>
+</html>

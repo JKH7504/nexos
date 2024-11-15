@@ -1,0 +1,81 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC09030Q0
+    프로그램명         : 액티비티로그조회
+    프로그램설명       : 액티비티로그조회 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC09030Q0.css" /> -->
+<script src="js/CSC09030Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQActivity_Date" class="lblCondition">액티비티일자</div>
+                    <input id="dtpQActivity_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQActivity_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQActivity_Div" class="lblCondition">액티비티구분</div>
+                    <select id="cboQActivity_Div" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQActivity_User_Id" class="lblCondition">사용자</div>
+                    <input id="edtQActivity_User_Id" class="edtNormal" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQActivity_Cd" class="lblCondition">액티비티코드</div>
+                    <input id="edtQActivity_Cd" class="edtNormal" type="text" style="width: 220px;" />
+                </td>
+                <td>
+                    <div id="lblQActivity_Comment" class="lblCondition">액티비티내역</div>
+                    <input id="edtQActivity_Comment" class="edtNormal" type="text" style="width: 220px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">액티비티 로그내역</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspDetailInfo" class="lblTitle">액티비티 상세내역</td>
+                    <td class="styFillArea styRight">
+                        <input id="btnLoadActivityComment" class="btnImgNormal" type="button" value="상세내역 전체보기" style="width: 140px;" />
+                    </td>
+                </tr>
+            </table>
+            <textarea id="edtActivity_Comment" class="edtNormal" readonly="readonly" style="white-space: pre; word-wrap: normal; resize: none; overflow: auto; border-width: 0;"></textarea>
+        </div>
+    </div>
+</body>
+</html>

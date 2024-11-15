@@ -1,0 +1,73 @@
+package nexos.dao.cs;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: CSC03010E0DAOImpl<br>
+ * Description: CSC03010E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("CSC03010E0DAO")
+public class CSC03010E0DAOImpl extends DaoSupport implements CSC03010E0DAO {
+
+    // private final Logger logger = LoggerFactory.getLogger(CSC03010E0DAOImpl.class);
+
+    final String PRORAM_ID           = "CSC03010E0";
+
+    final String TABLE_NM_CPPROCESS  = "CPPROCESS";
+    final String INSERT_ID_CPPROCESS = PRORAM_ID + ".INSERT_" + TABLE_NM_CPPROCESS;
+    final String UPDATE_ID_CPPROCESS = PRORAM_ID + ".UPDATE_" + TABLE_NM_CPPROCESS;
+    final String DELETE_ID_CPPROCESS = PRORAM_ID + ".DELETE_" + TABLE_NM_CPPROCESS;
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveMaster(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        if (dsSave == null || dsSave.size() == 0) {
+            return;
+        }
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        // 그룹코드 처리
+        int dsCnt = dsSave.size();
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CPPROCESS, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_CPPROCESS, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                // 삭제일 경우 상용코드 먼저 삭제
+                Map<String, Object> newRowData = new HashMap<String, Object>();
+                newRowData.put("P_COMMON_GRP", rowData.get("P_COMMON_CD"));
+                deleteSql(DELETE_ID_CPPROCESS, newRowData);
+                // 그룹코드 삭제
+                deleteSql(DELETE_ID_CPPROCESS, rowData);
+            }
+        }
+    }
+}

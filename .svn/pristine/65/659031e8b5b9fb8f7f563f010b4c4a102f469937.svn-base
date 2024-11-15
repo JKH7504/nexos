@@ -1,0 +1,178 @@
+package nexos.dao.cm;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.support.DaoSupport;
+
+/**
+ * Class: CMC04020E0DAOImpl<br>
+ * Description: CMC04020E0 DAO (Data Access Object)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ * 
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Repository("CMC04020E0DAO")
+public class CMC04020E0DAOImpl extends DaoSupport implements CMC04020E0DAO {
+
+    final String PRORAM_ID               = "CMC04020E0";
+
+    final String TABLE_NM_CMITEM         = "CMITEM";
+    final String INSERT_ID_CMITEM        = PRORAM_ID + ".INSERT_" + TABLE_NM_CMITEM;
+    final String UPDATE_ID_CMITEM        = PRORAM_ID + ".UPDATE_" + TABLE_NM_CMITEM;
+    final String DELETE_ID_CMITEM        = PRORAM_ID + ".DELETE_" + TABLE_NM_CMITEM;
+
+    final String TABLE_NM_CMBARCD        = "CMITEMBARCD";
+    final String INSERT_ID_CMBARCD       = PRORAM_ID + ".INSERT_" + TABLE_NM_CMBARCD;
+    final String UPDATE_ID_CMBARCD       = PRORAM_ID + ".UPDATE_" + TABLE_NM_CMBARCD;
+    final String DELETE_ID_CMBARCD       = PRORAM_ID + ".DELETE_" + TABLE_NM_CMBARCD;
+
+    final String TABLE_NM_CMIMAGE        = "CMIMAGE";
+    final String INSERT_ID_CMIMAGE       = PRORAM_ID + ".INSERT_" + TABLE_NM_CMIMAGE;
+    final String UPDATE_ID_CMIMAGE       = PRORAM_ID + ".UPDATE_" + TABLE_NM_CMIMAGE;
+    final String DELETE_ID_CMIMAGE       = PRORAM_ID + ".DELETE_" + TABLE_NM_CMIMAGE;
+
+    final String SP_ID_CM_ITEMBARCD_SAVE = "CM_ITEMBARCD_SAVE";                      // 상품바코드 마스터 등록
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveMaster(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        String oMsg = null;
+
+        callParams.put("P_IMAGE_DIV", "04"); // 상품이미지
+        callParams.put(Consts.PK_CRUD, Consts.DV_CRUD_D);
+
+        int dsCnt = dsSave.size();
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            // 상품바코드 등록 SP 호출을 위한 파라메터 설정
+            Map<String, Object> callSpParams = new HashMap<String, Object>();
+            callSpParams.put("P_CUST_CD", rowData.get("P_CUST_CD"));
+            callSpParams.put("P_ITEM_CD", rowData.get("P_ITEM_CD"));
+            callSpParams.put("P_ITEM_BAR_CD", rowData.get("P_ITEM_BAR_CD"));
+            callSpParams.put("P_CASE_BAR_CD", rowData.get("P_CASE_BAR_CD"));
+            callSpParams.put("P_BOX_BAR_CD", rowData.get("P_BOX_BAR_CD"));
+            callSpParams.put("P_BRAND_CD", rowData.get("P_BRAND_CD"));
+            callSpParams.put("P_CRUD", rowData.get(Consts.PK_CRUD));
+            callSpParams.put(Consts.PK_USER_ID, userId);
+            String regYn = (String)rowData.get("P_CMITEMBARCD_REG_YN");
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CMITEM, rowData);
+                oMsg = saveItemBarcd(callSpParams, regYn); // 상품바코드 등록
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_CMITEM, rowData);
+                oMsg = saveItemBarcd(callSpParams, regYn); // 상품바코드 등록
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                if (Consts.YES.equals(regYn)) {
+                    callParams.put("P_IMAGE_DIV", "04");
+                    callParams.put("P_IMAGE_CD1", rowData.get("P_BRAND_CD"));
+                    callParams.put("P_IMAGE_CD2", rowData.get("P_ITEM_CD"));
+
+                    oMsg = saveItemBarcd(callSpParams, regYn); // 상품바코드 등록
+                } else {
+                    callParams.put("P_BRAND_CD", rowData.get("P_BRAND_CD"));
+                    callParams.put("P_ITEM_CD", rowData.get("P_ITEM_CD"));
+                    deleteSql(DELETE_ID_CMBARCD, callParams);
+                    oMsg = Consts.OK;
+                }
+
+                deleteSql(DELETE_ID_CMIMAGE, callParams);
+                deleteSql(DELETE_ID_CMITEM, rowData);
+            }
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void saveDetail(Map<String, Object> params) throws Exception {
+
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        int dsCnt = dsSave.size();
+        for (int i = 0; i < dsCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+            rowData.put(Consts.PK_USER_ID, userId);
+
+            String rowCrud = (String)rowData.get(Consts.PK_CRUD);
+            if (Consts.DV_CRUD_C.equals(rowCrud)) {
+                rowData.put(Consts.PK_REG_USER_ID, userId);
+                rowData.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CMBARCD, rowData);
+            } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+                updateSql(UPDATE_ID_CMBARCD, rowData);
+            } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+                deleteSql(DELETE_ID_CMBARCD, rowData);
+            }
+        }
+    }
+
+    @Override
+    public void saveImage(Map<String, Object> params) throws Exception {
+
+        String rowCrud = (String)params.get(Consts.PK_CRUD);
+        if (Consts.DV_CRUD_C.equals(rowCrud)) {
+            int updateRow = updateSql(UPDATE_ID_CMIMAGE, params);
+            if (updateRow < 1) {
+                params.put(Consts.PK_REG_USER_ID, params.get(Consts.PK_USER_ID));
+                params.put(Consts.PK_REG_DATETIME, Consts.DV_SYSDATE);
+                insertSql(INSERT_ID_CMIMAGE, params);
+            }
+        } else if (Consts.DV_CRUD_U.equals(rowCrud)) {
+            updateSql(UPDATE_ID_CMIMAGE, params);
+        } else if (Consts.DV_CRUD_D.equals(rowCrud)) {
+            deleteSql(DELETE_ID_CMIMAGE, params);
+        }
+    }
+
+    /**
+     * 상품바코드 마스터 등록 SP 호출(regYn-정책CM130[2]인 경우만 호출)
+     * 
+     * @param callSpParams
+     * @param regYn
+     *        사이트정책(CM130)이 1인 경우는 상품바코드 마스터 등록 안함(1인 경우는 화면단에서 N으로 넘어옴)
+     * @return
+     */
+    private String saveItemBarcd(Map<String, Object> callSpParams, String regYn) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+
+        if (regYn.equals(Consts.NO)) {
+            return Consts.OK;
+        } else {
+            resultMap = callProcedure(SP_ID_CM_ITEMBARCD_SAVE, callSpParams); // 상품바코드 등록
+            return Util.getOutMessage(resultMap);
+        }
+
+    }
+
+}

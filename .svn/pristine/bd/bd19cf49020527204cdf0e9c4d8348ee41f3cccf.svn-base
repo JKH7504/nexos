@@ -1,0 +1,692 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : LIC05030Q1
+ *  프로그램명         : 입고확인서
+ *  프로그램설명       : 입고확인서 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2018-08-24
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2018-08-24    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#divMasterView",
+            grids: [
+                "#grdMaster"
+            ]
+        }
+    });
+
+    // 그리드 초기화
+    grdMasterInitialize();
+
+    $NC.setInitDatePicker("#dtpQInbound_Date");
+
+    // 사업부 초기값 설정
+    $NC.setValue("#edtQBu_Cd", $NC.G_USERINFO.BU_CD);
+    $NC.setValue("#edtQBu_Nm", $NC.G_USERINFO.BU_NM);
+    $NC.setValue("#edtQCust_Cd", $NC.G_USERINFO.CUST_CD);
+
+    $("#btnQBu_Cd").click(showUserBuPopup);
+    $("#btnQBrand_Cd").click(showBuBrandPopup);
+    $("#btnQVendor_Cd").click(showVendorPopup);
+
+    // 조회조건 - 입고구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "INOUT_CD",
+            P_COMMON_CD: $ND.C_ALL,
+            P_ATTR01_CD: [
+                $ND.C_INOUT_GRP_E1,
+                $ND.C_INOUT_GRP_E2
+            ].join($ND.C_DV_SEPARATOR),
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQInout_Cd",
+        codeField: "COMMON_CD",
+        nameField: "COMMON_NM",
+        fullNameField: "COMMON_CD_F",
+        addAll: true
+    });
+
+    // 조회조건 - 물류센터 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CSUSERCENTER",
+        P_QUERY_PARAMS: {
+            P_USER_ID: $NC.G_USERINFO.USER_ID,
+            P_CENTER_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQCenter_Cd",
+        codeField: "CENTER_CD",
+        nameField: "CENTER_NM",
+        onComplete: function() {
+            $NC.setValue("#cboQCenter_Cd", $NC.G_USERINFO.CENTER_CD);
+        }
+    });
+
+    // 조회조건 - 입고번호 세팅
+    onSetInboundNoComboInfo();
+
+    // 조회조건 - 연도구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "YEAR_DIV",
+            P_COMMON_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQYear_Div",
+        codeField: "COMMON_CD",
+        fullNameField: "COMMON_CD_F",
+        addAll: true,
+        multiSelect: true
+    });
+
+    // 조회조건 - 시즌구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "SEASON_DIV",
+            P_COMMON_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQSeason_Div",
+        codeField: "COMMON_CD",
+        fullNameField: "COMMON_CD_F",
+        addAll: true,
+        multiSelect: true
+    });
+
+    // 조회조건 - 상품구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "ITEM_DIV",
+            P_COMMON_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQItem_Div",
+        codeField: "COMMON_CD",
+        fullNameField: "COMMON_CD_F",
+        addAll: true,
+        multiSelect: true
+    });
+
+    // 조회조건 - 상품상태 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "ITEM_STATE",
+            P_COMMON_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQItem_State",
+        codeField: "COMMON_CD",
+        fullNameField: "COMMON_CD_F",
+        addAll: true,
+        multiSelect: true
+    });
+
+    // 프로그램 레포트 정보 세팅
+    $NC.setProgramReportInfo({
+        P_BU_CD: $NC.G_USERINFO.BU_CD
+    });
+
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * 조회조건이 변경될 때 호출
+ */
+function onChangingCondition() {
+
+    // 전역 변수 값 초기화
+    $NC.clearGridData(G_GRDMASTER);
+
+    // 공통 버튼 초기화 - 조회 버튼만 활성
+    $NC.setInitTopButtons();
+}
+
+/**
+ * Input, Select Change Event 처리
+ */
+function _OnConditionChange(e, view, val) {
+
+    var id = view.prop("id").substr(4).toUpperCase();
+    switch (id) {
+        case "BU_CD":
+            $NP.onUserBuChange(val, {
+                P_USER_ID: $NC.G_USERINFO.USER_ID,
+                P_BU_CD: val,
+                P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+            }, onUserBuPopup);
+            return;
+        case "BRAND_CD":
+            $NP.onBuBrandChange(val, {
+                P_BU_CD: $NC.getValue("#edtQBu_Cd"),
+                P_BRAND_CD: val
+            }, onBuBrandPopup);
+            return;
+        case "INBOUND_DATE":
+            $NC.setValueDatePicker(view, val, $NC.getDisplayMsg("JS.LIC05030Q1.001", "입고일자를 정확히 입력하십시오."));
+            onSetInboundNoComboInfo();
+            break;
+        case "VENDOR_CD":
+            $NP.onVendorChange(val, {
+                P_CUST_CD: $NC.getValue("#edtQCust_Cd"),
+                P_VENDOR_CD: val,
+                P_VIEW_DIV: "2"
+            }, onVendorPopup);
+            return;
+        case "CENTER_CD":
+            onSetInboundNoComboInfo();
+            break;
+    }
+
+    onChangingCondition();
+}
+
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTER);
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    if ($NC.isNull(CENTER_CD)) {
+        alert($NC.getDisplayMsg("JS.LIC05030Q1.002", "물류센터를 선택하십시오."));
+        $NC.setFocus("#cboQCenter_Cd");
+        return;
+    }
+
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    if ($NC.isNull(BU_CD)) {
+        alert($NC.getDisplayMsg("JS.LIC05030Q1.003", "사업부를 입력하십시오."));
+        $NC.setFocus("#edtQBu_Cd");
+        return;
+    }
+
+    var INBOUND_DATE = $NC.getValue("#dtpQInbound_Date");
+    if ($NC.isNull(INBOUND_DATE)) {
+        alert($NC.getDisplayMsg("JS.LIC05030Q1.004", "검색 시작일자를 입력하십시오."));
+        $NC.setFocus("#dtpQInbound_Date");
+        return;
+    }
+
+    var BRAND_CD = $NC.getValue("#edtQBrand_Cd", true);
+    var ITEM_CD = $NC.getValue("#edtQItem_Cd", true);
+    var ITEM_NM = $NC.getValue("#edtQItem_Nm", true);
+    var VENDOR_CD = $NC.getValue("#edtQVendor_Cd", true);
+    var ITEM_STATE = $NC.getValue("#cboQItem_State");
+    var INBOUND_NO = $NC.getValue("#cboQInbound_No");
+    var INOUT_CD = $NC.getValue("#cboQInout_Cd");
+    var YEAR_DIV = $NC.getValue("#cboQYear_Div");
+    var SEASON_DIV = $NC.getValue("#cboQSeason_Div");
+    var ITEM_DIV = $NC.getValue("#cboQItem_Div");
+
+    // 파라메터 세팅
+    G_GRDMASTER.queryParams = {
+        P_CENTER_CD: CENTER_CD,
+        P_BU_CD: BU_CD,
+        P_INBOUND_DATE: INBOUND_DATE,
+        P_INOUT_CD: INOUT_CD,
+        P_VENDOR_CD: VENDOR_CD,
+        P_BRAND_CD: BRAND_CD,
+        P_ITEM_CD: ITEM_CD,
+        P_ITEM_NM: ITEM_NM,
+        P_ITEM_STATE: ITEM_STATE,
+        P_INBOUND_NO: INBOUND_NO,
+        P_YEAR_DIV: YEAR_DIV,
+        P_SEASON_DIV: SEASON_DIV,
+        P_ITEM_DIV: ITEM_DIV
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LIC05030Q1/getDataSet.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel() {
+
+}
+
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    if ($NC.isNull(CENTER_CD)) {
+        alert($NC.getDisplayMsg("JS.LIC05030Q1.002", "물류센터를 선택하십시오."));
+        $NC.setFocus("#cboQCenter_Cd");
+        return;
+    }
+
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    if ($NC.isNull(BU_CD)) {
+        alert($NC.getDisplayMsg("JS.LIC05030Q1.003", "사업부를 입력하십시오."));
+        $NC.setFocus("#edtQBu_Cd");
+        return;
+    }
+
+    var INBOUND_DATE = $NC.getValue("#dtpQInbound_Date");
+    if ($NC.isNull(INBOUND_DATE)) {
+        alert($NC.getDisplayMsg("JS.LIC05030Q1.004", "검색 시작일자를 입력하십시오."));
+        $NC.setFocus("#dtpQInbound_Date");
+        return;
+    }
+
+    // 레포트별 출력 데이터 세팅
+    var checkedData = {};
+    var queryParams;
+    switch (reportInfo.REPORT_CD) {
+        // PAPER_LIC04 - 입고확인서
+        case "PAPER_LIC04":
+            // 선택 데이터 가져오기
+            checkedData = $NC.getGridCheckedValues(G_GRDMASTER, {
+                valueColumns: function(rowData) {
+                    return rowData.INBOUND_NO //
+                        + ";" + rowData.VENDOR_CD + ";" + rowData.ITEM_CD + ";" + rowData.ITEM_STATE;
+                }
+            });
+            // checkedValues 외 쿼리 파라메터 세팅
+            queryParams = {
+                P_CENTER_CD: CENTER_CD,
+                P_BU_CD: BU_CD,
+                P_INBOUND_DATE: INBOUND_DATE
+            };
+            break;
+        // 미정의된 레포트
+        default:
+            alert($NC.getDisplayMsg("JS.COMMON.036", "[" + reportInfo.REPORT_NM + "]구현되지 않은 레포트 정보입니다. 출력할 수 없습니다.", reportInfo.REPORT_NM));
+            return;
+    }
+
+    if ($NC.isNotEmpty(checkedData)) {
+        // 선택 건수 체크
+        if (checkedData.checkedCount == 0) {
+            alert($NC.getDisplayMsg("JS.COMMON.037", "[" + reportInfo.REPORT_NM + "]출력할 데이터를 선택하십시오.", reportInfo.REPORT_NM));
+            return;
+        }
+        // 선택 건수 중 출력 대상 건수
+        if (checkedData.values.length == 0) {
+            alert($NC.getDisplayMsg("JS.COMMON.038", "[" + reportInfo.REPORT_NM + "]출력 가능한 데이터를 선택하십시오.", reportInfo.REPORT_NM));
+            return;
+        }
+    }
+
+    // 출력 파라메터 세팅
+    var printOptions = {
+        reportDoc: reportInfo.REPORT_DOC_URL,
+        reportTitle: reportInfo.REPORT_TITLE_NM,
+        queryId: reportInfo.REPORT_QUERY_ID,
+        queryParams: queryParams,
+        internalQueryYn: reportInfo.INTERNAL_QUERY_YN,
+        checkedValue: $NC.toJoin(checkedData.values)
+    };
+
+    // 출력 미리보기 호출
+    $NC.showPrintPreview(printOptions);
+}
+
+/**
+ * Grid에서 CheckBox Formatter를 사용할 경우 CheckBox Click 이벤트 처리
+ * 
+ * @param e
+ * @param view
+ *        대상 Object
+ * @param args
+ *        grid, row, cell, val
+ */
+function _OnGridCheckBoxFormatterClick(e, view, args) {
+
+    var grdObject = $NC.getGridObject(args.grid);
+    if (!grdObject.isValid) {
+        return;
+    }
+
+    var columnId = grdObject.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "CHECK_YN":
+            $NC.onGridCheckBoxFormatterChange(grdObject, e, args, true);
+            break;
+    }
+}
+
+function grdMasterOnHeaderClick(e, args) {
+
+    switch (args.column.id) {
+        case "CHECK_YN":
+            $NC.onGridColumnHeaderCheckBoxChange(G_GRDMASTER, e, args);
+            break;
+    }
+}
+
+function grdMasterOnClick(e, args) {
+
+    var columnId = G_GRDMASTER.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "CHECK_YN":
+            $NC.onGridCheckBoxEditorChange(G_GRDMASTER, e, args);
+            break;
+    }
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "CHECK_YN",
+        field: "CHECK_YN",
+        resizable: false,
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "INBOUND_NO",
+        field: "INBOUND_NO",
+        name: "입고번호",
+        cssClass: "styCenter",
+        summaryTitle: "[합계]"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VENDOR_CD",
+        field: "VENDOR_CD",
+        name: "공급처"
+    });
+    $NC.setGridColumn(columns, {
+        id: "VENDOR_NM",
+        field: "VENDOR_NM",
+        name: "공급처명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_NM",
+        field: "ITEM_NM",
+        name: "상품명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BRAND_NM",
+        field: "BRAND_NM",
+        name: "브랜드명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_STATE_F",
+        field: "ITEM_STATE_F",
+        name: "상품상태"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CONFIRM_QTY",
+        field: "CONFIRM_QTY",
+        name: "확정수량",
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdMasterInitialize() {
+
+    var options = {
+        summaryRow: {
+            visible: true
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "LIC05030Q1.RS_MASTER",
+        sortCol: "VENDOR_CD",
+        gridOptions: options
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+    G_GRDMASTER.view.onHeaderClick.subscribe(grdMasterOnHeaderClick);
+    G_GRDMASTER.view.onClick.subscribe(grdMasterOnClick);
+    $NC.setGridColumnHeaderCheckBox(G_GRDMASTER, "CHECK_YN");
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+function onGetMaster(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTER, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDMASTER, [
+        "VENDOR_CD",
+        "INBOUND_DATE",
+        "INBOUND_NO"
+    ], true);
+
+    // 공통 버튼 활성화 처리
+    $NC.G_VAR.buttons._inquiry = "1";
+    $NC.G_VAR.buttons._new = "0";
+    $NC.G_VAR.buttons._save = "0";
+    $NC.G_VAR.buttons._cancel = "0";
+    $NC.G_VAR.buttons._delete = "0";
+    $NC.G_VAR.buttons._print = $NC.iif(G_GRDMASTER.data.getLength() > 0, "1", "0");
+
+    $NC.setInitTopButtons($NC.G_VAR.buttons);
+}
+
+/**
+ * 검색조건의 사업부 검색 팝업 클릭
+ */
+function showUserBuPopup() {
+
+    $NP.showUserBuPopup({
+        P_USER_ID: $NC.G_USERINFO.USER_ID,
+        P_BU_CD: $ND.C_ALL,
+        P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+    }, onUserBuPopup, function() {
+        $NC.setFocus("#edtQBu_Cd", true);
+    });
+}
+
+/**
+ * 검색조건의 브랜드 검색 팝업 클릭
+ */
+function showBuBrandPopup() {
+
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+
+    $NP.showBuBrandPopup({
+        P_BU_CD: BU_CD,
+        P_BRAND_CD: $ND.C_ALL
+    }, onBuBrandPopup, function() {
+        $NC.setFocus("#edtQBrand_Cd", true);
+    });
+}
+
+/**
+ * 검색조건의 공급처 검색 팝업 클릭
+ */
+function showVendorPopup() {
+
+    var CUST_CD = $NC.getValue("#edtQCust_Cd");
+
+    $NP.showVendorPopup({
+        queryParams: {
+            P_CUST_CD: CUST_CD,
+            P_VENDOR_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2"
+        }
+    }, onVendorPopup, function() {
+        $NC.setFocus("#edtQVendor_Cd", true);
+    });
+}
+
+/**
+ * 사업부 검색 결과
+ * 
+ * @param resultInfo
+ */
+function onUserBuPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQBu_Cd", resultInfo.BU_CD);
+        $NC.setValue("#edtQBu_Nm", resultInfo.BU_NM);
+        $NC.setValue("#edtQCust_Cd", resultInfo.CUST_CD);
+    } else {
+        $NC.setValue("#edtQBu_Cd");
+        $NC.setValue("#edtQBu_Nm");
+        $NC.setValue("#edtQCust_Cd");
+        $NC.setFocus("#edtQBu_Cd", true);
+    }
+    onSetInboundNoComboInfo();
+    onChangingCondition();
+}
+
+/**
+ * 브랜드 검색 결과
+ * 
+ * @param resultInfo
+ */
+function onBuBrandPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQBrand_Cd", resultInfo.BRAND_CD);
+        $NC.setValue("#edtQBrand_Nm", resultInfo.BRAND_NM);
+    } else {
+        $NC.setValue("#edtQBrand_Cd");
+        $NC.setValue("#edtQBrand_Nm");
+        $NC.setFocus("#edtQBrand_Cd", true);
+    }
+    onChangingCondition();
+}
+
+/**
+ * 배송처 검색 결과
+ * 
+ * @param resultInfo
+ */
+function onVendorPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQVendor_Cd", resultInfo.VENDOR_CD);
+        $NC.setValue("#edtQVendor_Nm", resultInfo.VENDOR_NM);
+    } else {
+        $NC.setValue("#edtQVendor_Cd");
+        $NC.setValue("#edtQVendor_Nm");
+        $NC.setFocus("#edtQVendor_Cd", true);
+    }
+    onChangingCondition();
+}
+
+function onSetInboundNoComboInfo() {
+
+    $NC.setInitCombo("/LIC05030Q1/getDataSet.do", {
+        P_QUERY_ID: "LIC05030Q1.RS_SUB",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: $NC.getValue("#cboQCenter_Cd") == "" ? $NC.G_USERINFO.CENTER_CD : $NC.getValue("#cboQCenter_Cd"),
+            P_BU_CD: $NC.getValue("#edtQBu_Cd") == "" ? $NC.G_USERINFO.BU_CD : $NC.getValue("#edtQBu_Cd"),
+            P_INBOUND_DATE: $NC.getValue("#dtpQInbound_Date")
+        }
+    }, {
+        selector: "#cboQInbound_No",
+        codeField: "INBOUND_NO",
+        nameField: "VENDOR_NM",
+        fullNameField: "INBOUND_NO_F",
+        addAll: true,
+        multiSelect: true
+    });
+}

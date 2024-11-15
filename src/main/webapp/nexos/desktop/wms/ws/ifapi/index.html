@@ -1,0 +1,244 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : IFAPI - index.html
+    프로그램명         : IFAPI - 호출 설명
+    프로그램설명       : IFAPI - 호출 설명 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../../} -->
+<link rel="stylesheet" href="css/index.css" />
+<script src="js/index.js"></script>
+</head>
+<body>
+    <div id="ctrMasterView" style="overflow: auto;">
+        <div style="border-width: 0 1px 0 1px; box-sizing: border-box; width: 1200px;">
+            <table class="ctrTitleBar">
+                <tr>
+                    <td class="lblTitle">Nexos 표준 인터페이스 - IFAPI</td>
+                </tr>
+            </table>
+            <div class="ctrGroupRow comments">Nexos 표준 인터페이스 중 RESTful 방식으로 인터페이스할 경우 호출 방법 설명</div>
+        </div>
+        <div class="ctrInner" style="border-width: 1px; box-sizing: border-box; width: 1200px;">
+            <div class="ctrGroupRow">
+                <div class="lblKey">서비스 Url</div>
+            </div>
+            <div class="ctrGroupRow">
+                <span class="lblComments">기본 Url</span> <input id="edtUrl" class="edtNormal" type="text" readonly="readonly" />
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">서비스 호출 방식</div>
+            </div>
+            <div class="ctrGroupRow">
+                <p class="lblComments">
+                    <b>고객사 송신</b> --> WMS 수신: Post
+                </p>
+                <p class="lblComments">
+                    <b>고객사 수신</b> &lt;-- WMS 송신: Get
+                </p>
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">서비스 호출 인증</div>
+            </div>
+            <div class="ctrGroupRow">
+                <p class="lblComments">HTTP Basic Authentication 방식 사용 함</p>
+                <p class="lblComments">WMS에서 인증 사용시 서비스 호출 Http Header에 인증 정보 포함하여 호출하여야만 처리 가능</p>
+                <p class="lblComments">사용자ID/PWD는 WMS에서 부여 받아서 사용</p>
+                <br>
+                <p class="lblComments" style="background-color: #e0e0e0; padding: 10px; font-weight: bold;">Authorization: Basic &lt;credentials&gt;</p>
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">서비스 목록</div>
+            </div>
+            <div class="ctrGroupRow">
+                <table class="ctrComments">
+                    <tr>
+                        <th>구분</th>
+                        <th>서비스명</th>
+                        <th>서비스 Url</th>
+                        <th>데이터 입력</th>
+                        <th>설명</th>
+                    </tr>
+                    <tr>
+                        <td>공통수신</td>
+                        <td>receive.do</td>
+                        <td><input id="edtReceive" class="edtNormal" type="text" readonly="readonly" value="/predefined/receive.do" /></td>
+                        <td>Parameter or Body</td>
+                        <td>수신정의 정보와 데이터를 Request Parameter 또는 Body로 수신하도록 구성된 메서드</td>
+                    </tr>
+                    <tr>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">서비스 호출 설명</div>
+            </div>
+            <div class="ctrGroupRow">
+                <table class="ctrComments">
+                    <tr>
+                        <th>구분</th>
+                        <th>서비스명</th>
+                        <th>Http 메서드</th>
+                        <th>데이터 입력구분</th>
+                        <th>데이터 입력</th>
+                        <th>데이터타입</th>
+                        <th>설명</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">공통수신</td>
+                        <td rowspan="2">receive.do</td>
+                        <td rowspan="2">Post</td>
+                        <td>Parameter 방식</td>
+                        <td style="text-align: center;">Request Parameter<br>(Key: payload)
+                        </td>
+                        <td style="text-align: center;">String<br>(Json)
+                        </td>
+                        <td>수신정의 정보와 데이터를 Request Parameter로 수신</td>
+                    </tr>
+                    <tr>
+                        <td>Body 방식</td>
+                        <td style="text-align: center;">Request Body</td>
+                        <td style="text-align: center;">String<br>(Json)
+                        </td>
+                        <td>수신정의 정보와 데이터를 Request Body로 수신</td>
+                    </tr>
+                    <tr>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">데이터 구조 설명</div>
+            </div>
+            <div class="ctrGroupRow">
+                <table class="ctrComments">
+                    <tr>
+                        <th>항목</th>
+                        <th>데이터타입</th>
+                        <th>필수여부</th>
+                        <th>설명</th>
+                        <th>비고</th>
+                    </tr>
+                    <tr>
+                        <td>buCd</td>
+                        <td>String</td>
+                        <td>●</td>
+                        <td>사업부코드</td>
+                        <td>해당 데이터를 처리할 사업부</td>
+                    </tr>
+                    <tr>
+                        <td>ediDiv</td>
+                        <td>String</td>
+                        <td>●</td>
+                        <td>수신구분</td>
+                        <td>정의된 수신구분, 상품마스터: "RCM10", 공급처마스터: "RCM20", ...</td>
+                    </tr>
+                    <tr>
+                        <td>defineNo</td>
+                        <td>String</td>
+                        <td>●</td>
+                        <td>수신정의번호</td>
+                        <td>해당 데이터를 처리할 수신정의번호, 기본값: "IFAPI"</td>
+                    </tr>
+                    <tr>
+                        <td>데이터 항목<br>(컬럼명 지정)
+                        </td>
+                        <td>Object<br>Array
+                        </td>
+                        <td>●</td>
+                        <td>송신 데이터</td>
+                        <td>수신구분별 협의된 항목의 데이터, 데이터 구조는 협의 필요</td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">서비스 호출 추가 정보</div>
+            </div>
+            <div class="ctrGroupRow">
+                <p class="lblComments">문자열의 Charset은 utf-8로 지정</p>
+            </div>
+            <br>
+            <div class="ctrGroupRow">
+                <div class="lblNormal">서비스 호출 데이터 샘플</div>
+            </div>
+            <div class="ctrGroupRow">
+                <table class="ctrComments">
+                    <tr>
+                        <th>구분</th>
+                        <th>메서드명</th>
+                        <th>샘플</th>
+                        <th>설명</th>
+                    </tr>
+                    <tr>
+                        <td>공통수신</td>
+                        <td>receive.do</td>
+                        <td>Request Parameter로 호출:<br>&nbsp;&nbsp;Url: http://.../ifapi/predefined/receive.do<br>&nbsp;&nbsp;Http Method: Post<br>&nbsp;&nbsp;Authorization: Basic &lt;credentials&gt;<br>&nbsp;&nbsp;Parameter Key: payload<br>&nbsp;&nbsp;Parameter Value: { ... }<br>
+                        <br>Request Body로 호출:<br>&nbsp;&nbsp;Url: http://.../ifapi/predefined/receive.do<br>&nbsp;&nbsp;Http Method: Post<br>&nbsp;&nbsp;Authorization: Basic &lt;credentials&gt;<br>&nbsp;&nbsp;Body: { ... }<br> <br> 데이터 샘플<br> <textarea id="edtReceiveAnySample1" class="edtNormal sample" readonly="readonly">{
+    "buCd": "RD",
+    "ediDiv": "RCM10",
+    "defineNo": "IFAPI",
+    "data": [
+        {
+            "itemCd": "A0001",
+            "itemNm": "테스트상품1",
+            "itemSpec": null,
+            "qtyInBox": 1,
+            "itemBarCd": "8801110000001"
+        },
+        {
+            "itemCd": "A0002",
+            "itemNm": "테스트상품2",
+            "itemSpec": null,
+            "qtyInBox": 2,
+            "itemBarCd": "8801110000002"
+        }
+    ]
+}</textarea>
+                        </td>
+                        <td>※ 데이터 샘플은 데이터 입력에 대한 샘플이며 데이터 구조 및 항목은 협의 후 진행
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                    </tr>
+                </table>
+            </div>
+            <br> <br>
+        </div>
+    </div>
+</body>
+</html>

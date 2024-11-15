@@ -1,0 +1,201 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC07010E0
+    프로그램명         : 우편번호관리
+    프로그램설명       : 우편번호관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC07010E0.css" /> -->
+<script src="js/CMC07010E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQZip_Cd" class="lblCondition">우편번호</div>
+                    <input id="edtQZip_Cd" class="edtNormal" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQAddr_Nm" class="lblCondition">주소</div>
+                    <input id="edtQAddr_Nm" class="edtNormal" type="text" style="width: 250px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">우편번호</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspDetailInfo" class="lblTitle">기본정보</td>
+            </tr>
+        </table>
+        <div id="divMasterInfoView" class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblZip_Cd" class="lblKey alignInContent">우편번호</div>
+                <input id="edtZip_Cd" class="edtKey" type="text" maxlength="6" style="width: 100px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblAddr_Nm1" class="lblNormal alignInContent">시도</div>
+                <input id="edtAddr_Nm1" class="edtNormal" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblAddr_Nm2" class="lblNormal alignInContent">시군구</div>
+                <input id="edtAddr_Nm2" class="edtNormal" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblAddr_Nm3" class="lblNormal alignInContent">읍면동</div>
+                <input id="edtAddr_Nm3" class="edtNormal" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblAddr_Detail" class="lblNormal alignInContent">상세주소</div>
+                <input id="edtAddr_Detail" class="edtNormal" type="text" maxlength="100" style="width: 330px;" />
+            </div>
+            <div id="ctrHdc_Div01" class="ctrGroupRow inContent">
+                <div id="dspTitle_Hdc01" class="lblGroupTitle">CJ대한통운 택배정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblCj_Tml_Cd" class="lblNormal">도착지코드</div>
+                        <input id="edtCj_Tml_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCj_Tml_Sub_Cd" class="lblNormal">도착지서브코드</div>
+                        <input id="edtCj_Tml_Sub_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCj_Arr_Shop_Nm" class="lblNormal">배달점소명</div>
+                        <input id="edtCj_Arr_Shop_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCj_Arr_Cd" class="lblNormal">배달사원분류코드</div>
+                        <input id="edtCj_Arr_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCj_Arr_Nm" class="lblNormal">배달사원명</div>
+                        <input id="edtCj_Arr_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCj_Arr_Addr" class="lblNormal">분류주소</div>
+                        <input id="edtCj_Arr_Addr" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                </div>
+            </div>
+            <div id="ctrHdc_Div02" class="ctrGroupRow inContent">
+                <div id="dspTitle_Hdc02" class="lblGroupTitle">롯데 택배정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblLt_Tml_Cd" class="lblNormal">터미널코드</div>
+                        <input id="edtLt_Tml_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLt_Tml_Nm" class="lblNormal">터미널명</div>
+                        <input id="edtLt_Tml_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLt_Arr_Shop_Nm" class="lblNormal">배달영업소명</div>
+                        <input id="edtLt_Arr_Shop_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLt_Arr_Cd" class="lblNormal">도착지코드</div>
+                        <input id="edtLt_Arr_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLt_Arr_Addr2" class="lblNormal">시군구주소</div>
+                        <input id="edtLt_Arr_Addr2" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLt_Arr_Addr3" class="lblNormal">읍면동주소</div>
+                        <input id="edtLt_Arr_Addr3" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                </div>
+            </div>
+            <div id="ctrHdc_Div03" class="ctrGroupRow inContent">
+                <div id="dspTitle_Hdc03" class="lblGroupTitle">우체국 택배정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblEp_Tml_Nm" class="lblNormal">도착집중국명</div>
+                        <input id="edtEp_Tml_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblEp_Arr_Shop_Nm" class="lblNormal">배달우체국명</div>
+                        <input id="edtEp_Arr_Shop_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblEp_Arr_Cd" class="lblNormal">집배코드</div>
+                        <input id="edtEp_Arr_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                </div>
+            </div>
+            <div id="ctrHdc_Div05" class="ctrGroupRow inContent">
+                <div id="dspTitle_Hdc05" class="lblGroupTitle">한진 택배정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Tml_Cd" class="lblNormal">터미널코드</div>
+                        <input id="edtHj_Tml_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Tml_Nm" class="lblNormal">터미널명</div>
+                        <input id="edtHj_Tml_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Class1_Cd" class="lblNormal">대분류코드</div>
+                        <input id="edtHj_Class1_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Class2_Cd" class="lblNormal">중분류코드</div>
+                        <input id="edtHj_Class2_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Class3_Cd" class="lblNormal">소분류코드</div>
+                        <input id="edtHj_Class3_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Arr_Nm" class="lblNormal">집배구역명</div>
+                        <input id="edtHj_Arr_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Arr_Shop_Cd" class="lblNormal">영업소코드</div>
+                        <input id="edtHj_Arr_Shop_Cd" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Arr_Shop_Nm" class="lblNormal">영업소명</div>
+                        <input id="edtHj_Arr_Shop_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Deliver_Nm" class="lblNormal">배송원명</div>
+                        <input id="edtHj_Deliver_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHj_Ship_Air_Nm" class="lblNormal">제주도서구분</div>
+                        <input id="edtHj_Ship_Air_Nm" class="edtNormal" type="text" style="width: 324px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+#=====================================================================================================================================================
+#
+#   encrypt-globals.properties : \uc2dc\uc2a4\ud15c \ud658\uacbd\uc124\uc815 [\uc554\ud638\ud654] - \uac1c\ubc1c(DEV)
+#
+#=====================================================================================================================================================
+#   1.  key = value \uad6c\uc870\uc785\ub2c8\ub2e4.
+#   2.  key\uac12\uc740 \uacf5\ubc31\ubb38\uc790\ub97c \ud3ec\ud568\ubd88\uac00, value\uac12\uc740 \uacf5\ubc31\ubb38\uc790\ub97c \uac00\ub2a5
+#   3.  key\uac12\uc73c\ub85c \ud55c\uae00\uc744 \uc0ac\uc6a9\ubd88\uac00,   value\uac12\uc740 \ud55c\uae00\uc0ac\uc6a9\uc774 \uac00\ub2a5
+#   4.  \uc904\uc744 \ubc14\uafc0 \ud544\uc694\uac00 \uc788\uc73c\uba74 '\'\ub97c \ub77c\uc778\uc758 \ub05d\uc5d0 \ucd94\uac00(\ub9cc\uc57d  '\'\ubb38\uc790\ub97c \uc0ac\uc6a9\ud574\uc57c \ud558\ub294 \uacbd\uc6b0\ub294 '\\'\ub97c \uc0ac\uc6a9)
+#   5.  Windows\uc5d0\uc11c\uc758 \ub514\ub809\ud1a0\ub9ac \ud45c\uc2dc : '\\' or '/'  ('\' \uc0ac\uc6a9\ud558\uba74 \uc548\ub428)
+#   6.  Unix\uc5d0\uc11c\uc758 \ub514\ub809\ud1a0\ub9ac \ud45c\uc2dc : '/'
+#   7.  \uc8fc\uc11d\ubb38 \ucc98\ub9ac\ub294  #\uc0ac\uc6a9
+#   8.  value\uac12 \ub4a4\uc5d0 \uc2a4\ud398\uc774\uc2a4\uac00 \uc874\uc7ac\ud558\ub294 \uacbd\uc6b0 \uc11c\ube14\ub9bf\uc5d0\uc11c \ucc38\uc870\ud560\ub54c\ub294 \uc5d0\ub7ec\ubc1c\uc0dd\ud560 \uc218 \uc788\uc73c\ubbc0\ub85c trim()\ud558\uac70\ub098 \ub9c8\uc9c0\ub9c9 \uacf5\ubc31\uc5c6\uc774 properties \uac12\uc744 \uc124\uc815\ud560\uac83
+#=====================================================================================================================================================
+
+
+#=====================================================================================================================================================
+# \ub370\uc774\ud130\ubca0\uc774\uc2a4 \uc811\uc18d \uad00\ub828 \uc124\uc815
+# \u203b \uc554\ud638\ud654 \ud558\uc9c0 \uc54a\uc544\ub3c4 \uc0ac\uc6a9 \uac00\ub2a5\ud558\ub098, \ubc30\ud3ec\uc2dc\ub294 \ubc18\ub4dc\uc2dc \uc554\ud638\ud654 \ud558\uc5ec \ubc30\ud3ec\ud560 \uac83
+#
+# ENC.DB.JDBC_URL     : JDBC \uc811\uc18d URL, <encrypt.db.jdbcUrl>
+#                       oracle => jdbc:oracle:thin:@SERVER_IP:SERVER_PORT:SERVICE_NAME
+#                                 jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(HOST=SERVER_IP)(PROTOCOL=TCP)(PORT=SERVER_PORT))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=SERVICE_NAME)))
+#                       mssql  => jdbc:sqlserver://SERVER_IP:SERVER_PORT;SelectMethod=cursor;databaseName=DATABASE_NAME
+#
+# ENC.DB.USER_ID      : \ub370\uc774\ud130\ubca0\uc774\uc2a4 \uc811\uc18d \uc0ac\uc6a9\uc790ID, <encrypt.db.user>
+# ENC.DB.USER_PWD     : \ub370\uc774\ud130\ubca0\uc774\uc2a4 \uc811\uc18d \uc0ac\uc6a9\uc790 \ube44\ubc00\ubc88\ud638, <encrypt.db.password>
+#
+# oracle => ENC.DB.JDBC_URL = jdbc:oracle:thin:@127.0.0.1:1521:WMS11G
+# mssql  => ENC.DB.JDBC_URL = jdbc:sqlserver://127.0.0.1:1521;SelectMethod=cursor;databaseName=WMS11G
+#
+# <Sample>
+# ENC.DB.JDBC_URL = ENC(HkFdjXG2OnaRg9rzzASIYOTcSkQUttWOVoAuKdZLSL5hIseDlUDPDS56+AVq0ttjjKKzKU4RRZTQle53LCSdey7iv3O1rboKCGDMFxG4bgJoQWCPSAcv7bGfGrYdMYAqfjGahHJXdK9H8akqbtg2Flmiqey2ri+2gw+l/Y3NHiEochC8MK2dtcKqntqj6HpS)
+# ENC.DB.USER_ID = ENC(2hHOUnPDpD9RFmj8Ey6R1Q==)
+# ENC.DB.USER_PWD = ENC(v0g6lg/3+a1uec32PyH7mA==)
+#
+#   SELECT WF.GET_ENCSTR('JDBC_URL')   AS ENC_JDBC_URL
+#         ,WF.GET_ENCSTR('USER_ID')    AS ENC_USER_ID
+#         ,WF.GET_ENCSTR('USER_PWD')   AS ENC_USER_PWD
+#     FROM DUAL;
+#=====================================================================================================================================================
+ENC.DB.JDBC_URL = jdbc:oracle:thin:@210.116.77.208:2521:DEV1U
+ENC.DB.USER_ID = NEXOS75_USER
+ENC.DB.USER_PWD = ase#DEV1#1908
+

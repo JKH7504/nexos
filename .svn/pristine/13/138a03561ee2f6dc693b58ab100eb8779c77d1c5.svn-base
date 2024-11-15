@@ -1,0 +1,1118 @@
+package nexos.service.ed.common;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.web.client.RestTemplate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.json.MapTypeReference;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.security.AuthenticationUtil;
+import nexos.framework.support.ServiceSupport;
+
+/**
+ * Class: EDRESTfulService<br>
+ * Description: WMS RESTful 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class EDRESTfulService extends ServiceSupport {
+
+    // private final Logger logger = LoggerFactory.getLogger(EDRESTfulService.class);
+
+    final String SELECT_ID_LOTTE_ADDRESS_INFO  = "WI.GET_LOTTE_ADDRESS_INFO";
+    final String UPDATE_ID_LOTTE_ADDRESS_INFO  = "WI.SET_LOTTE_ADDRESS_INFO_UPDATE";
+    final String SELECT_ID_EPOST_ADDRESS_INFO  = "WI.GET_EPOST_ADDRESS_INFO";
+    final String UPDATE_ID_EPOST_ADDRESS_INFO  = "WI.SET_EPOST_ADDRESS_INFO_UPDATE";
+    final String SELECT_ID_HANJIN_ADDRESS_INFO = "WI.GET_HANJIN_ADDRESS_INFO";
+    final String UPDATE_ID_HANJIN_ADDRESS_INFO = "WI.SET_HANJIN_ADDRESS_INFO_UPDATE";
+    final String SELECT_ID_CUSTOMS_CSCL_INFO   = "WI.GET_CUSTOMS_CSCL_INFO";
+    final String UPDATE_ID_CUSTOMS_CSCL_INFO   = "WI.SET_CUSTOMS_CSCL_INFO_UPDATE";
+
+    /**
+     * 데이터의 키/값을 서비스 호출 데이터 키/값으로 변경 처리
+     *
+     * @param rowData
+     *        변경 처리할 데이터 맵
+     * @param excludeKeys
+     *        변경 처리에서 제외할 데이터 키
+     * @param dataValues
+     *        SOAP 서비스호출 데이터 키/값 맵
+     * @param callParams
+     *        결과반영 호출 파라메터 맵
+     */
+    private void setParameter(Map<String, Object> rowData, String[] excludeKeys, Map<String, Object> dataValues, Map<String, Object> callParams) {
+
+        callParams.clear();
+        dataValues.clear();
+        if (excludeKeys == null) {
+            excludeKeys = new String[] {};
+        }
+        for (Map.Entry<String, Object> entry : rowData.entrySet()) {
+            String key = entry.getKey();
+            for (String excludeKey : excludeKeys) {
+                if (key.equals(excludeKey)) {
+                    continue;
+                }
+            }
+            // 서비스호출 데이터 키/값
+            if (key.startsWith("DV_")) {
+                dataValues.put(key, entry.getValue());
+            }
+            // 결과반영 호출 기본 파라메터
+            else if (key.startsWith("P_")) {
+                callParams.put(key, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * [롯데택배] 주소정제 웹서비스 호출<br>
+     * 별도 쓰레드로 동작 함
+     *
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 출고정보<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부
+     * @return
+     */
+    public void callLotteGetAddressInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsAddress = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsAddress = getDataList(SELECT_ID_LOTTE_ADDRESS_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsAddress == null || dsAddress.size() == 0) {
+            return;
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        if (Consts.YES.equals(threadYn)) {
+            final List<Map<String, Object>> dsThreadAddress = dsAddress;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callLotteGetAddressInformation(params, dsThreadAddress);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+        } else {
+            callLotteGetAddressInformation(params, dsAddress);
+        }
+    }
+
+    private void callLotteGetAddressInformation(Map<String, Object> params, List<Map<String, Object>> dsAddress) {
+
+        // 서비스 호출 기본정보 처리, 첫번째 Record에만 존재 함
+        Map<String, Object> defineInfo = dsAddress.get(0);
+        // 서비스 호출 기본정보 - 컬럼명 SP_로 시작, 입력시 P_로 변경하여 입력
+        Map<String, Object> serviceParams = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : defineInfo.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("SP_")) {
+                serviceParams.put(key.replaceFirst("SP_", "P_"), entry.getValue());
+            }
+        }
+        // 서비스 호출 결과 파라메터 매핑 정보 파싱
+        Map<String, Object> resultTagParams = Util.toKeyValues((String)serviceParams.get("P_RESULT_TAG_PARAM_MAP"));
+        if (resultTagParams.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.032", "[RESULT_TAG_PARAM_MAP]파라메터 매핑 정보가 존재하지 않습니다."));
+        }
+        // 서비스 호출 헤더 매핑정보 파싱
+        Map<String, Object> headerParams = Util.toKeyValues((String)serviceParams.get("P_HEADER_PARAM_MAP"));
+
+        serviceParams.put("P_RESULT_TAG_PARAMS", resultTagParams);
+        serviceParams.put("P_HEADER_PARAMS", headerParams);
+
+        String responseTimeParamNm = (String)serviceParams.get("P_PARAM_RESPONSE_TIME");
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        // 전표 단위 처리
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        Map<String, Object> dataValues = new HashMap<String, Object>();
+        String[] excludeDataKeys = new String[] {"DV_UKEY"};
+        for (Map<String, Object> rowData : dsAddress) {
+            // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+            setParameter(rowData, excludeDataKeys, dataValues, callParams);
+
+            TransactionStatus ts = beginTrans();
+            try {
+                // 추가 정보 파라메터에 추가
+                callParams.put(Consts.PK_USER_ID, userId);
+                callParams.put("P_SEND_PARAMS", dataValues);
+
+                long startTime = System.currentTimeMillis();
+                Map<String, Object> resultMap = sendLotteRESTfulMessage(serviceParams, callParams);
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                }
+                resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+
+                Map<String, Object> callResultMap = callProcedure(UPDATE_ID_LOTTE_ADDRESS_INFO, resultMap);
+                oMsg = Util.getOutMessage(callResultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getLotteRESTfulResponseMessage(Map<String, Object> serviceParams, Map<String, Object> callParams,
+        ResponseEntity<String> restfulResponse) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>(callParams);
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        String responseBody = restfulResponse.getBody();
+        // Http Call Error
+        if (HttpStatus.OK != restfulResponse.getStatusCode()) {
+            Util.setOutMessage(resultMap, responseBody);
+        } else {
+            // JSON parsing
+            ObjectMapper objMapper = new ObjectMapper();
+            try {
+                Map<String, Object> responseMap = objMapper.readValue(responseBody, new MapTypeReference<String, Object>());
+                Map<String, Object> resultTagParams = (Map<String, Object>)serviceParams.get("P_RESULT_TAG_PARAMS");
+                String resultCdTag = (String)serviceParams.get("P_RESULT_CD_TAG");
+                for (Entry<String, Object> entry : resultTagParams.entrySet()) {
+                    if (entry.getKey().equals(resultCdTag) && "success".equals(responseMap.get(resultCdTag))) {
+                        resultMap.put((String)entry.getValue(), "0");
+                    } else {
+                        resultMap.put((String)entry.getValue(), responseMap.get(entry.getKey()));
+                    }
+                }
+            } catch (Exception e) {
+                // JSON parsing Error
+                Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+            }
+        }
+        return resultMap;
+    }
+
+    /**
+     * RESTful Message 전송
+     *
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          RESTful Url
+     * P_METHOD_NM               RESTful Method Name
+     * P_NS_PREFIX               사용안함
+     * P_NS_URI                  사용안함
+     * P_DATA_TAG                RESTful 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        RESTful 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> sendLotteRESTfulMessage(Map<String, Object> serviceParams, Map<String, Object> callParams) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        try {
+            String requestUrl = (String)serviceParams.get("P_WEBSERVICE_URL");
+            if (Util.isNull(requestUrl)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.033", "RESTful 전송 Url[P_WEBSERVICE_URL]이 지정되지 않았습니다."));
+            }
+            String methodNm = (String)serviceParams.get("P_METHOD_NM");
+            if (Util.isNotNull(methodNm)) {
+                if (requestUrl.endsWith("/")) {
+                    requestUrl += methodNm;
+                } else {
+                    requestUrl += "/" + methodNm;
+                }
+            }
+            Map<String, Object> sendParams = (Map<String, Object>)callParams.get("P_SEND_PARAMS");
+            if (Util.isNull(sendParams)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.034", "RESTful 전송 데이터[P_SEND_PARAMS]가 지정되지 않았습니다."));
+            }
+            HashMap<String, Object> httpParams = new LinkedHashMap<String, Object>();
+            Object sendParamValue;
+            for (Map.Entry<String, Object> sendParam : sendParams.entrySet()) {
+                // LowerCase로 변경 - > DV_COLUMN_NM - > column_nm
+                sendParamValue = sendParam.getValue();
+                httpParams.put(sendParam.getKey().substring(3).toLowerCase(), sendParamValue == null ? "" : sendParamValue.toString());
+            }
+            // 추가 헤더 정보 세팅
+            HttpHeaders headers = new HttpHeaders();
+            Map<String, Object> headerParams = (Map<String, Object>)serviceParams.get("P_HEADER_PARAMS");
+            if (Util.isNotNull(headerParams)) {
+                for (Map.Entry<String, Object> headerParam : headerParams.entrySet()) {
+                    // add -> set으로 변경 7.0.0, 헤더 중복
+                    headers.set(headerParam.getKey(), headerParam.getValue().toString());
+                }
+            }
+            int connectTimeout = Math.min(Util.toInt(serviceParams.get("P_CONN_TIMEOUT"), 5), 5);
+            int readTimeout = Math.min(Util.toInt(serviceParams.get("P_READ_TIMEOUT"), 20), 20);
+
+            RestTemplate restTemplate = Util.getRestTemplate(connectTimeout, readTimeout);
+            ResponseEntity<String> response = null;
+            // Http POST Call
+            HttpEntity<String> entity = new HttpEntity<String>(Util.toJson(httpParams), headers);
+            response = restTemplate.postForEntity(requestUrl, entity, String.class);
+            // 결과 파싱
+            resultMap = getLotteRESTfulResponseMessage(serviceParams, callParams, response);
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * [우체국택배] 주소정제 웹서비스 호출<br>
+     * 별도 쓰레드로 동작 함
+     *
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 출고정보<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부
+     * @return
+     */
+    public void callEPostGetAddressInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsAddress = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsAddress = getDataList(SELECT_ID_EPOST_ADDRESS_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsAddress == null || dsAddress.size() == 0) {
+            return;
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        if (Consts.YES.equals(threadYn)) {
+            final List<Map<String, Object>> dsThreadAddress = dsAddress;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callEPostGetAddressInformation(params, dsThreadAddress);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+        } else {
+            callEPostGetAddressInformation(params, dsAddress);
+        }
+    }
+
+    private void callEPostGetAddressInformation(Map<String, Object> params, List<Map<String, Object>> dsAddress) {
+
+        // 서비스 호출 기본정보 처리, 첫번째 Record에만 존재 함
+        Map<String, Object> defineInfo = dsAddress.get(0);
+        // 서비스 호출 기본정보 - 컬럼명 SP_로 시작, 입력시 P_로 변경하여 입력
+        Map<String, Object> serviceParams = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : defineInfo.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("SP_")) {
+                serviceParams.put(key.replaceFirst("SP_", "P_"), entry.getValue());
+            }
+        }
+        // 서비스 호출 결과 파라메터 매핑 정보 파싱
+        Map<String, Object> resultTagParams = Util.toKeyValues((String)serviceParams.get("P_RESULT_TAG_PARAM_MAP"));
+        if (resultTagParams.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.032", "[RESULT_TAG_PARAM_MAP]파라메터 매핑 정보가 존재하지 않습니다."));
+        }
+        // 서비스 호출 헤더 매핑정보 파싱
+        Map<String, Object> headerParams = Util.toKeyValues((String)serviceParams.get("P_HEADER_PARAM_MAP"));
+
+        serviceParams.put("P_RESULT_TAG_PARAMS", resultTagParams);
+        serviceParams.put("P_HEADER_PARAMS", headerParams);
+
+        String responseTimeParamNm = (String)serviceParams.get("P_PARAM_RESPONSE_TIME");
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        // 전표 단위 처리
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        Map<String, Object> dataValues = new HashMap<String, Object>();
+        String[] excludeDataKeys = new String[] {};
+        for (Map<String, Object> rowData : dsAddress) {
+            // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+            setParameter(rowData, excludeDataKeys, dataValues, callParams);
+
+            TransactionStatus ts = beginTrans();
+            try {
+                // 추가 정보 파라메터에 추가
+                callParams.put(Consts.PK_USER_ID, userId);
+                callParams.put("P_SEND_PARAMS", dataValues);
+
+                long startTime = System.currentTimeMillis();
+                Map<String, Object> resultMap = sendEPostRESTfulMessage(serviceParams, callParams);
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                }
+                resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+
+                Map<String, Object> callResultMap = callProcedure(UPDATE_ID_EPOST_ADDRESS_INFO, resultMap);
+                oMsg = Util.getOutMessage(callResultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getEPostRESTfulResponseMessage(Map<String, Object> serviceParams, Map<String, Object> callParams,
+        ResponseEntity<String> restfulResponse) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>(callParams);
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        String responseBody = restfulResponse.getBody();
+        // Http Call Error
+        if (HttpStatus.OK != restfulResponse.getStatusCode()) {
+            Util.setOutMessage(resultMap, responseBody);
+        } else {
+            DocumentBuilderFactory xmlDocFactory = null;
+            DocumentBuilder xmlDocBuilder = null;
+            Document xmlDoc = null;
+            InputStream is = new ByteArrayInputStream(responseBody.getBytes());
+
+            try {
+                xmlDocFactory = DocumentBuilderFactory.newInstance();
+                xmlDocBuilder = xmlDocFactory.newDocumentBuilder();
+                xmlDoc = xmlDocBuilder.parse(is);
+                Element xmlRootElement = xmlDoc.getDocumentElement();
+                xmlRootElement.normalize();
+                NodeList xmlDataNodeList = null;
+                xmlDataNodeList = xmlRootElement.getChildNodes();
+
+                if (xmlDataNodeList == null || xmlDataNodeList.getLength() == 0) {
+                    throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.043", "XML 파일에 처리할 데이터가 없습니다."));
+                }
+
+                Map<String, Object> resultTagParams = (Map<String, Object>)serviceParams.get("P_RESULT_TAG_PARAMS");
+                String resultCdTag = (String)serviceParams.get("P_RESULT_CD_TAG");
+                for (int col = 0; col < xmlDataNodeList.getLength(); col++) {
+                    // Result Tag Sub Node
+                    Node node = xmlDataNodeList.item(col);
+                    if (node.getAttributes() != null && resultTagParams.get(node.getNodeName()) != null) {
+                        resultMap.put(Util.nullToDefault(resultTagParams.get(node.getNodeName()), node.getNodeName()), node.getTextContent());
+                    }
+                }
+                // resultCdTag(error_code)가 존재하지 않으면 정상처리된것이기때문에 0을 설정 함.
+                if (resultMap.get(resultTagParams.get(resultCdTag)) == null) {
+                    resultMap.put((String)resultTagParams.get(resultCdTag), "0");
+                }
+            } catch (Exception e) {
+                Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+            }
+        }
+        return resultMap;
+    }
+
+    /**
+     * RESTful Message 전송
+     *
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          RESTful Url
+     * P_METHOD_NM               RESTful Method Name
+     * P_NS_PREFIX               사용안함
+     * P_NS_URI                  사용안함
+     * P_DATA_TAG                RESTful 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        RESTful 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> sendEPostRESTfulMessage(Map<String, Object> serviceParams, Map<String, Object> callParams) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        try {
+            String requestUrl = (String)serviceParams.get("P_WEBSERVICE_URL");
+            if (Util.isNull(requestUrl)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.033", "RESTful 전송 Url[P_WEBSERVICE_URL]이 지정되지 않았습니다."));
+            }
+            String methodNm = (String)serviceParams.get("P_METHOD_NM");
+            if (Util.isNotNull(methodNm)) {
+                if (requestUrl.endsWith("/")) {
+                    requestUrl += methodNm;
+                } else {
+                    requestUrl += "/" + methodNm;
+                }
+            }
+            Map<String, Object> sendParams = (Map<String, Object>)callParams.get("P_SEND_PARAMS");
+            if (Util.isNull(sendParams)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.034", "RESTful 전송 데이터[P_SEND_PARAMS]가 지정되지 않았습니다."));
+            }
+            // RestTemplate가 Url을 utf-8로 인코딩 함, utf-8로 인코딩되면 우체국 api가 인식 못함
+            // 우체국 api가 인식할 수 있도록 조정
+            String queryParams = "";
+            String sendParamValue;
+            for (Map.Entry<String, Object> sendParam : sendParams.entrySet()) {
+                // LowerCase로 변경 - > DV_COLUMN_NM - > column_nm
+                if (sendParam.getValue() == null) {
+                    sendParamValue = "";
+                } else {
+                    try {
+                        // 우체국 한글 변환, euc-kr로 인코딩
+                        sendParamValue = URLEncoder.encode(sendParam.getValue().toString(), "EUC-KR");
+                    } catch (Exception e) {
+                        sendParamValue = sendParam.getValue().toString();
+                    }
+                }
+                queryParams += "&" + sendParam.getKey().substring(3).toLowerCase() + "=" + sendParamValue;
+            }
+            if (queryParams.length() > 0) {
+                requestUrl += "?" + queryParams.substring(1);
+            }
+            // 추가 헤더 정보 세팅
+            HttpHeaders headers = new HttpHeaders();
+            Map<String, Object> headerParams = (Map<String, Object>)serviceParams.get("P_HEADER_PARAMS");
+            if (Util.isNotNull(headerParams)) {
+                for (Map.Entry<String, Object> headerParam : headerParams.entrySet()) {
+                    // add -> set으로 변경 7.0.0, 헤더 중복
+                    headers.set(headerParam.getKey(), headerParam.getValue().toString());
+                }
+            }
+            int connectTimeout = Math.min(Util.toInt(serviceParams.get("P_CONN_TIMEOUT"), 5), 5);
+            int readTimeout = Math.min(Util.toInt(serviceParams.get("P_READ_TIMEOUT"), 20), 20);
+
+            RestTemplate restTemplate = Util.getRestTemplate(connectTimeout, readTimeout);
+            ResponseEntity<String> response = null;
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            // urlVariables를 처리시 utf-8로 인코딩 하므로 urlVariables 제거하고 URI로 직접 입력
+            response = restTemplate.exchange(new URI(requestUrl), HttpMethod.GET, entity, String.class);
+            // 결과 파싱
+            resultMap = getEPostRESTfulResponseMessage(serviceParams, callParams, response);
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * [한진택배] 주소정제 웹서비스 호출<br>
+     * 별도 쓰레드로 동작 함
+     *
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 출고정보<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부, 기본값 N<br>
+     *        P_UPDATE_YN: 주소정제(송장채번) 결과 DB반영 여부, 기본값 Y
+     * @return
+     */
+    public void callHanjinGetAddressInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsAddress = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsAddress = getDataList(SELECT_ID_HANJIN_ADDRESS_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsAddress == null || dsAddress.size() == 0) {
+            return;
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        // 결과반영 여부, 기본값 Y
+        if (!params.containsKey("P_UPDATE_YN")) {
+            params.put("P_UPDATE_YN", Consts.YES);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        if (Consts.YES.equals(threadYn)) {
+            final List<Map<String, Object>> dsThreadAddress = dsAddress;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callHanjinGetAddressInformation(params, dsThreadAddress);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+        } else {
+            callHanjinGetAddressInformation(params, dsAddress);
+        }
+    }
+
+    private void callHanjinGetAddressInformation(Map<String, Object> params, List<Map<String, Object>> dsAddress) {
+
+        // 서비스 호출 기본정보 처리, 첫번째 Record에만 존재 함
+        Map<String, Object> defineInfo = dsAddress.get(0);
+        // 서비스 호출 기본정보 - 컬럼명 SP_로 시작, 입력시 P_로 변경하여 입력
+        Map<String, Object> serviceParams = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : defineInfo.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("SP_")) {
+                serviceParams.put(key.replaceFirst("SP_", "P_"), entry.getValue());
+            }
+        }
+        // 서비스 호출 결과 파라메터 매핑 정보 파싱
+        Map<String, Object> resultTagParams = Util.toKeyValues((String)serviceParams.get("P_RESULT_TAG_PARAM_MAP"));
+        if (resultTagParams.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.032", "[RESULT_TAG_PARAM_MAP]파라메터 매핑 정보가 존재하지 않습니다."));
+        }
+        // 서비스 호출 헤더 매핑정보 파싱
+        Map<String, Object> headerParams = Util.toKeyValues((String)serviceParams.get("P_HEADER_PARAM_MAP"));
+
+        serviceParams.put("P_RESULT_TAG_PARAMS", resultTagParams);
+        serviceParams.put("P_HEADER_PARAMS", headerParams);
+
+        String responseTimeParamNm = (String)serviceParams.get("P_PARAM_RESPONSE_TIME");
+        String userId = (String)params.get(Consts.PK_USER_ID);
+        boolean isUpdate = Consts.YES.equals(params.get("P_UPDATE_YN")); // 주소정제 후 결과 DB반영 여부
+        Util.setOutMessage(params, Consts.OK);
+
+        // 전표 단위 처리
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        Map<String, Object> dataValues = new HashMap<String, Object>();
+        String[] excludeDataKeys = new String[] {"DV_UKEY"};
+        for (Map<String, Object> rowData : dsAddress) {
+            // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+            setParameter(rowData, excludeDataKeys, dataValues, callParams);
+
+            TransactionStatus ts = beginTrans();
+            try {
+                // 추가 정보 파라메터에 추가
+                callParams.put(Consts.PK_USER_ID, userId);
+                callParams.put("P_SEND_PARAMS", dataValues);
+
+                long startTime = System.currentTimeMillis();
+                Map<String, Object> resultMap = sendHanjinRESTfulMessage(serviceParams, callParams);
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                }
+                resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+
+                // 한진택배의 경우 송장번호를 주소정제 서비스 호출을 통해서 받음
+                // 주소정제시만 LO020PM 테이블에 반영하고 송장번호 채번할 경우는 테이블에 반영하지 않음
+                if (isUpdate) {
+                    Map<String, Object> callResultMap = callProcedure(UPDATE_ID_HANJIN_ADDRESS_INFO, resultMap);
+                    oMsg = Util.getOutMessage(callResultMap);
+                    if (!Consts.OK.equals(oMsg)) {
+                        throw new RuntimeException(oMsg);
+                    }
+                }
+                // DB 반영이 아닐 경우(채번한 송장번호 리턴)
+                else {
+                    params.put("O_WB_NO", resultMap.get("P_WB_NO"));
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getHanjinRESTfulResponseMessage(Map<String, Object> serviceParams, Map<String, Object> callParams,
+        ResponseEntity<String> restfulResponse) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>(callParams);
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        // String responseBody = restfulResponse.getBody();
+        String responseBody = new String(restfulResponse.getBody().getBytes("ISO-8859-1"), "UTF-8");
+        // Http Call Error
+        if (HttpStatus.OK != restfulResponse.getStatusCode()) {
+            Util.setOutMessage(resultMap, responseBody);
+        } else {
+            // JSON parsing
+            ObjectMapper objMapper = new ObjectMapper();
+            try {
+                Map<String, Object> responseMap = objMapper.readValue(responseBody, new MapTypeReference<String, Object>());
+                Map<String, Object> resultTagParams = (Map<String, Object>)serviceParams.get("P_RESULT_TAG_PARAMS");
+                String resultCdTag = (String)serviceParams.get("P_RESULT_CD_TAG");
+                for (Entry<String, Object> entry : resultTagParams.entrySet()) {
+                    // if (entry.getKey().equals(resultCdTag) && "OK".equals((String)responseMap.get(resultCdTag))) {
+                    String resultCd = (String)responseMap.get(resultCdTag);
+                    if (entry.getKey().equals(resultCdTag) && "OK".equals(resultCd)) {
+                        resultMap.put((String)entry.getValue(), "0");
+                    } else {
+                        resultMap.put((String)entry.getValue(), responseMap.get(entry.getKey()));
+                    }
+                }
+            } catch (Exception e) {
+                // JSON parsing Error
+                Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+            }
+        }
+        return resultMap;
+    }
+
+    /**
+     * RESTful Message 전송
+     *
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          RESTful Url
+     * P_METHOD_NM               RESTful Method Name
+     * P_NS_PREFIX               사용안함
+     * P_NS_URI                  사용안함
+     * P_DATA_TAG                RESTful 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        RESTful 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> sendHanjinRESTfulMessage(Map<String, Object> serviceParams, Map<String, Object> callParams) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        try {
+            String requestUrl = (String)serviceParams.get("P_WEBSERVICE_URL");
+            if (Util.isNull(requestUrl)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.033", "RESTful 전송 Url[P_WEBSERVICE_URL]이 지정되지 않았습니다."));
+            }
+            String methodNm = (String)serviceParams.get("P_METHOD_NM");
+            if (Util.isNotNull(methodNm)) {
+                if (requestUrl.endsWith("/")) {
+                    requestUrl += methodNm;
+                } else {
+                    requestUrl += "/" + methodNm;
+                }
+            }
+            Map<String, Object> sendParams = (Map<String, Object>)callParams.get("P_SEND_PARAMS");
+            if (Util.isNull(sendParams)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.034", "RESTful 전송 데이터[P_SEND_PARAMS]가 지정되지 않았습니다."));
+            }
+            HashMap<String, Object> httpParams = new LinkedHashMap<String, Object>();
+            Object sendParamValue;
+            for (Map.Entry<String, Object> sendParam : sendParams.entrySet()) {
+                // LowerCase로 변경 - > DV_COLUMN_NM - > column_nm
+                sendParamValue = sendParam.getValue();
+                httpParams.put(sendParam.getKey().substring(3).toLowerCase(), sendParamValue == null ? "" : sendParamValue.toString());
+            }
+            // 추가 헤더 정보 세팅
+            HttpHeaders headers = new HttpHeaders();
+            Map<String, Object> headerParams = (Map<String, Object>)serviceParams.get("P_HEADER_PARAMS");
+            if (Util.isNotNull(headerParams)) {
+                for (Map.Entry<String, Object> headerParam : headerParams.entrySet()) {
+                    // add -> set으로 변경 7.0.0, 헤더 중복
+                    headers.set(headerParam.getKey(), headerParam.getValue().toString());
+                }
+            }
+
+            int connectTimeout = Math.min(Util.toInt(serviceParams.get("P_CONN_TIMEOUT"), 5), 5);
+            int readTimeout = Math.min(Util.toInt(serviceParams.get("P_READ_TIMEOUT"), 20), 20);
+
+            RestTemplate restTemplate = Util.getRestTemplate(connectTimeout, readTimeout);
+            ResponseEntity<String> response = null;
+            // Http POST Call
+            HttpEntity<String> entity = new HttpEntity<String>(Util.toJson(httpParams), headers);
+            response = restTemplate.postForEntity(requestUrl, entity, String.class);
+
+            // 결과 파싱
+            resultMap = getHanjinRESTfulResponseMessage(serviceParams, callParams, response);
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * [화물통관] 화물통관 진행정보 웹서비스 호출<br>
+     * 별도 쓰레드로 동작 함
+     *
+     * @param params
+     *        <br>
+     *        P_CHECKED_VALUE: 출고정보<br>
+     *        P_USER_ID: 사용자ID<br>
+     *        P_THREAD_YN: 쓰레드로 동작할지 여부, 기본값 N
+     * @return
+     */
+    public void callCustomsGetCsclInformation(final Map<String, Object> params) {
+
+        List<Map<String, Object>> dsCscl = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            getDefaultDao().insertCheckedValue(params);
+            dsCscl = getDataList(SELECT_ID_CUSTOMS_CSCL_INFO, params);
+        } finally {
+            rollbackTrans(ts);
+        }
+        if (dsCscl == null || dsCscl.size() == 0) {
+            return;
+        }
+
+        // 쓰레드 동작, 기본값 N
+        if (!params.containsKey("P_THREAD_YN")) {
+            params.put("P_THREAD_YN", Consts.NO);
+        }
+        String threadYn = (String)params.get("P_THREAD_YN");
+        if (Consts.YES.equals(threadYn)) {
+            final List<Map<String, Object>> dsThreadCscl = dsCscl;
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    AuthenticationUtil.configureAuthentication();
+                    try {
+                        callCustomsGetCsclInformation(params, dsThreadCscl);
+                    } catch (Exception e) {
+                    } finally {
+                        AuthenticationUtil.clearAuthentication();
+                    }
+                }
+            }).start();
+        } else {
+            callCustomsGetCsclInformation(params, dsCscl);
+        }
+    }
+
+    private void callCustomsGetCsclInformation(Map<String, Object> params, List<Map<String, Object>> dsCscl) {
+
+        // 서비스 호출 기본정보 처리, 첫번째 Record에만 존재 함
+        Map<String, Object> defineInfo = dsCscl.get(0);
+        // 서비스 호출 기본정보 - 컬럼명 SP_로 시작, 입력시 P_로 변경하여 입력
+        Map<String, Object> serviceParams = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : defineInfo.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith("SP_")) {
+                serviceParams.put(key.replaceFirst("SP_", "P_"), entry.getValue());
+            }
+        }
+        // 서비스 호출 결과 파라메터 매핑 정보 파싱
+        Map<String, Object> resultTagParams = Util.toKeyValues((String)serviceParams.get("P_RESULT_TAG_PARAM_MAP"));
+        if (resultTagParams.size() == 0) {
+            throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.032", "[RESULT_TAG_PARAM_MAP]파라메터 매핑 정보가 존재하지 않습니다."));
+        }
+        // 서비스 호출 헤더 매핑정보 파싱
+        Map<String, Object> headerParams = Util.toKeyValues((String)serviceParams.get("P_HEADER_PARAM_MAP"));
+
+        serviceParams.put("P_RESULT_TAG_PARAMS", resultTagParams);
+        serviceParams.put("P_HEADER_PARAMS", headerParams);
+
+        String responseTimeParamNm = (String)serviceParams.get("P_PARAM_RESPONSE_TIME");
+        String userId = (String)params.get(Consts.PK_USER_ID);
+
+        // 전표 단위 처리
+        Map<String, Object> callParams = new HashMap<String, Object>();
+        Map<String, Object> dataValues = new HashMap<String, Object>();
+        String[] excludeDataKeys = new String[] {};
+        for (Map<String, Object> rowData : dsCscl) {
+            // 주소정제 데이터 서비스호출/ 결과반영 키/값으로 변경
+            setParameter(rowData, excludeDataKeys, dataValues, callParams);
+
+            TransactionStatus ts = beginTrans();
+            try {
+                // 추가 정보 파라메터에 추가
+                callParams.put(Consts.PK_USER_ID, userId);
+                callParams.put("P_SEND_PARAMS", dataValues);
+
+                long startTime = System.currentTimeMillis();
+                Map<String, Object> resultMap = sendCustomsRESTfulMessage(serviceParams, callParams);
+                String oMsg = Util.getOutMessage(resultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_CD_TAG")), "-1");
+                    resultMap.put((String)resultTagParams.get(serviceParams.get("P_RESULT_MSG_TAG")), oMsg);
+                }
+                resultMap.put(responseTimeParamNm, String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000f));
+
+                Map<String, Object> callResultMap = callProcedure(UPDATE_ID_CUSTOMS_CSCL_INFO, resultMap);
+                oMsg = Util.getOutMessage(callResultMap);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+
+                commitTrans(ts);
+            } catch (Exception e) {
+                rollbackTrans(ts);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getCustomsRESTfulResponseMessage(Map<String, Object> serviceParams, Map<String, Object> callParams,
+        ResponseEntity<String> restfulResponse) throws Exception {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>(callParams);
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        String responseBody = restfulResponse.getBody();
+        // Http Call Error
+        if (HttpStatus.OK != restfulResponse.getStatusCode()) {
+            Util.setOutMessage(resultMap, responseBody);
+        } else {
+            DocumentBuilderFactory xmlDocFactory = null;
+            DocumentBuilder xmlDocBuilder = null;
+            Document xmlDoc = null;
+            InputStream is = new ByteArrayInputStream(responseBody.getBytes());
+
+            try {
+                xmlDocFactory = DocumentBuilderFactory.newInstance();
+                xmlDocBuilder = xmlDocFactory.newDocumentBuilder();
+                xmlDoc = xmlDocBuilder.parse(is);
+                Element xmlRootElement = xmlDoc.getDocumentElement();
+                xmlRootElement.normalize();
+                NodeList xmlDataNodeList = null;
+                xmlDataNodeList = xmlRootElement.getChildNodes();
+
+                if (xmlDataNodeList == null || xmlDataNodeList.getLength() == 0) {
+                    throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.043", "XML 파일에 처리할 데이터가 없습니다."));
+                }
+
+                Map<String, Object> resultTagParams = (Map<String, Object>)serviceParams.get("P_RESULT_TAG_PARAMS");
+                String resultCdTag = (String)serviceParams.get("P_RESULT_CD_TAG");
+                String resultTag = (String)serviceParams.get("P_RESULT_TAG");
+                NodeList resultTagNodes = null;
+                if (Util.isNotNull(resultTag)) {
+                    resultTagNodes = xmlRootElement.getElementsByTagName(resultTag);
+                    // if (resultTagNodes == null || resultTagNodes.getLength() == 0) {
+                    // throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.057", "Result Tag[P_RESULT_TAG]에 해당하는 데이터가 없습니다."));
+                    // }
+                }
+                for (int col = 0; col < xmlDataNodeList.getLength(); col++) {
+                    // Result Tag Sub Node
+                    Node node = xmlDataNodeList.item(col);
+                    if (node.getAttributes() != null && resultTagParams.get(node.getNodeName()) != null) {
+                        resultMap.put((String)resultTagParams.get(node.getNodeName()), node.getTextContent());
+                    }
+                }
+                if (resultTagNodes != null) {
+                    for (int row = 0; row < resultTagNodes.getLength(); row++) {
+                        // Result Tag Node
+                        NodeList resultTagNode = (NodeList)resultTagNodes.item(row);
+                        for (int col = 0; col < resultTagNode.getLength(); col++) {
+                            // Result Tag Sub Node
+                            Node node = resultTagNode.item(col);
+                            if (node.getAttributes() != null && resultTagParams.get(node.getNodeName()) != null) {
+                                resultMap.put((String)resultTagParams.get(node.getNodeName()), node.getTextContent());
+                            }
+                        }
+                    }
+                }
+                // resultCdTag(error_code)가 존재하지 않으면 정상처리된것이기때문에 0을 설정 함.
+                if (resultMap.get(resultTagParams.get(resultCdTag)) == null) {
+                    resultMap.put((String)resultTagParams.get(resultCdTag), "0");
+                }
+            } catch (Exception e) {
+                Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+            }
+        }
+        return resultMap;
+    }
+
+    /**
+     * RESTful Message 전송
+     *
+     * @param serviceParams
+     *        서비스 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_WEBSERVICE_URL          RESTful Url
+     * P_METHOD_NM               RESTful Method Name
+     * P_NS_PREFIX               사용안함
+     * P_NS_URI                  사용안함
+     * P_DATA_TAG                RESTful 호출 데이터가 입력될 상위 태그명
+     * P_RESULT_TAG              결과 정보를 읽을 상위 태그명
+     * P_RESULT_TAG_PARAM_MAP    결과 정보에서 읽은 태그 값을 반영할 때 사용할 파라메터 매핑
+     * P_RESULT_CD_TAG           결과 정보에서 처리결과 코드를 읽을 태그명
+     * P_RESULT_MSG_TAG          결과 정보에서 처리결과 메시지를 읽을 태그명
+     * P_PARAM_RESPONSE_TIME     처리 응답시간을 기록할 파라메터명, NULL 허용
+     * P_HEADER_PARAM_MAP        RESTful 호출 Header에 추가할 값, key1=value || WD.C_CR || key2=value
+     * P_CONN_TIMEOUT            서비스 Connection Timeout(초)
+     * P_READ_TIMEOUT            서비스 Data Read Timeout(초)
+     *        </pre>
+     * @param callParams
+     *        결과반영 호출 파라메터
+     *        <pre style="font-family: GulimChe; font-size: 12px;">
+     * P_...                     기본 파라메터, P_로 시작하는 컬럼
+     * P_SEND_PARAMS             Send Data Hashmap, DV로 시작하는 컬럼
+     *        </pre>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> sendCustomsRESTfulMessage(Map<String, Object> serviceParams, Map<String, Object> callParams) {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Util.setOutMessage(resultMap, Consts.OK);
+
+        try {
+            String requestUrl = (String)serviceParams.get("P_WEBSERVICE_URL");
+            if (Util.isNull(requestUrl)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.033", "RESTful 전송 Url[P_WEBSERVICE_URL]이 지정되지 않았습니다."));
+            }
+            String methodNm = (String)serviceParams.get("P_METHOD_NM");
+            if (Util.isNotNull(methodNm)) {
+                if (requestUrl.endsWith("/")) {
+                    requestUrl += methodNm;
+                } else {
+                    requestUrl += "/" + methodNm;
+                }
+            }
+            Map<String, Object> sendParams = (Map<String, Object>)callParams.get("P_SEND_PARAMS");
+            if (Util.isNull(sendParams)) {
+                throw new RuntimeException(NexosMessage.getDisplayMsg("JAVA.ED.034", "RESTful 전송 데이터[P_SEND_PARAMS]가 지정되지 않았습니다."));
+            }
+            // RestTemplate가 Url을 utf-8로 인코딩 함, utf-8로 인코딩되면 우체국 api가 인식 못함
+            // 우체국 api가 인식할 수 있도록 조정
+            String queryParams = "";
+            String sendParamValue;
+            for (Map.Entry<String, Object> sendParam : sendParams.entrySet()) {
+                // LowerCase로 변경 - > DV_COLUMN_NM - > column_nm
+                if (sendParam.getValue() == null) {
+                    sendParamValue = "";
+                } else {
+                    sendParamValue = sendParam.getValue().toString();
+                }
+                queryParams += "&" + Util.toCamelCase(sendParam.getKey().substring(3), true) + "=" + sendParamValue;
+            }
+            if (queryParams.length() > 0) {
+                requestUrl += "?" + queryParams.substring(1);
+            }
+            // 추가 헤더 정보 세팅
+            HttpHeaders headers = new HttpHeaders();
+            Map<String, Object> headerParams = (Map<String, Object>)serviceParams.get("P_HEADER_PARAMS");
+            if (Util.isNotNull(headerParams)) {
+                for (Map.Entry<String, Object> headerParam : headerParams.entrySet()) {
+                    // add -> set으로 변경 7.0.0, 헤더 중복
+                    headers.set(headerParam.getKey(), headerParam.getValue().toString());
+                }
+            }
+            int connectTimeout = Math.min(Util.toInt(serviceParams.get("P_CONN_TIMEOUT"), 5), 5);
+            int readTimeout = Math.min(Util.toInt(serviceParams.get("P_READ_TIMEOUT"), 20), 20);
+
+            RestTemplate restTemplate = Util.getRestTemplate(connectTimeout, readTimeout);
+            ResponseEntity<String> response = null;
+            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            // urlVariables를 처리시 utf-8로 인코딩 하므로 urlVariables 제거하고 URI로 직접 입력
+            response = restTemplate.exchange(new URI(requestUrl), HttpMethod.GET, entity, String.class);
+            // 결과 파싱
+            resultMap = getCustomsRESTfulResponseMessage(serviceParams, callParams, response);
+        } catch (Exception e) {
+            Util.setOutMessage(resultMap, Util.getErrorMessage(e));
+        }
+
+        return resultMap;
+    }
+}

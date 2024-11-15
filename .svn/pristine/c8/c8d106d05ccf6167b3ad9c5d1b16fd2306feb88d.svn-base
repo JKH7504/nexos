@@ -1,0 +1,84 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01011P0
+    프로그램명         : 사용자복사 팝업
+    프로그램설명       : 사용자복사 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01011P0.css" /> -->
+<script src="js/CSC01011P0.js"></script>
+</head>
+<body>
+    <div id="divLeftView" class="ctrLeft" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_DestUser" class="lblTitle">복사대상 사용자</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <input id="edtFrom_User_Id" class="edtKey" type="text" style="width: 60px;" />
+                <input id="btnFrom_User_Id" class="btnIcoPopup" type="button" />
+                <input id="edtFrom_User_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+            </div>
+        </div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="border-bottom-width: 0;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_NewUser" class="lblTitle">신규 사용자</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblUser_Id" class="lblKey">사용자ID</div>
+                <input id="edtUser_Id" class="edtKey" type="text" style="width: 170px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblUser_Nm" class="lblKey">사용자명</div>
+                <input id="edtUser_Nm" class="edtKey" type="text" style="width: 170px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblUser_Pwd" class="lblKey">비밀번호</div>
+                <input id="edtUser_Pwd" class="edtKey" type="password" style="width: 170px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblEmployee_Id" class="lblNormal">사원번호</div>
+                <input id="edtEmployee_Id" class="edtNormal" type="text" style="width: 170px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblUser_Hp" class="lblNormal">휴대전화번호</div>
+                <input id="edtUser_Hp" class="edtNormal" type="text" style="width: 170px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblUser_Email" class="lblNormal">이메일</div>
+                <input id="edtUser_Email" class="edtNormal" type="text" style="width: 170px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblEntry_Comment" class="lblNormal">등록사유</div>
+                <input id="edtEntry_Comment" class="edtNormal" type="text" autocomplete="" style="width: 170px;" />
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnCopy" class="btnNormal" type="button" value="복사하기" style="width: 80px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

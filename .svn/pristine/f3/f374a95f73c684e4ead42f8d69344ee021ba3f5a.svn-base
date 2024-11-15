@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PAPER_LFC_CONSIGNMENT_02_subreport4" pageWidth="567" pageHeight="814" whenNoDataType="AllSectionsNoDetail" columnWidth="567" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="84f10716-8e92-486f-8151-2c521ab585be">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SPIGEN_NEXOX_V75"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="P_USER_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자ID]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SYSDATE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]DB현재일시]]></parameterDescription>
+		<defaultValueExpression><![CDATA["2008-01-01 01:01:01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_USER_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]사용자명]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CLIENT_IP" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]출력사용자IP]]></parameterDescription>
+	</parameter>
+	<parameter name="P_REPORT_TITLE_NM" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트타이틀]]></parameterDescription>
+	</parameter>
+	<parameter name="P_SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[[시스템]레포트파일루트절대경로]]></parameterDescription>
+	</parameter>
+	<parameter name="P_CENTER_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["A2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_BU_CD" class="java.lang.String">
+		<defaultValueExpression><![CDATA["RD"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ADJUST_MONTH" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2023-06-01"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT --+ INDEX(M1 LF230NM_IDX01)                                                                  --출고패킹작업비
+       M1.ADJUST_SDATE
+      ,M1.ADJUST_EDATE
+      ,M2.BILL_NM
+      ,M2.BILL_DETAIL
+      ,M1.PACKING_PRICE
+      ,M1.ITEM_QTY_PRICE
+      ,SUM(M1.BILL_QTY)          AS BILL_QTY
+      ,SUM(M1.BILL_AMT)          AS BILL_AMT
+      ,SUM(M1.FINAL_AMT)         AS FINAL_AMT
+      ,SUM((M1.FINAL_AMT * 0.1)) AS VAT_AMT
+      ,SUM((M1.FINAL_AMT * 1.1)) AS TOT_AMT
+      ,MAX(M1.REMARK1)           AS REMARK1
+  FROM LF230NM M1
+       JOIN LFBILL M2 ON M2.CONTRACT_NO = M1.CONTRACT_NO
+                     AND M2.BILL_DIV    = M1.BILL_DIV
+ WHERE M1.CENTER_CD     = $P{P_CENTER_CD}
+   AND M1.BU_CD         = $P{P_BU_CD}
+   AND M1.ADJUST_MONTH  = $P{P_ADJUST_MONTH}
+ GROUP BY M1.ADJUST_SDATE
+         ,M1.ADJUST_EDATE
+         ,M2.BILL_NM
+         ,M2.BILL_DETAIL
+         ,M1.PACKING_PRICE
+         ,M1.ITEM_QTY_PRICE]]>
+	</queryString>
+	<field name="ADJUST_SDATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="ADJUST_SDATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ADJUST_SDATE"/>
+	</field>
+	<field name="ADJUST_EDATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="ADJUST_EDATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ADJUST_EDATE"/>
+	</field>
+	<field name="BILL_NM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BILL_NM"/>
+		<property name="com.jaspersoft.studio.field.label" value="BILL_NM"/>
+	</field>
+	<field name="BILL_DETAIL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BILL_DETAIL"/>
+		<property name="com.jaspersoft.studio.field.label" value="BILL_DETAIL"/>
+	</field>
+	<field name="PACKING_PRICE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="PACKING_PRICE"/>
+		<property name="com.jaspersoft.studio.field.label" value="PACKING_PRICE"/>
+	</field>
+	<field name="ITEM_QTY_PRICE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ITEM_QTY_PRICE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ITEM_QTY_PRICE"/>
+	</field>
+	<field name="BILL_QTY" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BILL_QTY"/>
+		<property name="com.jaspersoft.studio.field.label" value="BILL_QTY"/>
+	</field>
+	<field name="BILL_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="BILL_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="BILL_AMT"/>
+	</field>
+	<field name="FINAL_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="FINAL_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_AMT"/>
+	</field>
+	<field name="VAT_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="VAT_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="VAT_AMT"/>
+	</field>
+	<field name="TOT_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TOT_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="TOT_AMT"/>
+	</field>
+	<field name="REMARK1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="REMARK1"/>
+		<property name="com.jaspersoft.studio.field.label" value="REMARK1"/>
+	</field>
+	<variable name="SUM_BILL_QTY" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+		<variableExpression><![CDATA[$F{BILL_QTY}]]></variableExpression>
+	</variable>
+	<variable name="SUM_FINAL_AMT" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+		<variableExpression><![CDATA[$F{FINAL_AMT}]]></variableExpression>
+	</variable>
+	<variable name="SUM_VAT_AMT" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+		<variableExpression><![CDATA[$F{VAT_AMT}]]></variableExpression>
+	</variable>
+	<variable name="SUM_TOT_AMT" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOT_AMT}]]></variableExpression>
+	</variable>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="66" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<line>
+				<reportElement key="line-1" x="1" y="65" width="567" height="1" uuid="92c8526a-0a04-427c-a2be-b0f695eea040"/>
+			</line>
+			<staticText>
+				<reportElement key="staticText-40" x="0" y="1" width="567" height="38" uuid="20a2c873-5bed-41e6-be1d-b1efab10b09b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[출고 패킹 작업비 내역]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-1" x="0" y="40" width="567" height="1" uuid="194a6dca-39ad-42b5-b09e-15a899a9af48">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement key="staticText-4" x="0" y="41" width="74" height="24" uuid="f6ceb1be-e159-49c3-b214-137592a0c925">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[기간]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="76" y="41" width="75" height="24" uuid="898425bd-a4c7-4e2f-bfbe-faacebd9b103">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[정산명]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="152" y="41" width="78" height="24" uuid="5ec2a6b5-9d06-4d4f-9ede-448b3c5ce08f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[구분]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="281" y="41" width="43" height="24" uuid="f91033b8-e38e-400a-b6d0-6934eedd038b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[내품수량
+단가]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="365" y="41" width="38" height="24" uuid="74fc5bd8-8ec1-494f-a5a0-55538adbeaa1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[금액]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="405" y="41" width="38" height="24" uuid="5860a09e-f923-401e-8c97-30d00401e05c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VAT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="445" y="41" width="44" height="24" uuid="e8aa2a4a-6e43-491d-b581-c36ea6d4e204">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[합계금액]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="490" y="41" width="76" height="24" uuid="7e58b84a-cf9e-42fd-a01a-807ccc43093d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[비고]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="232" y="41" width="48" height="24" uuid="5cae55cf-6e21-4dfe-8816-da88aab9b8f7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[패킹단가]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-4" x="325" y="41" width="38" height="24" uuid="693f4c2d-8788-40fd-acfd-a41b70f3c98d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[수량]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<line>
+				<reportElement key="line-1" x="0" y="28" width="567" height="1" uuid="4e678cc2-00c1-40ce-8ca0-1c3615f26b90"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" x="490" y="1" width="76" height="25" uuid="06bd3b15-a80a-4c62-a52f-598e7ab16b53">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REMARK1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="textField-18" x="445" y="1" width="44" height="25" uuid="bbe43565-4295-4da5-af77-905c0dc5f902"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_AMT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="405" y="1" width="38" height="25" uuid="364473c2-0c18-4928-891a-5ca7669ed669"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VAT_AMT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="365" y="1" width="38" height="25" uuid="b8900ca8-c182-494c-adb2-a21a8af34ed9"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FINAL_AMT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="281" y="1" width="43" height="25" uuid="db87463d-3030-4c9e-a1fc-e54b3ce13713">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ITEM_QTY_PRICE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" x="152" y="1" width="78" height="25" uuid="47a5a4e3-4ac3-44b9-b03f-eff7cb96a721"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILL_DETAIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="76" y="1" width="75" height="25" uuid="18167e39-5f77-4da4-8428-ea8d06ee4a85"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILL_NM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;" isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="0" y="1" width="74" height="25" uuid="94636909-342e-463f-a6f0-e5e25a70058e"/>
+				<box rightPadding="0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ADJUST_SDATE} + " - " + $F{ADJUST_EDATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="232" y="1" width="48" height="25" uuid="15087ee0-5d28-487d-82cd-52d3303ee681"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PACKING_PRICE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="325" y="1" width="38" height="25" uuid="45e9af0b-07a7-4f51-8f35-6368589bfad1"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILL_QTY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="25">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="365" y="0" width="38" height="25" uuid="7df99d5c-deb9-4664-9719-53e30fce7518">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_FINAL_AMT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="405" y="0" width="38" height="25" uuid="2cc28576-deb5-415b-9edb-714dd658b85d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_VAT_AMT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="445" y="0" width="44" height="25" uuid="dc953616-1ada-4017-926c-3e6a12481340">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TOT_AMT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-18" mode="Transparent" x="325" y="0" width="38" height="25" uuid="1d07d18d-9f37-4e40-be61-300b52f53ddb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="D2Coding" size="9" isBold="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_BILL_QTY}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-1" x="1" y="-1" width="567" height="1" uuid="f5ac67e4-1d0f-4589-b0cc-d6104ea86de1"/>
+			</line>
+		</band>
+	</columnFooter>
+</jasperReport>

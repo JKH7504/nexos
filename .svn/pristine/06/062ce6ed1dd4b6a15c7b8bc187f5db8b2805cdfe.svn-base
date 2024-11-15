@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // WMS Common 관련 Package
+  // Author : ASETEC
+  // Date : 2022-11-30
+  // Description
+  // WMS Common 관련 Package Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_package_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PACKAGE_MAPPER('WC' ,'CSUSERSYSINFO;CSUSER;CSUSERFAVORITE;CSUSERGRIDLAYOUT;CTCHECKVALUE' ,NULL) AS SQLMAP_TEXT
+    FROM DUAL;
+  //====================================================================================================================
+  // ※ Package 호출 관련 Mapper의 Namespace는 "Package명" 으로 처리
+  //====================================================================================================================
+  -->
+<mapper namespace="WC">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="WC_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - WC.GET_CSMSG -->
+  <select id="GET_CSMSG" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSMSG
+      (#{P_SYS_LANG                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSMSG -->
+
+
+  <!-- [S] - WC.GET_CSPROGRAMREPORT -->
+  <select id="GET_CSPROGRAMREPORT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSPROGRAMREPORT
+      (#{P_PROGRAM_ID              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROGRAM_SUB_CD          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSPROGRAMREPORT -->
+
+
+  <!-- [S] - WC.GET_CSUSERFAVORITE -->
+  <select id="GET_CSUSERFAVORITE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSUSERFAVORITE
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSUSERFAVORITE -->
+
+
+  <!-- [S] - WC.GET_CSUSERGRIDLAYOUT -->
+  <select id="GET_CSUSERGRIDLAYOUT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSUSERGRIDLAYOUT
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROGRAM_ID              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_GRID_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSUSERGRIDLAYOUT -->
+
+
+  <!-- [S] - WC.GET_CSUSERMOBILEPROGRAM -->
+  <select id="GET_CSUSERMOBILEPROGRAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSUSERMOBILEPROGRAM
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSUSERMOBILEPROGRAM -->
+
+
+  <!-- [S] - WC.GET_CSUSERPDAPROGRAM -->
+  <select id="GET_CSUSERPDAPROGRAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSUSERPDAPROGRAM
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSUSERPDAPROGRAM -->
+
+
+  <!-- [S] - WC.GET_CSUSERPROGRAM -->
+  <select id="GET_CSUSERPROGRAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSUSERPROGRAM
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROGRAM_ID              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSUSERPROGRAM -->
+
+
+  <!-- [S] - WC.GET_CSUSERSCANPROGRAM -->
+  <select id="GET_CSUSERSCANPROGRAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CSUSERSCANPROGRAM
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CSUSERSCANPROGRAM -->
+
+
+  <!-- [S] - WC.GET_CTCHECKVALUE -->
+  <select id="GET_CTCHECKVALUE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CTCHECKVALUE()
+    }
+  </select>
+  <!-- [E] - WC.GET_CTCHECKVALUE -->
+
+
+  <!-- [S] - WC.GET_CTCHECKVALUEEX -->
+  <select id="GET_CTCHECKVALUEEX" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_CTCHECKVALUEEX
+      (#{P_CHECK_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_CTCHECKVALUEEX -->
+
+
+  <!-- [S] - WC.GET_JAVA_MSG -->
+  <select id="GET_JAVA_MSG" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_JAVA_MSG()
+    }
+  </select>
+  <!-- [E] - WC.GET_JAVA_MSG -->
+
+
+  <!-- [S] - WC.GET_JS_MSG -->
+  <select id="GET_JS_MSG" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_JS_MSG
+      (#{P_SYS_LANG                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROGRAM_ID              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_JS_MSG -->
+
+
+  <!-- [S] - WC.GET_LOGIN -->
+  <select id="GET_LOGIN" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_LOGIN
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_LOGIN -->
+
+
+  <!-- [S] - WC.GET_POLICY_VAL -->
+  <select id="GET_POLICY_VAL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_POLICY_VAL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_POLICY_VAL -->
+
+
+  <!-- [S] - WC.GET_PROCESS_INFO -->
+  <select id="GET_PROCESS_INFO" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_PROCESS_INFO
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_PROCESS_INFO -->
+
+
+  <!-- [S] - WC.GET_PROCESS_STATE_FWBW -->
+  <select id="GET_PROCESS_STATE_FWBW" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_PROCESS_STATE_FWBW
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROCESS_GRP             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_PROCESS_STATE_FWBW -->
+
+
+  <!-- [S] - WC.GET_PROTECT -->
+  <select id="GET_PROTECT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_PROTECT
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROTECT_DATE            ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WC.GET_PROTECT -->
+
+
+  <!-- [S] - WC.GET_RESET_USER_PWD -->
+  <select id="GET_RESET_USER_PWD" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_RESET_USER_PWD
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_PWD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_EMAIL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.GET_RESET_USER_PWD -->
+
+
+  <!-- [S] - WC.GET_SYSDATE -->
+  <select id="GET_SYSDATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.GET_SYSDATE()
+    }
+  </select>
+  <!-- [E] - WC.GET_SYSDATE -->
+
+
+  <!-- [S] - WC.POP_CMBRAND -->
+  <select id="POP_CMBRAND" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMBRAND
+      (#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMBRAND -->
+
+
+  <!-- [S] - WC.POP_CMBRANDITEM -->
+  <select id="POP_CMBRANDITEM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMBRANDITEM
+      (#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMBRANDITEM -->
+
+
+  <!-- [S] - WC.POP_CMBU -->
+  <select id="POP_CMBU" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMBU
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_DIV                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMBU -->
+
+
+  <!-- [S] - WC.POP_CMBUBRAND -->
+  <select id="POP_CMBUBRAND" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMBUBRAND
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMBUBRAND -->
+
+
+  <!-- [S] - WC.POP_CMCAR -->
+  <select id="POP_CMCAR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCAR
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CAR_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCAR -->
+
+
+  <!-- [S] - WC.POP_CMCARRIER -->
+  <select id="POP_CMCARRIER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCARRIER
+      (#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CARRIER_DIV             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCARRIER -->
+
+
+  <!-- [S] - WC.POP_CMCARRIER_HDC -->
+  <select id="POP_CMCARRIER_HDC" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCARRIER_HDC
+      (#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_HDC_DIV_ATTR03_CD       ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_HDC_DIV_ATTR05_CD       ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCARRIER_HDC -->
+
+
+  <!-- [S] - WC.POP_CMCENTER -->
+  <select id="POP_CMCENTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCENTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCENTER -->
+
+
+  <!-- [S] - WC.POP_CMCODE -->
+  <select id="POP_CMCODE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCODE
+      (#{P_COMMON_GRP              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_COMMON_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR01_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR02_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR03_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR04_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR05_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR06_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR07_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR08_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR09_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR10_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCODE -->
+
+
+  <!-- [S] - WC.POP_CMCODEATTR -->
+  <select id="POP_CMCODEATTR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCODEATTR
+      (#{P_COMMON_GRP              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCODEATTR -->
+
+
+  <!-- [S] - WC.POP_CMCUST -->
+  <select id="POP_CMCUST" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCUST
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCUST -->
+
+
+  <!-- [S] - WC.POP_CMCUSTBRAND -->
+  <select id="POP_CMCUSTBRAND" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCUSTBRAND
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCUSTBRAND -->
+
+
+  <!-- [S] - WC.POP_CMCUSTITEM -->
+  <select id="POP_CMCUSTITEM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMCUSTITEM
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMCUSTITEM -->
+
+
+  <!-- [S] - WC.POP_CMDELIVERY -->
+  <select id="POP_CMDELIVERY" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMDELIVERY
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMDELIVERY -->
+
+
+  <!-- [S] - WC.POP_CMDELIVERYAREA -->
+  <select id="POP_CMDELIVERYAREA" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMDELIVERYAREA
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_AREA_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMDELIVERYAREA -->
+
+
+  <!-- [S] - WC.POP_CMDEPT -->
+  <select id="POP_CMDEPT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMDEPT
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPT_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMDEPT -->
+
+
+  <!-- [S] - WC.POP_CMITEM -->
+  <select id="POP_CMITEM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMITEM
+      (#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CLASS_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TAG_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SET_ITEM_YN             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMITEM -->
+
+
+  <!-- [S] - WC.POP_CMITEMGROUP -->
+  <select id="POP_CMITEMGROUP" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMITEMGROUP
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMITEMGROUP -->
+
+
+  <!-- [S] - WC.POP_CMLOCATION -->
+  <select id="POP_CMLOCATION" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMLOCATION
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_DIV_ATTR01_CD      ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOC_DIV_ATTR03_CD       ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_VAL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMLOCATION -->
+
+
+  <!-- [S] - WC.POP_CMMATERIAL -->
+  <select id="POP_CMMATERIAL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMMATERIAL
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_MATERIAL_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMMATERIAL -->
+
+
+  <!-- [S] - WC.POP_CMORGN -->
+  <select id="POP_CMORGN" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMORGN
+      (#{P_ORGN_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORGN_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMORGN -->
+
+
+  <!-- [S] - WC.POP_CMPOST -->
+  <select id="POP_CMPOST" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMPOST
+      (#{P_ADDR_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMPOST -->
+
+
+  <!-- [S] - WC.POP_CMREFERENCE -->
+  <select id="POP_CMREFERENCE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMREFERENCE
+      (#{P_REF_CUST_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_REF_CUST_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMREFERENCE -->
+
+
+  <!-- [S] - WC.POP_CMVENDOR -->
+  <select id="POP_CMVENDOR" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMVENDOR
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VENDOR_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMVENDOR -->
+
+
+  <!-- [S] - WC.POP_CMWBBASE -->
+  <select id="POP_CMWBBASE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMWBBASE
+      (#{P_CARRIER_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ATTR05_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMWBBASE -->
+
+
+  <!-- [S] - WC.POP_CMWBTERMINAL -->
+  <select id="POP_CMWBTERMINAL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMWBTERMINAL
+      (#{P_TML_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMWBTERMINAL -->
+
+
+  <!-- [S] - WC.POP_CMZONE -->
+  <select id="POP_CMZONE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CMZONE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_DIV_ATTR01_CD      ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CMZONE -->
+
+
+  <!-- [S] - WC.POP_CSNOTICE -->
+  <select id="POP_CSNOTICE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSNOTICE
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSNOTICE -->
+
+
+  <!-- [S] - WC.POP_CSPROGRAM -->
+  <select id="POP_CSPROGRAM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSPROGRAM
+      (#{P_PROGRAM_ID              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PROGRAM_DIV             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSPROGRAM -->
+
+
+  <!-- [S] - WC.POP_CSREPORT -->
+  <select id="POP_CSREPORT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSREPORT
+      (#{P_REPORT_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_REPORT_TYPE             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_REPORT_DIV              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSREPORT -->
+
+
+  <!-- [S] - WC.POP_CSUSER -->
+  <select id="POP_CSUSER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSUSER
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CERTIFY_DIV             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSUSER -->
+
+
+  <!-- [S] - WC.POP_CSUSERBRAND -->
+  <select id="POP_CSUSERBRAND" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSUSERBRAND
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSUSERBRAND -->
+
+
+  <!-- [S] - WC.POP_CSUSERBU -->
+  <select id="POP_CSUSERBU" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSUSERBU
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_DIV                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSUSERBU -->
+
+
+  <!-- [S] - WC.POP_CSUSERCENTER -->
+  <select id="POP_CSUSERCENTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSUSERCENTER
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSUSERCENTER -->
+
+
+  <!-- [S] - WC.POP_CSUSERCUST -->
+  <select id="POP_CSUSERCUST" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_CSUSERCUST
+      (#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_CSUSERCUST -->
+
+
+  <!-- [S] - WC.POP_DELIVERY_BATCH -->
+  <select id="POP_DELIVERY_BATCH" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_DELIVERY_BATCH
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WC.POP_DELIVERY_BATCH -->
+
+
+  <!-- [S] - WC.POP_ITEMGROUP_CLASS -->
+  <select id="POP_ITEMGROUP_CLASS" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_ITEMGROUP_CLASS
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LINE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_ITEMGROUP_CLASS -->
+
+
+  <!-- [S] - WC.POP_ITEMGROUP_DEPART -->
+  <select id="POP_ITEMGROUP_DEPART" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_ITEMGROUP_DEPART
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_ITEMGROUP_DEPART -->
+
+
+  <!-- [S] - WC.POP_ITEMGROUP_LINE -->
+  <select id="POP_ITEMGROUP_LINE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_ITEMGROUP_LINE
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEPART_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_ITEMGROUP_LINE -->
+
+
+  <!-- [S] - WC.POP_ITEM_LOT -->
+  <select id="POP_ITEM_LOT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_ITEM_LOT
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WC.POP_ITEM_LOT -->
+
+
+  <!-- [S] - WC.POP_LFBILL -->
+  <select id="POP_LFBILL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_LFBILL
+      (#{P_BILL_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PRICE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_LFBILL -->
+
+
+  <!-- [S] - WC.POP_LFBUCONTRACTBILL -->
+  <select id="POP_LFBUCONTRACTBILL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_LFBUCONTRACTBILL
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CONTRACT_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BILL_TB                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_LFBUCONTRACTBILL -->
+
+
+  <!-- [S] - WC.POP_LFCONTRACT -->
+  <select id="POP_LFCONTRACT" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_LFCONTRACT
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CONTRACT_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PRICE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BILL_TB                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_LFCONTRACT -->
+
+
+  <!-- [S] - WC.POP_LFCONTRACTBILL -->
+  <select id="POP_LFCONTRACTBILL" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_LFCONTRACTBILL
+      (#{P_CONTRACT_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_PRICE_DIV               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VIEW_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_LFCONTRACTBILL -->
+
+
+  <!-- [S] - WC.POP_LS010NM -->
+  <select id="POP_LS010NM" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_LS010NM
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_POLICY_VAL              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WC.POP_LS010NM -->
+
+
+  <!-- [S] - WC.POP_OUTBOUND_BATCH -->
+  <select id="POP_OUTBOUND_BATCH" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_OUTBOUND_BATCH
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_DIV            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_BATCH_GRP      ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - WC.POP_OUTBOUND_BATCH -->
+
+
+  <!-- [S] - WC.POP_VALID_DATE -->
+  <select id="POP_VALID_DATE" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet  ,resultMap=WC_VIRTUALMAP} = call WC.POP_VALID_DATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_LOT                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VALID_DATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      })
+    }
+  </select>
+  <!-- [E] - WC.POP_VALID_DATE -->
+
+
+  <!--
+  //====================================================================================================================
+  // PROCEDURE SQLMAP
+  //====================================================================================================================
+  -->
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - INSERT_CSUSERGRIDLAYOUT [사용자그리드설정마스터] -->
+  <insert id="INSERT_CSUSERGRIDLAYOUT" parameterType="hashmap">
+    INSERT INTO CSUSERGRIDLAYOUT
+               (
+                USER_ID
+               ,PROGRAM_ID
+               ,GRID_ID
+               <if test="P_GRID_CFG                != null and P_GRID_CFG                != ''">,GRID_CFG                    </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_USER_ID}
+               ,#{P_PROGRAM_ID}
+               ,#{P_GRID_ID}
+               <if test="P_GRID_CFG                != null and P_GRID_CFG                != ''">,#{P_GRID_CFG}               </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CSUSERGRIDLAYOUT [사용자그리드설정마스터] -->
+
+
+  <!-- [S] - UPDATE_CSUSERGRIDLAYOUT [사용자그리드설정마스터] -->
+  <update id="UPDATE_CSUSERGRIDLAYOUT" parameterType="hashmap">
+    UPDATE CSUSERGRIDLAYOUT
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_GRID_CFG                != null">,GRID_CFG                 = #{P_GRID_CFG}               </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}            </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE USER_ID                  = #{P_USER_ID}
+       AND PROGRAM_ID               = #{P_PROGRAM_ID}
+       AND GRID_ID                  = #{P_GRID_ID}
+  </update>
+  <!-- [E] - UPDATE_CSUSERGRIDLAYOUT [사용자그리드설정마스터] -->
+
+
+  <!-- [S] - DELETE_CSUSERGRIDLAYOUT [사용자그리드설정마스터] -->
+  <delete id="DELETE_CSUSERGRIDLAYOUT" parameterType="hashmap">
+    DELETE 
+      FROM CSUSERGRIDLAYOUT
+     WHERE USER_ID                  = #{P_USER_ID}
+     <!--<if test="P_PROGRAM_ID              != null and P_PROGRAM_ID              != ''">-->
+       AND PROGRAM_ID               = #{P_PROGRAM_ID}
+     <!--</if>-->
+     <if test="P_GRID_ID                 != null and P_GRID_ID                 != ''">
+       AND GRID_ID                  = #{P_GRID_ID}
+     </if>
+  </delete>
+  <!-- [E] - DELETE_CSUSERGRIDLAYOUT [사용자그리드설정마스터] -->
+
+
+  <!-- [S] - INSERT_CSUSERSYSINFO [사용자시스템정보] -->
+  <insert id="INSERT_CSUSERSYSINFO" parameterType="hashmap">
+    INSERT INTO CSUSERSYSINFO
+               (
+                USER_ID
+               ,CLIENT_IP
+               <if test="P_LOGIN_LAST_DATETIME     != null and P_LOGIN_LAST_DATETIME     != ''">,LOGIN_LAST_DATETIME         </if>
+               <if test="P_LOGIN_FINAL_DATETIME    != null and P_LOGIN_FINAL_DATETIME    != ''">,LOGIN_FINAL_DATETIME        </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_USER_ID}
+               ,#{P_CLIENT_IP}
+               <if test="P_LOGIN_LAST_DATETIME     != null and P_LOGIN_LAST_DATETIME     != ''">
+               ,DECODE(#{P_LOGIN_LAST_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_LOGIN_LAST_DATETIME}))
+               </if>
+               <if test="P_LOGIN_FINAL_DATETIME    != null and P_LOGIN_FINAL_DATETIME    != ''">
+               ,DECODE(#{P_LOGIN_FINAL_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_LOGIN_FINAL_DATETIME}))
+               </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CSUSERSYSINFO [사용자시스템정보] -->
+
+
+  <!-- [S] - UPDATE_CSUSERSYSINFO [사용자시스템정보] -->
+  <update id="UPDATE_CSUSERSYSINFO" parameterType="hashmap">
+    UPDATE CSUSERSYSINFO
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          ,LOGIN_LAST_DATETIME      = LOGIN_FINAL_DATETIME
+          ,LOGIN_FINAL_DATETIME     = SYSDATE
+     WHERE USER_ID                  = #{P_USER_ID}
+       AND CLIENT_IP                = #{P_CLIENT_IP}
+  </update>
+  <!-- [E] - UPDATE_CSUSERSYSINFO [사용자시스템정보] -->
+
+
+  <!-- [S] - DELETE_CSUSERSYSINFO [사용자시스템정보] -->
+  <delete id="DELETE_CSUSERSYSINFO" parameterType="hashmap">
+    DELETE 
+      FROM CSUSERSYSINFO
+     WHERE USER_ID                  = #{P_USER_ID}
+     <!--<if test="P_CLIENT_IP               != null and P_CLIENT_IP               != ''">-->
+       AND CLIENT_IP                = #{P_CLIENT_IP}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_CSUSERSYSINFO [사용자시스템정보] -->
+
+
+  <!-- [S] - UPDATE_CSUSER [사용자마스터] -->
+  <update id="UPDATE_CSUSER" parameterType="hashmap">
+    UPDATE CSUSER
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_USER_PWD                != null">,USER_PWD                 = #{P_USER_PWD}               </if>
+          <if test="P_PWD_LAST_DATE           != null">
+          ,PWD_LAST_DATE            = DECODE(#{P_PWD_LAST_DATE} ,'SYSDATE' ,TRUNC(SYSDATE ,'DD') ,WF.C_TO_DATE(#{P_PWD_LAST_DATE}))
+          </if>
+          <if test="P_PWD_ERROR_CNT           != null">
+          ,PWD_ERROR_CNT            = DECODE(#{P_PWD_ERROR_CNT} ,-1 ,PWD_ERROR_CNT + 1 ,#{P_PWD_ERROR_CNT})
+          </if>
+          <if test="P_LOGIN_LAST_DATE         != null">
+          ,LOGIN_LAST_DATE          = DECODE(#{P_LOGIN_LAST_DATE} ,'SYSDATE' ,TRUNC(SYSDATE ,'DD') ,WF.C_TO_DATE(#{P_LOGIN_LAST_DATE}))
+          </if>
+     WHERE USER_ID                  = #{P_USER_ID}
+  </update>
+  <!-- [E] - UPDATE_CSUSER [사용자마스터] -->
+
+
+  <!-- [S] - INSERT_CSUSERFAVORITE [사용자즐겨찾기정보] -->
+  <insert id="INSERT_CSUSERFAVORITE" parameterType="hashmap">
+    INSERT INTO CSUSERFAVORITE
+               (
+                USER_ID
+               ,PROGRAM_ID
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_USER_ID}
+               ,#{P_PROGRAM_ID}
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}            </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CSUSERFAVORITE [사용자즐겨찾기정보] -->
+
+
+  <!-- [S] - DELETE_CSUSERFAVORITE [사용자즐겨찾기정보] -->
+  <delete id="DELETE_CSUSERFAVORITE" parameterType="hashmap">
+    DELETE 
+      FROM CSUSERFAVORITE
+     WHERE USER_ID                  = #{P_USER_ID}
+     <!--<if test="P_PROGRAM_ID              != null and P_PROGRAM_ID              != ''">-->
+       AND PROGRAM_ID               = #{P_PROGRAM_ID}
+     <!--</if>-->
+  </delete>
+  <!-- [E] - DELETE_CSUSERFAVORITE [사용자즐겨찾기정보] -->
+
+
+  <!-- [S] - INSERT_CTCHECKVALUE [화면다중선택임시테이블] -->
+  <insert id="INSERT_CTCHECKVALUE" parameterType="hashmap">
+    INSERT INTO CTCHECKVALUE
+               (
+                CHECK_VALUE
+               )
+         VALUES
+               (
+                #{P_CHECKED_VALUE}
+               )
+  </insert>
+  <!-- [E] - INSERT_CTCHECKVALUE [화면다중선택임시테이블] -->
+
+
+  <!-- [S] - DELETE_CTCHECKVALUE [화면다중선택임시테이블] -->
+  <delete id="DELETE_CTCHECKVALUE" parameterType="hashmap">
+    DELETE 
+      FROM CTCHECKVALUE
+  </delete>
+  <!-- [E] - DELETE_CTCHECKVALUE [화면다중선택임시테이블] -->
+
+
+  <!-- [S] - INSERT_CTCHECKVALUEEX [화면다중선택임시테이블] -->
+  <insert id="INSERT_CTCHECKVALUEEX" parameterType="hashmap">
+    INSERT INTO CTCHECKVALUEEX
+               (
+                CHECK_CD
+               ,CHECK_VALUE
+               )
+         VALUES
+               (
+                #{P_CHECKED_CD}
+               ,#{P_CHECKED_VALUE}
+               )
+  </insert>
+  <!-- [E] - INSERT_CTCHECKVALUEEX [화면다중선택임시테이블] -->
+
+
+  <!-- [S] - DELETE_CTCHECKVALUEEX [화면다중선택임시테이블] -->
+  <delete id="DELETE_CTCHECKVALUEEX" parameterType="hashmap">
+    DELETE 
+      FROM CTCHECKVALUEEX
+  <where>
+      <if test="P_CHECKED_CD              != null and P_CHECKED_CD              != ''">
+      CHECK_CD                      = #{P_CHECKED_CD}
+      </if>
+  </where>
+  </delete>
+  <!-- [E] - DELETE_CTCHECKVALUEEX [화면다중선택임시테이블] -->
+
+
+</mapper>

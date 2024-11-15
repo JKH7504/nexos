@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="nexos-server-resource" basedir=".">
+    <property name="src.dir" value="src/main/webapp/nexos" />
+    <property name="target.dir" value="target/ant-generated-sources" />
+    <property name="generate.dir" value="${target.dir}/nexos" />
+    <!-- Compressed ant library Dir -->
+    <property name="nexos.ref.ant.dir" value="reference/library/ant" />
+
+    <taskdef name="yuicompress" classname="net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask">
+        <classpath>
+            <pathelement path="${nexos.ref.ant.dir}/yuicompressor-2.4.8.jar" />
+            <pathelement path="${nexos.ref.ant.dir}/yui-compressor-ant-task-0.5.jar" />
+        </classpath>
+    </taskdef>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement path="${nexos.ref.ant.dir}/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+
+    <target name="init" description="Target 폴더 초기화">
+        <echo level="info">Initialize...</echo>
+        <if>
+            <available file="${target.dir}" type="dir" />
+            <then>
+                <delete includeemptydirs="true">
+                    <fileset dir="${target.dir}" includes="**/*" />
+                </delete>
+                <delete dir="${target.dir}" />
+            </then>
+        </if>
+
+        <antcall target="create-dirs" />
+    </target>
+
+    <target name="create-dirs">
+        <mkdir dir="${target.dir}" />
+        <mkdir dir="${generate.dir}" />
+    </target>
+
+    <target name="compress-resources" description="JS/CSS 파일 압축">
+        <echo level="info">Compressing JS and CSS files</echo>
+        <yuicompress warn="false" munge="yes" charset="UTF-8" lineBreakPosition="1000" preserveallsemicolons="yes" toDir="${generate.dir}" fromDir="${src.dir}" csssuffix=".css" jssuffix=".js">
+            <include name="**/*.js" />
+            <include name="**/*.css" />
+            <exclude name="**/*.min.js" />
+            <exclude name="**/*.min.css" />
+        </yuicompress>
+
+        <echo level="info">Compressing HTML files</echo>
+        <apply executable="java" parallel="false" verbose="true" dest="${generate.dir}">
+            <fileset dir="${src.dir}">
+                <include name="*.html" />
+                <include name="**/*.html" />
+            </fileset>
+            <arg value="-jar" />
+            <arg path="${nexos.ref.ant.dir}/htmlcompressor-1.5.3.jar" />
+            <arg line="--type html" />
+            <arg line="--charset UTF-8" />
+            <arg line="--preserve-comments" />
+            <arg line="--remove-surrounding-spaces min" />
+            <arg line="--compress-js" />
+            <arg line="--compress-css" />
+            <srcfile />
+            <arg value="-o" />
+            <mapper type="identity" />
+            <targetfile />
+        </apply>
+    </target>
+
+    <target name="copy-other-resources" description="기타 리소스 파일 복사">
+        <echo level="info">Coping other resource files</echo>
+        <copy todir="${generate.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*" />
+                <exclude name="**/*.js" />
+                <exclude name="**/*.html" />
+                <exclude name="**/*.css" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean" depends="init, copy-other-resources, compress-resources">
+        <echo level="info">Cleaning deployment...</echo>
+    </target>
+
+    <target name="compile" depends="copy-other-resources, compress-resources">
+        <echo level="info">Execute all task...</echo>
+    </target>
+
+    <target name="package" depends="clean">
+        <echo level="info">Execute all task...</echo>
+    </target>
+</project>

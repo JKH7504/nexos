@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- Properties Setting -->
+    <properties resource="nexos/config/config-globals.properties" />
+
+    <!-- myBatis Setting -->
+    <!--
+        ==============================================================================================================================================
+        cacheEnabled _____________________________ 이 구성에서 매퍼에 구성된 모든 캐시를 전역적으로 활성화 또는 비활성화합니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : TRUE
+
+        lazyLoadingEnabled _______________________ 지연 로딩을 전역적으로 활성화 또는 비활성화합니다.
+        __________________________________________ 활성화되면 모든 관계가 지연 로드됩니다. fetchType의 값은 속성을 사용하여 특정 관계에 대해 대체될 수 있습니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        aggressiveLazyLoading ____________________ 활성화되면 메서드 호출시 객체의 속성을 모두 지연 로드합니다.
+        __________________________________________ 그렇지 않으면 요청 시 각 속성이 로드됩니다( 참조 lazyLoadTriggerMethods).
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : false (true in ≤3.4.1)
+
+        multipleResultSetsEnabled ________________ 단일 문에서 여러 ResultSet가 반환되는 것을 허용하거나 허용하지 않습니다. (호환 가능한 드라이버 필요)
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : TRUE
+
+        useColumnLabel ___________________________ 열 이름 대신 열 레이블을 사용합니다.
+        __________________________________________ 다른 드라이버는 이와 관련하여 다르게 작동합니다.
+        __________________________________________ 드라이버 설명서를 참조하거나 두 모드를 모두 테스트하여 드라이버 작동 방식을 확인하십시오.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : TRUE
+
+        useGeneratedKeys _________________________ 생성된 키에 대한 JDBC 지원을 허용합니다. 호환되는 드라이버가 필요합니다.
+        __________________________________________ 일부 드라이버는 호환성을 거부하지만 여전히 작동하기 때문에(예: Derby)
+        __________________________________________ 이 설정은 true로 설정된 경우 생성된 키를 강제로 사용합니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        autoMappingBehavior ______________________ MyBatis가 열을 필드/속성에 자동으로 매핑할지 여부와 방법을 지정합니다.
+        __________________________________________ NONE은 자동 매핑을 비활성화합니다.
+        __________________________________________ PARTIAL은 내부에 정의된 중첩된 결과 매핑이 없는 결과만 자동 매핑합니다.
+        __________________________________________ FULL은 모든 복잡성(중첩 또는 기타 포함)의 결과 매핑을 자동 매핑합니다.
+        __________________________________________ 설정 : NONE, PARTIAL, FULL
+        __________________________________________ 기본 : PARTIAL
+
+        autoMappingUnknownColumnBehavior _________ 자동 매핑 대상의 알 수 없는 열(또는 알 수 없는 속성 유형) 감지 시 동작을 지정합니다.
+        __________________________________________ NONE: 아무것도하지 마세요
+        __________________________________________ WARNING: 경고 로그 출력(로그 수준을
+        __________________________________________ 'org.apache.ibatis.session.AutoMappingUnknownColumnBehavior'로 설정해야 함 WARN)
+        __________________________________________ FAILING: 매핑 실패 (Throw SqlSessionException)
+        __________________________________________ 설정 : NONE, WARNING, FAILING
+        __________________________________________ 기본 : NONE
+
+        defaultExecutorType ______________________ 기본 실행기를 구성합니다.
+        __________________________________________ SIMPLE 실행기는 특별한 작업을 수행하지 않습니다.
+        __________________________________________ REUSE 실행자는 준비된 명령문을 재사용합니다.
+        __________________________________________ BATCH 실행기는 문을 재사용하고 업데이트를 일괄 처리합니다.
+        __________________________________________ 설정 : SIMPLE REUSE BATCH
+        __________________________________________ 기본 : SIMPLE
+
+        defaultStatementTimeout __________________ 드라이버가 데이터베이스의 응답을 기다리는 시간(초)을 설정합니다.
+        __________________________________________ 설정 : Any positive integer
+        __________________________________________ 기본 : Not Set (null)
+
+        defaultFetchSize _________________________ 반환 결과에 대한 가져오기 크기를 제어하기 위해 드라이버에 힌트를 설정합니다.
+        __________________________________________ 이 매개 변수 값은 쿼리 설정으로 재정의할 수 있습니다.
+        __________________________________________ 설정 : Any positive integer
+        __________________________________________ 기본 : Not Set (null)
+
+        defaultResultSetType _____________________ 명령문 설정별로 생략할 때 스크롤 전략을 지정합니다. (이후: 3.5.2)
+        __________________________________________ 설정 : FORWARD_ONLY | SCROLL_SENSITIVE | SCROLL_INSENSITIVE | DEFAULT(same behavior with 'Not Set')
+        __________________________________________ 기본 : Not Set (null)
+
+        safeRowBoundsEnabled _____________________ 중첩된 문에서 RowBounds를 사용할 수 있습니다. 허용하는 경우 false로 설정합니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        safeResultHandlerEnabled _________________ 중첩된 문에서 ResultHandler를 사용할 수 있습니다. 허용하는 경우 false로 설정합니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : TRUE
+
+        mapUnderscoreToCamelCase _________________ 클래식 데이터베이스 열 이름 A_COLUMN에서 카멜 케이스 클래식 Java 속성 이름 aColumn으로 자동 매핑을 활성화합니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        localCacheScope __________________________ MyBatis는 순환 참조를 방지하고 반복되는 중첩 쿼리 속도를 높이기 위해 로컬 캐시를 사용합니다.
+        __________________________________________ 기본적으로(SESSION) 세션 중에 실행된 모든 쿼리는 캐시됩니다.
+        __________________________________________ localCacheScope=STATEMENT 로컬 세션이 명령문 실행에만 사용되는 경우
+        __________________________________________ 동일한 SqlSession에 대한 두 개의 서로 다른 호출 간에 데이터가 공유되지 않습니다.
+        __________________________________________ 설정 : SESSION | STATEMENT
+        __________________________________________ 기본 : SESSION
+
+        jdbcTypeForNull __________________________ 매개변수에 대해 특정 JDBC 유형이 제공되지 않은 경우 null 값에 대한 JDBC 유형을 지정합니다.
+        __________________________________________ 일부 드라이버는 열 JDBC 유형을 지정해야 하지만 다른 드라이버는 NULL, VARCHAR 또는 OTHER와 같은 일반 값으로 작동합니다.
+        __________________________________________ 설정 : JdbcType enumeration. Most common are: NULL, VARCHAR and OTHER
+        __________________________________________ 기본 : OTHER
+
+        lazyLoadTriggerMethods ___________________ 지연 로드를 트리거하는 개체의 메서드를 지정합니다.
+        __________________________________________ 설정 : A method name list separated by commas
+        __________________________________________ 기본 : equals,clone,hashCode,toString
+
+        defaultScriptingLanguage _________________ 동적 SQL 생성에 기본적으로 사용되는 언어를 지정합니다.
+        __________________________________________ 설정 : A type alias or fully qualified class name.
+        __________________________________________ 기본 : org.apache.ibatis.scripting.xmltags.XMLLanguageDriver
+
+        defaultEnumTypeHandler ___________________ Enum에 대해 기본적으로 사용되는 TypeHandler를 지정합니다. (이후: 3.4.5)
+        __________________________________________ 설정 : A type alias or fully qualified class name.
+        __________________________________________ 기본 : org.apache.ibatis.type.EnumTypeHandler
+
+        callSettersOnNulls _______________________ 검색된 값이 null일 때 setter 또는 맵의 put 메서드를 호출할지 여부를 지정합니다.
+        __________________________________________ Map.keySet() 또는 null 값 초기화에 의존할 때 유용합니다. (int, boolean 등)과 같은 프리미티브는 null로 설정되지 않습니다.
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        returnInstanceForEmptyRow ________________ MyBatis는 반환된 행의 모든 ​​열이 NULL일 때 기본적으로 null을 반환합니다.
+        __________________________________________ 이 설정이 활성화되면 MyBatis는 빈 인스턴스를 반환합니다. 중첩된 결과(예: 수집 및 연관)에도 적용됩니다. 이후: 3.4.2
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        logPrefix ________________________________ MyBatis가 로거 이름에 추가할 접두사 문자열을 지정합니다.
+        __________________________________________ 설정 : Any String
+        __________________________________________ 기본 : Not set
+
+        logImpl __________________________________ MyBatis가 사용해야 하는 로깅 구현을 지정합니다. 이 설정이 없으면 로깅 구현이 자동으로 검색됩니다.
+        __________________________________________ 설정 : SLF4J | LOG4J(deprecated since 3.5.9) | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING
+        _______________________________________________ | STDOUT_LOGGING | NO_LOGGING
+        __________________________________________ 기본 : Not set
+
+        proxyFactory _____________________________ MyBatis가 지연된 로딩 가능한 객체를 생성하기 위해 사용할 프록시 도구를 지정합니다.
+        __________________________________________ 설정 : CGLIB (deprecated since 3.5.10) | JAVASSIST  기본 : JAVASSIST (MyBatis 3.3 or above)
+
+        vfsImpl __________________________________ VFS 구현을 지정합니다.
+        __________________________________________ 설정 : Fully qualified class names of custom VFS implementation separated by commas.
+        __________________________________________ 기본 : Not set
+
+        useActualParamName _______________________ 메소드 서명에 선언된 실제 이름으로 명령문 매개변수 참조를 허용합니다.
+        __________________________________________ 이 기능을 사용하려면 옵션을 사용하여 프로젝트를 Java 8로 컴파일해야 합니다. -parameters. (이후: 3.4.1)
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : TRUE
+
+        configurationFactory _____________________ Configuration의 인스턴스를 제공하는 클래스를 지정합니다.
+        __________________________________________ 반환된 Configuration 인스턴스는 역직렬화된 개체의 속성을 로드하는데 사용됩니다.
+        __________________________________________ 이 클래스에는 서명이 있는 메서드가 있어야 합니다. static Configuration getConfiguration(). (이후: 3.2.3)
+        __________________________________________ 설정 : A type alias or fully qualified class name.
+        __________________________________________ 기본 : Not set
+
+        shrinkWhitespacesInSql ___________________ SQL에서 추가 공백 문자를 제거합니다. 이는 SQL의 리터럴 문자열에도 영향을 미칩니다. (3.5.5부터)
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        defaultSqlProviderType ___________________ 공급자 메서드를 보유하는 SQL 공급자 클래스를 지정합니다(3.5.6부터).
+        __________________________________________ 이 클래스 는 sql provider annotation(예: @SelectProvider)의 type(또는 value) 속성 이 생략된 경우에 적용됩니다.
+        __________________________________________ 설정 : A type alias or fully qualified class name
+        __________________________________________ 기본 : Not set
+
+        nullableOnForEach ________________________ 'foreach' 태그에서 'nullable' 속성의 기본값을 지정합니다. (3.5.9부터)
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+
+        argNameBasedConstructorAutoMapping _______ 생성자 자동 매핑을 적용할 때 열 순서에 의존하지 않고 인수 이름을 사용하여 매핑할 열을 검색합니다. (3.5.10부터)
+        __________________________________________ 설정 : true | false
+        __________________________________________ 기본 : FALSE
+        ==============================================================================================================================================
+    -->
+    <settings>
+        <setting name="autoMappingBehavior" value="PARTIAL" />
+        <setting name="callSettersOnNulls" value="true" />
+        <setting name="mapUnderscoreToCamelCase" value="false" />
+        <setting name="jdbcTypeForNull" value="VARCHAR" />
+        <setting name="useColumnLabel" value="false" />
+        <setting name="defaultFetchSize" value="500" />
+        <setting name="returnInstanceForEmptyRow" value="true" />
+        <!-- Statement Timeout을 최대 1시간으로 세팅 -->
+        <!-- select/insert/delete/procedure call 등이 1시간이상 유지될 경우 -->
+        <!-- "ORA-01013: 사용자가 현재 작업의 취소를 요청했습니다."로 에러 처리 됨 -->
+        <!-- 3600초 = 1시간 -->
+        <setting name="defaultStatementTimeout" value="3600" />
+    </settings>
+
+    <!-- Value Object Setting -->
+    <!--
+        <typeAliases>
+        <typeAlias type="nexos.cs.TestVo" alias="TestVo" />
+        </typeAliases>
+    -->
+
+    <!-- Mapper Setting -->
+    <!-- 파일명 규칙은 [화면명]_sqlmap.xml -->
+    <!-- <mappers> -->
+    <!-- [S] - WMS Common -->
+    <!-- <sqlMap resource="nexos/sqlmap/${DB.TYPE}/common/wc_sqlmap.xml" /> --><!-- WMS 공통 -->
+    <!-- [E] - WMS Common -->
+    <!-- </mappers> -->
+
+    <!-- Data Type Handler -->
+    <typeHandlers>
+        <!-- Number Type -->
+        <typeHandler handler="nexos.framework.db.mybatis.NumberTypeHandler" javaType="java.math.BigDecimal" />
+        <typeHandler handler="nexos.framework.db.mybatis.NumberTypeHandler" javaType="java.lang.Integer" />
+
+        <!-- Date Type -->
+        <typeHandler handler="nexos.framework.db.mybatis.TimestampTypeHandler" javaType="java.sql.Timestamp" />
+        <typeHandler handler="nexos.framework.db.mybatis.TimestampTypeHandler" javaType="java.sql.Time" />
+        <typeHandler handler="nexos.framework.db.mybatis.TimestampTypeHandler" javaType="java.sql.Date" />
+        <typeHandler handler="nexos.framework.db.mybatis.TimestampTypeHandler" javaType="java.util.Date" />
+
+        <!-- Object Type -->
+        <typeHandler handler="nexos.framework.db.mybatis.ObjectTypeHandler" javaType="java.lang.Object" jdbcType="CLOB" />
+    </typeHandlers>
+
+    <!-- PlugIn -->
+    <!--
+        <plugins>
+        <plugin interceptor="nexos.framework.db.mybatis.TestInterceptor" />
+        </plugins>
+    -->
+
+</configuration>

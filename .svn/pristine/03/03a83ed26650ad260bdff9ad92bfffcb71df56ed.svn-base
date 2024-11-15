@@ -1,0 +1,4 @@
+.slick-cell.styPart {
+    color: #e17009 !important;
+    font-weight: bold;
+}

@@ -1,0 +1,86 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LKC04010Q0
+    프로그램명         : 재고실사오차율추이
+    프로그램설명       : 재고실사오차율추이 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${c} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LKC04010Q0.css" /> -->
+<script src="js/LKC04010Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQInvest_Date" class="lblCondition">실사일자</div>
+                    <input id="dtpQInvest_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQInvest_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td id="tdQDsp_Brand_Cd">
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">재고실사 오차율</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table id="ctrTitle_chtMaster" class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_InvestDiffer" class="lblTitle">재고실사 오차율 그래프</td>
+            </tr>
+        </table>
+        <div id="ctrAdditional_chtMaster" class="ctrAdditional bottom" style="border-bottom-color: #c3c3c3;">
+            <div id="lblDisplay_Div" class="lblNormal">표시항목</div>
+            <div class="ctrGroupBox">
+                <input id="chkDisplay_Div1" name="chkDisplay_Div" class="chkNormal" type="checkbox" checked="checked">
+                오차율
+                <input id="chkDisplay_Div2" name="chkDisplay_Div" class="chkNormal" type="checkbox" checked="checked" style="margin-left: 30px;">
+                오차건수
+            </div>
+        </div>
+        <div id="chtMaster"></div>
+    </div>
+</body>
+</html>

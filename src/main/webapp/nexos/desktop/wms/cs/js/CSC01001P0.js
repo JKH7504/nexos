@@ -1,0 +1,407 @@
+﻿/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : CSC01001P0
+ *  프로그램명         : 공지사항 팝업
+ *  프로그램설명       : 공지사항 팝업 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2016-12-14
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2016-12-14    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: {
+            container: "#ctrPopupView"
+        },
+        // 마스터 데이터
+        masterData: null
+    });
+
+    $NC.setInitDateRangePicker("#dtpNotice_From_Date", "#dtpNotice_To_Date");
+
+    // 버튼 클릭 이벤트 연결
+    $("#btnClose").click(onCancel);
+    $("#btnSave").click(_Save);
+    $("#btnBu_Cd").click(showUserBuPopup);
+    $("#btnFileAttachment").click(btnFileAttachmentOnClick);
+    $("#btnFileRemove").click(btnFileRemoveOnClick);
+}
+
+/**
+ * 등록팝업 Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    // 신규 등록
+    if ($NC.G_VAR.G_PARAMETER.P_PROCESS_CD == $ND.C_PROCESS_CREATE) {
+        $NC.setValue("#edtBu_Cd", $NC.G_VAR.G_PARAMETER.P_BU_CD);
+        $NC.setValue("#edtBu_Nm", $NC.G_VAR.G_PARAMETER.P_BU_NM);
+
+        var NOTICE_FROM_DATE = $NC.getValue("#dtpNotice_From_Date");
+        var NOTICE_TO_DATE = $NC.getValue("#dtpNotice_To_Date");
+        // var NOTICE_DIV = $NC.getValue("#cboNotice_Div");
+
+        // 마스터 데이터 세팅
+        $NC.G_VAR.masterData = {
+            WRITE_NO: "",
+            CENTER_CD: "",
+            BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD,
+            NOTICE_DIV: "",// NOTICE_DIV,
+            NOTICE_TITLE: "",
+            CONTENT_HTML: "",
+            CONTENT_TEXT: "",
+            NOTICE_FROM_DATE: NOTICE_FROM_DATE,
+            NOTICE_TO_DATE: NOTICE_TO_DATE,
+            ATTACH_FILE_NM: "",
+            ATTACH_FILE_SIZE: "",
+            USER_ID: $NC.G_USERINFO.USER_ID,
+            ORG_ATTACH_FILE_NM: "",
+            ORG_ATTACH_FILE_SIZE: "",
+            CRUD: $ND.C_DV_CRUD_C
+        };
+        $NC.setEnable("#btnFileRemove", false);
+
+        $NC.setFocus("#edtNotice_Title");
+    } else {
+        // 등록 수정
+        $NC.G_VAR.masterData = {
+            WRITE_NO: $NC.G_VAR.G_PARAMETER.P_WRITE_NO,
+            CENTER_CD: $NC.G_VAR.G_PARAMETER.P_CENTER_CD,
+            BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD,
+            NOTICE_DIV: $NC.G_VAR.G_PARAMETER.P_NOTICE_DIV,
+            NOTICE_TITLE: $NC.G_VAR.G_PARAMETER.P_NOTICE_TITLE,
+            CONTENT_HTML: $NC.G_VAR.G_PARAMETER.P_CONTENT_HTML,
+            CONTENT_TEXT: $NC.G_VAR.G_PARAMETER.P_CONTENT_TEXT,
+            NOTICE_FROM_DATE: $NC.G_VAR.G_PARAMETER.P_NOTICE_FROM_DATE,
+            NOTICE_TO_DATE: $NC.G_VAR.G_PARAMETER.P_NOTICE_TO_DATE,
+            ATTACH_FILE_NM: $NC.G_VAR.G_PARAMETER.P_ATTACH_FILE_NM,
+            ATTACH_FILE_SIZE: $NC.G_VAR.G_PARAMETER.P_ATTACH_FILE_SIZE,
+            USER_ID: $NC.G_VAR.G_PARAMETER.P_USER_ID,
+            ORG_ATTACH_FILE_NM: $NC.G_VAR.G_PARAMETER.P_ORG_ATTACH_FILE_NM,
+            ORG_ATTACH_FILE_SIZE: $NC.G_VAR.G_PARAMETER.P_ORG_ATTACH_FILE_SIZE,
+            CRUD: $ND.C_DV_CRUD_R
+        };
+
+        $NC.setValue("#edtWrite_No", $NC.G_VAR.masterData.WRITE_NO);
+        $NC.setValue("#edtBu_Cd", $NC.G_VAR.masterData.BU_CD);
+        $NC.setValue("#edtBu_Nm", $NC.G_VAR.masterData.BU_NM);
+        // $NC.setValue("#cboNotice_Div", $NC.G_VAR.masterData.NOTICE_DIV);
+        $NC.setValue("#dtpNotice_From_Date", $NC.G_VAR.masterData.NOTICE_FROM_DATE);
+        $NC.setValue("#dtpNotice_To_Date", $NC.G_VAR.masterData.NOTICE_TO_DATE);
+        $NC.setValue("#edtAttach_File_Nm", $NC.G_VAR.masterData.ATTACH_FILE_NM);
+        $NC.setValue("#edtNotice_Title", $NC.G_VAR.masterData.NOTICE_TITLE);
+        $NC.setValue("#edtContent_Text", $NC.G_VAR.masterData.CONTENT_TEXT);
+        $NC.setEnable("#btnFileRemove", $NC.isNotNull($NC.G_VAR.masterData.ATTACH_FILE_NM));
+
+        // 등록수정
+        $NC.setFocus("#edtContent_Text");
+    }
+
+    // 조회조건 - 공지사항구분 세팅
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODE",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "NOTICE_DIV",
+            P_COMMON_CD: $ND.C_ALL,
+            P_VIEW_DIV: "1" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboNotice_Div",
+        codeField: "COMMON_CD",
+        nameField: "COMMON_NM",
+        fullNameField: "COMMON_CD_F",
+        selectOption: $NC.G_VAR.G_PARAMETER.P_PROCESS_CD == $ND.C_PROCESS_CREATE ? "F" : null,
+        onComplete: function() {
+            if ($NC.G_VAR.G_PARAMETER.P_PROCESS_CD == $ND.C_PROCESS_CREATE) {
+                $NC.G_VAR.masterData.NOTICE_DIV = $NC.getValue("#cboNotice_Div");
+            } else {
+                $NC.setValue("#cboNotice_Div", $NC.G_VAR.masterData.NOTICE_DIV);
+            }
+        }
+    });
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * 닫기,취소버튼 클릭 이벤트
+ */
+function onCancel() {
+
+    $NC.setPopupCloseAction($ND.C_CANCEL);
+    $NC.onPopupClose();
+}
+
+/**
+ * 저장,확인버튼 클릭 이벤트
+ */
+function onClose() {
+
+    $NC.setPopupCloseAction($ND.C_OK);
+    $NC.onPopupClose();
+}
+
+/**
+ * Input Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnInputChange(e, view, val) {
+
+    var id = view.prop("id").substr(3).toUpperCase();
+    masterDataOnChange(e, {
+        view: view,
+        col: id,
+        val: val
+    });
+}
+
+/**
+ * 조회
+ */
+function _Inquiry() {
+
+}
+
+/**
+ * 신규
+ */
+function _New() {
+
+}
+
+/**
+ * 저장
+ */
+function _Save() {
+
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        alert($NC.getDisplayMsg("JS.CSC01001P0.002", "수정 후 저장하십시오."));
+        $NC.setFocus("#edtContent_Text");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.NOTICE_DIV)) {
+        alert($NC.getDisplayMsg("JS.CSC01001P0.003", "공지사항 구분을 입력하십시오."));
+        $NC.setFocus("#cboNotice_Div");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.NOTICE_FROM_DATE)) {
+        alert($NC.getDisplayMsg("JS.CSC01001P0.004", "공지사항 게시 시작일자를 입력하십시오."));
+        $NC.setFocus("#dtpNotice_From_Date");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.NOTICE_DIV)) {
+        alert($NC.getDisplayMsg("JS.CSC01001P0.005", "공지사항 게시 종료일자를 입력하십시오."));
+        $NC.setFocus("#dtpNotice_To_Date");
+        return;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.NOTICE_TITLE)) {
+        alert($NC.getDisplayMsg("JS.CSC01001P0.006", "공지사항 제목을 입력하십시오."));
+        $NC.setFocus("#edtNotice_Title");
+        return;
+    }
+
+    /*
+     * if ($NC.isNull($NC.G_VAR.masterData.CONTENT_TEXT)) {
+     *     alert($NC.getDisplayMsg("JS.CSC01001P0.006", "공지사항 내용을 입력하십시오."));
+     *     $NC.setFocus("#edtContent_Text");
+     *     return;
+     * }
+     */
+
+    if ($NC.isNull($NC.G_VAR.masterData.CENTER_CD)) {
+        $NC.G_VAR.masterData.CENTER_CD = $ND.C_NULL;
+    }
+
+    if ($NC.isNull($NC.G_VAR.masterData.BU_CD)) {
+        $NC.G_VAR.masterData.BU_CD = $ND.C_NULL;
+    }
+
+    var dsMaster = [
+        {
+            P_WRITE_NO: $NC.G_VAR.masterData.WRITE_NO,
+            P_CENTER_CD: $NC.G_VAR.masterData.CENTER_CD,
+            P_BU_CD: $NC.G_VAR.masterData.BU_CD,
+            P_NOTICE_DIV: $NC.G_VAR.masterData.NOTICE_DIV,
+            P_NOTICE_TITLE: $NC.G_VAR.masterData.NOTICE_TITLE,
+            P_CONTENT_HTML: $NC.G_VAR.masterData.CONTENT_HTML,
+            P_CONTENT_TEXT: $NC.G_VAR.masterData.CONTENT_TEXT,
+            P_NOTICE_FROM_DATE: $NC.G_VAR.masterData.NOTICE_FROM_DATE,
+            P_NOTICE_TO_DATE: $NC.G_VAR.masterData.NOTICE_TO_DATE,
+            P_ATTACH_FILE_NM: $NC.G_VAR.masterData.ATTACH_FILE_NM,
+            P_ATTACH_FILE_SIZE: $NC.G_VAR.masterData.ATTACH_FILE_SIZE,
+            P_ORG_ATTACH_FILE_NM: $NC.G_VAR.masterData.ORG_ATTACH_FILE_NM,
+            P_ORG_ATTACH_FILE_SIZE: $NC.G_VAR.masterData.ORG_ATTACH_FILE_SIZE,
+            P_USER_ID: $NC.G_VAR.masterData.USER_ID,
+            P_CRUD: $NC.G_VAR.masterData.CRUD
+        }
+    ];
+
+    if ($NC.isNull($NC.G_VAR.masterData.ATTACH_FILE_NM) || $NC.G_VAR.masterData.ATTACH_FILE_NM == $NC.G_VAR.masterData.ORG_ATTACH_FILE_NM) {
+        $NC.serviceCall("/CSC01000E0/saveMaster.do", {
+            P_DS_MASTER: dsMaster,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }, onSave);
+    } else {
+        $NC.fileUpload("/CSC01000E0/saveMasterAttachment.do", {
+            P_DS_MASTER: dsMaster,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }, function(ajaxData) {
+            var resultData = $NC.toObject(ajaxData);
+            var oMsg = $NC.getOutMessage(resultData);
+            if (oMsg != $ND.C_OK) {
+                alert(oMsg);
+                return;
+            }
+
+            onClose();
+        });
+    }
+}
+
+/**
+ * 삭제
+ */
+function _Delete() {
+
+}
+
+function masterDataOnChange(e, args) {
+
+    switch (args.col) {
+        case "BU_CD":
+            $NP.onUserBuChange(args.val, {
+                P_USER_ID: $NC.G_USERINFO.USER_ID,
+                P_BU_CD: args.val
+            }, onUserBuPopup);
+            return;
+        case "NOTICE_DIV":
+            $NC.G_VAR.masterData.NOTICE_DIV = args.val;
+            break;
+        case "NOTICE_TITLE":
+            $NC.G_VAR.masterData.NOTICE_TITLE = args.val;
+            break;
+        case "CONTENT_TEXT":
+            $NC.G_VAR.masterData.CONTENT_TEXT = args.val;
+            break;
+        case "NOTICE_FROM_DATE":
+            $NC.setValueDatePicker(args.view, args.val, $NC.getDisplayMsg("JS.CSC01001P0.007", "공지 게시 시작일자를 정확히 입력하십시오."));
+            $NC.G_VAR.masterData.NOTICE_FROM_DATE = $NC.getValue(args.view);
+            break;
+        case "NOTICE_TO_DATE":
+            $NC.setValueDatePicker(args.view, args.val, $NC.getDisplayMsg("JS.CSC01001P0.008", "공지 게시 종료일자를 정확히 입력하십시오."));
+            $NC.G_VAR.masterData.NOTICE_TO_DATE = $NC.getValue(args.view);
+            break;
+    }
+
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+}
+
+function btnFileAttachmentOnClick() {
+
+    $NC.showUploadFilePopup(function(view, fileFullName, fileName) {
+
+        $NC.G_VAR.masterData.ATTACH_FILE_NM = fileName;
+        $NC.G_VAR.masterData.ATTACH_FILE_SIZE = "";
+
+        if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+            $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+        }
+
+        $NC.setValue("#edtAttach_File_Nm", fileName);
+    });
+}
+
+function btnFileRemoveOnClick() {
+
+    if ($NC.isNull($NC.G_VAR.masterData.ATTACH_FILE_NM)) {
+        return;
+    }
+    $NC.G_VAR.masterData.ATTACH_FILE_NM = "";
+    $NC.G_VAR.masterData.ATTACH_FILE_SIZE = "";
+
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+
+    $NC.setValue("#edtAttach_File_Nm");
+}
+
+function onSave(ajaxData) {
+
+    var resultData = $NC.toObject(ajaxData);
+    var oMsg = $NC.getOutMessage(resultData);
+    if (oMsg != $ND.C_OK) {
+        alert(oMsg);
+        return;
+    }
+
+    onClose();
+}
+
+/**
+ * 검색조건의 사업부 검색 이미지 클릭
+ */
+function showUserBuPopup() {
+
+    $NP.showUserBuPopup({
+        P_USER_ID: $NC.G_USERINFO.USER_ID,
+        P_BU_CD: $ND.C_ALL
+    }, onUserBuPopup, function() {
+        $NC.setFocus("#edtBu_Cd", true);
+    });
+}
+
+/**
+ * 사업부 검색 결과 / 검색 실패 했을 경우(not found)
+ */
+function onUserBuPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtBu_Cd", resultInfo.BU_CD);
+        $NC.setValue("#edtBu_Nm", resultInfo.BU_NM);
+
+        $NC.G_VAR.masterData.BU_CD = resultInfo.BU_CD;
+    } else {
+        $NC.setValue("#edtBu_Cd");
+        $NC.setValue("#edtBu_Nm");
+        $NC.setFocus("#edtBu_Cd", true);
+
+        $NC.G_VAR.masterData.BU_CD = "";
+    }
+
+    if ($NC.G_VAR.masterData.CRUD == $ND.C_DV_CRUD_R) {
+        $NC.G_VAR.masterData.CRUD = $ND.C_DV_CRUD_U;
+    }
+}

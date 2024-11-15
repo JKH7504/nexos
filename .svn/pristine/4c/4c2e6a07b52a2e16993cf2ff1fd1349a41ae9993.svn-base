@@ -1,0 +1,77 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : usergridlayoutpopup
+    프로그램명         : 사용자 그리드 설정 팝업
+    프로그램설명       : 사용자 그리드 설정 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-12
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- User Grid Layout Popup CSS/JS -->
+<!-- <link rel="stylesheet" href="css/usergridlayoutpopup.css" /> -->
+<script src="js/usergridlayoutpopup.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div class="lblNormal">프로그램</div>
+                    <input id="edtProgram_Id_F" class="edtDisplay" type="text" disabled="disabled" style="width: 250px;" />
+                    <input id="btnInitializeProgram" class="btnImgCancel" type="button" value="프로그램초기화" style="width: 130px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="lblNormal">그리드</div>
+                    <input id="edtGrid_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 250px;" />
+                    <input id="btnInitializeGrid" class="btnImgCancel" type="button" value="그리드초기화" style="width: 130px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrLeft" style="border-width: 0 1px 0 1px;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">표시 항목</td>
+                <td>
+                    <input id="btnUp" class="btnNormal" type="button" value="▲" style="width: 30px;" />
+                    <input id="btnDown" class="btnNormal" type="button" value="▼" style="width: 30px;" />
+                    <input id="btnDelete" class="btnImgNormal" type="button" value="삭제" style="width: 60px;" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="ctrDetailView" class="ctrRight" style="border-width: 0 1px 0 1px;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">추가 가능한 항목</td>
+                <td>
+                    <input id="btnAdd" class="btnImgNormal" type="button" value="추가" style="width: 60px;" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnOk" class="btnNormal" type="button" value="저장" style="width: 80px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 80px;" />
+    </div>
+</body>
+</html>

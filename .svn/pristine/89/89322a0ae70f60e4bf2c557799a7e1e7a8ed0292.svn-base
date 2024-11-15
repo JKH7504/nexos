@@ -1,0 +1,470 @@
+* {
+    outline: none;
+}
+
+body {
+    background-color: #fff;
+}
+
+/*
+  //====================================================================================================================
+  // Container
+  //====================================================================================================================
+*/
+.ctrViewport {
+    position: relative;
+    visibility: hidden;
+}
+
+.ctrMain {
+    
+}
+
+.ctrPopupMessageOverlay {
+    display: none;
+    padding: 5px 5px 0 5px;
+    margin: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.ctrClient {
+    position: relative;
+}
+
+.ctrClient>div {
+    position: absolute;
+    background-color: #fff;
+    overflow: hidden;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+  //====================================================================================================================
+  // Etc
+  //====================================================================================================================
+*/
+.edtHiddenFile {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+    opacity: 0.0; /* Standard: FF gt 1.5, Opera, Safari */
+    filter: alpha(opacity = 0); /* IE lt 8 */
+    -ms-filter: "alpha(opacity=0)"; /* IE 8 */
+    -khtml-opacity: 0.0; /* Safari 1.x */
+    -moz-opacity: 0.0; /* FF lt 1.5, Netscape */
+}
+
+/*
+  //====================================================================================================================
+  // MenuBar
+  //====================================================================================================================
+*/
+.ctrTopTitleBar {
+    /*background: #e6e6e6 url(image/imgMainTopMenuBG.png) 50% 50% repeat-x;*/
+    background-color: #fff;
+    height: 44px;
+}
+
+.ctrTopTitleBar td {
+    padding: 0 5px;
+    height: 100%;
+}
+
+.ctrTopTitleBar .ctrLogo {
+    background: transparent url(image/imgMainLogo.png) 0 6px no-repeat;
+    background-size: contain;
+    min-width: 140px;
+}
+
+.ctrTopTitleBar .ctrUser {
+    cursor: pointer;
+    width: 100%;
+    text-align: right;
+}
+
+.ctrTopTitleBar .ctrUser span {
+    color: #000;
+    font-weight: bold;
+    text-align: right;
+    text-shadow: 1px 1px 1px #ffffffb3;
+    text-overflow: ellipsis;
+    line-height: 16px;
+    overflow: hidden;
+    max-width: 200px;
+    width: 100%;
+}
+
+/*
+  //====================================================================================================================
+  // Login
+  //====================================================================================================================
+*/
+div.ctrLoginOverlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+}
+
+div.ctrLoginOverlay .ctrOuter {
+    display: table;
+    background-color: #474b4b;
+    width: 100%;
+    height: 100%;
+    z-index: 101;
+}
+
+div.ctrLoginOverlay .ctrInner {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+table.ctrLogin {
+    display: inline-block;
+    padding: 10px;
+    border: none;
+    border-collapse: separate;
+    border-spacing: 5px;
+    box-sizing: border-box;
+    text-align: left;
+    white-space: nowrap;
+    max-width: 600px;
+    width: 100%;
+}
+
+table.ctrLogin>tbody>tr>td {
+    color: white;
+    font-size: 9pt;
+    height: 30px;
+}
+
+table.ctrLogin input:not([type=checkbox]):not([type=radio]):not(.btnIcoPopup), /*
+*/ table.ctrLogin select, /*
+*/ table.ctrLogin textarea, /*
+*/ table.ctrLogin .hasDatepicker, /*
+*/ table.ctrLogin .hasMonthpicker, /*
+*/ table.ctrLogin .hasTimepicker {
+    min-height: 30px;
+    width: 100%;
+    height: 100%;
+}
+
+table.ctrLogin input[type=button] {
+    background-color: #fff;
+    margin: 0;
+    font-size: 11pt;
+}
+
+table.ctrLogin div.ctrGroupRow {
+    padding: initial;
+    line-height: initial;
+    min-height: initial;
+}
+
+span.ctrLogoBI {
+    display: inline-block;
+    background: transparent url(image/imgMainLogoBI.png) 0 0 no-repeat;
+    background-size: contain;
+    width: 180px;
+    height: 60px;
+}
+
+.styDisplay .lblDisplay {
+    padding: 0 2px;
+    color: #b1b1b1;
+    font-family: sans-serif;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px #191919;
+}
+
+.styDisplay .lblDisplay.platform {
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.styDisplay .lblDisplay.copyright {
+    font-size: 8pt;
+}
+
+.styDisplay .lblDisplay.version {
+    font-size: 8pt;
+}
+
+.lblLoginSaveUser {
+    color: #fff;
+    font-size: 10pt;
+    vertical-align: text-top;
+}
+
+/*
+ *======================================================================================================================
+ * Loading Message
+ *======================================================================================================================
+ */
+div.ctrLoadingOverlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+}
+
+div.ctrLoadingOverlay .ctrOuter {
+    display: table;
+    background: rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 100%;
+    z-index: 2001;
+}
+
+div.ctrLoadingOverlay .ctrInner {
+    display: table-cell;
+    vertical-align: middle;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    font-weight: bold;
+}
+
+div.ctrLoadingOverlay .ctrContent {
+    display: inline-block;
+    padding: 15px 5px;
+    background-color: #2e2e2e;
+    border: 2px solid #1c1c1c;
+    border-radius: 5px;
+    box-sizing: border-box;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    width: 100%;
+}
+
+div.ctrLoadingOverlay .ctrProcessingStyle1 {
+    display: inline-block;
+    position: absolute;
+    padding: 2px;
+    background-color: #ffffff;
+    border-radius: 0 5px 0 0;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.9);
+    left: 0px;
+    bottom: 0px;
+    min-width: 300px;
+}
+
+div.ctrLoadingOverlay .ctrLoadingData {
+    display: inline-block;
+    color: #ee0000;
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    vertical-align: middle;
+    text-align: left;
+}
+
+div.ctrLoadingOverlay .styIcoLoading {
+    display: inline-block;
+    background: transparent url(image/imgLoading.gif) 0 0 no-repeat;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+}
+
+div.ctrLoadingOverlay .ctrProgress {
+    border: 1px solid gray;
+    border-radius: 3px;
+    height: 10px;
+    z-index: 1;
+}
+
+div.ctrLoadingOverlay .ctrContent.printing, /*
+*/ div.ctrLoadingOverlay .ctrContent.progress {
+    padding: 5px;
+}
+
+div.ctrLoadingOverlay .ctrContent.progress .progress {
+    padding: 10px 0 0 0;
+    color: #fff;
+    letter-spacing: -1px;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+/*
+  //====================================================================================================================
+  // 기타
+  //====================================================================================================================
+*/
+.ctrTopPopupOverlay {
+    position: absolute;
+    background-color: rgba(0, 0, 0, .1);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+}
+
+.ctrTopOverlay {
+    position: absolute;
+    background-color: #f6f6f6;
+    border: 2px solid #5f6968;
+    box-shadow: 0px 0px 3px #00000099;
+}
+
+.ctrCopyGridData {
+    background-color: #f6f6f6;
+    min-width: 300px;
+    min-height: 60px;
+    z-index: 2000;
+}
+
+.lblLoginServer::before {
+    content: "";
+    position: absolute;
+    padding: 0 6px;
+    color: #fbfbfb;
+    border-radius: 5px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 8pt;
+    line-height: 20px;
+    left: 150px;
+    top: 17px;
+    visibility: hidden;
+}
+
+.lblLoginServer.local::before {
+    content: "LOCAL";
+    background-color: #8bc34a;
+    visibility: visible;
+}
+
+.lblLoginServer.dev::before {
+    content: "DEV";
+    background-color: #77ab3b;
+    visibility: visible;
+}
+
+.lblLoginServer.qa::before {
+    content: "TEST";
+    background-color: #d9b63a;
+    visibility: visible;
+}
+
+/*
+  //====================================================================================================================
+  // BUTTON
+  //====================================================================================================================
+*/
+
+/*
+  //====================================================================================================================
+  // GRID
+  //====================================================================================================================
+*/
+
+/*
+  //====================================================================================================================
+  // IMAGE
+  //====================================================================================================================
+*/
+
+/*
+  //====================================================================================================================
+  // JWINDOW
+  //====================================================================================================================
+*/
+.jWindow-wrapper {
+    position: relative;
+}
+
+.jWindow-titleBar {
+    background: #333333;
+    border-bottom: 1px solid #1e1f1f;
+    height: 29px;
+}
+
+.jWindow-titleBar .jWindow-icon {
+    position: absolute;
+    background: transparent url("../../../../framework/css/image/icoDefault.png") no-repeat;
+    cursor: pointer;
+    top: 4px;
+    width: 23px;
+    height: 22px;
+}
+
+.jWindow-titleBar .jWindow-title {
+    padding-left: 23px;
+    color: #fff;
+    height: 30px;
+    line-height: 30px;
+}
+
+.jWindow-titleBar .jWindow-subTitle {
+    height: 30px;
+    line-height: 30px;
+}
+
+.jWindow-titleBar .jWindow-button {
+    background-color: #333333;
+    height: 30px;
+}
+
+.jWindow-titleBar .jWindow-button:hover {
+    background-color: #5b6060;
+}
+
+.jWindow-titleBar.p {
+    background: #2b2e34;
+}
+
+.jWindow-titleBar.e .jWindow-icon {
+    background-position: 3px -280px;
+}
+
+.jWindow-titleBar.q .jWindow-icon {
+    background-position: 3px -260px;
+}
+
+.jWindow-titleBar.r .jWindow-icon {
+    background-position: 3px -300px;
+}
+
+.jWindow-titleBar.p .jWindow-icon, /*
+*/ .jWindow-titleBar.c .jWindow-icon {
+    background: transparent url("../../../../framework/css/image/btnDefault.png") no-repeat;
+}
+
+.jWindow-titleBar.p .jWindow-icon {
+    background-position: 3px -180px;
+}
+
+.jWindow-titleBar.c .jWindow-icon {
+    background-position: 3px -300px;
+}
+
+.jWindow-titleBar.p .jWindow-button {
+    background-color: #2b2e34;
+}
+
+.jWindow-titleBar.e .jWindow-contentAttrBar {
+    background-color: #d85b5b;
+}
+
+.jWindow-titleBar.q .jWindow-contentAttrBar {
+    background-color: #7379df;
+}
+
+.jWindow-titleBar.r .jWindow-contentAttrBar {
+    background-color: #dcae60;
+}

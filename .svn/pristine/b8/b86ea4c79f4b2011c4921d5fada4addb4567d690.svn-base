@@ -1,0 +1,344 @@
+package nexos.service.scan;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+
+import nexos.dao.scan.SCAN_LOF03010E0DAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.ServiceSupport;
+import nexos.service.ed.common.EDCommonService;
+import nexos.service.ed.common.EDRESTfulService;
+
+/**
+ * Class: SCAN_LOF03010E0Service<br>
+ * Description: 스캔검수 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class SCAN_LOF03010E0Service extends ServiceSupport {
+
+    final String               SP_ID_LO_SHORTAGE_REWORK = "LO_SHORTAGE_REWORK";
+    final String               SP_ID_LO_ORDER_CANCEL    = "LO_PROCESSING";
+
+    @Autowired
+    private SCAN_LOF03010E0DAO dao;
+
+    @SuppressWarnings("unused")
+    @Autowired
+    private EDCommonService    edCommonService;
+
+    @Autowired
+    private EDRESTfulService   edRESTfulService;
+
+    /**
+     * 출고 박스저장 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String callLOScanBoxSave(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        // Start 한진택배 운송장 번호 웹서비스 호출 취득 로직 추가
+        // 주소정제시에 트랜잭션 발생 하기 때문에 박스저장 트랜잭션 전에 송장번호 취득
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+        String userId = (String)masterRowData.get(Consts.PK_USER_ID);
+        String hdcDiv = (String)masterRowData.get("P_HDC_DIV");
+        String boxNo = (String)masterRowData.get("P_BOX_NO");
+        String completeYn = (String)params.get("P_COMPLETE_YN"); // 박스완료여부
+        if (Consts.YES.equals(completeYn) && Consts.HDC_DIV_HANJIN_B2C.equals(hdcDiv) && !"1".equals(boxNo)) {
+            Map<String, Object> callParams = Util.newMap();
+            callParams.put("P_CENTER_CD", masterRowData.get("P_CENTER_CD"));
+            callParams.put("P_BU_CD", masterRowData.get("P_BU_CD"));
+            callParams.put("P_OUTBOUND_DATE", masterRowData.get("P_OUTBOUND_DATE"));
+            callParams.put("P_OUTBOUND_NO", masterRowData.get("P_OUTBOUND_NO"));
+            callParams.put(Consts.PK_PROCESS_CD, Consts.PROCESS_ENTRY);
+            callParams.put("P_CARRIER_CD", masterRowData.get("P_CARRIER_CD"));
+            callParams.put("P_HDC_CUST_CD", masterRowData.get("P_HDC_CUST_CD"));
+            callParams.put("P_HDC_DIV", hdcDiv);
+            callParams.put(Consts.PK_USER_ID, userId);
+            edRESTfulService.callAcsGetWbNoHanjin(callParams);
+            String wbNo = (String)callParams.get("O_WB_NO");
+            if (Util.isNull(wbNo)) {
+                throw new RuntimeException( //
+                    NexosMessage.getDisplayMsg("JAVA.SCAN_LOF03010E0SERVICE.XXX", "[한진택배]송장번호를 채번하지 못해 저장할 수 없습니다.") //
+                        + "\n" + callParams.get("O_ACS_ERROR_MSG") //
+                );
+            }
+            masterRowData.put("P_WB_NO", wbNo);
+        }
+        // End
+
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.callLOScanBoxSave(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 출고 팝업박스저장 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    public String callLOScanPopBoxSave(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.callLOScanPopBoxSave(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 출고 TOTAL 일괄검수 저장 처리
+     *
+     * @param params
+     */
+    public String callLOScanBoxTotalInspection(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.callLOScanBoxTotalInspection(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-박스 삭제(팝업화면에서)
+     *
+     * @param params
+     */
+    public String callLOScanBoxDelete(Map<String, Object> params) throws Exception {
+
+        String result;
+
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOScanBoxDelete(params);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(result)) {
+                throw new RuntimeException(result);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-박스 통합(팝업화면에서)
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOScanBoxMerge(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOScanBoxMerge(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-검수 완료
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOFWScanConfirm(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOFWScanConfirm(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-검수 취소
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOBWScanConfirm(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOBWScanConfirm(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-결품 처리
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOShortageRework(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            result = callProcedure(SP_ID_LO_SHORTAGE_REWORK, params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-주문취소 처리
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOOrderCancel(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            params.put("P_PROCESS_CD", Consts.PROCESS_CONFIRM);
+            params.put("P_DIRECTION", Consts.DIRECTION_FW);
+            result = callProcedure(SP_ID_LO_ORDER_CANCEL, params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-송장 출력 횟수 업데이트 처리
+     *
+     * @param params
+     */
+    public Map<String, Object> callSetWbNoPrintCntUpdate(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callSetWbNoPrintCntUpdate(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+    /**
+     * 출고스캔검수-TDAS라벨
+     *
+     * @param params
+     */
+    public Map<String, Object> callLOScanTdasLabel(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLOScanTdasLabel(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+
+}

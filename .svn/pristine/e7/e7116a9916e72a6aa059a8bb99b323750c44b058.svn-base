@@ -1,0 +1,217 @@
+/*
+  //====================================================================================================================
+  // MenuBar
+  //====================================================================================================================
+*/
+.ctrMenuBar {
+    padding-left: 8px;
+    background-color: #f1f1f1;
+    border-width: 1px 0 0 0;
+    box-sizing: border-box;
+    overflow: hidden auto;
+    float: left;
+    width: 40%;
+    height: 100%;
+}
+
+.ctrMenuBar .menu {
+    padding: 8px 0 0;
+}
+
+.ctrMenuBar .menu .actionItem {
+    display: inline-block;
+    background-color: #fafafa;
+    border-bottom: 2px solid transparent;
+    box-shadow: 0 1px 1px rgba(193, 193, 193, 0.9);
+    cursor: pointer;
+    font-size: 11pt;
+    font-weight: bold;
+    text-align: center;
+    line-height: 48px;
+    width: 100%;
+    height: 48px;
+}
+
+.ctrMenuBar .menu.active .actionItem {
+    background-color: #ffffff;
+    border-bottom-color: #ff8f35;
+    color: #ff8f35;
+}
+
+.ctrMenuPanel {
+    border-width: 1px 0 0 1px;
+    box-sizing: border-box;
+    overflow: hidden auto;
+    float: left;
+    width: 60%;
+    height: 100%;
+}
+
+.ctrMenuPanel .panel {
+    background-color: #f1f1f1;
+}
+
+.ctrMenuPanel .panel .actionItem {
+    padding-top: 8px;
+    box-shadow: 0 1px 1px rgba(193, 193, 193, 0.9);
+    line-height: 72px;
+    height: 72px;
+}
+
+.ctrMenuPanel .panel .actionItem:nth-child(1) {
+    padding-top: 0;
+}
+
+.ctrMenuPanel .panel .actionItem input:not([type=checkbox]):not([type=radio]):not(.btnIcoPopup), /*
+*/ .ctrMenuPanel .panel .actionItem select, /*
+*/ .ctrMenuPanel .panel .actionItem textarea, /*
+*/ .ctrMenuPanel .panel .actionItem .hasDatepicker, /*
+*/ .ctrMenuPanel .panel .actionItem .hasMonthpicker, /*
+*/ .ctrMenuPanel .panel .actionItem .hasTimepicker {
+    max-width: initial;
+    min-height: 72px;
+    width: 100%;
+    height: 100%;
+}
+
+.ctrMenuPanel .panel .ctrLinearLayout {
+    background-color: #fff;
+    box-shadow: 0 1px 1px rgba(193, 193, 193, 0.9);
+}
+
+.ctrMenuPanel .panel .actionItem .btnAction {
+    background-color: #fff;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.ctrMenuPanel .panel .actionItem .btnAction, /*
+*/ .ctrMenuPanel .panel .actionItem .btnAction span {
+    font-size: 11pt;
+    font-weight: bold;
+}
+
+/*
+  // ===================================================================================================================
+  // Action TitleBar
+  // ===================================================================================================================
+*/
+.ctrActionTitleBar {
+    display: flex;
+    position: relative;
+    background-color: #ffffff;
+    border-top: 1px solid #aeaeae;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+    flex-direction: row;
+    flex: 1 1 0%;
+    transition: .3s ease-out;
+    width: 100%;
+    height: 37px;
+    z-index: 1001;
+}
+
+.ctrActionTitleBar * {
+    box-sizing: border-box;
+}
+
+.ctrActionTitleBar .icoMenu, /*
+*/ .ctrActionTitleBar .icoCondition, /*
+*/ .ctrActionTitleBar .icoRefresh, /*
+*/ .ctrActionTitleBar .icoClose {
+    position: relative;
+    cursor: pointer;
+    width: 38px;
+}
+
+.ctrActionTitleBar .icoMenu {
+    background: #f44336 url('image/imgMainHover.png') 10px -86px no-repeat;
+    transition: 0.3s ease;
+}
+
+.ctrActionTitleBar .icoMenu:hover {
+    background-color: rgba(244, 67, 54, 0.6);;
+}
+
+.ctrActionTitleBar .icoCondition, /*
+*/ .ctrActionTitleBar .icoRefresh {
+    margin: 3px 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    transition: 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ctrActionTitleBar .icoCondition:hover, /*
+*/ .ctrActionTitleBar .icoRefresh:hover {
+    background-color: #e3e3e3;
+}
+
+.ctrActionTitleBar .icoCondition:before, /*
+*/ .ctrActionTitleBar .icoRefresh:before {
+    content: " ";
+    display: inline-block;
+    margin: 7px 0 0 7px;
+    width: 16px;
+    height: 16px;
+}
+
+.ctrActionTitleBar .icoCondition:before {
+    background: transparent url('image/imgMainDefault.png') 0 -127px no-repeat;
+}
+
+.ctrActionTitleBar .icoRefresh:before {
+    background: transparent url('image/imgMainDefault.png') 0px -67px no-repeat
+}
+
+.ctrActionTitleBar .icoClose {
+    margin: 3px 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    transition: 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ctrActionTitleBar .icoClose:hover {
+    background-color: #e3e3e3;
+}
+
+.ctrActionTitleBar .icoClose:before {
+    content: " ";
+    display: inline-block;
+    margin: 7px 0 0 7px;
+    background: transparent url('image/btnMainDefault.png') 0 -64px no-repeat;
+    width: 16px;
+    height: 16px;
+}
+
+.ctrActionTitleBar .lblMenu {
+    position: relative;
+    padding: 0 10px;
+    /*font-family: sans-serif;*/
+    font-size: 11pt;
+    font-weight: bold;
+    color: #222222;
+    line-height: 36px;
+    flex-grow: 1;
+}
+
+.ctrActionTitleBar .lblMenu.layer {
+    padding-left: 20px;
+}
+
+.ctrActionTitleBar .lblMenu.layer:before {
+    content: " ";
+    position: absolute;
+    background-color: #f44336;
+    left: 0;
+    width: 10px;
+    height: 100%;
+}
+
+.ctrActionTitleBar .lblMenu.layer.condition:before {
+    background-color: #4caf50;
+}

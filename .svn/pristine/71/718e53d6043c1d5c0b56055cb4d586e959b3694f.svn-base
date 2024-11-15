@@ -1,0 +1,27 @@
+{
+  "ecmaVersion": 5,
+  "plugins": {
+    "outline": {
+      
+    },
+    "eslint": {
+      "configFile": "eslint.json"
+    },
+    "nexos-popup6.4": {
+      
+    },
+    "nexos-define6.4": {
+      
+    },
+    "nexos-common6.4": {
+      
+    },
+    "jquery-ui1-12": {
+      
+    }
+  },
+  "libs": [
+    "browser",
+    "jquery"
+  ]
+}

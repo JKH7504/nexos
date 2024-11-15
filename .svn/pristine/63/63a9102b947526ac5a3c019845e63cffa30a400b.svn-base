@@ -1,0 +1,62 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC04052P0
+    프로그램명         : 엑셀등록 팝업
+    프로그램설명       : 물류센터 상품관리 엑셀등록 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2019-10-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2019-10-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LCC04011P0.css" /> -->
+<script src="js/CMC04052P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCenter_Cd_F" class="lblKey">물류센터</div>
+                    <input id="edtCenter_Cd_F" class="edtDisplay" type="text" style="width: 200px;" />
+                </td>
+                <td>
+                    <div id="lblPopup_Bu_Cd" class="lblKey">사업부</div>
+                    <input id="edtBu_Cd" class="edtDisplay" type="text" style="width: 60px;" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                </td>
+                <td class="styFillArea styRight">
+                    <input id="btnDownloadXLSFormat" class="btnImgFile" type="button" value="엑셀포맷 다운로드" />
+                    <input id="btnUploadXLS" class="btnImgFile" type="button" value="엑셀 업로드" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- 엑셀 등록 디테일-->
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">물류센터상품 내역정보</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnSave" class="btnNormal" type="button" value="저장" style="width: 80px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

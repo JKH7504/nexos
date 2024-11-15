@@ -1,0 +1,1103 @@
+﻿/**
+ * 사이트별 옵션 변경<br>
+ * <br> ※ 해당 Function에서 참조하는 $ND, $NC는 MDI메인에서 생성된 Object 이므로 코딩시 주의
+ * 
+ * @param siteOptions
+ * @returns
+ */
+function _OnCustomizeDefaultOptions(siteOptions) {
+
+    // $NC.writeLog 로그 출력 모드
+    // siteOptions.G_LOG_WRITE_MODE = "D";
+
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 공통 Display Format 세팅
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 일반 - 정수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.INT.FILTER = new RegExp( //
+    // "_QTY$|_BOX$|_EA$|_ORDER$|_LENGTH$|_WIDTH$|_HEIGHT$|_CASE$|_PLT$|_STAIR$|_PLACE$|_ROW$|_CNT$|_RANK$|_PRICE$|_AMT$", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    // siteOptions.G_FORMATTER.INT.OPTION = {
+    // TYPE: "I", // 정수
+    // SCALE: 0, // 소수점 자리수
+    // SCALEFN: "toTrunc" // toTrunc, toRound 중 선택
+    // };
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 일반 - 실수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.FLOAT.FILTER = new RegExp( //
+    // "_RBOX$|_RPLT$|_RATE$", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    siteOptions.G_FORMATTER.FLOAT_QTY.OPTION = {
+        TYPE: "I", // 정수
+        SCALE: 0, // 소수점 자리수
+        SCALEFN: "toTrunc" // toTrunc, toRound 중 선택
+    // TYPE: "F", // 실수
+    // SCALE: 2, // 소수점 자리수
+    // SCALEFN: "toRound" // toTrunc, toRound 중 선택
+    };
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 수량 - 실수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.FLOAT_QTY.FILTER = new RegExp( //
+    // "", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    // siteOptions.G_FORMATTER.FLOAT_QTY.OPTION = {
+    // TYPE: "F", // 실수
+    // SCALE: 2, // 소수점 자리수
+    // SCALEFN: "toRound" // toTrunc, toRound 중 선택
+    // };
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 중량 - 실수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.FLOAT_WEIGHT.FILTER = new RegExp( //
+    // "_WEIGHT$|_CAPA$|_TON$|_DIST$", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    siteOptions.G_FORMATTER.FLOAT_WEIGHT.OPTION = {
+        TYPE: "F", // 실수
+        SCALE: 3, // 소수점 자리수
+        SCALEFN: "toRound" // toTrunc, toRound 중 선택
+    };
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * CBM - 실수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.FLOAT_CBM.FILTER = new RegExp( //
+    // "_CBM$", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    // siteOptions.G_FORMATTER.FLOAT_CBM.OPTION = {
+    // TYPE: "F", // 실수
+    // SCALE: 6, // 소수점 자리수
+    // SCALEFN: "toRound" // toTrunc, toRound 중 선택
+    // };
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 단가 - 실수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.FLOAT_PRICE.FILTER = new RegExp( //
+    // "", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    // siteOptions.G_FORMATTER.FLOAT_PRICE.OPTION = {
+    // TYPE: "F", // 실수
+    // SCALE: 2, // 소수점 자리수
+    // SCALEFN: "toRound" // toTrunc, toRound 중 선택
+    // };
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 금액 - 실수
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * GRID의 FORMATTER, EDITOR OPTION을 지정하지 않았을 경우 자동 지정을 위한 필터
+     */
+    // siteOptions.G_FORMATTER.FLOAT_AMT.FILTER = new RegExp( //
+    // "", //
+    // "i");
+    /**
+     * FORMATTER, EDITOR OPTION
+     */
+    // siteOptions.G_FORMATTER.FLOAT_AMT.OPTION = {
+    // TYPE: "F", // 실수
+    // SCALE: 2, // 소수점 자리수
+    // SCALEFN: "toRound" // toTrunc, toRound 중 선택
+    // };
+    // -----------------------------------------------------------------------------------------------------------------------------------------------
+    // INPUT TAG TYPES
+    // button, checkbox, file, hidden, image, password, radio, reset, submit, text
+    // color, date, datetime-local, email, month, number, range, search, tel, time, url, week -> HTML5
+    // -----------------------------------------------------------------------------------------------------------------------------------------------
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 공통 Event 연결 제어하기 위한 세팅<br>
+     * Event는 Grid와는 다르게 중복으로 바인딩 되므로 동일 값 추가 금지
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * _OnInputKeyDown Event 연결 대상
+     */
+    /**
+     * KeyDown Event 연결 기본 대상, 해당 Selector를 기준으로 하위 Filter 적용하여 입력 제한 처리
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.SELECTOR.DEFAULT = [
+    // "input:not([type=radio],[type=checkbox],[type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset],[type=color])"
+    // ];
+    /**
+     * ENTER 키 Action 제거 대상 -> 버튼
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.SELECTOR.BUTTON = [
+    // "input[type=button],input[type=reset],input[type=submit]"
+    // ];
+    /**
+     * 정의된 항목외 강제적으로 Event 할달이 필요할 경우
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.SELECTOR.ETC = [
+    // ".globalOnKeyDown"
+    // ];
+    /**
+     * 입력 제한에 대한 추가 Filter
+     */
+    /**
+     * 일반 정수 - 정수만 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     * <br>
+     * .ui-edt-string - Deprecated
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.INT = [
+    // // SUFFIX
+    // "_Qty", // 수량
+    // "_Box", // 수량[BOX]
+    // "_Ea", // 수량[EA]
+    // "_Order", // 순위
+    // "_Length", // 길이
+    // "_Width", // 너비
+    // "_Height", // 높이
+    // "_Case", //
+    // "_Plt", //
+    // "_Stair", //
+    // "_Place", //
+    // "_Row", //
+    // "_Cnt", //
+    // "_Val", //
+    // "_Price", // 단가
+    // "_Amt", // 금액
+    // "_Cost", // 비용
+    // // FULL
+    //
+    // // CSS
+    // ".formatterInteger"
+    // ];
+    /**
+     * 일반 실수 - 소수점이 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.FLOAT = [
+    // // SUFFIX
+    // "_Rate", //
+    // "_RBox", //
+    // "_RPlt", /
+    // // FULL
+    //
+    // // CSS
+    // ".formatterFloat"
+    // ];
+    /**
+     * 일반 실수 - 소수점이 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.FLOAT_QTY = [
+    // // SUFFIX/
+    // // FULL
+    //
+    // // CSS
+    // ".formatterFloatQty"
+    // ];
+    /**
+     * 중량 실수 - 소수점이 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     * <br>
+     * .ui-edt-string - Deprecated .ui-edt-double - Deprecated
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.FLOAT_WEIGHT = [
+    // // SUFFIX
+    // "_Weight", //
+    // "_Capa", //
+    // "_Ton", //
+    // "_Dist", //
+    // // FULL
+    //
+    // // CSS
+    // ".formatterFloatWeight"
+    // ];
+    /**
+     * CBM 실수 - 소수점이 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.FLOAT_CBM = [
+    // // SUFFIX
+    // "_Cbm", //
+    // // FULL
+    //
+    // // CSS
+    // ".formatterFloatCbm"
+    // ];
+    /**
+     * 단가 실수 - 소수점이 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.FLOAT_PRICE = [
+    // // SUFFIX // Event는 Grid와는 다르게 중복으로 바인딩 되므로 동일 값 추가 금지
+    // // FULL
+    //
+    // // CSS
+    // ".formatterFloatPrice"
+    // ];
+    /**
+     * 금액 실수 - 소수점이 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 숫자 컬럼이 아닌데 명칭 때문에 숫자로 인식될 경우 CSS Class에 .globalExcludeEvent 를 추가<br>
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.FLOAT_AMT = [
+    // // SUFFIX // Event는 Grid와는 다르게 중복으로 바인딩 되므로 동일 값 추가 금지
+    // // FULL
+    //
+    // // CSS
+    // ".formatterFloatAmt"
+    // ];
+    /**
+     * 날짜(년월일, YYYY-MM-DD) - 날짜로 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 날짜 컬럼이 아닌데 명칭 때문에 날짜로 인식될 경우 CSS Class에 .globalExcludeEvent를 추가하여 제외할 수 있음
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.DATE = [
+    // // SUFFIX
+    // "_Date", //
+    // "_Date1", //
+    // "_Date2", //
+    // // FULL
+    //
+    // // CSS
+    // ".formatterDate"
+    // ];
+    /**
+     * 날짜(년월, YYYY-MM) - 날짜로 입력되어야 하는 컬럼 정의<br>
+     * Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 날짜 컬럼이 아닌데 명칭 때문에 날짜로 인식될 경우 CSS Class에 .globalExcludeEvent를 추가하여 제외할 수 있음
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.MONTH = [
+    // // SUFFIX
+    // "_Month", //
+    // "_Month1", //
+    // "_Month2", //
+    // // FULL
+    //
+    // // CSS
+    // ".formatterMonth"
+    // ];
+    /**
+     * 시간(시분, HH-MM) - 시간으로 입력되어야 하는 컬럼 정의 Element의 ID를 검색하므로 대/소문자 구분<br>
+     * 날짜 컬럼이 아닌데 명칭 때문에 날짜로 인식될 경우 CSS Class에 .globalExcludeEvent를 추가하여 제외할 수 있음
+     */
+    // siteOptions.G_EVENT.ON_KEY_DOWN.FILTER.TIME = [
+    // // SUFFIX
+    // "_Time", //
+    // "_Time1", //
+    // "_Time2", //
+    // // FULL
+    //
+    // // CSS
+    // ".formatterTime"
+    // ];
+    /**
+     * _OnInputKeyUp Event 연결 대상
+     */
+    // siteOptions.G_EVENT.ON_KEY_UP.SELECTOR = [
+    // "input:not([type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset])",
+    // "textarea",
+    // "select",
+    // ".globalOnKeyUp"
+    // ];
+    /**
+     * _OnInputKeyPress Event 연결 대상
+     */
+    // siteOptions.G_EVENT.ON_KEY_PRESS.SELECTOR = [
+    // "input:not([type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset],[type=color])",
+    // "textarea",
+    // "select",
+    // ".globalOnKeyPress"
+    // ];
+    /**
+     * _OnInputChange, _OnConditionChange Event 연결 대상
+     */
+    // siteOptions.G_EVENT.ON_CHANGE.SELECTOR = [
+    // "input:not([type=image],[type=button],[type=submit],[type=hidden],[type=reset])",
+    // "textarea",
+    // "select",
+    // ".globalOnChange"
+    // ];
+    /**
+     * _OnInputFocus Event 연결 대상
+     */
+    // siteOptions.G_EVENT.ON_FOCUS.SELECTOR = [
+    // "input:not([type=hidden])",
+    // "textarea",
+    // "select",
+    // ".globalOnFocus"
+    // ];
+    /**
+     * 포커스 후 데이터 선택에 대한 추가 Filter
+     */
+    // siteOptions.G_EVENT.ON_FOCUS.FILTER.SELECTOR = [
+    // "input:not([type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset],[type=checkbox],[type=radio],[type=color],[type=range])"
+    // ];
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 표시여부, 명칭 변경 제어하기 위한 세팅
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * 
+     */
+    // siteOptions.G_DISPLAY.SHOW.SELECTOR = [
+    // "td[id^='td']",
+    // "div[id^='div']",
+    // "td[id^='ctr']",
+    // "div[id^='ctr']"
+    // ];
+    /**
+     * 표시여부 대상 판단을 위한 추가 필터
+     */
+    /**
+     * 표시여부 적용할 Element, ID로 검색, 대/소문자 구분 함
+     */
+    // siteOptions.G_DISPLAY.SHOW.FILTER.DISPLAY = new RegExp( //
+    // "^tdQ[0-9]Dsp_|^divQ[0-9]Dsp_|^tdQL[0-9]Dsp_|^divQL[0-9]Dsp_|^tdQDsp_|^divQDsp_|^tdDsp_|^divDsp_|" //
+    // + "^ctrQ[0-9]Dsp_|^ctrL[0-9]Dsp_|^ctrQL[0-9]Dsp_|^ctrQDsp_|^ctrDsp_", //
+    // "i");
+    /**
+     * Table의 하위 Element가 모두 숨김처리 되었는지를 체크하기 위한 필터
+     */
+    // siteOptions.G_DISPLAY.SHOW.FILTER.CHECK = [
+    // "td[style*='display: none;']"
+    // ];
+    /**
+     * 명칭 변경 - 컬럼
+     */
+    /**
+     * Label
+     */
+    // siteOptions.G_DISPLAY.CHANGE.C.LABEL.SELECTOR = [
+    // "div[id^='lbl']"
+    // ];
+    // siteOptions.G_DISPLAY.CHANGE.C.LABEL.FILTER.CONDITION.SELECTOR = [
+    // "[class*='Condition']"
+    // ];
+    // siteOptions.G_DISPLAY.CHANGE.C.LABEL.FILTER.CONDITION.TITLE = new RegExp( //
+    // "^lblQT[0-9]_|^lblQL[0-9]_|^lblQT[0-9]|^lblQL[0-9]|^lblQ", //
+    // "i");
+    // siteOptions.G_DISPLAY.CHANGE.C.LABEL.FILTER.NORMAL.SELECTOR = [
+    // "[class*='Normal'],[class*='Key'],[class*='Display'],[class*='Search'],[class*='Special']"
+    // ];
+    // siteOptions.G_DISPLAY.CHANGE.C.LABEL.FILTER.NORMAL.TITLE = new RegExp( //
+    // "^lblT[0-9]_|^lblL[0-9]_|^lbl", //
+    // "i");
+    /**
+     * Input - RADIO,CHECKBOX
+     */
+    // siteOptions.G_DISPLAY.CHANGE.C.INPUT.SELECTOR = [
+    // "input[type=radio][id^='rgb'][class*='Normal']",
+    // "input[type=checkbox][id^='chk'][class*='Normal']
+    // ];
+    // siteOptions.G_DISPLAY.CHANGE.C.INPUT.FILTER.TITLE = new RegExp( //
+    // "^chkQT[0-9]_|^chkQL[0-9]_|^chkQ|^rgbQT[0-9]_" //
+    // + "|^rgbQL[0-9]_|^rgbQ|^chkT[0-9]_" //
+    // + "|^chkL[0-9]_|^chk|^rgbT[0-9]_" //
+    // + "|^rgbL[0-9]_|^rgb", /
+    // "i");
+    /**
+     * 명칭 변경 - ID(메시지)
+     */
+    // siteOptions.G_DISPLAY.CHANGE.M.SELECTOR = [
+    // // DIV
+    // "div[id][class*=lblGroupTitle]",
+    // "div[id][class*=globalDisplay]",
+    // "div[id^='dsp']"
+    // // BUTTON
+    // "input[id][type=button]:not([class^='btnIco'])",
+    // // TD
+    // "td[id][class*='lblTitle']",
+    // "td[id][class*='globalDisplay']",
+    // "td[id^='dsp']",
+    // // SPAN
+    // "span[id][class*='globalDisplay']",
+    // "span[id^='dsp']"
+    // ];
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 서비스 호출을 위한 정보 세팅
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    // siteOptions.G_SERVICE.TIMEOUT.DEFAULT = 600000;
+    // siteOptions.G_SERVICE.TIMEOUT.CHECK = 5000;
+    // siteOptions.G_SERVICE.URL.GET_DATASET = "/WC/getDataSet.do";
+    // siteOptions.G_SERVICE.URL.GET_SERVER_STATUS = "/WC/getServerStatus.do";
+    // siteOptions.G_SERVICE.QUERY_ID.PROGRAM_REPORT = "WC.GET_CSPROGRAMREPORT";
+    // siteOptions.G_SERVICE.QUERY_ID.USER_GRID_LAYOUT = "WC.GET_CSUSERGRIDLAYOUT";
+    siteOptions.G_SERVICE.SERVICE.REQUEST_TYPE = "B";
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * 내부 FUNCTION에서 사용되는 추가 정보 세팅
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * 마스터 관리 화면의 그룹단위 Enable/Disable 처리시 사용 되는 SELECTOR<br>
+     */
+    // siteOptions.G_FUNCTION.GROUP.SELECTOR = [
+    // "input:not([type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset]).edtKey", // Edit 키
+    // "input:not([type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset]).edtNormal", // Edit 일반
+    // "input[type=text].dtpKey", // DatePicker 키
+    // "input[type=text].dtpNormal", // DatePicker 일반
+    // "input[type=text].mtpKey", // MonthPicker 키
+    // "input[type=text].mtpNormal", // MonthPicker 일반
+    // "input[type=text].tmpKey", // TimePicker 키
+    // "input[type=text].tmpNormal", // TimePicker 일반
+    // "button.ui-datepicker-trigger", // DatePicker trigger
+    // "button.ui-monthpicker-trigger", // MonthPicker trigger
+    // "input[type=radio].rgbNormal", // Radio 일반
+    // "input[type=checkbox].chkNormal", // Checkbox 일반
+    // "select.cboKey", // ComboBox 키
+    // "select.cboNormal", // ComboBox 일반
+    // "input[type=button]", // Button 일반
+    // "input[type=submit]", // Button submit
+    // "input[type=reset]" // Button reset
+    // ];
+    // siteOptions.G_FUNCTION.BUTTONS.SELECTOR = [
+    // "input[type=button][class^='btn']"
+    // ];
+    // siteOptions.G_FUNCTION.ADDITIONAL_CONDITION.SELECTOR = [
+    // "input,select,textarea,div.SumoSelect"
+    // ];
+    // siteOptions.G_FUNCTION.FOCUS.FILTER.SELECTOR = [
+    // "input:not([type=image],[type=button],[type=submit],[type=file],[type=hidden],[type=reset],[type=checkbox],[type=radio])"
+    // ];
+    /**
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     * Function
+     * -----------------------------------------------------------------------------------------------------------------------------------------------
+     */
+    /**
+     * 그리드 마스킹 사용여부, 기본값 "N", 사용안함
+     */
+    siteOptions.G_FUNCTION.DATA_MASK.ENABLE = $ND.C_YES;
+    /**
+     * 마스킹 함수 목록, 추가될 경우 세팅<br> ※ 마스킹 함수 명칭은 getMask로 시작, getMask[유형]
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.ACTIONS = [
+    // "getMaskAll",
+    // "getMaskOther",
+    // "getMaskId",
+    // "getMaskNm",
+    // "getMaskEmail",
+    // "getMaskTel",
+    // "getMaskRrn",
+    // "getMaskAddress",
+    // "getMaskIp"
+    // ];
+    /**
+     * 전체 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskAll = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskAll(value);
+    // };
+    /**
+     * 첫번째 글자외 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskOther = function(value, lenValue) {
+    //
+    // return Nexos.fn.dataMask.getMaskOther(value, lenValue);
+    // };
+    /**
+     * ID 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskId = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskId(value);
+    // };
+    /**
+     * 성명 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskNm = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskNm(value);
+    // };
+    /**
+     * 이메일 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskEmail = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskEmail(value);
+    // };
+    /**
+     * 전화번호 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskTel = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskTel(value);
+    // };
+    /**
+     * 주민번호 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskRrn = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskRrn(value);
+    // };
+    /**
+     * 주소 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskAddress = function(addrBasic, addrDetail) {
+    //
+    // return Nexos.fn.dataMask.getMaskAddress(addrBasic, addrDetail);
+    // };
+    /**
+     * 주소 마스킹 처리 후 리턴 신규 추가
+     * 
+     * @since 7.1.0
+     */
+    // siteOptions.G_FUNCTION.DATA_MASK.getMaskIp = function(value) {
+    //
+    // return Nexos.fn.dataMask.getMaskIp(value);
+    // };
+    /**
+     * GRID의 정의된 FORMATTER, EDITOR OPTION을 리턴<br>
+     * 사이트에서 다른 옵션을 추가했을 경우 추가 코딩<br>
+     * G_FORMATTER에 정의된 값 리턴
+     */
+    // siteOptions.G_FUNCTION.getGridNumberColumnOptions = function(options) {
+    //
+    // return siteOptions.G_FORMATTER.INT;
+    // return siteOptions.G_FORMATTER.FLOAT_QTY;
+    //
+    // return null; // 기본 OPTION 처리 사용
+    // };
+    /**
+     * 현재 Active된 화면의 프로그램 정보 리턴
+     * 
+     * @since 6.0.0
+     */
+    // siteOptions.G_FUNCTION.getProgramInfo = function(nullToDefaultInfo) {
+    //
+    // var result = {
+    // PROGRAM_ID: "",
+    // PROGRAM_NM: ""
+    // };
+    //
+    // // MDI메인일 경우
+    // if ($NC.G_VAR.G_WINDOW_TYPE == 0) {
+    // result.PROGRAM_ID = "MAIN";
+    // result.PROGRAM_NM = "MDI메인";
+    // }
+    // // 단위 프로그램 / 팝업
+    // else {
+    // result = $NC.G_JWINDOW.get("G_PARAMETER") || {};
+    // if ($NC.isNull(result.PROGRAM_ID)) {
+    // result.PROGRAM_ID = nullToDefaultInfo !== false ? "DEFAULT" : "";
+    // }
+    // if ($NC.isNull(result.PROGRAM_NM)) {
+    // result.PROGRAM_NM = nullToDefaultInfo !== false ? "기본" : "";
+    // }
+    // // 권한 데이터가 없을 경우 권한 없음으로 처리
+    // if ($NC.isNull(result.EXE_LEVEL1)) {
+    // result.EXE_LEVEL1 = $ND.C_NO;
+    // }
+    // if ($NC.isNull(result.EXE_LEVEL2)) {
+    // result.EXE_LEVEL2 = $ND.C_NO;
+    // }
+    // if ($NC.isNull(result.EXE_LEVEL3)) {
+    // result.EXE_LEVEL3 = $ND.C_NO;
+    // }
+    // if ($NC.isNull(result.EXE_LEVEL4)) {
+    // result.EXE_LEVEL4 = $ND.C_NO;
+    // }
+    // if ($NC.isNull(result.EXE_LEVEL5)) {
+    // result.EXE_LEVEL5 = $ND.C_NO;
+    // }
+    // }
+    // if ($NC.isNull(result.APPLICATION_DIV)) {
+    // if ($(document.body).hasClass("mobile")) {
+    // result.APPLICATION_DIV = "3";
+    // } else {
+    // result.APPLICATION_DIV = "1";
+    // }
+    // }
+    //
+    // return result;
+    // };
+    /**
+     * 프로그램의 권한 정보 리턴<br>
+     * 사이트별로 권한 정보가 다를 경우 지정
+     * 
+     * @since 6.0.0
+     */
+    // siteOptions.G_FUNCTION.getProgramPermission = function(programInfo) {
+    //
+    // var permission = {
+    // canSave: false,
+    // canDelete: false,
+    // canConfirm: false,
+    // canConfirmCancel: false
+    // };
+    //
+    // // permission 체크할 프로그램 정보가 null일 경우
+    // if ($NC.isNull(programInfo)) {
+    // // 현재 active된 프로그램이 없으면 모두 false로 리턴
+    // if ($NC.isNull($NC.G_JWINDOW)) {
+    // return permission;
+    // }
+    // // active된 프로그램이 있으면 programInfo 읽음
+    // else {
+    // programInfo = $NC.G_JWINDOW.get("G_PARAMETER");
+    // if ($NC.isNull(programInfo)) {
+    // return permission;
+    // }
+    // }
+    // }
+    //
+    // permission.canSave = programInfo.EXE_LEVEL1 == $ND.C_YES;
+    // permission.canDelete = programInfo.EXE_LEVEL2 == $ND.C_YES;
+    // permission.canConfirm = programInfo.EXE_LEVEL3 == $ND.C_YES;
+    // permission.canConfirmCancel = programInfo.EXE_LEVEL4 == $ND.C_YES;
+    // permission.canApproval = programInfo.EXE_LEVEL5 == $ND.C_YES;
+    //
+    // return permission;
+    // };
+    /**
+     * BOX 환산 수량 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getRBox = function(itemQty, qtyInBox) {
+    //
+    // itemQty = $NC.toNumber(itemQty);
+    // qtyInBox = $NC.toNumber(qtyInBox);
+    // if (qtyInBox <= 1) {
+    // return itemQty;
+    // }
+    //
+    // return $NC.toTruncVal(itemQty / qtyInBox, 3);
+    // };
+    /**
+     * PLT 환산 수량 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getRPlt = function(itemQty, qtyInBox, boxInPlt) {
+    //
+    // boxInPlt = $NC.toNumber(boxInPlt);
+    // if (boxInPlt == 0) {
+    // return 1;
+    // }
+    //
+    // qtyInBox = $NC.toNumber(qtyInBox);
+    // if (qtyInBox == 0) {
+    // qtyInBox = 1;
+    // }
+    //
+    // itemQty = $NC.toNumber(itemQty);
+    //
+    // return $NC.toTruncVal(itemQty / (qtyInBox * boxInPlt), 3);
+    // };
+    /**
+     * BOX기준 BOX수량 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getBBox = function(itemQty, qtyInBox) {
+    //
+    // itemQty = $NC.toNumber(itemQty);
+    // if (itemQty == 0) {
+    // return 0;
+    // }
+    //
+    // qtyInBox = $NC.toNumber(qtyInBox);
+    // if (qtyInBox == 0) {
+    // qtyInBox = 1;
+    // }
+    //
+    // return parseInt(itemQty / qtyInBox);
+    // };
+    /**
+     * BOX기준 EA수량 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getBEa = function(itemQty, qtyInBox) {
+    //
+    // itemQty = $NC.toNumber(itemQty);
+    // if (itemQty == 0) {
+    // return 0;
+    // }
+    //
+    // qtyInBox = $NC.toNumber(qtyInBox);
+    // if (qtyInBox == 0) {
+    // qtyInBox = 1;
+    // }
+    //
+    // return itemQty % qtyInBox;
+    // };
+    /**
+     * BOX/EA 기준 총수량 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getBQty = function(itemBox, itemEa, qtyInBox) {
+    //
+    // itemBox = $NC.toNumber(itemBox);
+    // itemEa = $NC.toNumber(itemEa);
+    //
+    // qtyInBox = $NC.toNumber(qtyInBox);
+    // if (qtyInBox == 0) {
+    // qtyInBox = 1;
+    // }
+    //
+    // return itemBox * qtyInBox + itemEa;
+    // };
+    /**
+     * 상품 중량 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getWeight = function(itemQty, qtyInBox, boxWeight) {
+    //
+    // boxWeight = $NC.toNumber(boxWeight);
+    // if (boxWeight == 0) {
+    // return 0;
+    // }
+    //
+    // return $NC.getTruncVal($NC.getRBox(itemQty, qtyInBox) * boxWeight, 2);
+    // };
+    /**
+     * 상품의 CBM 구하기<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    // siteOptions.G_FUNCTION.getCbm = function(itemQty, qtyInBox, boxCbm) {
+    //
+    // boxCbm = $NC.toNumber(boxCbm);
+    // if (boxCbm == 0) {
+    // return 0;
+    // }
+    //
+    // return $NC.getTruncVal($NC.getRBox(itemQty, qtyInBox) * boxCbm, 2);
+    // };
+    /**
+     * 매입금액 또는 공급금액 계산<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    siteOptions.G_FUNCTION.getItemAmt = function(params) {
+
+        var result;
+        // POLICY_VAL
+        // 1 - 매입(공급)단가 * 수량
+        // 2 - 적용단가(매입(공급)단가 - 할인단가) * 수량
+        // 3 - 매입(공급)단가 * 수량 / 1.1 (소수점 첫째자리 올림)
+        // 기타 - 계산안함
+        switch (params.POLICY_VAL) {
+            // 매입(공급)단가 * 수량
+            case "1":
+                result = (params.ITEM_PRICE || 0) * (params.ITEM_QTY || 0);
+                break;
+            // 적용단가 * 수량
+            case "2":
+                result = (params.APPLY_PRICE || 0) * (params.ITEM_QTY || 0);
+                break;
+            // 매입(공급)단가 * 수량 / 1.1 (소수점 첫째자리 올림)
+            case "3":
+                if (params.VAT_YN === $ND.C_YES) {
+                    result = Math.ceil((params.ITEM_PRICE || 0) * (params.ITEM_QTY || 0) / 1.1);
+                } else {
+                    result = (params.ITEM_PRICE || 0) * (params.ITEM_QTY || 0);
+                }
+                break;
+            // 계산안함 - 정책값을 알 수 없거나, 4 - 계산안함일 경우
+            default:
+                result = params.ITEM_AMT;
+                break;
+        }
+
+        return result || 0;
+    };
+
+    /**
+     * 합계금액 계산<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    siteOptions.G_FUNCTION.getTotalAmt = function(params) {
+
+        var result;
+        // POLICY_VAL
+        // 1 - 매입(공급)단가 * 수량
+        // 2 - 적용단가(매입(공급)단가 - 할인단가) * 수량
+        // 3 - 매입(공급)단가 * 수량 / 1.1 (소수점 첫째자리 올림)
+        // 기타 - 계산안함
+        switch (params.POLICY_VAL) {
+            // 계산필요
+            case "1":
+            case "2":
+                // 매입(공급)금액 계산
+                var ITEM_AMT = $NC.getItemAmt(params);
+                // 부가세 계산
+                var VAT_AMT = $NC.getVatAmt(params);
+
+                result = ITEM_AMT + VAT_AMT - (params.DC_AMT || 0);
+                break;
+            // 매입(공급)단가 * 수량 / 1.1 (소수점 첫째자리 올림)
+            case "3":
+                result = (params.ITEM_PRICE || 0) * (params.ITEM_QTY || 0);
+                break;
+            // 계산안함 - 정책값을 알 수 없거나, 4 - 계산안함일 경우
+            default:
+                result = params.TOTAL_AMT;
+                break;
+        }
+
+        return result || 0;
+    };
+
+    /**
+     * 부가세 계산<br>
+     * 사이트별로 계산 방식이 다를 경우 지정
+     * 
+     * @since 6.4.0
+     */
+    siteOptions.G_FUNCTION.getVatAmt = function(params) {
+
+        var result, ITEM_AMT;
+        // POLICY_VAL
+        // 1 - 매입(공급)단가 * 수량
+        // 2 - 적용단가(매입(공급)단가 - 할인단가) * 수량
+        // 3 - 매입(공급)단가 * 수량 / 1.1 (소수점 첫째자리 올림)
+        // 기타 - 계산안함
+        switch (params.POLICY_VAL) {
+            case "1":
+            case "2":
+                // VAT_AMT가 있거나, VAT_YN이 Y일 경우
+                if (params.VAT_AMT > 0 || params.VAT_YN == $ND.C_YES) {
+                    // 매입(공급)금액 계산
+                    ITEM_AMT = $NC.getItemAmt(params);
+                    result = $NC.getTruncVal(ITEM_AMT * 0.1);
+                } else {
+                    result = 0;
+                }
+                break;
+            case "3":
+                // VAT_AMT가 있거나, VAT_YN이 Y일 경우
+                if (params.VAT_AMT > 0 || params.VAT_YN == $ND.C_YES) {
+                    // 매입(공급)금액 계산
+                    ITEM_AMT = $NC.getItemAmt(params);
+                    result = (params.ITEM_PRICE || 0) * (params.ITEM_QTY || 0) - ITEM_AMT;
+                } else {
+                    result = 0;
+                }
+                break;
+            default:
+                result = params.VAT_AMT;
+                break;
+        }
+
+        return result || 0;
+    };
+
+    /**
+     * 재정의 가능 상수에 대해 사이트별로 재정의 처리하거나 사이트에서만 사용되는 상수 추가 가능
+     */
+    var redefineConstProps = {
+        // --공통에 정의된 값 변경 ----------------------------------------
+        // C_SEP_LOC: "-", // 로케이션 구분자
+        // C_SEP_COMBO: " - ", // Select(COMBOBOX)의 코드, 명 표시시 구분자
+        // C_SEP_DATE: "-", // 날짜 구분자
+        // C_SEP_DATA: ",", // 공통코드 검색 데이터 값 구분자, since 7.5.0, 명칭 변경
+        // C_SEP_PARAM: String.fromCharCode(12), // 메시지 파라메터 값 구분자, since 7.5.0, 명칭 변경
+        // C_SEP_COL: ";", // 체크값 컬럼 구분자
+        // C_SEP_ROW: ",", // 체크값 로우 구분자
+        // C_BASE_NM: "공통", // 기본 코드명, since 7.1.0
+        // C_DATA_DIV_DBLINK: "10", // EDI데이터구분 - DBLINK
+        // C_DATA_DIV_DBCONNECT: "20", // EDI데이터구분 - DBCONNECT
+        // C_DATA_DIV_EXCEL: "30", // EDI데이터구분 - EXCEL
+        // C_DATA_DIV_TEXT: "31", // EDI데이터구분 - TEXT
+        // C_DATA_DIV_XML: "32", // EDI데이터구분 - XML
+        // C_DATA_DIV_JSON: "33", // EDI데이터구분 - JSON
+        // C_DATA_DIV_SAP: "40", // EDI데이터구분 - SAP
+        // C_HDC_DIV_HANJIN_B2B: "A1",// 택배사구분 - 한진택배B2B, since 7.5.0
+        // C_HDC_DIV_HANJIN_B2C: "A2",// 택배사구분 - 한진택배B2C, since 7.5.0
+        // C_HDC_DIV_EPOST_B2B: "B1",// 택배사구분 - 우체국택배B2B, since 7.5.0
+        // C_HDC_DIV_EPOST_B2C: "B2",// 택배사구분 - 우체국택배B2C, since 7.5.0
+        // C_HDC_DIV_CJ_B2B: "C1",// 택배사구분 - CJ대한통운B2B, since 7.5.0
+        // C_HDC_DIV_CJ_B2C: "C2",// 택배사구분 - CJ대한통운B2C, since 7.5.0
+        // C_HDC_DIV_LOTTE_B2B: "D1",// 택배사구분 - 롯데택배B2B, since 7.5.0
+        // C_HDC_DIV_LOTTE_B2C: "D2", // 택배사구분 - 롯데택배B2C, since 7.5.0
+        // C_REASON_ETC_DIV: "99", // 사유구분값 중 기타에 해당하는 값 99 - 기타
+        // C_TIMEOUT_FOCUS: $.browser.mobile ? 200 : 500, // 스캔 Editor 포커스시 Delay Time(ms)
+        // C_TIMEOUT_CLOSE: 1000, // 숨김, 닫기 등의 Delay Time(ms), 기본
+        // C_TIMEOUT_CLOSE_FAST: 500, // 숨김, 닫기 등의 Delay Time(ms), 빠른
+        // C_TIMEOUT_CLOSE_FASTEST: 300, // 숨김, 닫기 등의 Delay Time(ms), 가장빠른
+        // C_TIMEOUT_CLOSE_SLOW: 2000, // 숨김, 닫기 등의 Delay Time(ms), 느린
+        // C_TIMEOUT_ACT: 300, // 일반적인 지연 처리 Delay Time(ms), 기본
+        // C_TIMEOUT_ACT_FAST: 100 // 일반적인 지연 처리 Delay Time(ms), 빠른
+        // C_TIMEOUT_ACT_SLOW: 1000 // 일반적인 지연 처리 Delay Time(ms), 느린
+        // ----------------------------------------------------------------
+
+        C_LEN_ORDER_NO: 4, // 입출고 예정번호 자릿수
+        C_LEN_INOUT_NO: 4, // 입출고 등록번호 자릿수
+        C_LEN_RTN_ORDER_NO: 4, // 반품 입출고 예정번호 자릿수
+        C_LEN_RTN_INOUT_NO: 4, // 반품 입출고 등록번호 자릿수
+        C_LEN_ETC_NO: 4, // 기타 입출고 번호 자릿수
+        C_LEN_MOVE_NO: 4, // 재고 이동번호 번호 자릿수
+        C_LEN_INVEST_NO: 4, // 재고 실사번호 번호 자릿수
+        C_LEN_PROCEED_NO: 4, // 유통가공 등록번호 자릿수
+        C_LEN_BATCH_NO: 4, // 출고차수, 배송차수 자릿수
+        C_LEN_DELIVERY_NO: 4, // 예외운송비 등록번호 자릿수
+        C_LEN_RECV_NO: 4, // EDI 수신번호 자릿수
+        C_LEN_SEND_NO: 6, // EDI 송신번호 자릿수
+        C_LEN_SEQ_NO: 6, // SEQ 자릿수
+
+        C_BASE_STATE: "00", // 기본 진행상태
+        C_BASE_INOUT_CD: "000", // 기본 입출고구분코드(이월기초재고, 가입고)
+        C_BASE_BATCH_NO: "000", // 기본 배송/출고차수
+        C_BASE_CENTER_CD: "*", // 기본 물류센터 코드, since 7.1.0
+        C_BASE_CARRIER_CD: "*", // 기본 운송사 코드, since 7.1.0
+        C_BASE_CUST_CD: "*", // 기본 고객사 코드, since 7.1.0
+        C_BASE_BU_CD: "*", // 기본 브랜드 코드, since 7.1.0
+        C_BASE_BRAND_CD: "*", // 기본 브랜드 코드, since 7.0.0
+        C_BASE_DEPART_CD: "*", // 기본 상품대분류코드, since 7.0.0
+        C_BASE_LINE_CD: "*", // 기본 상품중분류코드, since 7.0.0
+        C_BASE_CLASS_CD: "*", // 기본 상품소분류코드, since 7.0.0
+        C_BASE_ITEM_CD: "*", // 기본 상품코드, since 7.0.0
+        C_BASE_KEEP_DIV: "*", // 기본 보관구분, since 7.0.0
+        C_BASE_VENDOR_CD: "*", // 기본 공급처코드, since 7.0.0
+        C_BASE_ITEM_STATE: "A", // 기본 상품상태(정상품)
+        C_BASE_ITEM_STATE_X: "X", // 기본 상품상태(불량품), since 7.1.0
+        C_BASE_ITEM_LOT: "*", // 기본 LOT번호
+        C_BASE_AREA_CD: "000", // 기본 운송권역 코드
+        C_BASE_TRANS_ROUTE: 999, // 기본 운송루트
+        C_BASE_SHORTAGE_DIV: "01", // 기본 미출사유구분(재고부족)
+        C_BASE_CONTRACT_NO: "*", // 기본 계약번호
+        C_BASE_CELL_DIV: "*" // 기본 셀구분
+    };
+    $ND.setRedefineConsts(redefineConstProps);
+}
+
+/**
+ * 사이트별 Contents Customize<br>
+ * _Initialize 실행 전 호출 됨
+ * 
+ * @param contents
+ * 
+ * <pre>
+ * document    Content document object
+ * window      Conetnt window object
+ * </pre>
+ * 
+ * @returns
+ */
+function _OnCustomizeContents(contents) {
+
+    var $styGlobalFont, styGlobalFont;
+    // 모바일
+    if (contents.window.$(contents.document.body).hasClass("mobile")) {
+        // var fs = $.browser.mobile ? "10" : "9";
+        var fs = "9";
+        $styGlobalFont = contents.window.$("#styGlobalFont");
+        styGlobalFont = $styGlobalFont[0].innerHTML.replace("9pt", fs + "pt");
+        // Main일 경우 글꼴 조정
+        if (contents.window == top) {
+            styGlobalFont = styGlobalFont.replace(/(GulimChe)(.*)(, sans-serif)/, "$1$3$2 !important");
+        }
+        styGlobalFont += ".mobile input[type=button], .mobile .btnAction span {\n" //
+            + "    font-size: " + fs + "pt;\n" //
+            + "}";
+        $styGlobalFont[0].innerHTML = styGlobalFont;
+
+        // 레이아웃 고정값 조정
+        contents.window.$NC.G_LAYOUT.header = 30; // TitleBar Height
+        contents.window.$NC.G_LAYOUT.tabHeader = 36; // Tab Navigator Height
+        contents.window.$NC.G_LAYOUT.columnHeaderRowHeight = 28; // Grid Column Header Row Height
+        contents.window.$NC.G_LAYOUT.headerRowHeight = 28; // Grid Column Header Summary Row Height
+        contents.window.$NC.G_LAYOUT.dataRowHeight = 30; // Grid Data Row Height
+        contents.window.$NC.G_CHILDLAYOUT.minWidth = 300;
+        contents.window.$NC.G_CHILDLAYOUT.minHeight = 550;
+        contents.window.$NC.G_CHILDLAYOUT.nonClientHeight = 30;
+    }
+    // 데스크탑
+    else {
+        // 레이아웃 고정값 조정
+        contents.window.$NC.G_LAYOUT.header = 30; // TitleBar Height
+        contents.window.$NC.G_LAYOUT.tabHeader = 30; // Tab Navigator Height
+        contents.window.$NC.G_LAYOUT.columnHeaderRowHeight = 25; // Grid Column Header Row Height
+        contents.window.$NC.G_LAYOUT.headerRowHeight = 25; // Grid Column Header Summary Row Height
+        contents.window.$NC.G_LAYOUT.dataRowHeight = 22; // Grid Data Row Height
+    }
+}

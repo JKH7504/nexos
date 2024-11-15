@@ -1,0 +1,71 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC03040Q0
+    프로그램명         : 상차지시서출력
+    프로그램설명       : 상차지시서출력 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC03040Q0.css" /> -->
+<script src="js/LDC03040Q0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblOutbound_Date" class="lblCondition">출고일자</div>
+                    <input id="dtpQOutbound_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">차량 정보</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <div id="divSubViewDetail" style="border: none;">
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdDetail" class="lblTitle">배송처 정보</td>
+                        <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdDetail"></div>
+            </div>
+            <div>
+                <table class="ctrTitleBar">
+                    <tr>
+                        <td id="ctrTitle_grdSub" class="lblTitle">상품 정보</td>
+                        <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+                    </tr>
+                </table>
+                <div id="grdSub"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

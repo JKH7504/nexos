@@ -1,0 +1,107 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LCC01021P0
+    프로그램명         : 세트예정등록 팝업
+    프로그램설명       : 세트예정등록 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LCC01021P0.css" /> -->
+<script src="js/LCC01021P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblCenter_Cd_F" class="lblNormal">물류센터</div>
+                    <input id="edtCenter_Cd_F" class="edtDisplay" type="text" style="width: 170px;" />
+                </td>
+            <tr>
+                <td>
+                    <div id="lblPopup_Bu_Cd" class="lblNormal">사업부</div>
+                    <input id="edtBu_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 60px;" />
+                    <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 104px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_Date" class="lblKey">예정일자</div>
+                    <input id="dtpOrder_Date" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblOrder_No" class="lblNormal">입출고번호</div>
+                    <input id="edtOrder_No" class="edtNormal" type="text" disabled="disabled" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblSet_Item_Div" class="lblKey">세트작업구분</div>
+                    <div class="ctrGroupBox" style="width: 170px;">
+                        <input id="rgbSet_Proc_Div1" name="rgbSet_Proc_Div" class="rgbNormal" type="radio" value="1" checked="checked" style="width: 20px;" />
+                        구성
+                        <input id="rgbSet_Proc_Div2" name="rgbSet_Proc_Div" class="rgbNormal" type="radio" value="2" style="width: 20px;" />
+                        해체
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblInout_Cd" class="lblKey">입출고구분</div>
+                    <select id="cboInout_Cd" class="cboKey" style="width: 170px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblRemark1" class="lblNormal">비고</div>
+                    <input id="edtRemark1" class="edtNormal" type="text" maxlength="255" style="width: 170px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">세트상품정보</td>
+                <td class="styFillArea styRight">
+                    <input id="btnNewItem" class="btnImgNormal" type="button" value="추가" style="width: 60px;" />
+                    <input id="btnDeleteItem" class="btnImgCancel" type="button" value="삭제" style="width: 60px;" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <!-- 구성상품내역 -->
+    <div id="divSubView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdSub" class="lblTitle">구성상품정보</td>
+                <td id="ctrRows_grdSub" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdSub"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnSave" class="btnNormal" type="button" value="저장" style="width: 80px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

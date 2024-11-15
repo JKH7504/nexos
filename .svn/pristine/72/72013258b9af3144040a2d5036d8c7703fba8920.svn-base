@@ -1,0 +1,452 @@
+﻿/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : EDS01012P0
+ *  프로그램명         : 사업부송신관리복사 팝업
+ *  프로그램설명       : 사업부송신관리복사 팝업 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2021-09-14
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2021-09-14    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeFixedView: {
+            viewFirst: {
+                container: "#divLeftView",
+                grids: "#grdMaster"
+            },
+            viewSecond: {
+                container: "#divRightView"
+            },
+            viewType: "h",
+            viewFixed: 460
+        }
+    });
+
+    // 그리드 초기화
+    grdMasterInitialize();
+
+    // 버튼 클릭 이벤트 연결
+    $("#btnTo_Bu_Cd").click(showUserBuPopup);
+    $("#btnOk").click(_Save);
+    $("#btnCancel").click(onCancel);
+
+    $NC.setValueRadioGroup("#rgbCopy_Div", "1");
+    $NC.setVisible("#ctrRenameCopy", false);
+    $NC.setEnable("#cboCreate_Div");
+
+    // 복사구분 세팅
+    $NC.setInitComboData({
+        selector: "#cboCreate_Div",
+        codeField: "COMMON_CD",
+        nameField: "COMMON_NM",
+        data: [
+            {
+                COMMON_CD: "1",
+                COMMON_NM: $NC.getDisplayMsg("JS.EDS01012P0.002", "삭제 후 생성")
+            },
+            {
+                COMMON_CD: "2",
+                COMMON_NM: $NC.getDisplayMsg("JS.EDS01012P0.003", "미존재 수신정의만 생성")
+            }
+        ],
+        onComplete: function() {
+            $NC.setValue("#cboCreate_Div", "1");
+        }
+    });
+}
+
+/**
+ * 등록팝업 Open 시 호출 됨
+ */
+function _OnLoaded() {
+
+    $NC.setValue("#edtQBu_Cd", $NC.G_VAR.G_PARAMETER.P_BU_CD);
+    $NC.setValue("#edtQBu_Nm", $NC.G_VAR.G_PARAMETER.P_BU_NM);
+
+    _Inquiry();
+
+    $NC.setFocus("#edtTo_Bu_Cd");
+}
+
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * 조회
+ */
+function _Inquiry() {
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTER);
+
+    // 파라메터 세팅
+    G_GRDMASTER.queryParams = {
+        P_BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD
+    };
+    // 데이터 조회
+    $NC.serviceCall("/EDS01010E0/getDataSet.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+}
+
+/**
+ * 신규
+ */
+function _New() {
+
+}
+
+/**
+ * 저장
+ */
+function _Save() {
+
+    if (G_GRDMASTER.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.EDS01012P0.004", "조회 후 처리하십시오."));
+        return;
+    }
+
+    if (G_GRDMASTER.view.getEditorLock().isActive()) {
+        G_GRDMASTER.view.getEditorLock().commitCurrentEdit();
+    }
+
+    var TO_BU_CD = $NC.getValue("#edtTo_Bu_Cd");
+    if ($NC.isNull(TO_BU_CD)) {
+        alert($NC.getDisplayMsg("JS.EDS01012P0.005", "사업부를 입력하십시오."));
+        $NC.setFocus("#edtTo_Bu_Cd");
+        return;
+    }
+
+    if (TO_BU_CD == $NC.G_VAR.G_PARAMETER.P_BU_CD) {
+        alert($NC.getDisplayMsg("JS.EDS01012P0.006", "기준 사업부와 대상 사업부가 같습니다. 다른 사업부를 선택하십시오."));
+        $NC.setFocus("#edtTo_Bu_Cd");
+        return;
+    }
+
+    var COPY_DIV = $NC.getValueRadioGroup("rgbCopy_Div");
+    var checkedData;
+    var NEW_DEFINE_NO = null;
+    var NEW_DEFINE_NM = null;
+    // 일반 복사
+    if (COPY_DIV == 1) {
+        // 선택 데이터 가져오기
+        checkedData = $NC.getGridCheckedValues(G_GRDMASTER, {
+            valueColumns: function(rowData) {
+                return rowData.EDI_DIV + ";" + rowData.DEFINE_NO;
+            }
+        });
+
+        if (checkedData.checkedCount == 0) {
+            alert($NC.getDisplayMsg("JS.EDS01012P0.007", "복사할 수신정의를 선택하십시오."));
+            return;
+        }
+
+        if (!confirm($NC.getDisplayMsg("JS.EDS01012P0.008", "선택한 수신정의 데이터를 복사하시겠습니까?"))) {
+            return;
+        }
+    }
+    // 번호변경 복사
+    else {
+        var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+        if ($NC.isNull(rowData)) {
+            alert($NC.getDisplayMsg("JS.EDS01012P0.009", "복사할 정의번호를 선택하십시오."));
+            return;
+        }
+
+        NEW_DEFINE_NO = $NC.getValue("#edtDefine_No");
+        if ($NC.isNull(NEW_DEFINE_NO)) {
+            alert($NC.getDisplayMsg("JS.EDS01012P0.010", "정의번호를 입력하십시오."));
+            $NC.setFocus("#edtDefine_No");
+            return;
+        }
+
+        NEW_DEFINE_NM = $NC.getValue("#edtDefine_Nm");
+        if ($NC.isNull(NEW_DEFINE_NM)) {
+            alert($NC.getDisplayMsg("JS.EDS01012P0.011", "정의명칭을 입력하십시오."));
+            $NC.setFocus("#edtDefine_No");
+            return;
+        }
+
+        // 명칭변경일 경우 체크 데이터에 기존정의번호와 신규정의번호 같이 추가
+        checkedData = {
+            values: [
+                rowData.EDI_DIV + ";" + rowData.DEFINE_NO + ";" + NEW_DEFINE_NO
+            ]
+        };
+
+        if (!confirm($NC.getDisplayMsg("JS.EDS01012P0.012", "수신구분: " + rowData.EDI_DIV + "\n수신정의번호: " + rowData.DEFINE_NO
+            + "\n\n해당 수신정의를 정의번호 변경 후 복사하시겠습니까?", rowData.EDI_DIV, rowData.DEFINE_NO))) {
+            return;
+        }
+    }
+
+    var CREATE_DIV = $NC.getValue("#cboCreate_Div");
+
+    $NC.serviceCall("/EDS01010E0/callEMDefineSendCopy.do", {
+        P_BU_CD: $NC.G_VAR.G_PARAMETER.P_BU_CD,
+        P_TO_BU_CD: TO_BU_CD,
+        P_COPY_DIV: COPY_DIV,
+        P_CREATE_DIV: CREATE_DIV,
+        P_NEW_DEFINE_NO: NEW_DEFINE_NO,
+        P_NEW_DEFINE_NM: NEW_DEFINE_NM,
+        P_CHECKED_VALUE: $NC.toJoin(checkedData.values),
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave);
+}
+
+/**
+ * 삭제
+ */
+function _Delete() {
+
+}
+
+/**
+ * 닫기,취소버튼 클릭 이벤트
+ */
+function onCancel() {
+
+    $NC.setPopupCloseAction($ND.C_CANCEL);
+    $NC.onPopupClose();
+}
+
+/**
+ * 저장,확인버튼 클릭 이벤트
+ */
+function onClose() {
+
+    $NC.setPopupCloseAction($ND.C_OK);
+    $NC.onPopupClose();
+}
+
+/**
+ * Input Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnInputChange(e, view, val) {
+
+    var id = view.prop("id").substr(3).toUpperCase();
+    switch (id) {
+        case "TO_BU_CD":
+            if (val == $ND.C_BASE_BU_CD) {
+                $NC.setValue("#edtTo_Bu_Nm", $ND.C_BASE_NM);
+                break;
+            } else {
+                $NP.onUserBuChange(val, {
+                    P_USER_ID: $NC.G_USERINFO.USER_ID,
+                    P_BU_CD: val
+                }, onUserBuPopup, {
+                    addBase: $ND.C_BASE_BU_CD
+                });
+                return;
+            }
+        case "COPY_DIV1":
+        case "COPY_DIV2":
+            if (val == "1") {
+                $NC.setVisible("#ctrRenameCopy", false);
+                $NC.setEnable("#cboCreate_Div");
+            } else {
+                $NC.setVisible("#ctrRenameCopy");
+                $NC.setEnable("#cboCreate_Div", false);
+                $NC.setValue("#cboCreate_Div", "1");
+            }
+            $NC.setFocus("#edtTo_Bu_Cd");
+            break;
+    }
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [ ];
+    $NC.setGridColumn(columns, {
+        id: "CHECK_YN",
+        field: "CHECK_YN",
+        resizable: false,
+        cssClass: "styCenter",
+        formatter: Slick.Formatters.CheckBox,
+        editorOptions: {
+            valueChecked: $ND.C_YES,
+            valueUnChecked: $ND.C_NO
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "EDI_DIV",
+        field: "EDI_DIV",
+        name: "송신구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "EDI_DIV_D",
+        field: "EDI_DIV_D",
+        name: "송신구분명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DEFINE_NO",
+        field: "DEFINE_NO",
+        name: "송신정의번호"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DEFINE_NM",
+        field: "DEFINE_NM",
+        name: "송신정의명"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdMasterInitialize() {
+
+    var options = {
+        editable: false,
+        autoEdit: false,
+        frozenColumn: 1
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "EDS01010E0.RS_MASTER",
+        sortCol: "DEFINE_NO",
+        gridOptions: options
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+    G_GRDMASTER.view.onHeaderClick.subscribe(grdMasterOnHeaderClick);
+    $NC.setGridColumnHeaderCheckBox(G_GRDMASTER, "CHECK_YN");
+}
+
+function grdMasterOnHeaderClick(e, args) {
+
+    switch (args.column.id) {
+        case "CHECK_YN":
+            $NC.onGridColumnHeaderCheckBoxChange(G_GRDMASTER, e, args);
+            break;
+    }
+}
+
+function grdMasterOnClick(e, args) {
+
+    var columnId = G_GRDMASTER.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "CHECK_YN":
+            $NC.onGridCheckBoxEditorChange(G_GRDMASTER, e, args);
+            break;
+    }
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDMASTER.data.getItem(row);
+
+    // 정의 명칭만 세팅
+    $NC.setValue("#edtDefine_Nm", rowData.DEFINE_NM);
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+/**
+ * 검색조건의 사업부 검색 이미지 클릭
+ */
+function showUserBuPopup() {
+
+    $NP.showUserBuPopup({
+        queryParams: {
+            P_USER_ID: $NC.G_USERINFO.USER_ID,
+            P_BU_CD: $ND.C_ALL
+        },
+        addBase: $ND.C_BASE_BU_CD
+    }, onUserBuPopup, function() {
+        $NC.setFocus("#edtQTo_Bu_Cd", true);
+    });
+}
+
+function onGetMaster(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTER, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDMASTER, [
+        "EDI_DIV",
+        "DEFINE_NO"
+    ], true);
+}
+
+/**
+ * 사업부 검색 결과 / 검색 실패 했을 경우(not found)
+ */
+function onUserBuPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtTo_Bu_Cd", resultInfo.BU_CD);
+        $NC.setValue("#edtTo_Bu_Nm", resultInfo.BU_NM);
+    } else {
+        $NC.setValue("#edtTo_Bu_Cd");
+        $NC.setValue("#edtTo_Bu_Nm");
+        $NC.setFocus("#edtTo_Bu_Cd", true);
+    }
+}
+
+/**
+ * 저장에 성공했을 경우의 처리
+ * 
+ * @param ajaxData
+ */
+
+function onSave(ajaxData) {
+    onClose();
+}
+
+/**
+ * Grid에서 CheckBox Formatter를 사용할 경우 CheckBox Click 이벤트 처리
+ * 
+ * @param e
+ * @param view
+ *        대상 Object
+ * @param args
+ *        grid, row, cell, val
+ */
+function _OnGridCheckBoxFormatterClick(e, view, args) {
+
+    var grdObject = $NC.getGridObject(args.grid);
+    if (!grdObject.isValid) {
+        return;
+    }
+
+    var columnId = grdObject.view.getColumnId(args.cell);
+    if ($NC.isNull(columnId)) {
+        return;
+    }
+
+    switch (columnId) {
+        case "CHECK_YN":
+            $NC.onGridCheckBoxFormatterChange(grdObject, e, args, true);
+            break;
+    }
+}

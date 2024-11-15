@@ -1,0 +1,58 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC05010E0
+    프로그램명         : 월지입료관리
+    프로그램설명       : 월지입료관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2020-10-07
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2020-10-07    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC05010E0.css" /> -->
+<script src="js/LDC05010E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td id="divQCenter_Cd">
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQAdjust_Month" class="lblCondition">정산월</div>
+                    <input id="mtpQAdjust_Month" class="mtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td style="width: 100%; text-align: right;">
+                    <input id="btnBwClosingMonth" class="btnImgNormal" type="button" value="월마감 취소" style="width: 100px;" />
+                    <input id="btnIntermediateClosing" class="btnImgPopup" type="button" value="운행일지 중간마감" style="width: 140px;" />
+                    <input id="btnCreateData" class="btnImgPopup" type="button" value="기초데이터 생성" style="width: 125px;" />
+                </td>
+            <tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">월지입료관리 내역</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

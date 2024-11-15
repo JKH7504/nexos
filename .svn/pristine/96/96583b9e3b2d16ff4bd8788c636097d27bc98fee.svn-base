@@ -1,0 +1,103 @@
+<!--
+    ==================================================================================================================================================
+    main include
+      <div id="ctrExtraView" class="ctrExtra">
+    ==================================================================================================================================================
+ -->
+<!-- 단위화면 출력물 목록 -->
+<div id=ctrReportLayer class="ctrTopOverlay" style="display: none;">
+    <div id="grdReport"></div>
+</div>
+<!-- 메시지 팝업 -->
+<div id="ctrPopupMessageLayer" class="ctrPopupMessage" tabindex="1"></div>
+<!-- 파일 업/다운로드 -->
+<div id="ctrFileView" style="position: absolute; top: -100000px;">
+    <form id="frmFile" name="frmFile">
+        <input id="P_UPLOAD_FILE" name="P_UPLOAD_FILE" class="edtHiddenFile" type="file">
+    </form>
+    <iframe id="ifmFile" name="ifmFile" src="about:blank" style="display: none;"></iframe>
+</div>
+<div id="ctrContextMenuLayer" tabindex="1"></div>
+<!-- 데이터 복사 레이어 -->
+<div id="ctrCopyGridDataLayer" class="ctrTopPopupOverlay" tabindex="1" style="display: none;">
+    <div id="ctrCopyGridDataView" class="ctrCopyGridData ctrTopOverlay">
+        <table class="ctrTitleBar gray" style="cursor: move;">
+            <tr>
+                <td class="lblTitle">데이터 검색 및 복사</td>
+            </tr>
+        </table>
+        <div class="ctrGroupContent" style="margin: 0; padding: 15px; border-color: transparent;">
+            <div id="lblCopyComments" style="margin-bottom: 15px; font-weight: bold;"></div>
+            <div style="text-align: right;">
+                <input id="chkCopyOption" name="chkCopyOption" class="chkNormal" type="checkbox" checked="checked">
+                전체 일치
+            </div>
+            <div id="lblCopyColumn" style="margin-bottom: 5px;"></div>
+            <textarea id="edtCopyValue" class="edtNormal" style="height: 50px;"></textarea>
+        </div>
+    </div>
+</div>
+<!-- 엑셀다운로드 사유 선택 레이어 -->
+<div id="ctrPIExcelDownloadLayer" class="ctrTopPopupOverlay" tabindex="1" style="display: none;">
+    <div id="ctrPIExcelDownload" class="ctrCopyGridData ctrTopOverlay">
+        <table class="ctrTitleBar gray" style="cursor: move;">
+            <tr>
+                <td class="lblTitle">엑셀 다운로드</td>
+            </tr>
+        </table>
+        <div class="ctrGroupContent" style="margin: 0; padding: 10px; border-color: transparent;">
+            <div class="ctrInner">
+                <div class="ctrGroupRow">
+                    <div class="lblDisplay" style="font-weight: bold;">엑셀 다운로드 사유를 선택하십시오.</div>
+                </div>
+                <div class="ctrGroupRow" style="margin-top: 10px;">
+                    <div id="lblPI_Excel_Download_Cause_Div" class="lblKey">사유구분</div>
+                    <select id="cboPI_Excel_Download_Cause_Div" class="cboKey" style="width: 250px;"></select>
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblPI_Excel_Download_Cause_Comment" class="lblNormal">사유내역</div>
+                    <input id="edtPI_Excel_Download_Cause_Comment" class="edtNormal" style="width: 250px;" />
+                </div>
+                <div class="ctrGroupRow" style="margin-top: 10px; text-align: right;">
+                    <input id="btnPIExcelDownload" class="btnNormal" type="button" value="다운로드" style="width: 80px;" />
+                    <input id="btnPIExcelDownloadCancel" class="btnNormal" type="button" value="취소" style="width: 80px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 데이터 조회 메시지 표시 -->
+<div id="ctrProcessingLayer" class="ctrLoadingOverlay" tabindex="1" style="display: none;">
+    <div id="ctrProcessingStyle1" class="ctrProcessingStyle1" style="display: none;">
+        <span class="styIcoLoading"></span>
+        <div class="ctrLoadingData lblProcessing">데이터를 가져오는 중 입니다...</div>
+    </div>
+    <div id="ctrProcessingStyle2" class="ctrOuter" style="display: none;">
+        <div class="ctrInner">
+            <div class="ctrContent progress">
+                <div id="pgbProcessing" class="ctrProgress"></div>
+                <div class="progress lblProcessing">데이터를 처리하고 있습니다. 잠시만 기다려 주십시오...</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Loading Message -->
+<div id="ctrLoadingLayer" class="ctrLoadingOverlay" tabindex="1">
+    <div class="ctrOuter">
+        <div class="ctrInner">
+            <div class="ctrContent">Loading...</div>
+        </div>
+    </div>
+</div>
+<!-- Printing Message -->
+<div id="ctrPrintingLayer" class="ctrLoadingOverlay" tabindex="1" style="display: none;">
+    <div class="ctrOuter">
+        <div class="ctrInner">
+            <div class="ctrContent">출력 중 입니다. 잠시만 기다려 주십시오...</div>
+        </div>
+    </div>
+</div>
+<!-- 로그인 Dialog -->
+<div id="ctrLoginLayer" style="display: none;">
+    <!-- ${NEXOS_INCLUDE} ${include/main_ctrLoginLayer.html} -->
+</div>

@@ -1,0 +1,70 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC09012P0
+    프로그램명         : 작업일자생성 팝업
+    프로그램설명       : 작업일자생성 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC09012P0.css" /> -->
+<script src="js/CMC09012P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_Holiday" class="lblTitle">매주 휴일인 요일 체크</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblSunDay" class="lblKey">일요일</div>
+                <input id="chkSunDay" name="chkSunDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblMonDay" class="lblKey">월요일</div>
+                <input id="chkMonDay" name="chkMonDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblTueDay" class="lblKey">화요일</div>
+                <input id="chkTueDay" name="chkTueDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblWedDay" class="lblKey">수요일</div>
+                <input id="chkWedDay" name="chkWedDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblThuDay" class="lblKey">목요일</div>
+                <input id="chkThuDay" name="chkThuDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblFriDay" class="lblKey">금요일</div>
+                <input id="chkFriDay" name="chkFriDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblSatDay" class="lblKey">토요일</div>
+                <input id="chkSatDay" name="chkSatDay" class="chkNormal" type="checkbox" value="1" />
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnOk" class="btnNormal" type="button" value="작업일자 생성" style="width: 100px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC02020E0
+    프로그램명         : 차량관리
+    프로그램설명       : 차량관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC02020E0.css" /> -->
+<script src="js/CMC02020E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Carrier_Cd" class="lblCondition">운송사</div>
+                    <input id="edtQCarrier_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQCarrier_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQDeal_Div" class="lblCondition">거래구분</div>
+                    <div class="ctrGroupBox">
+                        <input id="chkQDeal_Div1" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="1" />
+                        거래진행
+                        <input id="chkQDeal_Div2" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="2" />
+                        거래종료
+                        <input id="chkQDeal_Div3" name="chkQDeal_Div" class="chkNormal" type="checkbox" value="3" />
+                        조회종료
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">차량정보</td>
+                <td>
+                    <input id="btnEntryCoord" class="btnImgPopup" type="button" value="좌표일괄등록" style="width: 105px;" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <!-- Tab Handler -->
+        <ul>
+            <li id="divTab1"><a href="#divT1TabSheetView">기본정보</a></li>
+            <li id="divTab2"><a href="#divT2TabSheetView">상세정보</a></li>
+        </ul>
+        <!-- 기본정보 -->
+        <div id="divT1TabSheetView" class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblCar_Cd" class="lblKey alignInContent">차량코드</div>
+                <input id="edtCar_Cd" class="edtKey" type="text" maxlength="30" style="width: 110px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblCar_Nm" class="lblKey alignInContent">차량명</div>
+                <input id="edtCar_Nm" class="edtKey" type="text" maxlength="50" style="width: 330px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblCar_Div" class="lblNormal alignInContent">차량구분</div>
+                <select id="cboCar_Div" class="cboNormal" style="width: 150px;"></select>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblPopup_Carrier_Cd" class="lblNormal alignInContent">운송사</div>
+                <input id="edtCarrier_Cd" class="edtNormal" type="text" style="width: 110px;" />
+                <input id="btnCarrier_Cd" class="btnIcoPopup" type="button" />
+                <input id="edtCarrier_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 190px;" />
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Car" class="lblGroupTitle">차량정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblTrans_Div" class="lblKey">운송구분</div>
+                        <select id="cboTrans_Div" class="cboKey" style="width: 150px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Ton_Div" class="lblKey">차량톤수</div>
+                        <select id="cboCar_Ton_Div" class="cboKey" style="width: 150px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Keep_Div" class="lblKey">차량보관유형</div>
+                        <select id="cboCar_Keep_Div" class="cboKey" style="width: 150px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Kind_Div" class="lblNormal">차종구분</div>
+                        <select id="cboCar_Kind_Div" class="cboNormal" style="width: 150px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCapacity_Cbm" class="lblNormal">적재용적</div>
+                        <input id="edtCapacity_Cbm" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">㎥</div>
+                        <div id="lblCapacity_Box" class="lblNormal">적재박스수</div>
+                        <input id="edtCapacity_Box" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">Box</div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCapacity_Weight" class="lblNormal">적재중량</div>
+                        <input id="edtCapacity_Weight" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">㎏</div>
+                        <div id="lblCapacity_Width" class="lblNormal">적재가능너비</div>
+                        <input id="edtCapacity_Width" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">㎜</div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCapacity_Length" class="lblNormal">적재가능길이</div>
+                        <input id="edtCapacity_Length" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">㎜</div>
+                        <div id="lblCapacity_Height" class="lblNormal">적재가능높이</div>
+                        <input id="edtCapacity_Height" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">㎜</div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblFuel_Rate" class="lblNormal">연비</div>
+                        <input id="edtFuel_Rate" class="edtNormal" type="text" style="width: 80px;" />
+                        <div class="lblDisplay">㎞/ℓ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Driver" class="lblGroupTitle">운전자정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblDriver_Nm" class="lblNormal">성명</div>
+                        <input id="edtDriver_Nm" class="edtNormal" type="text" style="width: 110px;" />
+                        <div id="lblDriver_Hp" class="lblNormal">휴대전화</div>
+                        <input id="edtDriver_Hp" class="edtNormal" type="text" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblWorking_STime" class="lblNormal">근무시작시각</div>
+                        <input id="dtpWorking_STime" class="dtpNormal" type="text" style="width: 110px;" />
+                        <div id="lblWorking_ETime" class="lblNormal">근무마감시각</div>
+                        <input id="dtpWorking_ETime" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Address" class="lblGroupTitle">주소정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblPopup_Zip_Cd" class="lblNormal">우편번호</div>
+                        <input id="edtZip_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                        <input id="btnZip_Cd" class="btnIcoPopup" type="button" />
+                        <input id="btnZip_Cd_Clear" class="btnIcoCancel" type="button" />
+                        <input id="btnGetCoord" class="btnImgNormal" type="button" value="좌표입력" style="width: 80px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblAddr_Basic" class="lblNormal">기본주소</div>
+                        <input id="edtAddr_Basic" class="edtDisplay" type="text" disabled="disabled" style="width: 323px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblAddr_Detail" class="lblNormal">상세주소</div>
+                        <input id="edtAddr_Detail" class="edtNormal" type="text" style="width: 323px;" />
+                    </div>
+                    <div id="coordGroupRow" class="ctrGroupRow">
+                        <div id="lblGeocode_Lat" class="lblNormal">위도</div>
+                        <input id="edtGeocode_Lat" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                        <div id="lblGeocode_Lng" class="lblNormal">경도</div>
+                        <input id="edtGeocode_Lng" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Management" class="lblGroupTitle">관리정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblDeal_Div" class="lblKey">거래구분</div>
+                        <div class="ctrGroupBox" style="width: 323px;">
+                            <input id="rgbDeal_Div1" name="rgbDeal_Div" class="rgbNormal" type="radio" value="1" />
+                            거래진행
+                            <input id="rgbDeal_Div2" name="rgbDeal_Div" class="rgbNormal" type="radio" value="2" />
+                            거래종료
+                            <input id="rgbDeal_Div3" name="rgbDeal_Div" class="rgbNormal" type="radio" value="3" />
+                            조회종료
+                        </div>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblOpen_Date" class="lblNormal">거래일자</div>
+                        <input id="dtpOpen_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                        <div id="lblClose_Date" class="lblNormal">종료일자</div>
+                        <input id="dtpClose_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblRemark1" class="lblNormal alignInContent">비고</div>
+                <input id="edtRemark1" class="edtNormal" type="text" style="width: 330px;" />
+            </div>
+        </div>
+        <div id="divT2TabSheetView" class="ctrInner">
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Car" class="lblGroupTitle">차량보험정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblInsurance_Div" class="lblNormal">차량보험구분</div>
+                        <select id="cboInsurance_Div" class="cboNormal" style="width: 150px;"></select>
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblInsurance_Expire_Date" class="lblNormal">보험만기일자</div>
+                        <input id="dtpInsurance_Expire_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblLoad_Insurance_Yn" class="lblNormal">적재물배상책임보험가입여부</div>
+                        <input id="chkLoad_Insurance_Yn" name="chkLoad_Insurance_Yn" class="chkNormal" type="checkbox" />
+                    </div>
+                </div>
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_Car" class="lblGroupTitle">차량기타정보</div>
+                <div class="ctrGroupContent">
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Year" class="lblNormal">차량연식</div>
+                        <input id="dtpCar_Year" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Made_Date" class="lblNormal">차량출고일자</div>
+                        <input id="dtpCar_Made_Date" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblHipass_Yn" class="lblNormal">하이패스유무</div>
+                        <input id="chkHipass_Yn" name="chkHipass_Yn" class="chkNormal" type="checkbox" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Paint_Yn" class="lblNormal">차량도색여부</div>
+                        <input id="chkCar_Paint_Yn" name="chkCar_Paint_Yn" class="chkNormal" type="checkbox" />
+                    </div>
+                    <div class="ctrGroupRow">
+                        <div id="lblCar_Paint_Year" class="lblNormal">차량도색연도</div>
+                        <input id="dtpCar_Paint_Year" class="dtpNormal" type="text" style="width: 110px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CMC05070Q0
+    프로그램명         : 상품바코드라벨출력
+    프로그램설명       : 상품바코드라벨출력 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-11-03
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-11-03    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CMC05070Q0.css" /> -->
+<script src="js/CMC05070Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQPopup_Cust_Cd" class="lblCondition">고객사</div>
+                    <input id="edtQCust_Cd" class="edtKey" type="text" style="width: 60px;" />
+                    <input id="btnQCust_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQCust_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQPopup_Brand_Cd" class="lblCondition">브랜드</div>
+                    <input id="edtQBrand_Cd" class="edtNormal" type="text" style="width: 60px;" />
+                    <input id="btnQBrand_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBrand_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQItem_Cd" class="lblCondition">상품코드</div>
+                    <input id="edtQItem_Cd" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+                <td>
+                    <div id="lblQItem_Nm" class="lblCondition">상품명</div>
+                    <input id="edtQItem_Nm" class="edtNormal" type="text" style="width: 210px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <div>
+            <div id="ctrAdditional_grdMaster" class="ctrAdditional top">
+                <div id="dspPrint_Option" class="lblGroupTitle" style="width: 110px;">출력옵션</div>
+                <div class="ctrGroupContent">
+                    <table class="ctrInner">
+                        <tr>
+                            <td>
+                                <input id="chkItem_Nm_Yn" name="chkItem_Nm_Yn" class="chkNormal" type="checkbox" />
+                                상품명포함여부
+                            </td>
+                            <td>
+                                <input id="chkPrint_Date_Yn" name="chkPrint_Date_Yn" class="chkNormal" type="checkbox" />
+                                출력일자포함여부
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">상품</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+    </div>
+</body>
+</html>

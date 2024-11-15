@@ -1,0 +1,111 @@
+package nexos.dao.lo;
+
+import java.util.Map;
+
+public interface LOB02010E0DAO {
+
+    /**
+     * 출고등록 마스터/디테일 저장 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void save(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고등록(개별) 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveEntry(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고등록(일괄) 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveEntryBT(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고차수 업데이트
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void updateOutboundBatch(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고지시 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveDirections(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고확정 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveConfirm(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고확정 - 유통구분, 직송여부변경
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveConfirmData(Map<String, Object> params) throws Exception;
+
+    /**
+     * 입고등록 디테일 저장 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveDetail(Map<String, Object> params) throws Exception;
+
+    /**
+     * 배송완료 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void saveDelivery(Map<String, Object> params) throws Exception;
+
+    /**
+     * 거래명세서일자 수정 처리
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void callInoutDateUpdate(Map<String, Object> params) throws Exception;
+
+    /**
+     * 출고차수 채번
+     */
+    Map<String, Object> getOutboundBatch(Map<String, Object> params);
+
+    /**
+     * 운송차수 채번
+     */
+    Map<String, Object> getDeliveryBatch(Map<String, Object> params);
+
+    /**
+     * 일마감 여부 체크
+     */
+    Map<String, Object> getClosingDailyCheck(Map<String, Object> params);
+}

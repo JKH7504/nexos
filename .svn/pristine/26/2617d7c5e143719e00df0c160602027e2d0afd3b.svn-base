@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 운송사관리 화면
+  // Author : ASETEC
+  // Date : 2016-06-29
+  // Description
+  // 운송사관리 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('CMC02050E0' ,'CMCARRIER') AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="CMC02050E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="CMC02050E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - CMC02050E0.RS_MASTER -->
+  <select id="RS_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=CMC02050E0_VIRTUALMAP} = call CMC02050E0.RS_MASTER
+      (#{P_DEAL_DIV1               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV2               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DEAL_DIV3               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CMC02050E0.RS_MASTER -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- [S] - INSERT_CMCARRIER [운송사마스터] -->
+  <insert id="INSERT_CMCARRIER" parameterType="hashmap">
+    INSERT INTO CMCARRIER
+               (
+                CARRIER_CD
+               <if test="P_CARRIER_NM              != null and P_CARRIER_NM              != ''">,CARRIER_NM                  </if>
+               <if test="P_CARRIER_FULL_NM         != null and P_CARRIER_FULL_NM         != ''">,CARRIER_FULL_NM             </if>
+               <if test="P_CARRIER_DIV             != null and P_CARRIER_DIV             != ''">,CARRIER_DIV                 </if>
+               <if test="P_BUSINESS_NO             != null and P_BUSINESS_NO             != ''">,BUSINESS_NO                 </if>
+               <if test="P_CEO_NM                  != null and P_CEO_NM                  != ''">,CEO_NM                      </if>
+               <if test="P_BUSINESS_KIND           != null and P_BUSINESS_KIND           != ''">,BUSINESS_KIND               </if>
+               <if test="P_BUSINESS_TYPE           != null and P_BUSINESS_TYPE           != ''">,BUSINESS_TYPE               </if>
+               <if test="P_IDENTITY_NO             != null and P_IDENTITY_NO             != ''">,IDENTITY_NO                 </if>
+               <if test="P_ZIP_CD                  != null and P_ZIP_CD                  != ''">,ZIP_CD                      </if>
+               <if test="P_ADDR_BASIC              != null and P_ADDR_BASIC              != ''">,ADDR_BASIC                  </if>
+               <if test="P_ADDR_DETAIL             != null and P_ADDR_DETAIL             != ''">,ADDR_DETAIL                 </if>
+               <if test="P_TEL_NO                  != null and P_TEL_NO                  != ''">,TEL_NO                      </if>
+               <if test="P_FAX_NO                  != null and P_FAX_NO                  != ''">,FAX_NO                      </if>
+               <if test="P_CHARGE_NM               != null and P_CHARGE_NM               != ''">,CHARGE_NM                   </if>
+               <if test="P_CHARGE_DUTY             != null and P_CHARGE_DUTY             != ''">,CHARGE_DUTY                 </if>
+               <if test="P_CHARGE_TEL              != null and P_CHARGE_TEL              != ''">,CHARGE_TEL                  </if>
+               <if test="P_CHARGE_HP               != null and P_CHARGE_HP               != ''">,CHARGE_HP                   </if>
+               <if test="P_CHARGE_EMAIL            != null and P_CHARGE_EMAIL            != ''">,CHARGE_EMAIL                </if>
+               <if test="P_MANAGER_ID              != null and P_MANAGER_ID              != ''">,MANAGER_ID                  </if>
+               <if test="P_DEAL_DIV                != null and P_DEAL_DIV                != ''">,DEAL_DIV                    </if>
+               <if test="P_OPEN_DATE               != null and P_OPEN_DATE               != ''">,OPEN_DATE                   </if>
+               <if test="P_CLOSE_DATE              != null and P_CLOSE_DATE              != ''">,CLOSE_DATE                  </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,REG_USER_ID                 </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">,REG_DATETIME                </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_CARRIER_CD}
+               <if test="P_CARRIER_NM              != null and P_CARRIER_NM              != ''">,#{P_CARRIER_NM}                </if>
+               <if test="P_CARRIER_FULL_NM         != null and P_CARRIER_FULL_NM         != ''">,#{P_CARRIER_FULL_NM}           </if>
+               <if test="P_CARRIER_DIV             != null and P_CARRIER_DIV             != ''">,#{P_CARRIER_DIV}               </if>
+               <if test="P_BUSINESS_NO             != null and P_BUSINESS_NO             != ''">,#{P_BUSINESS_NO}               </if>
+               <if test="P_CEO_NM                  != null and P_CEO_NM                  != ''">,#{P_CEO_NM}                    </if>
+               <if test="P_BUSINESS_KIND           != null and P_BUSINESS_KIND           != ''">,#{P_BUSINESS_KIND}             </if>
+               <if test="P_BUSINESS_TYPE           != null and P_BUSINESS_TYPE           != ''">,#{P_BUSINESS_TYPE}             </if>
+               <if test="P_IDENTITY_NO             != null and P_IDENTITY_NO             != ''">,#{P_IDENTITY_NO}               </if>
+               <if test="P_ZIP_CD                  != null and P_ZIP_CD                  != ''">,#{P_ZIP_CD}                    </if>
+               <if test="P_ADDR_BASIC              != null and P_ADDR_BASIC              != ''">,#{P_ADDR_BASIC}                </if>
+               <if test="P_ADDR_DETAIL             != null and P_ADDR_DETAIL             != ''">,#{P_ADDR_DETAIL}               </if>
+               <if test="P_TEL_NO                  != null and P_TEL_NO                  != ''">,#{P_TEL_NO}                    </if>
+               <if test="P_FAX_NO                  != null and P_FAX_NO                  != ''">,#{P_FAX_NO}                    </if>
+               <if test="P_CHARGE_NM               != null and P_CHARGE_NM               != ''">,#{P_CHARGE_NM}                 </if>
+               <if test="P_CHARGE_DUTY             != null and P_CHARGE_DUTY             != ''">,#{P_CHARGE_DUTY}               </if>
+               <if test="P_CHARGE_TEL              != null and P_CHARGE_TEL              != ''">,WF.GET_ENCSTR(#{P_CHARGE_TEL}) </if>
+               <if test="P_CHARGE_HP               != null and P_CHARGE_HP               != ''">,WF.GET_ENCSTR(#{P_CHARGE_HP})  </if>
+               <if test="P_CHARGE_EMAIL            != null and P_CHARGE_EMAIL            != ''">,#{P_CHARGE_EMAIL}              </if>
+               <if test="P_MANAGER_ID              != null and P_MANAGER_ID              != ''">,#{P_MANAGER_ID}                </if>
+               <if test="P_DEAL_DIV                != null and P_DEAL_DIV                != ''">,#{P_DEAL_DIV}                  </if>
+               <if test="P_OPEN_DATE               != null and P_OPEN_DATE               != ''">,#{P_OPEN_DATE}                 </if>
+               <if test="P_CLOSE_DATE              != null and P_CLOSE_DATE              != ''">,#{P_CLOSE_DATE}                </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                   </if>
+               <if test="P_REG_USER_ID             != null and P_REG_USER_ID             != ''">,#{P_REG_USER_ID}               </if>
+               <if test="P_REG_DATETIME            != null and P_REG_DATETIME            != ''">
+               ,DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_CMCARRIER [운송사마스터] -->
+
+
+  <!-- [S] - UPDATE_CMCARRIER [운송사마스터] -->
+  <update id="UPDATE_CMCARRIER" parameterType="hashmap">
+    UPDATE CMCARRIER
+       SET LAST_USER_ID             = #{P_USER_ID}
+          ,LAST_DATETIME            = SYSDATE
+          <if test="P_CARRIER_NM              != null">,CARRIER_NM               = #{P_CARRIER_NM}                </if>
+          <if test="P_CARRIER_FULL_NM         != null">,CARRIER_FULL_NM          = #{P_CARRIER_FULL_NM}           </if>
+          <if test="P_CARRIER_DIV             != null">,CARRIER_DIV              = #{P_CARRIER_DIV}               </if>
+          <if test="P_BUSINESS_NO             != null">,BUSINESS_NO              = #{P_BUSINESS_NO}               </if>
+          <if test="P_CEO_NM                  != null">,CEO_NM                   = #{P_CEO_NM}                    </if>
+          <if test="P_BUSINESS_KIND           != null">,BUSINESS_KIND            = #{P_BUSINESS_KIND}             </if>
+          <if test="P_BUSINESS_TYPE           != null">,BUSINESS_TYPE            = #{P_BUSINESS_TYPE}             </if>
+          <if test="P_IDENTITY_NO             != null">,IDENTITY_NO              = #{P_IDENTITY_NO}               </if>
+          <if test="P_ZIP_CD                  != null">,ZIP_CD                   = #{P_ZIP_CD}                    </if>
+          <if test="P_ADDR_BASIC              != null">,ADDR_BASIC               = #{P_ADDR_BASIC}                </if>
+          <if test="P_ADDR_DETAIL             != null">,ADDR_DETAIL              = #{P_ADDR_DETAIL}               </if>
+          <if test="P_TEL_NO                  != null">,TEL_NO                   = #{P_TEL_NO}                    </if>
+          <if test="P_FAX_NO                  != null">,FAX_NO                   = #{P_FAX_NO}                    </if>
+          <if test="P_CHARGE_NM               != null">,CHARGE_NM                = #{P_CHARGE_NM}                 </if>
+          <if test="P_CHARGE_DUTY             != null">,CHARGE_DUTY              = #{P_CHARGE_DUTY}               </if>
+          <if test="P_CHARGE_TEL              != null">,CHARGE_TEL               = WF.GET_ENCSTR(#{P_CHARGE_TEL}) </if>
+          <if test="P_CHARGE_HP               != null">,CHARGE_HP                = WF.GET_ENCSTR(#{P_CHARGE_HP})  </if>
+          <if test="P_CHARGE_EMAIL            != null">,CHARGE_EMAIL             = #{P_CHARGE_EMAIL}              </if>
+          <if test="P_MANAGER_ID              != null">,MANAGER_ID               = #{P_MANAGER_ID}                </if>
+          <if test="P_DEAL_DIV                != null">,DEAL_DIV                 = #{P_DEAL_DIV}                  </if>
+          <if test="P_OPEN_DATE               != null">,OPEN_DATE                = #{P_OPEN_DATE}                 </if>
+          <if test="P_CLOSE_DATE              != null">,CLOSE_DATE               = #{P_CLOSE_DATE}                </if>
+          <if test="P_REMARK1                 != null">,REMARK1                  = #{P_REMARK1}                   </if>
+          <if test="P_REG_USER_ID             != null">,REG_USER_ID              = #{P_REG_USER_ID}               </if>
+          <if test="P_REG_DATETIME            != null">
+          ,REG_DATETIME             = DECODE(#{P_REG_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_REG_DATETIME}))
+          </if>
+     WHERE CARRIER_CD               = #{P_CARRIER_CD}
+  </update>
+  <!-- [E] - UPDATE_CMCARRIER [운송사마스터] -->
+
+
+  <!-- [S] - DELETE_CMCARRIER [운송사마스터] -->
+  <delete id="DELETE_CMCARRIER" parameterType="hashmap">
+    DELETE 
+      FROM CMCARRIER
+     WHERE CARRIER_CD               = #{P_CARRIER_CD}
+  </delete>
+  <!-- [E] - DELETE_CMCARRIER [운송사마스터] -->
+
+
+</mapper>

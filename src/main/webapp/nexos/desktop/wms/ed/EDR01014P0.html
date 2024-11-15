@@ -1,0 +1,85 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : EDR01014P0
+    프로그램명         : 사업부수신관리복사 팝업
+    프로그램설명       : 사업부수신관리복사 팝업 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-09-14
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-09-14    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/EDR01014P0.css" /> -->
+<script src="js/EDR01014P0.js"></script>
+</head>
+<body>
+    <div id="divLeftView" class="ctrLeft" style="border-width: 1px 1px 0 1px;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">기준 사업부 및 수신정의정보</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="ctrAdditional_grdMaster" class="ctrAdditional bottom">
+            <div id="lblQPopup_Bu_Cd" class="lblKey" style="min-width: 60px;">사업부</div>
+            <input id="edtQBu_Cd" class="edtDisplay" type="text" disabled="disabled" style="width: 60px;" />
+            <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 124px;" />
+        </div>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight" style="border-width: 1px 1px 0 1px;">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspTitle_NewBu" class="lblTitle">대상 사업부정보</td>
+            </tr>
+        </table>
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblCopy_Div" class="lblKey">복사구분</div>
+                <div id="ctrCopy_Div" class="ctrGroupBox" style="width: 215px;">
+                    <input id="rgbCopy_Div1" name="rgbCopy_Div" class="rgbNormal" type="radio" value="1" />
+                    일반복사
+                    <input id="rgbCopy_Div2" name="rgbCopy_Div" class="rgbNormal" type="radio" value="2" />
+                    정의번호 변경복사
+                </div>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblPopup_To_Bu_Cd" class="lblKey" style="min-width: 60px;">사업부</div>
+                <input id="edtTo_Bu_Cd" class="edtKey" type="text" style="width: 60px;" />
+                <input id="btnTo_Bu_Cd" class="btnIcoPopup" type="button" />
+                <input id="edtTo_Bu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 125px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblCreate_Div" class="lblKey">생성구분</div>
+                <select id="cboCreate_Div" class="cboKey" style="width: 215px;"></select>
+            </div>
+            <div id="ctrRenameCopy">
+                <div class="ctrGroupRow">
+                    <div id="lblDefine_No" class="lblKey">정의번호</div>
+                    <input id="edtDefine_No" class="edtKey" type="text" tabindex="4" style="width: 215px;" />
+                </div>
+                <div class="ctrGroupRow">
+                    <div id="lblDefine_Nm" class="lblKey">정의명칭</div>
+                    <input id="edtDefine_Nm" class="edtKey" type="text" tabindex="5" style="width: 215px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnOk" class="btnNormal" type="button" value="복사" style="width: 75px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

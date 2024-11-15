@@ -1,0 +1,102 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LFC05060E0
+    프로그램명         : 택배정산조정 조정
+    프로그램설명       : 택배정산조정 조정 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2023-03-16
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2023-03-16    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LFC05060E0.css" /> -->
+<script src="js/LFC05060E0.js"></script>
+</head>
+<body>
+    <!-- 조회 조건 -->
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQCenter_Cd" class="lblCondition">물류센터</div>
+                    <select id="cboQCenter_Cd" class="cboKey" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQPopup_Bu_Cd" class="lblCondition">사업부</div>
+                    <input id="edtQBu_Cd" class="edtKey" type="text" style="width: 70px;" />
+                    <input id="btnQBu_Cd" class="btnIcoPopup" type="button" />
+                    <input id="edtQBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                    <input id="edtQCust_Cd" class="edtHidden" type="text" disabled="disabled" />
+                </td>
+                <td>
+                    <div id="lblQInout_Date" class="lblCondition">정산일자</div>
+                    <input id="dtpQInout_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQInout_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQPopup_Contract_No" class="lblCondition">계약번호</div>
+                    <input id="edtQContract_No" class="edtNormal" type="text" style="width: 70px;" />
+                    <input id="btnQContract_No" class="btnIcoPopup" type="button" />
+                    <input id="edtQContract_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+                </td>
+                <td>
+                    <div id="lblQBill_Div_F" class="lblCondition">정산구분</div>
+                    <select id="cboQBill_Div" class="cboNormal" style="width: 220px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <!-- 등록조건 -->
+        <div>
+            <div id="ctrAdditional_grdMaster" class="ctrAdditional top">
+                <div class="ctrGroupContent">
+                    <table class="ctrInner">
+                        <tr>
+                            <td>
+                                <div id="lblContract_No" class="lblNormal">계약번호</div>
+                                <input id="edtContract_No" class="edtKey" type="text" style="width: 80px;" />
+                                <input id="btnContract_No" class="btnIcoPopup" type="button" />
+                                <input id="edtContract_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 110px;" />
+                                 <input id="edtBill_Div_F" class="edtDisplay" type="text" disabled="disabled" style="width: 150px;" />
+                            </td>
+                            <td>
+                                <div id="lblClose_Month" class="ctrGroupRow">
+                                    <div id="lblClose_Month" class="lblNormal">마감월</div>
+                                    <input id="mtpClose_Month" class="mtpKey" type="text" style="width: 100px;" />
+                                </div>
+                            </td>
+                            <td class="styFillArea styRight">
+                                 <input id="btnDownloadXLSFormat" class="btnImgFile" type="button" value="엑셀포맷 다운로드" />
+                                 <input id="btnUploadXLS" class="btnImgFile" type="button" value="엑셀 업로드" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">택배정산 상세내역</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+    </div>
+</body>
+</html>

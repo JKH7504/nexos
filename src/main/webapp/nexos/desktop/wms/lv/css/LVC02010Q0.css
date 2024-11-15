@@ -1,0 +1,55 @@
+.lblChartTitle {
+    position: absolute;
+    font-weight: bold;
+    text-align: center;
+    left: 5px;
+    right: 5px;
+    top: 30px;
+    height: 1em;
+}
+
+.ctrPercentBar {
+    display: inline-block;
+    position: relative;
+    background-color: #f7f7f7;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.ctrPercentBar.special {
+    position: absolute;
+    width: 40px;
+    top: 52px;
+    right: 10px;
+    bottom: 68px;
+}
+
+.lblPercentBarTitle {
+    position: absolute;
+    font-weight: bold;
+    text-align: center;
+    width: 40px;
+    right: 10px;
+    bottom: 42px;
+}
+
+.ctrPercentBarLine {
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    bottom: 0;
+    background-color: #ef7cc8;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.lblPercentBarValue {
+    position: absolute;
+    display: inline-block;
+    text-align: center;
+    top: 15%;
+    width: 100%;
+    z-index: 1;
+    font-weight: bold;
+    letter-spacing: -1px;
+    text-shadow: 0 1px 1px #ffffff;
+}

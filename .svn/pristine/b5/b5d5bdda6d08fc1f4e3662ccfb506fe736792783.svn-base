@@ -1,0 +1,224 @@
+package nexos.service.lc;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+
+import nexos.dao.lc.LCC02020E0DAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.ServiceSupport;
+import nexos.service.ed.common.EDCommonService;
+
+/**
+ * Class: LCC02020E0Service<br>
+ * Description: 상태변환관리(LCC02020E0) 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class LCC02020E0Service extends ServiceSupport {
+
+    final String            SP_ID_GET_LC_CONFIRM_YN    = "WF.GET_LC_CONFIRM_YN";
+    final String            SP_ID_LC_BW_ETC_ENTRY      = "LC_BW_ETC_ENTRY";
+    final String            SP_ID_LC_BW_ETC_INCONFIRM  = "LC_BW_ETC_INCONFIRM";
+    final String            SP_ID_LC_BW_ETC_OUTCONFIRM = "LC_BW_ETC_OUTCONFIRM";
+    final String            SP_ID_LC_FW_ETC_INCONFIRM  = "LC_FW_ETC_INCONFIRM";
+    final String            SP_ID_LC_FW_ETC_OUTCONFIRM = "LC_FW_ETC_OUTCONFIRM";
+
+    @Autowired
+    private LCC02020E0DAO   dao;
+
+    @Autowired
+    private EDCommonService edCommonService;
+
+    /**
+     * 기타입출고관리 - 기타입출고 등록 저장 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String save(Map<String, Object> params) throws Exception {
+
+        // 테이블구분([A]기타입출고, [B]재고이동, [C]재고실사)
+        final String TABLE_DIV = "A";
+
+        Map<String, Object> masterRowData = (Map<String, Object>)params.get(Consts.PK_DS_MASTER);
+        String processCd = (String)params.get(Consts.PK_PROCESS_CD);
+
+        if (!Consts.PROCESS_ENTRY_CREATE.equals(processCd)) {
+            Map<String, Object> checkParams = new HashMap<String, Object>();
+            checkParams.put("P_CENTER_CD", masterRowData.get("P_CENTER_CD"));
+            checkParams.put("P_BU_CD", masterRowData.get("P_BU_CD"));
+            checkParams.put("P_ETC_DATE", masterRowData.get("P_ETC_DATE"));
+            checkParams.put("P_ETC_NO", masterRowData.get("P_ETC_NO"));
+            checkParams.put("P_TABLE_DIV", TABLE_DIV);
+
+            String oMsg = getConfirmYn(checkParams);
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+        }
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.save(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 저장/삭제시 확정된 전표일 우 저장/삭제 불가
+     *
+     * @param params
+     * @param checkState
+     * @return
+     */
+    public String getConfirmYn(Map<String, Object> params) {
+
+        String result = Consts.OK;
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_LC_CONFIRM_YN, params);
+
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            result = oMsg;
+        } else {
+            String oConfirmYn = (String)resultMap.get("O_CONFIRM_YN");
+            if (Consts.YES.equals(oConfirmYn)) {
+                result = NexosMessage.getDisplayMsg("JAVA.LCC.001", "이미 확정 처리된 데이터입니다.");
+            } else {
+                result = oMsg;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * SP 호출
+     *
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    public String callLCProcessing(Map<String, Object> params) throws Exception {
+
+        final String DV_DEL = "DEL";
+
+        String PROCEDURE_ID_E = null;
+        String PROCEDURE_ID_D = null;
+        String PROCESS_DIV = (String)params.get("P_PROCESS_DIV");
+
+        if (Consts.DIRECTION_FW.equals(PROCESS_DIV)) {
+            PROCEDURE_ID_E = SP_ID_LC_FW_ETC_INCONFIRM;
+            PROCEDURE_ID_D = SP_ID_LC_FW_ETC_OUTCONFIRM;
+        } else if (Consts.DIRECTION_BW.equals(PROCESS_DIV)) {
+            PROCEDURE_ID_E = SP_ID_LC_BW_ETC_INCONFIRM;
+            PROCEDURE_ID_D = SP_ID_LC_BW_ETC_OUTCONFIRM;
+        } else if (DV_DEL.equals(PROCESS_DIV)) {
+            PROCEDURE_ID_E = SP_ID_LC_BW_ETC_ENTRY;
+            PROCEDURE_ID_D = SP_ID_LC_BW_ETC_ENTRY;
+        }
+
+        Map<String, Object> callParams_E = new HashMap<String, Object>();
+        callParams_E.put("P_CENTER_CD", params.get("P_LINK_CENTER_CD"));
+        callParams_E.put("P_BU_CD", params.get("P_LINK_BU_CD"));
+        callParams_E.put("P_ETC_DATE", params.get("P_LINK_ETC_DATE"));
+        callParams_E.put("P_ETC_NO", params.get("P_LINK_ETC_NO"));
+        callParams_E.put(Consts.PK_USER_ID, params.get(Consts.PK_USER_ID));
+
+        Map<String, Object> callParams_D = new HashMap<String, Object>();
+        callParams_D.put("P_CENTER_CD", params.get("P_CENTER_CD"));
+        callParams_D.put("P_BU_CD", params.get("P_BU_CD"));
+        callParams_D.put("P_ETC_DATE", params.get("P_ETC_DATE"));
+        callParams_D.put("P_ETC_NO", params.get("P_ETC_NO"));
+        callParams_D.put(Consts.PK_USER_ID, params.get(Consts.PK_USER_ID));
+
+        StringBuffer sbResult = new StringBuffer();
+        Map<String, Object> resultMap_E;
+        Map<String, Object> resultMap_D;
+
+        Map<String, Object> realtimeMap = null;
+        TransactionStatus ts = beginTrans();
+        try {
+            // 삭제일 경우
+            if (DV_DEL.equals(PROCESS_DIV)) {
+                callParams_E.put("P_LINE_NO", "");
+                callParams_D.put("P_LINE_NO", "");
+                resultMap_E = callProcedure(PROCEDURE_ID_E, callParams_E);
+                resultMap_D = callProcedure(PROCEDURE_ID_D, callParams_D);
+                // 확정일 경우
+            } else if (Consts.DIRECTION_FW.equals(PROCESS_DIV)) {
+                resultMap_D = callProcedure(PROCEDURE_ID_D, callParams_D);
+                resultMap_E = callProcedure(PROCEDURE_ID_E, callParams_E);
+                // 취소일 경우
+            } else {
+                resultMap_E = callProcedure(PROCEDURE_ID_E, callParams_E);
+                resultMap_D = callProcedure(PROCEDURE_ID_D, callParams_D);
+            }
+            String oMsg_E = Util.getOutMessage(resultMap_E);
+            String oMsg_D = Util.getOutMessage(resultMap_D);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg_E) || !Consts.OK.equals(oMsg_D)) {
+                rollbackTrans(ts);
+                if (!Consts.OK.equals(oMsg_E)) {
+                    sbResult.append(oMsg_E);
+                    sbResult.append(Consts.CRLF);
+                }
+                if (!Consts.OK.equals(oMsg_D)) {
+                    sbResult.append(oMsg_D);
+                    sbResult.append(Consts.CRLF);
+                }
+            } else {
+
+                // 실시간 송신 호출
+                if (SP_ID_LC_FW_ETC_OUTCONFIRM.equals(PROCEDURE_ID_D) || SP_ID_LC_BW_ETC_OUTCONFIRM.equals(PROCEDURE_ID_D)
+                    || SP_ID_LC_FW_ETC_INCONFIRM.equals(PROCEDURE_ID_E) || SP_ID_LC_BW_ETC_INCONFIRM.equals(PROCEDURE_ID_E)) {
+                    realtimeMap = edCommonService.realtimeSendProcessing();
+                    String oMsg = Util.getOutMessage(realtimeMap);
+                    // 오류면 Rollback
+                    if (!Consts.OK.equals(oMsg)) {
+                        // 오류가 날 경우 롤백되기 때문에 데이터 삭제, 자체 트랜잭션 처리 함
+                        realtimeMap.put("P_ERROR_YN", Consts.YES);
+                        edCommonService.ifResultProcessing(realtimeMap);
+                        throw new RuntimeException(oMsg);
+                    }
+                }
+
+                commitTrans(ts);
+                sbResult.append(Consts.OK);
+            }
+        } catch (Exception e) {
+            // SP 내에서 오류가 아니면 Exit
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        // 실시간 결과 데이터 반영, 자체 트랜잭션 처리 함
+        if (realtimeMap != null && !Consts.YES.equals(realtimeMap.get("P_ERROR_YN"))) {
+            edCommonService.ifResultProcessing(realtimeMap);
+        }
+
+        return sbResult.toString();
+    }
+}

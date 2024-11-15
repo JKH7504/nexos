@@ -1,0 +1,8 @@
+.lblKey, /*
+*/ .lblNormal {
+    width: 110px;
+}
+
+textarea {
+    white-space: pre;
+}

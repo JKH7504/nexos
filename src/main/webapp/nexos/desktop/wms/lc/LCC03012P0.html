@@ -1,0 +1,52 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LCC03012P0
+    프로그램명         : 수시보충내역생성 팝업 (일반)
+    프로그램설명       : 수시보충내역생성 팝업 (일반) 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2018-08-16
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2018-08-16    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LCC03012P0.css" /> -->
+<script src="js/LCC03012P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <table class="ctrInner ctrSubCondition">
+            <tr>
+                <td>
+                    <div id="lblQZone_Cd" class="lblCondition">존</div>
+                    <select id="cboQZone_Cd" class="cboNormal" style="width: 150px;"></select>
+                    <input id="btnInquiry" class="btnImgInquiry" type="button" value="조회" style="width: 60px;" />
+                </td>
+        </table>
+    </div>
+    <div id="divDetailView" class="ctrPopup">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">로케이션</td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdDetail"></div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnSave" class="btnNormal" type="button" value="확인" style="width: 80px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="닫기" style="width: 80px;" />
+    </div>
+</body>
+</html>

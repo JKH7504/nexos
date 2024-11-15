@@ -1,0 +1,172 @@
+#=====================================================================================================================================================
+#
+#   globals.properties : \uc2dc\uc2a4\ud15c \ud658\uacbd\uc124\uc815 - \uae30\ubcf8
+#
+#=====================================================================================================================================================
+#   1.  key = value \uad6c\uc870\uc785\ub2c8\ub2e4.
+#   2.  key\uac12\uc740 \uacf5\ubc31\ubb38\uc790\ub97c \ud3ec\ud568\ubd88\uac00, value\uac12\uc740 \uacf5\ubc31\ubb38\uc790\ub97c \uac00\ub2a5
+#   3.  key\uac12\uc73c\ub85c \ud55c\uae00\uc744 \uc0ac\uc6a9\ubd88\uac00,   value\uac12\uc740 \ud55c\uae00\uc0ac\uc6a9\uc774 \uac00\ub2a5
+#   4.  \uc904\uc744 \ubc14\uafc0 \ud544\uc694\uac00 \uc788\uc73c\uba74 '\'\ub97c \ub77c\uc778\uc758 \ub05d\uc5d0 \ucd94\uac00(\ub9cc\uc57d  '\'\ubb38\uc790\ub97c \uc0ac\uc6a9\ud574\uc57c \ud558\ub294 \uacbd\uc6b0\ub294 '\\'\ub97c \uc0ac\uc6a9)
+#   5.  Windows\uc5d0\uc11c\uc758 \ub514\ub809\ud1a0\ub9ac \ud45c\uc2dc : '\\' or '/'  ('\' \uc0ac\uc6a9\ud558\uba74 \uc548\ub428)
+#   6.  Unix\uc5d0\uc11c\uc758 \ub514\ub809\ud1a0\ub9ac \ud45c\uc2dc : '/'
+#   7.  \uc8fc\uc11d\ubb38 \ucc98\ub9ac\ub294  #\uc0ac\uc6a9
+#   8.  value\uac12 \ub4a4\uc5d0 \uc2a4\ud398\uc774\uc2a4\uac00 \uc874\uc7ac\ud558\ub294 \uacbd\uc6b0 \uc11c\ube14\ub9bf\uc5d0\uc11c \ucc38\uc870\ud560\ub54c\ub294 \uc5d0\ub7ec\ubc1c\uc0dd\ud560 \uc218 \uc788\uc73c\ubbc0\ub85c trim()\ud558\uac70\ub098 \ub9c8\uc9c0\ub9c9 \uacf5\ubc31\uc5c6\uc774 properties \uac12\uc744 \uc124\uc815\ud560\uac83
+#=====================================================================================================================================================
+
+#=====================================================================================================================================================
+# Database \uad00\ub828 \uc124\uc815
+#
+# DB.TYPE              : Database \uc885\ub958(ORACLE, MSSQL) - datasource \ubc0f sqlMap \ud30c\uc77c \uc9c0\uc815\uc5d0 \uc0ac\uc6a9\ub428, <Globals.dbType>
+#                        nexos.sqlmap.config.[Globals.dbType].*.xml\ud30c\uc77c\uc774 \ub85c\ub529
+#                        oracle => oracle
+#                        mssql  => mssql
+#                        mysql  => mysql
+#
+# DB.DRIVER_CLASS_NAME : JDBC \ub4dc\ub77c\uc774\ubc84 \ud074\ub798\uc2a4\uba85, <db.driverClassName>
+#                        oracle => oracle.jdbc.driver.OracleDriver
+#                        mssql  => com.microsoft.sqlserver.jdbc.SQLServerDriver
+#                        mysql  => com.mysql.jdbc.Driver
+#
+# DB.TEST_QUERY_TEXT   : datasource\uc5d0\uc11c \uc0ac\uc6a9\ub418\ub294 \uc5f0\uacb0 \ud14c\uc2a4\ud2b8\uc6a9 \ucffc\ub9ac, <db.testQuery>
+#                        oracle => SELECT * FROM DUAL
+#                        mssql  => SELECT 'X' AS DUMMY
+#                        mysql  => SELECT 'X' AS DUMMY
+#
+# Dynamic Connection \uad00\ub828 \uc124\uc815
+# DB.TYPES                  : \uc811\uc18d \uac00\ub2a5 DB \uc885\ub958, \ucf64\ub9c8(,)\ub85c \uad6c\ubd84
+# DB.DRIVER_CLASS_NAME.XXX  : \uac01 DB \uc885\ub958\ubcc4 JDBC \ub4dc\ub77c\uc774\ubc84 \ud074\ub798\uc2a4\uba85
+# DB.CONNECTION_URL.XXX     : \uac01 DB \uc885\ub958\ubcc4 JDBC \uc811\uc18d Url Fomat \ubb38\uc790\uc5f4, \uc811\uc18dIP, PORT, DB\uba85(\uc11c\ube44\uc2a4\uba85)
+# DB.TEST_QUERY_TEXT.XXX    : \uac01 DB \uc885\ub958\ubcc4 JDBC \uc5f0\uacb0 \ud14c\uc2a4\ud2b8\uc6a9 \ucffc\ub9ac
+#=====================================================================================================================================================
+DB.TYPE = oracle
+DB.DRIVER_CLASS_NAME = oracle.jdbc.driver.OracleDriver
+DB.TEST_QUERY_TEXT = SELECT * FROM DUAL
+
+DB.TYPES = oracle,mssql,mysql
+DB.DRIVER_CLASS_NAME.ORACLE = oracle.jdbc.driver.OracleDriver
+DB.DRIVER_CLASS_NAME.MSSQL = com.microsoft.sqlserver.jdbc.SQLServerDriver
+# mysql-connector-java  -> 5.1.40 \ubc84\uc804
+DB.DRIVER_CLASS_NAME.MYSQL = com.mysql.jdbc.Driver
+# mysql-connector-java  -> 8.0.16 \ubc84\uc804
+# DB.DRIVER_CLASS_NAME.MYSQL = com.mysql.cj.jdbc.Driver
+DB.CONNECTION_URL.ORACLE = jdbc:oracle:thin:@%s:%s:%s
+DB.CONNECTION_URL.MSSQL = jdbc:sqlserver://%s:%s;SelectMethod=cursor;databaseName=%s;
+# MySQL \uc811\uc18d\uc2dc \uc11c\ubc84 \ubc84\uc804\uc5d0 \ub530\ub77c \uc811\uc18d\uc774 \uc548\ub420 \uc218 \uc788\uc74c
+# \uc624\ub958\uc2dc \ud655\uc778\ud558\uc5ec pom-connector\uc758 \ubc84\uc804\uc744 \ubcc0\uacbd\ud558\uac70\ub098 \uc811\uc18d\uc2dc \ud30c\ub77c\uba54\ud130\ub97c \ucd94\uac00\ud560 \ud544\uc694 \uc788\uc74c
+# mysql-connector-java  -> 5.1.40 \ubc84\uc804
+DB.CONNECTION_URL.MYSQL = jdbc:mysql://%s:%s/%s
+# mysql-connector-java  -> 8.0.16 \ubc84\uc804
+# DB.CONNECTION_URL.MYSQL = jdbc:mysql://%s:%s/%s?serverTimezone=UTC&useSSL=false
+DB.TEST_QUERY_TEXT.ORACLE = SELECT * FROM DUAL
+DB.TEST_QUERY_TEXT.MSSQL = SELECT 'X' AS DUMMY
+DB.TEST_QUERY_TEXT.MYSQL = SELECT 'X' AS DUMMY
+
+#=====================================================================================================================================================
+# Report \ud30c\uc77c \uc704\uce58
+# REPORT.ROOT       : Report \ud30c\uc77c Root, \ud558\uc704\uc5d0 \uac01 \uc5c5\ubb34 \uadf8\ub8f9\uc73c\ub85c \ud30c\uc77c \uc0dd\uc131, <reportRoot>
+# REPORT.EMPTYFILE  : \ube48 Report \ud30c\uc77c\uba85, \ud30c\uc77c\uc774 \uc874\uc7ac\ud558\uc9c0 \uc54a\uc744 \uacbd\uc6b0 \uc0ac\uc6a9 \ub428, <emptyReportFile>
+#=====================================================================================================================================================
+REPORT.ROOT = REF-FILES/reports/
+REPORT.EMPTYFILE = common/empty_report.jasper
+
+#=====================================================================================================================================================
+# \ud30c\uc77c \uc704\uce58
+# FILE.BI.ROOT                          : Logo Root, <biRoot>
+# FILE.BI.CUST                          : \uc704\ud0c1\uc0ac Logo \ud30c\uc77c \uc704\uce58, \uc774\ubbf8\uc9c0\uba85 > \uc704\ud0c1\uc0ac\ucf54\ub4dc, <biCustImage>
+# FILE.BI.BU                            : \uc0ac\uc5c5\ubd80 Logo \ud30c\uc77c \uc704\uce58, \uc774\ubbf8\uc9c0\uba85 > \uc0ac\uc5c5\ubd80\ucf54\ub4dc, <biBuImage>
+# FILE.BI.BRAND                         : \ube0c\ub79c\ub4dc Logo \ud30c\uc77c \uc704\uce58, \uc774\ubbf8\uc9c0\uba85 > \ube0c\ub79c\ub4dc\ucf54\ub4dc, <biBrandImage>
+# FILE.BI.ITEM                          : \uc0c1\ud488 \uc774\ubbf8\uc9c0 \ud30c\uc77c \uc704\uce58, \uc774\ubbf8\uc9c0\uba85 > \ube0c\ub79c\ub4dc\ucf54\ub4dc_\uc0c1\ud488\ucf54\ub4dc
+# FILE.DEPLOY.SCAN_INSPECTION           : \uc2a4\uce94\uac80\uc218 \ubc30\ud3ec \ud30c\uc77c \uc704\uce58
+#                                         \ud504\ub85c\uadf8\ub7a8: nexos-scan-inspection-7.0.0.jar
+#                                         CORE:     nexos-scan-core-7.0.0-SNAPSHOT.jar
+# FILE.DEPLOY.PDA                       : PDA \ubc30\ud3ec\ud30c\uc77c \uc704\uce58
+#                                         \ud504\ub85c\uadf8\ub7a8: nexos-pda-application-8.0.0-release.apk
+#                                         \ub9ac\uc18c\uc2a4:   nexos_pda_html.zip
+# FILE.AUTO_CREATE_REF_PATHS            : \uc790\ub3d9 \uc0dd\uc131\ud560 \ucc38\uc870 \ub514\ub809\ud1a0\ub9ac Property \ud0a4 \uac12
+#=====================================================================================================================================================
+FILE.BI.ROOT = REF-FILES/BI/
+FILE.BI.CUST = REF-FILES/BI/CUST/
+FILE.BI.BU = REF-FILES/BI/BU/
+FILE.BI.BRAND = REF-FILES/BI/BRAND/
+FILE.BI.ITEM = REF-FILES/BI/ITEM/
+FILE.DEPLOY.PDA = REF-FILES/deploy/pda/
+FILE.DEPLOY.SCAN_INSPECTION = REF-FILES/deploy/scanInspection/
+FILE.AUTO_CREATE_REF_PATHS = FILE.BI.ROOT,FILE.BI.CUST,FILE.BI.BU,FILE.BI.BRAND,FILE.BI.ITEM,FILE.DEPLOY.PDA,FILE.DEPLOY.SCAN_INSPECTION
+
+#=====================================================================================================================================================
+# \uc124\uc815 \uad00\ub828
+# CONFIG.USE_ACTIVITY_LOG             : \uc561\ud2f0\ube44\ud2f0\ub85c\uadf8 \uae30\ub85d \uc5ec\ubd80
+# CONFIG.USE_CACHE_SOURCE             : HTML, JS, CSS\uc5d0 \ub300\ud55c \uce90\uc26c \uc0ac\uc6a9 \uc5ec\ubd80
+# CONFIG.CACHE_CONTROL_SOURCE         : HTML, JS, CSS\uc5d0 \ub300\ud55c \uce90\uc26c \ucee8\ud2b8\ub864 \uac12
+# CONFIG.USE_CACHE_RESOURCE           : HTML, JS, CSS\ub97c \uc81c\uc678\ud55c \ud30c\uc77c\uc5d0 \ub300\ud55c \uce90\uc26c \uc0ac\uc6a9 \uc5ec\ubd80
+# CONFIG.CACHE_CONTROL_RESOURCE       : HTML, JS, CSS\ub97c \uc81c\uc678\ud55c \ud30c\uc77c\uc5d0 \ub300\ud55c \uce90\uc26c \ucee8\ud2b8\ub864 \uac12
+# 1\ubd84  : max-age=60
+# 1\uc2dc\uac04: max-age=3600
+# 1\uc77c  : max-age=86400
+# 1\uc8fc  : max-age=604800
+# 1\uac1c\uc6d4: max-age=2628000
+# 1\ub144  : max-age=31536000
+#=====================================================================================================================================================
+CONFIG.USE_ACTIVITY_LOG = false
+CONFIG.USE_CACHE_SOURCE = false
+CONFIG.CACHE_CONTROL_SOURCE = max-age=43200
+CONFIG.USE_CACHE_RESOURCE = false
+CONFIG.CACHE_CONTROL_RESOURCE = max-age=86400
+
+#=====================================================================================================================================================
+# Excel \ub2e4\uc6b4\ub85c\ub4dc \uad00\ub828 \uc124\uc815, \uba85\uce6d, \uad6c\uc870 \ubcc0\uacbd, \uc0ac\uc774\ud2b8\ubcc4 \ucee4\uc2a4\ud2b8\ub9c8\uc774\uc9d5 \uac00\ub2a5\ud558\ub3c4\ub85d, since 7.1.0
+# \ucf64\ub9c8(,)\ub85c \ud56d\ubaa9 \uad6c\ubd84, \ud574\ub2f9 \ubb38\uc790\uc5f4\ub85c \ub05d\ub098\ub294 \uceec\ub7fc\uba85, endsWidth
+# XLS.VERSION                : xls - 97 ~ 2003, xlsx - 2003 \uc774 
+# Excel \uceec\ub7fc \ud0c0\uc785
+# XLS.DATA_TYPE.DATE         : \uc22b\uc790\ub85c \uc778\uc2dd\ud560 \uceec\ub7fc\uba85, 7.0.0 \uc774\ud558 XLS.NUMBER_COLUMN
+# XLS.DATA_TYPE.NUMBER       : \ub0a0\uc790\ub85c \uc778\uc2dd\ud560 \uceec\ub7fc\uba85, 7.0.0 \uc774\ud558 XLS.DATE_COLUMN
+# Excel \ub370\uc774\ud130 \ub9c8\uc2a4\ud0b9
+# XLS.ENABLE_DATA_MASK       : \ub9c8\uc2a4\ud0b9 \ucc98\ub9ac\ub97c \ud560\uc9c0 \uc5ec\ubd80
+#                              7.0.0 \uc774\ud558 XLS.USE_COLUMN_MASK
+# XLS.MASK_ALL               : \uc804\uccb4,      \ubaa8\ub4e0 \ubb38\uc790 \ub9c8\uc2a4\ud0b9
+#                                         ********
+#                                         7.0.0 \uc774\ud558 XLS.MASK_ALL_COLUMN
+# XLS.MASK_OTHER             : \uc608\uc678,      \uc55e 1\uc790\ub97c \uc81c\uc678\ud55c \ub098\uba38\uc9c0 \ub9c8\uc2a4\ud0b9
+#                                         A*******
+#                                         7.1.0 \ucd94\uac00
+# XLS.MASK_ID                : ID,        \uc55e 2\uc790\ub97c \uc81c\uc678\ud55c \ub098\uba38\uc9c0 \ub9c8\uc2a4\ud0b9
+#                                         us******
+#                                         7.0.0 \uc774\ud558 XLS.MASK_ID_COLUMN
+# XLS.MASK_NM                : \uc131\uba85,      \uac00\uc6b4\ub370 1\uc790 \ub9c8\uc2a4\ud0b9, 4\uc790\uc774\uc0c1 3\uc790\ub85c \ucd95\uc18c
+#                                         \ud64d*\ub3d9
+#                                         7.0.0 \uc774\ud558 XLS.MASK_NAME_COLUMN
+# XLS.MASK_ADDRESS           : \uc8fc\uc18c,      \uae30\ubcf8/\uc0c1\uc138 \uad6c\ubd84 \uac00\ub2a5\ud560 \uacbd\uc6b0 \uc0c1\uc138 \uc804\uccb4 \ub9c8\uc2a4\ud0b9, \uad6c\ubd84 \ubd88\uac00\uc2dc \uc22b\uc790\ub9cc \ub9c8\uc2a4\ud0b9
+#                                         \uc11c\uc6b8\uc2dc \uc11c\ucd08\uad6c \uc11c\ucd08\ub3d9 *****, \uc11c\uc6b8\uc2dc \uc11c\ucd08\uad6c \uc11c\ucd08\ub3d9 ***\ubc88\uc9c0
+#                                         7.0.0 \uc774\ud558 XLS.MASK_ADDRESS_COLUMN
+# XLS.MASK_TEL               : \uc804\ud654\ubc88\ud638,  \ub4a4 4\uc790\ub9ac \ub9c8\uc2a4\ud0b9
+#                                         02-1234-****,
+#                                         7.0.0 \uc774\ud558 XLS.MASK_TEL_COLUMN
+# XLS.MASK_RRN               : \uc8fc\ubbfc\ubc88\ud638,  \ub4a4 7\uc790\ub9ac \ub9c8\uc2a4\ud0b9
+#                                         900101-*******
+#                                         7.1.0 \ucd94\uac00
+# XLS.MASK_IP                : IP,        \uc55e, \ub4a4 \uc8fc\uc18c \ub9c8\uc2a4\ud0b9
+#                                         ***.0.0.*
+#                                         7.1.0 \ucd94\uac00
+# XLS.MASK_EMAIL             : \uc774\uba54\uc77c,    ID\uc5d0\uc11c \uc55e 2\uc790\ub97c \uc81c\uc678\ud55c \ub098\uba38\uc9c0 \ub9c8\uc2a4\ud0b9
+#                                         us******@gmail.com
+#                                         7.0.0 \uc774\ud558 XLS.MASK_EMAIL_COLUMN
+# \uc81c\uac70                       : \uc808\ubc18,      \ubb38\uc790\uc5f4 \uc808\ubc18
+#                                         ABC***
+#                                         7.0.0 \uc774\ud558 XLS.MASK_HALF_COLUMN
+#=====================================================================================================================================================
+XLS.VERSION = xlsx
+
+XLS.DATA_TYPE.DATE = _DATE,_DATETIME,_TIME
+XLS.DATA_TYPE.NUMBER = _QTY,_BOX,_EA,_PRICE,_AMT,_WEIGHT,_CBM,_RATE,_CNT,_RBOX,_RPLT,_ORDER,_LENGTH,_WIDTH,_HEIGHT,_CAPA,_CASE,_PLT,_STAIR,_PLACE,_CASE
+
+XLS.ENABLE_DATA_MASK = true
+
+XLS.MASK_ALL = 
+XLS.MASK_OTHER = 
+XLS.MASK_ID = ORDERER_CD
+XLS.MASK_NM = ORDERER_NM,SHIPPER_NM
+XLS.MASK_ADDRESS = SHIPPER_ADDR_BASIC,SHIPPER_ADDR_DETAIL,SHIPPER_ADDR
+XLS.MASK_TEL = ORDERER_TEL,ORDERER_HP,SHIPPER_TEL,SHIPPER_HP,CHARGE_TEL,CHARGE_HP,MANAGER_TEL,MANAGER_HP
+XLS.MASK_RRN = IDENTITY_NO
+XLS.MASK_EMAIL = _EMAIL
+XLS.MASK_IP = _IP

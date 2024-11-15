@@ -1,0 +1,2266 @@
+﻿/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : LFC02020E0
+ *  프로그램명         : 정산항목관리
+ *  프로그램설명       : 정산항목관리 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2021-04-02
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2021-04-02    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeFixedView: {
+            viewFirst: {
+                container: "#divLeftView",
+                grids: "#grdMaster"
+            },
+            viewSecond: {
+                container: "#divRightView",
+                grids: "#grdDetail"
+            },
+            viewType: "h",
+            viewFixed: {
+                container: "#divRightView",
+                sizeFn: function(viewWidth, viewHeight) {
+
+                    var scrollOffset = viewHeight < $NC.G_OFFSET.rightViewMinHeight ? $NC.G_LAYOUT.scroll.width : 0;
+                    // Container 사이즈 조정
+                    return $NC.G_OFFSET.rightViewWidth + scrollOffset;
+                }
+            }
+        }
+    });
+    // 탭 초기화
+    $NC.setInitTab("#divRightView", {
+        tabIndex: 0,
+        onActivate: tabOnActivate
+    });
+    // 조회조건 - 정산 그룹
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODEATTR",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "BILL_DIV",
+            P_ATTR_DIV: "1",
+            P_ATTR_CD: $ND.C_ALL
+        }
+    }, {
+        selector: "#cboQBill_Grp",
+        codeField: "ATTR_CD",
+        nameField: "ATTR_NM",
+        fullNameField: "ATTR_CD_F",
+        addAll: true
+    });
+    // 등록조건 - 정산 그룹
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CMCODEATTR",
+        P_QUERY_PARAMS: {
+            P_COMMON_GRP: "BILL_DIV",
+            P_ATTR_DIV: "1",
+            P_ATTR_CD: $ND.C_ALL
+        }
+    }, {
+        selector: "#cboBill_Grp",
+        codeField: "ATTR_CD",
+        nameField: "ATTR_NM",
+        fullNameField: "ATTR_CD_F",
+        addAll: true
+    });
+
+    $NC.setValue("#chkQDeal_Div1", $ND.C_YES);
+    $NC.setValue("#chkQDeal_Div2", $ND.C_YES);
+
+    // 이벤트 연결
+    $("#btnAddCenter").click(btnAddCenterOnClick);
+    $("#btnDeleteCenter").click(btnDeleteCenterOnClick);
+    $("#btnAddBu").click(btnAddBuOnClick);
+    $("#btnDeleteBu").click(btnDeleteBuOnClick);
+    $("#btnAddInout").click(btnAddInoutOnClick);
+    $("#btnDeleteInout").click(btnDeleteInoutOnClick);
+
+    // 그리드 초기화
+    grdMasterInitialize();
+    grdDetailInitialize();
+    // 물류센터
+    grdDetail1Initialize();
+    grdDetail2Initialize();
+    // 사업부
+    grdDetail3Initialize();
+    grdDetail4Initialize();
+    // 입출고구분
+    grdDetail5Initialize();
+    grdDetail6Initialize();
+
+    // 이벤트 연결
+    $("#btnInquiryBill").click(btnInquiryBillOnClick); // 정산 그룹 조회 클릭시 처리
+    $("#btnAddBill").click(btnAddBillOnClick); // 정산 그룹 추가 버튼 클릭시 처리
+
+    // 프로그램 사용 권한 설정
+    setUserProgramPermission();
+    $NC.setEnableGroup("#divRightView", false);
+}
+
+/**
+ * 화면 리사이즈 Offset 계산
+ */
+function _SetResizeOffset() {
+
+    $NC.G_OFFSET.rightViewWidth = 530;
+    $NC.G_OFFSET.rightViewMinHeight = $("#divT1TabSheetView").outerHeight(true) + $NC.G_LAYOUT.tabHeader;
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight, rowData) {
+
+    // 물류센터/사업부 사이즈 조정
+    viewHeight = $("#divT2TabSheetView").height();
+
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    if (($NC.isNull(refRowData) && $NC.isNull(rowData)) || ($NC.isNull(rowData) && refRowData.BILL_INOUT == $ND.C_YES)
+        || ($NC.isNotNull(rowData) && rowData.BILL_INOUT == $ND.C_YES)) {
+        // 입출고구분 그리드 처리
+        $("#divGrdBottomView").show();
+        // 물류센터/사업부/입출고구분 컨테이너 리사이즈
+        $NC.resizeSplitView({
+            containers: [
+                "#divGrdTopView",
+                "#divGrdMiddleView",
+                "#divGrdBottomView"
+            ]
+        }, "v", null, null, viewHeight);
+
+        // 입출고구분 그리드 리사이즈
+        $NC.resizeSplitView({
+            containers: [
+                "#divSubView5",
+                "#divSubView6"
+            ],
+            grids: [
+                "#grdDetail5",
+                "#grdDetail6"
+            ]
+        }, "h");
+    } else {
+        // 입출고구분 그리드 처리
+        $("#divGrdBottomView").hide();
+        // 물류센터/사업부 컨테이너 리사이즈
+        $NC.resizeSplitView({
+            containers: [
+                "#divGrdTopView",
+                "#divGrdMiddleView"
+            ]
+        }, "v", null, null, viewHeight);
+    }
+
+    // 물류센터 그리드 리사이즈
+    $NC.resizeSplitView({
+        containers: [
+            "#divSubView1",
+            "#divSubView2"
+        ],
+        grids: [
+            "#grdDetail1",
+            "#grdDetail2"
+        ]
+    }, "h");
+    // 사업부 그리드 리사이즈
+    $NC.resizeSplitView({
+        containers: [
+            "#divSubView3",
+            "#divSubView4"
+        ],
+        grids: [
+            "#grdDetail3",
+            "#grdDetail4"
+        ]
+    }, "h");
+
+}
+
+/**
+ * Condition Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnConditionChange(e, view, val) {
+
+    var id = view.prop("id").substr(4).toUpperCase();
+    // 수수료그룹 조회 조건 변경
+    if (view.parents(".ctrSubCondition:first").length > 0) {
+        BillConditionChange(e, {
+            view: view,
+            col: id,
+            val: val
+        });
+    }
+    // 조회 조건 변경
+    else {
+        // 화면클리어
+        onChangingCondition();
+    }
+
+}
+
+function BillConditionChange(e, args) {
+    onChangingBillCondition();
+
+}
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+    var BILL_GRP = $NC.getValue("#cboQBill_Grp", true);
+    var DEAL_DIV1 = $NC.getValue("#chkQDeal_Div1");
+    var DEAL_DIV2 = $NC.getValue("#chkQDeal_Div2");
+    var DEAL_DIV3 = $NC.getValue("#chkQDeal_Div3");
+
+    // Bill Center 데이터 조회 (관리물류센터)
+    $NC.setInitGridVar(G_GRDDETAIL1);
+    $NC.serviceCall("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL1), onGetDetail1);
+
+    // Bill Bu 데이터 조회 (관리사업부)
+    $NC.setInitGridVar(G_GRDDETAIL3);
+    $NC.serviceCall("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL3), onGetDetail3);
+
+    // Bill Inout 데이터 조회 (관리입출고구분)
+    $NC.setInitGridVar(G_GRDDETAIL5);
+    $NC.serviceCall("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL5), onGetDetail5);
+
+    // Center 데이터 조회 (물류센터 전체 조회)
+    $NC.setInitGridVar(G_GRDDETAIL2);
+    G_GRDDETAIL2.queryParams = {
+        P_CENTER_CD: $ND.C_ALL,
+        P_VIEW_DIV: "1"
+    };
+    $NC.serviceCallAndWait("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL2), onGetDetail2);
+
+    // Bu 데이터 조회 (사업부 전체 조회)
+    $NC.setInitGridVar(G_GRDDETAIL4);
+    G_GRDDETAIL4.queryParams = {
+        P_BU_CD: $ND.C_ALL,
+        P_VIEW_DIV: "1"
+    };
+    $NC.serviceCall("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL4), onGetDetail4);
+
+    // Inout 데이터 조회 (입출고구분 전체 조회)
+    $NC.setInitGridVar(G_GRDDETAIL6);
+    G_GRDDETAIL6.queryParams = {
+        P_COMMON_GRP: "INOUT_CD",
+        P_COMMON_CD: $ND.C_ALL,
+        P_VIEW_DIV: "1"
+    };
+    $NC.serviceCallAndWait("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL6), onGetDetail6);
+
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDMASTER);
+    // 파라메터 세팅
+    G_GRDMASTER.queryParams = {
+        P_BILL_GRP: BILL_GRP,
+        P_DEAL_DIV1: DEAL_DIV1,
+        P_DEAL_DIV2: DEAL_DIV2,
+        P_DEAL_DIV3: DEAL_DIV3
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDMASTER), onGetMaster);
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+    if (G_GRDMASTER.data.getLength() == 0) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.003", "저장할 데이터가 없습니다."));
+        return;
+    }
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER)) {
+        return;
+    }
+
+    var dsMaster, dsDetail, dsSub1, dsSub2, dsTarget, rowData, rIndex, rCount;
+    // 정산항목 수정 데이터
+    var dsD = [];
+    var dsCU = [];
+    for (rIndex = 0, rCount = G_GRDMASTER.data.getLength(); rIndex < rCount; rIndex++) {
+        rowData = G_GRDMASTER.data.getItem(rIndex);
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            continue;
+        } else if (rowData.CRUD == $ND.C_DV_CRUD_D) {
+            dsMaster = dsD;
+        } else {
+            dsMaster = dsCU;
+        }
+        dsMaster.push({
+            P_BILL_CLASS: rowData.BILL_CLASS,
+            P_BILL_DETAIL: rowData.BILL_DETAIL,
+            P_BILL_DIV: rowData.BILL_DIV,
+            P_BILL_NM: rowData.BILL_NM,
+            P_CONTRACT_NO: rowData.CONTRACT_NO,
+            P_DEAL_DIV: rowData.DEAL_DIV,
+            P_OPEN_DATE: rowData.OPEN_DATE,
+            P_CLOSE_DATE: rowData.CLOSE_DATE,
+            P_REMARK1: rowData.REMARK1,
+            P_CRUD: rowData.CRUD
+        });
+    }
+    dsMaster = dsD.concat(dsCU);
+
+    // 관리물류센터 마스터
+    dsD = [];
+    dsCU = [];
+    // 필터링 된 데이터라 전체 데이터를 기준으로 처리
+    dsTarget = G_GRDDETAIL1.data.getItems();
+    for (rIndex = 0, rCount = dsTarget.length; rIndex < rCount; rIndex++) {
+        rowData = dsTarget[rIndex];
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            continue;
+        } else if (rowData.CRUD == $ND.C_DV_CRUD_D) {
+            dsDetail = dsD;
+        } else {
+            dsDetail = dsCU;
+        }
+        dsDetail.push({
+            P_BILL_DIV: rowData.BILL_DIV,
+            P_CENTER_CD: rowData.CENTER_CD,
+            P_CONTRACT_NO: rowData.CONTRACT_NO,
+            P_REG_USER_ID: null,
+            P_REG_DATETIME: null,
+            P_CRUD: rowData.CRUD
+        });
+    }
+    dsDetail = dsD.concat(dsCU);
+
+    // 관리사업부 마스터
+    dsD = [];
+    dsCU = [];
+    // 필터링 된 데이터라 전체 데이터를 기준으로 처리
+    dsTarget = G_GRDDETAIL3.data.getItems();
+    for (rIndex = 0, rCount = dsTarget.length; rIndex < rCount; rIndex++) {
+        rowData = dsTarget[rIndex];
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            continue;
+        } else if (rowData.CRUD == $ND.C_DV_CRUD_D) {
+            dsSub1 = dsD;
+        } else {
+            dsSub1 = dsCU;
+        }
+        dsSub1.push({
+            P_BILL_DIV: rowData.BILL_DIV,
+            P_BU_CD: rowData.BU_CD,
+            P_CONTRACT_NO: rowData.CONTRACT_NO,
+            P_REG_USER_ID: null,
+            P_REG_DATETIME: null,
+            P_CRUD: rowData.CRUD
+        });
+    }
+    dsSub1 = dsD.concat(dsCU);
+
+    // 관리입출고구분 마스터
+    dsD = [];
+    dsCU = [];
+    // 필터링 된 데이터라 전체 데이터를 기준으로 처리
+    dsTarget = G_GRDDETAIL5.data.getItems();
+    for (rIndex = 0, rCount = dsTarget.length; rIndex < rCount; rIndex++) {
+        rowData = dsTarget[rIndex];
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            continue;
+        } else if (rowData.CRUD == $ND.C_DV_CRUD_D) {
+            dsSub2 = dsD;
+        } else {
+            dsSub2 = dsCU;
+        }
+        dsSub2.push({
+            P_BILL_DIV: rowData.BILL_DIV,
+            P_INOUT_CD: rowData.INOUT_CD,
+            P_CONTRACT_NO: rowData.CONTRACT_NO,
+            P_REG_USER_ID: null,
+            P_REG_DATETIME: null,
+            P_CRUD: rowData.CRUD
+        });
+    }
+    dsSub2 = dsD.concat(dsCU);
+
+    if (dsMaster.length == 0 && dsDetail.length == 0 && dsSub1.length == 0 && dsSub2.length == 0) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.001", "데이터 수정 후 저장하십시오."));
+        return;
+    }
+
+    $NC.serviceCall("/LFC02020E0/save.do", {
+        P_DS_MASTER: dsMaster,
+        P_DS_DETAIL: dsDetail,
+        P_DS_SUB1: dsSub1,
+        P_DS_SUB2: dsSub2,
+        P_USER_ID: $NC.G_USERINFO.USER_ID
+    }, onSave, onSaveError);
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.002", "삭제할 데이터가 없습니다."));
+        return;
+    }
+
+    if (!confirm($NC.getDisplayMsg("JS.LFC02020E0.003", "정산항목을 삭제 하시겠습니까?"))) {
+        return;
+    }
+
+    var dsTarget, rowData, rIndex;
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    // 신규 데이터일 경우 Grid 데이터만 삭제
+    if (refRowData.CRUD == $ND.C_DV_CRUD_C || refRowData.CRUD == $ND.C_DV_CRUD_N) {
+        if ($NC.deleteGridRowData(G_GRDMASTER, refRowData) == 0) {
+            $NC.setEnableGroup("#divRightView", false);
+        }
+
+        // 해당BILL의 관리 물류센터 전체 삭제.
+        dsTarget = G_GRDDETAIL1.data.getItems();
+        for (rIndex = dsTarget.length - 1; rIndex > 0; rIndex--) {
+            rowData = dsTarget[rIndex];
+            if (rowData.BILL_DIV == refRowData.BILL_DIV) {
+                G_GRDDETAIL1.data.deleteItem(rowData.id);
+            }
+        }
+
+        // 해당BILL의 관리 사업부 전체 삭제.
+        dsTarget = G_GRDDETAIL3.data.getItems();
+        for (rIndex = dsTarget.length - 1; rIndex > 0; rIndex--) {
+            rowData = dsTarget[rIndex];
+            if (rowData.BILL_DIV == refRowData.BILL_DIV) {
+                G_GRDDETAIL3.data.deleteItem(rowData.id);
+            }
+        }
+
+        // 해당BILL의 관리 입출고구분 전체 삭제.
+        dsTarget = G_GRDDETAIL5.data.getItems();
+        for (rIndex = dsTarget.length - 1; rIndex > 0; rIndex--) {
+            rowData = dsTarget[rIndex];
+            if (rowData.BILL_DIV == refRowData.BILL_DIV) {
+                G_GRDDETAIL5.data.deleteItem(rowData.id);
+            }
+        }
+
+    } else {
+        refRowData.CRUD = $ND.C_DV_CRUD_D;
+        G_GRDMASTER.data.updateItem(refRowData.id, refRowData);
+
+        // 해당BILL의 관리 물류센터 전체 삭제.
+        dsTarget = G_GRDDETAIL1.data.getItems();
+        for (rIndex = dsTarget.length - 1; rIndex > 0; rIndex--) {
+            rowData = dsTarget[rIndex];
+            if (rowData.BILL_DIV == refRowData.BILL_DIV) {
+                rowData.CRUD = $ND.C_DV_CRUD_D;
+                G_GRDDETAIL1.data.updateItem(rowData.id, rowData);
+            }
+        }
+
+        // 해당BILL의 관리 사업부 전체 삭제.
+        dsTarget = G_GRDDETAIL3.data.getItems();
+        for (rIndex = dsTarget.length - 1; rIndex > 0; rIndex--) {
+            rowData = dsTarget[rIndex];
+            if (rowData.BILL_DIV == refRowData.BILL_DIV) {
+                rowData.CRUD = $ND.C_DV_CRUD_D;
+                G_GRDDETAIL3.data.updateItem(rowData.id, rowData);
+            }
+        }
+
+        // 해당BILL의 관리 입출고구분 전체 삭제.
+        dsTarget = G_GRDDETAIL5.data.getItems();
+        for (rIndex = dsTarget.length - 1; rIndex > 0; rIndex--) {
+            rowData = dsTarget[rIndex];
+            if (rowData.BILL_DIV == refRowData.BILL_DIV) {
+                rowData.CRUD = $ND.C_DV_CRUD_D;
+                G_GRDDETAIL5.data.updateItem(rowData.id, rowData);
+            }
+        }
+
+        _Save();
+    }
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel() {
+
+    var lastKeyVal1 = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: [
+            "BILL_DIV",
+            "CONTRACT_NO"
+        ],
+        isCancel: true
+    });
+    var lastKeyVal2 = $NC.getGridLastKeyVal(G_GRDDETAIL, {
+        selectKey: [
+            "BILL_GRP",
+            "BILL_DIV"
+        ],
+        isCancel: true
+    });
+    _Inquiry();
+    G_GRDMASTER.lastKeyVal = lastKeyVal1;
+    G_GRDDETAIL.lastKeyVal = lastKeyVal2;
+}
+/**
+ * 프로그램 사용 권한 설정
+ */
+function setUserProgramPermission() {
+
+    var enable = G_GRDMASTER.data.getLength() >= 0;
+
+    // 저장
+    $NC.setEnableGroup("#ctrAdditional_grdDetail", enable);
+    $NC.setEnable("#btnInquiryBill", enable);
+    $NC.setEnable("#btnAddBill", enable);
+}
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+}
+
+/**
+ * Tab Active Event
+ * 
+ * @param event
+ * @param ui
+ *        newTab: The tab that was just activated.<br>
+ *        oldTab: The tab that was just deactivated.<br>
+ *        newPanel: The panel that was just activated.<br>
+ *        oldPanel: The panel that was just deactivated
+ */
+function tabOnActivate(event, ui) {
+    $NC.onGlobalResize();
+}
+
+function grdMasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "BILL_DIV_F",
+        field: "BILL_DIV_F",
+        name: "정산구분"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BILL_CLASS",
+        field: "BILL_CLASS",
+        name: "정산분류",
+        editor: Slick.Editors.Text,
+        editorOptions: {
+            isKeyField: true
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "BILL_NM",
+        field: "BILL_NM",
+        name: "정산명",
+        editor: Slick.Editors.Text,
+        editorOptions: {
+            isKeyField: true
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "BILL_DETAIL",
+        field: "BILL_DETAIL",
+        name: "정산세부",
+        editor: Slick.Editors.Text
+    });
+    $NC.setGridColumn(columns, {
+        id: "CONTRACT_NO_F",
+        field: "CONTRACT_NO_F",
+        name: "계약번호",
+        editor: Slick.Editors.Popup,
+        editorOptions: {
+            onPopup: grdMasterOnPopup,
+            isKeyField: true
+        }
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST_NM",
+        field: "CUST_NM",
+        name: "고객사명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "DEAL_DIV_F",
+        field: "DEAL_DIV_F",
+        name: "거래구분",
+        editor: Slick.Editors.ComboBox,
+        editorOptions: $NC.getGridComboEditorOptions("/WC/getDataSet.do", {
+            P_QUERY_ID: "WC.POP_CMCODE",
+            P_QUERY_PARAMS: {
+                P_COMMON_GRP: "DEAL_DIV",
+                P_COMMON_CD: $ND.C_ALL,
+                P_VIEW_DIV: "1" // 1:등록팝업, 2:조회팝업
+            }
+        }, {
+            codeField: "DEAL_DIV",
+            dataCodeField: "COMMON_CD",
+            dataFullNameField: "COMMON_CD_F",
+            isKeyField: true
+        })
+    });
+    $NC.setGridColumn(columns, {
+        id: "OPEN_DATE",
+        field: "OPEN_DATE",
+        name: "거래시작일자",
+        cssClass: "styCenter",
+        editor: Slick.Editors.Date
+    });
+    $NC.setGridColumn(columns, {
+        id: "CLOSE_DATE",
+        field: "CLOSE_DATE",
+        name: "거래종료일자",
+        cssClass: "styCenter",
+        editor: Slick.Editors.Date
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고",
+        editor: Slick.Editors.Text
+    });
+    $NC.setGridColumn(columns, {
+        id: "REG_USER_ID",
+        field: "REG_USER_ID",
+        name: "최초사용자ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REG_DATETIME",
+        field: "REG_DATETIME",
+        name: "최초등록일시",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LAST_USER_ID",
+        field: "LAST_USER_ID",
+        name: "최종수정자ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LAST_DATETIME",
+        field: "LAST_DATETIME",
+        name: "최종수정일시",
+        cssClass: "styCenter"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdMasterInitialize() {
+
+    var options = {
+        editable: true,
+        autoEdit: true,
+        frozenColumn: 0
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdMaster", {
+        columns: grdMasterOnGetColumns(),
+        queryId: "LFC02020E0.RS_MASTER",
+        sortCol: "BILL_GRP_F",
+        gridOptions: options,
+        dropOptions: {
+            dropAccept: "#grdDetail",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnAddBillOnClick();
+            }
+        }
+    });
+
+    G_GRDMASTER.view.onSelectedRowsChanged.subscribe(grdMasterOnAfterScroll);
+    G_GRDMASTER.view.onBeforeEditCell.subscribe(grdMasterOnBeforeEditCell);
+    G_GRDMASTER.view.onCellChange.subscribe(grdMasterOnCellChange);
+}
+
+function grdMasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDMASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDMASTER.data.getItem(row);
+
+    // 관리물류센터 필터링
+    $NC.setInitGridVar(G_GRDDETAIL1);
+    $NC.setGridFilterValue(G_GRDDETAIL1, [
+        rowData.CONTRACT_NO,
+        rowData.BILL_DIV
+    ]);
+
+    // 관리사업부 필터링
+    $NC.setInitGridVar(G_GRDDETAIL3);
+    $NC.setGridFilterValue(G_GRDDETAIL3, [
+        rowData.CONTRACT_NO,
+        rowData.BILL_DIV
+    ]);
+
+    // 사업부 필터링
+    $NC.setInitGridVar(G_GRDDETAIL4);
+    $NC.setGridFilterValue(G_GRDDETAIL4, $NC.isNotNull(rowData.CONTRACT_NO) ? rowData.CUST_CD : null);
+
+    // 관리입출고구분 필터링
+    $NC.setInitGridVar(G_GRDDETAIL5);
+    $NC.setGridFilterValue(G_GRDDETAIL5, [
+        rowData.CONTRACT_NO,
+        rowData.BILL_DIV
+    ]);
+
+    // 입출고구분 관리여부에 따라 입출고구분 그리드 표시
+    _OnResize(null, null, null, rowData);
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDMASTER, row + 1);
+}
+
+function grdMasterOnPopup(e, args) {
+
+    switch (args.column.id) {
+        case "CONTRACT_NO_F":
+            $NP.showContractPopup({
+                queryId: "LFC02020E0.RS_SUB1",
+                queryParams: {
+                    P_CONTRACT_NO: $ND.C_ALL,
+                    P_VIEW_DIV: "1"
+                }
+            }, grdMasterOnContractPopup, function() {
+                $NC.setFocusGrid(G_GRDMASTER, args.row, args.cell, true, true);
+            });
+            return;
+    }
+}
+
+function grdMasterOnContractPopup(resultInfo) {
+
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+
+    // 계약번호-정산구분 중복 등록 시 return
+    if ($NC.isNotNull(resultInfo)) {
+        var searchRow = $NC.getGridSearchRow(G_GRDMASTER, {
+            searchKey: [
+                "CONTRACT_NO",
+                "BILL_DIV"
+            ],
+            searchVal: [
+                resultInfo.CONTRACT_NO,
+                rowData.BILL_DIV
+            ]
+        });
+
+        if (searchRow != -1) {
+            alert($NC.getDisplayMsg("JS.LFC02020E0.017", "이미 등록된 정산구분 입니다."));
+            $NC.setFocusGrid(G_GRDMASTER, G_GRDMASTER.lastRow, G_GRDMASTER.view.getColumnIndex("CONTRACT_NO_F"), true, true);
+            return;
+        }
+    }
+
+    var focusCol;
+    if ($NC.isNotNull(resultInfo)) {
+        rowData.CONTRACT_NO = resultInfo.CONTRACT_NO;
+        rowData.CONTRACT_NM = resultInfo.CONTRACT_NM;
+        rowData.CONTRACT_NO_F = resultInfo.CONTRACT_NO_F;
+        rowData.CUST_CD = resultInfo.CUST_CD;
+        rowData.CUST_NM = resultInfo.CUST_NM;
+
+        focusCol = G_GRDMASTER.view.getColumnIndex("DEAL_DIV_F");
+    } else {
+        rowData.CONTRACT_NO = "";
+        rowData.CONTRACT_NM = "";
+        rowData.CONTRACT_NO_F = "";
+        rowData.CUST_CD = "";
+        rowData.CUST_NM = "";
+
+        focusCol = G_GRDMASTER.view.getColumnIndex("CONTRACT_NO_F");
+    }
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDMASTER, rowData);
+    // 계약번호에 따라 사업부그리드 데이터 필터링
+    $NC.setGridFilterValue(G_GRDDETAIL4, rowData.CUST_CD);
+
+    $NC.setFocusGrid(G_GRDMASTER, G_GRDMASTER.lastRow, focusCol, true, true);
+}
+
+function grdMasterOnBeforeEditCell(e, args) {
+
+    var rowData = args.item;
+    // 신규 데이터일 때만 수정 가능한 컬럼
+    if (rowData.CRUD != $ND.C_DV_CRUD_N && rowData.CRUD != $ND.C_DV_CRUD_C) {
+        switch (args.column.id) {
+            case "CONTRACT_NO_F":
+                return false;
+            default:
+                return $NC.isNotNull(rowData.CONTRACT_NO);
+        }
+    }
+}
+
+function grdMasterOnCellChange(e, args) {
+
+    var rowData = args.item;
+
+    switch (G_GRDMASTER.view.getColumnId(args.cell)) {
+        case "BILL_CLASS":
+            if ($NC.isNull(rowData.BILL_CLASS)) {
+                alert($NC.getDisplayMsg("JS.LFC02020E0.004", "정산분류를 입력하십시오."));
+                rowData.BILL_CLASS = args.oldItem.BILL_CLASS;
+                $NC.setFocusGrid(G_GRDMASTER, args.row, args.cell, true);
+            }
+            break;
+        case "BILL_NM":
+            if ($NC.isNull(rowData.BILL_NM)) {
+                alert($NC.getDisplayMsg("JS.LFC02020E0.005", "정산명을 입력하십시오."));
+                rowData.BILL_NM = args.oldItem.BILL_NM;
+                $NC.setFocusGrid(G_GRDMASTER, args.row, args.cell, true);
+            }
+            break;
+        case "CONTRACT_NO_F":
+            $NP.onContractChange(rowData.CONTRACT_NO_F, {
+                P_CONTRACT_NO: rowData.CONTRACT_NO_F,
+                P_VIEW_DIV: "1"
+            }, grdMasterOnContractPopup, {
+                queryId: "LFC02020E0.RS_SUB1"
+            });
+            break;
+        case "DEAL_DIV":
+            if ($NC.isNull(rowData.DEAL_DIV)) {
+                alert($NC.getDisplayMsg("JS.LFC02020E0.007", "거래구분을 선택하십시오."));
+                rowData.DEAL_DIV = args.oldItem.DEAL_DIV;
+                $NC.setFocusGrid(G_GRDMASTER, args.row, args.cell, true);
+            }
+            break;
+        case "OPEN_DATE":
+            if ($NC.isNotNull(rowData.OPEN_DATE)) {
+                if (!$NC.isDate(rowData.OPEN_DATE)) {
+                    alert($NC.getDisplayMsg("JS.LFC02020E0.005", "거래일자를 정확히 입력하십시오."));
+                    rowData.OPEN_DATE = args.oldItem.OPEN_DATE;
+                    $NC.setFocusGrid(G_GRDMASTER, args.row, args.cell, true);
+                }
+            }
+            break;
+        case "CLOSE_DATE":
+            if ($NC.isNotNull(rowData.CLOSE_DATE)) {
+                if (!$NC.isDate(rowData.CLOSE_DATE)) {
+                    alert($NC.getDisplayMsg("JS.LFC02020E0.005", "종료일자를 정확히 입력하십시오."));
+                    rowData.CLOSE_DATE = args.oldItem.CLOSE_DATE;
+                    $NC.setFocusGrid(G_GRDMASTER, args.row, args.cell, true);
+                }
+            }
+            break;
+    }
+
+    // 마지막 선택 Row 수정 데이터 반영 및 상태 변경
+    $NC.setGridApplyChange(G_GRDMASTER, rowData);
+}
+
+function grdMasterOnBeforePost(row) {
+
+    // Validation 대상인지 체크, 아니면 True로 리턴
+    if (!$NC.isGridValidPostRow(G_GRDMASTER, row)) {
+        return true;
+    }
+
+    var rowData = G_GRDMASTER.data.getItem(row);
+
+    if (rowData.CRUD != $ND.C_DV_CRUD_R) {
+        if ($NC.isNull(rowData.BILL_CLASS)) {
+            alert($NC.getDisplayMsg("JS.LFC02020E0.004", "정산분류를 입력하십시오."));
+            $NC.setFocusGrid(G_GRDMASTER, row, "BILL_CLASS", true);
+            return false;
+        }
+        if ($NC.isNull(rowData.BILL_NM)) {
+            alert($NC.getDisplayMsg("JS.LFC02020E0.005", "정산명을 입력하십시오."));
+            $NC.setFocusGrid(G_GRDMASTER, row, "BILL_NM", true);
+            return false;
+        }
+        if ($NC.isNull(rowData.CONTRACT_NO)) {
+            alert($NC.getDisplayMsg("JS.LFC02020E0.006", "계약번호를 선택하십시오."));
+            $NC.setFocusGrid(G_GRDMASTER, row, "CONTRACT_NO_F", true);
+            return false;
+        }
+        if ($NC.isNull(rowData.DEAL_DIV)) {
+            alert($NC.getDisplayMsg("JS.LFC02020E0.007", "거래구분을 선택하십시오."));
+            $NC.setFocusGrid(G_GRDMASTER, row, "DEAL_DIV", true);
+            return false;
+        }
+        if ($NC.isNotNull(rowData.OPEN_DATE) && $NC.isNotNull(rowData.CLOSE_DATE)) {
+            if (rowData.CLOSE_DATE < rowData.OPEN_DATE) {
+                alert($NC.getDisplayMsg("JS.LFC02020E0.016", "거래일자와 종료일자의 범위 입력오류입니다."));
+                $NC.setFocusGrid(G_GRDMASTER, row, "CLOSE_DATE", true);
+                return false;
+            }
+        }
+    }
+
+    // 신규 데이터 업데이트, N -> C
+    $NC.setGridApplyPost(G_GRDMASTER, rowData);
+    return true;
+}
+
+function grdDetailOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "BILL_GRP_F",
+        field: "BILL_GRP_F",
+        name: "정산그룹"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BILL_DIV_F",
+        field: "BILL_DIV_F",
+        name: "정산구분"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdDetailInitialize() {
+
+    var options = {
+        editable: false,
+        autoEdit: false,
+        frozenColumn: 0
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail", {
+        columns: grdDetailOnGetColumns(),
+        queryId: "LFC02020E0.RS_DETAIL",
+        sortCol: "BILL_GRP_F",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-all",
+            onGetDraggable: function(e, dd) {
+                // Drag 가능 여부
+                return G_GRDMASTER.data.getLength() >= 0;
+            },
+            // helperMessageFormat: "선택 상품 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = dd.dragGridObject.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[정산구분: " + $NC.getDisplayCombo(rowData.BILL_DIV, rowData.BILL_DIV_D) + "]를 추가";
+                } else {
+                    result = "[정산구분: " + $NC.getDisplayCombo(rowData.BILL_DIV, rowData.BILL_DIV_D) + "] 외 " + (dd.dragCount - 1) + "건 추가";
+                }
+                return result;
+            }
+        }
+    });
+
+    G_GRDDETAIL.view.onSelectedRowsChanged.subscribe(grdDetailOnAfterScroll);
+    G_GRDDETAIL.view.onClick.subscribe(grdDetailOnClick);
+}
+
+function grdDetailOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL, row + 1);
+}
+
+function grdDetailOnClick(e, args) {
+
+    var rowData = G_GRDDETAIL.data.getItem(args.row);
+    if ($NC.isNull(rowData)) {
+        return;
+    }
+
+    var searchIndex = $NC.getGridSearchRow(G_GRDMASTER, {
+        searchKey: [
+            "BILL_GRP",
+            "BILL_DIV"
+        ],
+        searchVal: [
+            $NC.getValue("#cboBill_Grp"),
+            rowData.COMMON_CD,
+            rowData.COMMON_NM
+        ]
+    });
+
+    if (searchIndex > -1) {
+        $NC.setGridSelectRow(G_GRDMASTER, searchIndex);
+    }
+}
+
+function grdDetail1OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "CENTER_CD",
+        field: "CENTER_CD",
+        name: "코드",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CENTER_NM",
+        field: "CENTER_NM",
+        name: "명칭"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 관리물류센터 그리드 초기화.
+ */
+function grdDetail1Initialize() {
+
+    var options = {
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail1", {
+        columns: grdDetail1OnGetColumns(),
+        queryId: "LFC02020E0.RS_SUB2",
+        sortCol: "CENTER_CD",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-view",
+            // helperMessageFormat: "선택 물류센터 %d건 삭제",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = dd.dragGridObject.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[물류센터: " + $NC.getDisplayCombo(rowData.CENTER_CD, rowData.CENTER_NM) + "]를 삭제";
+                } else {
+                    result = "[물류센터: " + $NC.getDisplayCombo(rowData.CENTER_CD, rowData.CENTER_NM) + "] 외 " + (dd.dragCount - 1) + "건 삭제";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail2",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnAddCenterOnClick();
+            }
+        }
+    });
+
+    G_GRDDETAIL1.view.onSelectedRowsChanged.subscribe(grdDetail1OnAfterScroll);
+}
+
+/**
+ * grdDetail1 데이터 필터링 이벤트
+ */
+function grdDetail1OnFilter(item) {
+
+    return (G_GRDDETAIL1.lastFilterVal).toString() === ([
+        item.CONTRACT_NO,
+        item.BILL_DIV
+    ]).toString() //
+        && item.CRUD != $ND.C_DV_CRUD_D;
+}
+
+/**
+ * Row Change Event.
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetail1OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL1, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL1.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL1, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL1, G_GRDDETAIL1.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL1, row + 1);
+}
+
+function grdDetail2OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "CENTER_CD",
+        field: "CENTER_CD",
+        name: "코드",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CENTER_NM",
+        field: "CENTER_NM",
+        name: "명칭"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 물류센터 그리드 초기화.
+ */
+function grdDetail2Initialize() {
+
+    var options = {
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail2", {
+        columns: grdDetail2OnGetColumns(),
+        queryId: "WC.POP_CMCENTER",
+        sortCol: "CENTER_CD",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-view",
+            onGetDraggable: function(e, dd) {
+                // Drag 가능 여부
+                return G_GRDMASTER.data.getLength() > 0;
+            },
+            // helperMessageFormat: "선택 물류센터 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = dd.dragGridObject.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[물류센터: " + $NC.getDisplayCombo(rowData.CENTER_CD, rowData.CENTER_NM) + "]를 추가";
+                } else {
+                    result = "[물류센터: " + $NC.getDisplayCombo(rowData.CENTER_CD, rowData.CENTER_NM) + "] 외 " + (dd.dragCount - 1) + "건 추가";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail1",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnDeleteCenterOnClick();
+            }
+        }
+    });
+
+    G_GRDDETAIL2.view.onSelectedRowsChanged.subscribe(grdDetail2OnAfterScroll);
+}
+
+/**
+ * Row Change Event.
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetail2OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL2, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL2.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL2, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL2, G_GRDDETAIL2.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL2, row + 1);
+}
+
+function grdDetail3OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "BU_CD",
+        field: "BU_CD",
+        name: "코드",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_NM",
+        field: "BU_NM",
+        name: "명칭"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 관리사업부 그리드 초기화.
+ */
+function grdDetail3Initialize() {
+
+    var options = {
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail3", {
+        columns: grdDetail3OnGetColumns(),
+        queryId: "LFC02020E0.RS_SUB3",
+        sortCol: "BU_CD",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-view",
+            // helperMessageFormat: "선택 사업부 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = G_GRDDETAIL3.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[사업부: " + $NC.getDisplayCombo(rowData.BU_CD, rowData.BU_NM) + "]를 삭제";
+                } else {
+                    result = "[사업부: " + $NC.getDisplayCombo(rowData.BU_CD, rowData.BU_NM) + "] 외 " + (dd.dragCount - 1) + "건 삭제";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail4",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnAddBuOnClick();
+            }
+        }
+    });
+
+    G_GRDDETAIL3.view.onSelectedRowsChanged.subscribe(grdDetail3OnAfterScroll);
+}
+
+/**
+ * grdDetail3 데이터 필터링 이벤트
+ */
+function grdDetail3OnFilter(item) {
+
+    return (G_GRDDETAIL3.lastFilterVal).toString() === ([
+        item.CONTRACT_NO,
+        item.BILL_DIV
+    ]).toString() //
+        && item.CRUD != $ND.C_DV_CRUD_D;
+}
+
+/**
+ * Row Change Event.
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetail3OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL3, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL3.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL3, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL3, G_GRDDETAIL3.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL3, row + 1);
+}
+
+function grdDetail4OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "BU_CD",
+        field: "BU_CD",
+        name: "코드",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BU_NM",
+        field: "BU_NM",
+        name: "명칭"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST_NM",
+        field: "CUST_NM",
+        name: "고객사명"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 사업부 그리드 초기화.
+ */
+function grdDetail4Initialize() {
+
+    var options = {
+        multiSelect: true,
+        frozenColumn: 0
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail4", {
+        columns: grdDetail4OnGetColumns(),
+        queryId: "WC.POP_CMBU",
+        sortCol: "BU_CD",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-view",
+            onGetDraggable: function(e, dd) {
+                // Drag 가능 여부
+                return G_GRDMASTER.data.getLength() > 0;
+            },
+            // helperMessageFormat: "선택 사업부 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = G_GRDDETAIL4.data.getItem(dd.dragRows[0]);
+                var result = "";
+                if (dd.dragCount == 1) {
+                    result = "[사업부: " + $NC.getDisplayCombo(rowData.BU_CD, rowData.BU_NM) + "]를 추가";
+                } else {
+                    result = "[사업부: " + $NC.getDisplayCombo(rowData.BU_CD, rowData.BU_NM) + "] 외 " + (dd.dragCount - 1) + "건 추가";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail3",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnDeleteBuOnClick();
+            }
+        }
+    });
+
+    G_GRDDETAIL4.view.onSelectedRowsChanged.subscribe(grdDetail4OnAfterScroll);
+}
+
+/**
+ * grdDetail4 데이터 필터링 이벤트
+ */
+function grdDetail4OnFilter(item) {
+
+    if ($NC.isNull(G_GRDDETAIL4.lastFilterVal)) {
+        return item.CRUD != $ND.C_DV_CRUD_D;
+    } else {
+        return G_GRDDETAIL4.lastFilterVal == item.CUST_CD && item.CRUD != $ND.C_DV_CRUD_D;
+    }
+}
+
+/**
+ * Row Change Event.
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetail4OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL4, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL4.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL4, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL4, G_GRDDETAIL4.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL4, row + 1);
+}
+
+function grdDetail5OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "INOUT_CD",
+        field: "INOUT_CD",
+        name: "코드",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "INOUT_NM",
+        field: "INOUT_NM",
+        name: "명칭"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 관리입출고구분 그리드 초기화.
+ */
+function grdDetail5Initialize() {
+
+    var options = {
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail5", {
+        columns: grdDetail5OnGetColumns(),
+        queryId: "LFC02020E0.RS_SUB4",
+        sortCol: "INOUT_CD",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-view",
+            // helperMessageFormat: "선택 사업부 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = G_GRDDETAIL5.data.getItem(dd.dragRows[0]);
+                var result;
+                if (dd.dragCount == 1) {
+                    result = "[입출고구분: " + $NC.getDisplayCombo(rowData.INOUT_CD, rowData.INOUT_NM) + "]를 삭제";
+                } else {
+                    result = "[입출고구분: " + $NC.getDisplayCombo(rowData.INOUT_CD, rowData.INOUT_NM) + "] 외 " + (dd.dragCount - 1) + "건 삭제";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail6",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnAddInoutOnClick();
+            }
+        }
+    });
+
+    G_GRDDETAIL5.view.onSelectedRowsChanged.subscribe(grdDetail5OnAfterScroll);
+}
+
+/**
+ * grdDetail5 데이터 필터링 이벤트
+ */
+function grdDetail5OnFilter(item) {
+
+    return (G_GRDDETAIL5.lastFilterVal).toString() === ([
+        item.CONTRACT_NO,
+        item.BILL_DIV
+    ]).toString() //
+        && item.CRUD != $ND.C_DV_CRUD_D;
+}
+
+/**
+ * Row Change Event.
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetail5OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL5, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL5.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL5, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL5, G_GRDDETAIL5.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL5, row + 1);
+}
+
+function grdDetail6OnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "COMMON_CD",
+        field: "COMMON_CD",
+        name: "입출고구분",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "COMMON_NM",
+        field: "COMMON_NM",
+        name: "입출고구분명"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 입출고구분 그리드 초기화.
+ */
+function grdDetail6Initialize() {
+
+    var options = {
+        multiSelect: true
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdDetail6", {
+        columns: grdDetail6OnGetColumns(),
+        queryId: "WC.POP_CMCODE",
+        sortCol: "INOUT_CD",
+        gridOptions: options,
+        dragOptions: {
+            dropMode: "drop-view",
+            onGetDraggable: function(e, dd) {
+                // Drag 가능 여부
+                return G_GRDMASTER.data.getLength() > 0;
+            },
+            // helperMessageFormat: "선택 사업부 %d건 추가",
+            onGetDragHelper: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // 단순 문자열 리턴: 기본 스타일
+                // HTML 문자 리턴: 해당 HTML을 Object화해서 표현
+                var rowData = G_GRDDETAIL6.data.getItem(dd.dragRows[0]);
+                var result = "";
+                if (dd.dragCount == 1) {
+                    result = "[입출고구분: " + $NC.getDisplayCombo(rowData.COMMON_CD, rowData.COMMON_NM) + "]를 추가";
+                } else {
+                    result = "[입출고구분: " + $NC.getDisplayCombo(rowData.COMMON_CD, rowData.COMMON_NM) + "] 외 " + (dd.dragCount - 1) + "건 추가";
+                }
+                return result;
+            }
+        },
+        dropOptions: {
+            dropAccept: "#grdDetail5",
+            onDrop: function(e, dd) {
+                // Drag 참조 정보
+                // dd.dragGridObject: Grid Object
+                // dd.dragRows: Drag Selected Row Indexes
+                // dd.dragCount: Drag Selected Count
+                // Drop 참조 정보
+                // dd.dropMode: drop-view, drop-cell
+                // dd.dropGridObject: Grid Object
+                // dd.dropCell: dropMode가 drop-cell, drop-all일 경우 Drop 된 Cell 정보, drop-all일 경우 dropCell이 없으면 cell이 아닌 위치에 DropV
+                btnDeleteInoutOnClick();
+            }
+        }
+    });
+
+    G_GRDDETAIL6.view.onSelectedRowsChanged.subscribe(grdDetail6OnAfterScroll);
+}
+
+/**
+ * Row Change Event.
+ * 
+ * @param e
+ * @param args
+ */
+function grdDetail6OnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL6, args.rows, e)) {
+        if (args.rows.length == 0) {
+            // Grid가 Multi Select가 될 경우 마지막 Row는 선택해제가 안되게 처리
+            if (G_GRDDETAIL6.data.getLength() == 0) {
+                $NC.setGridDisplayRows(G_GRDDETAIL6, 0, 0);
+            } else {
+                $NC.setGridSelectRow(G_GRDDETAIL6, G_GRDDETAIL6.lastRow);
+            }
+        }
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDDETAIL6, row + 1);
+}
+
+function onGetMaster(ajaxData) {
+
+    $NC.setInitGridData(G_GRDMASTER, ajaxData);
+    if ($NC.setInitGridAfterOpen(G_GRDMASTER, [
+        "BILL_DIV",
+        "CONTRACT_NO"
+    ], true)) {
+        // 데이터 조회
+        btnInquiryBillOnClick();
+        $NC.setEnableGroup("#divRightView", true);
+    } else {
+        btnInquiryBillOnClick();
+        $NC.setEnableGroup("#divRightView", false);
+    }
+
+    setTopButtons();
+
+    // 프로그램 사용권한 설정
+    setUserProgramPermission();
+}
+
+function onGetDetail(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL, [
+        "BILL_GRP",
+        "BILL_DIV"
+    ]);
+}
+
+/**
+ * 조회버튼 클릭후 상단 그리드에 데이터 표시처리
+ */
+function onGetDetail1(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL1, ajaxData, grdDetail1OnFilter);
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    $NC.setGridFilterValue(G_GRDDETAIL1, $NC.isNotNull(rowData) ? [
+        rowData.CONTRACT_NO,
+        rowData.BILL_DIV
+    ] : "");
+    $NC.setInitGridAfterOpen(G_GRDDETAIL1, "CENTER_CD");
+}
+
+/**
+ * 조회버튼 클릭후 상단 그리드에 데이터 표시처리
+ */
+function onGetDetail2(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL2, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL2, "CENTER_CD");
+}
+
+/**
+ * 조회버튼 클릭후 상단 그리드에 데이터 표시처리
+ */
+function onGetDetail3(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL3, ajaxData, grdDetail3OnFilter);
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    $NC.setGridFilterValue(G_GRDDETAIL3, $NC.isNotNull(rowData) ? [
+        rowData.CONTRACT_NO,
+        rowData.BILL_DIV
+    ] : "");
+    $NC.setInitGridAfterOpen(G_GRDDETAIL3, "BU_CD");
+}
+
+/**
+ * 조회버튼 클릭후 상단 그리드에 데이터 표시처리
+ */
+function onGetDetail4(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL4, ajaxData, grdDetail4OnFilter);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL4, "BU_CD");
+}
+
+/**
+ * 조회버튼 클릭후 상단 그리드에 데이터 표시처리
+ */
+function onGetDetail5(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL5, ajaxData, grdDetail5OnFilter);
+    var rowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    $NC.setGridFilterValue(G_GRDDETAIL5, $NC.isNotNull(rowData) ? [
+        rowData.CONTRACT_NO,
+        rowData.BILL_DIV
+    ] : "");
+    $NC.setInitGridAfterOpen(G_GRDDETAIL5, "INOUT_CD");
+}
+
+/**
+ * 조회버튼 클릭후 상단 그리드에 데이터 표시처리
+ */
+function onGetDetail6(ajaxData) {
+
+    $NC.setInitGridData(G_GRDDETAIL6, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDDETAIL6, "INOUT_CD");
+}
+
+function onSave(ajaxData) {
+
+    var lastKeyVal1 = $NC.getGridLastKeyVal(G_GRDMASTER, {
+        selectKey: [
+            "BILL_DIV",
+            "CONTRACT_NO"
+        ]
+    });
+    var lastKeyVal2 = $NC.getGridLastKeyVal(G_GRDDETAIL, {
+        selectKey: [
+            "BILL_GRP",
+            "BILL_DIV"
+        ]
+    });
+    _Inquiry();
+    G_GRDMASTER.lastKeyVal = lastKeyVal1;
+    G_GRDDETAIL.lastKeyVal = lastKeyVal2;
+}
+
+function onSaveError(ajaxData) {
+
+    $NC.onError(ajaxData);
+    _Inquiry();
+}
+
+/**
+ * 관리물류센터 등록
+ */
+function btnAddCenterOnClick() {
+
+    if (!$NC.getProgramPermission().canSave) {
+        alert($NC.getDisplayMsg("JS.MAIN.001", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDMASTER)) {
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.008", "관리물류센터를 추가할 정산항목을 선택하십시오."));
+        return;
+    }
+
+    if (G_GRDDETAIL2.data.getLength() == 0) {
+        return;
+    }
+
+    var newRowData, rowData;
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    var selectedRows = G_GRDDETAIL2.view.getSelectedRows();
+    G_GRDDETAIL1.data.beginUpdate();
+    try {
+        for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+            rowData = G_GRDDETAIL2.data.getItem(selectedRows[rIndex]);
+            if ($NC.getGridSearchRow(G_GRDDETAIL1, {
+                searchKey: "CENTER_CD",
+                searchVal: rowData.CENTER_CD
+            }) != -1) {
+                continue;
+            }
+
+            newRowData = {
+                CONTRACT_NO: refRowData.CONTRACT_NO,
+                BILL_DIV: refRowData.BILL_DIV,
+                CENTER_CD: rowData.CENTER_CD,
+                CENTER_NM: rowData.CENTER_NM,
+                REG_USER_ID: null,
+                REG_DATETIME: null,
+                id: $NC.getGridNewRowId(),
+                CRUD: $ND.C_DV_CRUD_C
+            };
+
+            G_GRDDETAIL1.data.addItem(newRowData);
+        }
+    } finally {
+        G_GRDDETAIL1.data.endUpdate();
+    }
+
+    // 관리물류센터 필터링
+    $NC.setGridFilterValue(G_GRDDETAIL1, [
+        refRowData.CONTRACT_NO,
+        refRowData.BILL_DIV
+    ]);
+    // 관리물류센터 강제 정렬
+    $NC.setGridSort(G_GRDDETAIL1, {
+        sortColumns: {
+            columnId: "CENTER_CD",
+            sortAsc: true
+        }
+    });
+
+    $NC.setGridSelectRow(G_GRDDETAIL2, selectedRows[selectedRows.length - 1]);
+}
+
+/**
+ * 관리물류센터 해제
+ */
+function btnDeleteCenterOnClick() {
+
+    if (!$NC.getProgramPermission().canDelete) {
+        alert($NC.getDisplayMsg("JS.MAIN.002", "해당 프로그램의 삭제권한이 없습니다."));
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.009", "관리물류센터를 삭제할 정산항목을 선택하십시오."));
+        return;
+    }
+
+    if (G_GRDDETAIL1.data.getLength() == 0) {
+        return;
+    }
+
+    var rowData;
+    var selectedRows = G_GRDDETAIL1.view.getSelectedRows();
+    G_GRDDETAIL1.data.beginUpdate();
+    for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+        rowData = G_GRDDETAIL1.data.getItem(selectedRows[rIndex]);
+
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            rowData.CRUD = $ND.C_DV_CRUD_D;
+            G_GRDDETAIL1.data.updateItem(rowData.id, rowData);
+        } else {
+            G_GRDDETAIL1.data.deleteItem(rowData.id);
+        }
+    }
+    G_GRDDETAIL1.data.endUpdate();
+
+    if (G_GRDDETAIL1.data.getLength() > 0) {
+        $NC.setGridSelectRow(G_GRDDETAIL1, G_GRDDETAIL1.data.getLength() - 1);
+    } else {
+        $NC.setGridDisplayRows(G_GRDDETAIL1, 0, 0);
+    }
+}
+
+/**
+ * 관리사업부 등록
+ */
+function btnAddBuOnClick() {
+
+    if (!$NC.getProgramPermission().canSave) {
+        alert($NC.getDisplayMsg("JS.MAIN.001", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDMASTER)) {
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.010", "관리사업부를 추가할 정산항목을 선택하십시오."));
+        return;
+    }
+
+    if (G_GRDDETAIL4.data.getLength() == 0) {
+        return;
+    }
+
+    var newRowData, rowData;
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    var selectedRows = G_GRDDETAIL4.view.getSelectedRows();
+    G_GRDDETAIL3.data.beginUpdate();
+    try {
+        for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+            rowData = G_GRDDETAIL4.data.getItem(selectedRows[rIndex]);
+            if ($NC.getGridSearchRow(G_GRDDETAIL3, {
+                searchKey: "BU_CD",
+                searchVal: rowData.BU_CD
+            }) != -1) {
+                continue;
+            }
+
+            newRowData = {
+                CONTRACT_NO: refRowData.CONTRACT_NO,
+                BILL_DIV: refRowData.BILL_DIV,
+                BU_CD: rowData.BU_CD,
+                BU_NM: rowData.BU_NM,
+                REG_USER_ID: null,
+                REG_DATETIME: null,
+                id: $NC.getGridNewRowId(),
+                CRUD: $ND.C_DV_CRUD_C
+            };
+
+            G_GRDDETAIL3.data.addItem(newRowData);
+        }
+    } finally {
+        G_GRDDETAIL3.data.endUpdate();
+    }
+
+    // 관리사업부 필터링
+    $NC.setGridFilterValue(G_GRDDETAIL3, [
+        refRowData.CONTRACT_NO,
+        refRowData.BILL_DIV
+    ]);
+    // 관리사업부 강제 정렬
+    $NC.setGridSort(G_GRDDETAIL3, {
+        sortColumns: {
+            columnId: "BU_CD",
+            sortAsc: true
+        }
+    });
+
+    $NC.setGridSelectRow(G_GRDDETAIL4, selectedRows[selectedRows.length - 1]);
+}
+
+/**
+ * 관리사업부 해제
+ */
+function btnDeleteBuOnClick() {
+
+    if (!$NC.getProgramPermission().canDelete) {
+        alert($NC.getDisplayMsg("JS.MAIN.002", "해당 프로그램의 삭제권한이 없습니다."));
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.011", "관리사업부를 삭제할 정산항목을 선택하십시오."));
+        return;
+    }
+
+    if (G_GRDDETAIL3.data.getLength() == 0) {
+        return;
+    }
+
+    var rowData;
+    var selectedRows = G_GRDDETAIL3.view.getSelectedRows();
+    G_GRDDETAIL3.data.beginUpdate();
+    for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+        rowData = G_GRDDETAIL3.data.getItem(selectedRows[rIndex]);
+
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            rowData.CRUD = $ND.C_DV_CRUD_D;
+            G_GRDDETAIL3.data.updateItem(rowData.id, rowData);
+        } else {
+            G_GRDDETAIL3.data.deleteItem(rowData.id);
+        }
+    }
+    G_GRDDETAIL3.data.endUpdate();
+
+    if (G_GRDDETAIL3.data.getLength() > 0) {
+        $NC.setGridSelectRow(G_GRDDETAIL3, G_GRDDETAIL3.data.getLength() - 1);
+    } else {
+        $NC.setGridDisplayRows(G_GRDDETAIL3, 0, 0);
+    }
+}
+
+/**
+ * 관리입출고구분 등록
+ */
+function btnAddInoutOnClick() {
+
+    if (!$NC.getProgramPermission().canSave) {
+        alert($NC.getDisplayMsg("JS.MAIN.001", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDMASTER)) {
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.010", "관리사업부를 추가할 정산항목을 선택하십시오."));
+        return;
+    }
+
+    if (G_GRDDETAIL6.data.getLength() == 0) {
+        return;
+    }
+
+    var newRowData, rowData;
+    var refRowData = G_GRDMASTER.data.getItem(G_GRDMASTER.lastRow);
+    var selectedRows = G_GRDDETAIL6.view.getSelectedRows();
+    G_GRDDETAIL5.data.beginUpdate();
+    try {
+        for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+            rowData = G_GRDDETAIL6.data.getItem(selectedRows[rIndex]);
+            if ($NC.getGridSearchRow(G_GRDDETAIL5, {
+                searchKey: "INOUT_CD",
+                searchVal: rowData.COMMON_CD
+            }) != -1) {
+                continue;
+            }
+
+            newRowData = {
+                CONTRACT_NO: refRowData.CONTRACT_NO,
+                BILL_DIV: refRowData.BILL_DIV,
+                INOUT_CD: rowData.COMMON_CD,
+                INOUT_NM: rowData.COMMON_NM,
+                REG_USER_ID: null,
+                REG_DATETIME: null,
+                id: $NC.getGridNewRowId(),
+                CRUD: $ND.C_DV_CRUD_C
+            };
+
+            G_GRDDETAIL5.data.addItem(newRowData);
+        }
+    } finally {
+        G_GRDDETAIL5.data.endUpdate();
+    }
+
+    // 관리사업부 필터링
+    $NC.setGridFilterValue(G_GRDDETAIL5, [
+        refRowData.CONTRACT_NO,
+        refRowData.BILL_DIV
+    ]);
+    // 관리사업부 강제 정렬
+    $NC.setGridSort(G_GRDDETAIL5, {
+        sortColumns: {
+            columnId: "INOUT_CD",
+            sortAsc: true
+        }
+    });
+
+    $NC.setGridSelectRow(G_GRDDETAIL6, selectedRows[selectedRows.length - 1]);
+}
+
+/**
+ * 관리사업부 해제
+ */
+function btnDeleteInoutOnClick() {
+
+    if (!$NC.getProgramPermission().canDelete) {
+        alert($NC.getDisplayMsg("JS.MAIN.002", "해당 프로그램의 삭제권한이 없습니다."));
+        return;
+    }
+
+    if (G_GRDMASTER.data.getLength() == 0 || $NC.isNull(G_GRDMASTER.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.012", "관리입출고구분을 삭제할 정산항목을 선택하십시오."));
+        return;
+    }
+
+    if (G_GRDDETAIL5.data.getLength() == 0) {
+        return;
+    }
+
+    var rowData;
+    var selectedRows = G_GRDDETAIL5.view.getSelectedRows();
+    G_GRDDETAIL5.data.beginUpdate();
+    for (var rIndex = 0, rCount = selectedRows.length; rIndex < rCount; rIndex++) {
+        rowData = G_GRDDETAIL5.data.getItem(selectedRows[rIndex]);
+
+        if (rowData.CRUD == $ND.C_DV_CRUD_R) {
+            rowData.CRUD = $ND.C_DV_CRUD_D;
+            G_GRDDETAIL5.data.updateItem(rowData.id, rowData);
+        } else {
+            G_GRDDETAIL5.data.deleteItem(rowData.id);
+        }
+    }
+    G_GRDDETAIL5.data.endUpdate();
+
+    if (G_GRDDETAIL5.data.getLength() > 0) {
+        $NC.setGridSelectRow(G_GRDDETAIL5, G_GRDDETAIL5.data.getLength() - 1);
+    } else {
+        $NC.setGridDisplayRows(G_GRDDETAIL5, 0, 0);
+    }
+}
+
+/**
+ * 검색항목 값 변경시 화면 클리어
+ */
+function onChangingCondition() {
+
+    // 전역 변수 값 초기화
+    $NC.clearGridData(G_GRDMASTER);
+    $NC.clearGridData(G_GRDDETAIL);
+    $NC.clearGridData(G_GRDDETAIL1);
+    $NC.clearGridData(G_GRDDETAIL2);
+    $NC.clearGridData(G_GRDDETAIL3);
+    $NC.clearGridData(G_GRDDETAIL4);
+    $NC.clearGridData(G_GRDDETAIL5);
+    $NC.clearGridData(G_GRDDETAIL6);
+
+    // 프로그램 사용 권한 설정
+    setUserProgramPermission();
+
+    // 공통 버튼 초기화 - 조회 버튼만 활성
+    $NC.setInitTopButtons();
+}
+
+function onChangingBillCondition() {
+
+    $NC.clearGridData(G_GRDDETAIL);
+}
+
+function setTopButtons() {
+
+    $NC.G_VAR.buttons._inquiry = "1";
+    $NC.G_VAR.buttons._new = "0";
+    $NC.G_VAR.buttons._save = "0";
+    $NC.G_VAR.buttons._cancel = "0";
+    $NC.G_VAR.buttons._delete = "0";
+    $NC.G_VAR.buttons._print = "0";
+
+    if (G_GRDMASTER.data.getLength() >= 0) {
+        $NC.G_VAR.buttons._save = "1";
+        $NC.G_VAR.buttons._cancel = "1";
+        $NC.G_VAR.buttons._delete = "1";
+    }
+    $NC.setInitTopButtons($NC.G_VAR.buttons);
+}
+
+function btnInquiryBillOnClick() {
+
+    var BILL_GRP = $NC.getValue("#cboBill_Grp");
+    if ($NC.isNull(BILL_GRP)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.013", "수수료그룹을 선택하십시오."));
+        $NC.setFocus("#cboBill_Grp");
+        return;
+    }
+    // 조회시 전역 변수 값 초기화
+    $NC.setInitGridVar(G_GRDDETAIL);
+    // 파라메터 세팅
+    G_GRDDETAIL.queryParams = {
+        P_BILL_GRP: BILL_GRP
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LFC02020E0/getDataSet.do", $NC.getGridParams(G_GRDDETAIL), onGetDetail);
+}
+
+function btnAddBillOnClick() {
+
+    if (G_GRDDETAIL.data.getLength() == 0 || $NC.isNull(G_GRDDETAIL.lastRow)) {
+        alert($NC.getDisplayMsg("JS.LFC02020E0.014", "정산항목 조회 후 등록 처리하십시오."));
+        return;
+    }
+
+    // 마지막 선택 Row Validation 체크
+    if (!$NC.isGridValidLastRow(G_GRDDETAIL)) {
+        return;
+    }
+    if (!$NC.isGridValidLastRow(G_GRDMASTER)) {
+        return;
+    }
+    var rowData = G_GRDDETAIL.data.getItem(G_GRDDETAIL.lastRow);
+
+    // 신규 데이터는 CRUD를 "N"으로 하고 데이터 입력 후 다른 Row로 이동하면 "C"로 변경
+    var newRowData = {
+        BILL_CLASS: null,
+        BILL_DETAIL: null,
+        BILL_DIV: rowData.BILL_DIV,
+        BILL_DIV_F: rowData.BILL_DIV_F,
+        BILL_GRP: rowData.BILL_GRP,
+        BILL_GRP_F: rowData.BILL_GRP_F,
+        BILL_DIV_D: rowData.BILL_DIV_D,
+        BILL_INOUT: rowData.BILL_INOUT,
+        BILL_NM: null,
+        CUST_CD: null,
+        DEAL_DIV: "1",
+        DEAL_DIV_F: $NC.getGridComboName(G_GRDMASTER, {
+            columnId: "DEAL_DIV_F",
+            searchVal: "1",
+            dataCodeField: "COMMON_CD",
+            dataFullNameField: "COMMON_CD_F"
+        }),
+        OPEN_DATE: null,
+        CLOSE_DATE: null,
+        REMARK1: null,
+        id: $NC.getGridNewRowId(),
+        CRUD: $ND.C_DV_CRUD_N
+    };
+
+    // 신규 데이터 생성 및 이벤트 호출
+    $NC.newGridRowData(G_GRDMASTER, newRowData);
+}
+
+function grdMasterOnNewRecord(args) {
+
+    $NC.setFocusGrid(G_GRDMASTER, args.row, "BILL_CLASS", true);
+}

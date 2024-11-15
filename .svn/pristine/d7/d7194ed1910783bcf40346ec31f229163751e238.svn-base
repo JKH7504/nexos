@@ -1,0 +1,924 @@
+/**
+ * <pre>
+ *  ==================================================================================================================================================
+ *  프로그램ID         : LCC02090E0
+ *  프로그램명         : 가공작업관리
+ *  프로그램설명       : 가공작업관리 화면 Javascript
+ *  작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+ *  작성일자           : 2023-04-17
+ *  버전               : 1.0
+ * 
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ *  버전       작성일자      작성자           설명
+ *  ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+ *  1.0        2023-04-17    ASETEC           신규작성
+ *  --------------------------------------------------------------------------------------------------------------------------------------------------
+ * 
+ *  ==================================================================================================================================================
+ * </pre>
+ */
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+function _Initialize() {
+
+    // 단위화면에서 사용될 일반 전역 변수 정의
+    $NC.setGlobalVar({
+        autoResizeView: function() {
+            return {
+                container: "#divMasterView",
+                grids: $NC.getTabActiveIndex("#divMasterView") == 0 ? [
+                    "#grdT1Master",
+                    "#grdT1Detail"
+                ] : "#grdT2Master"
+            };
+        }
+    });
+
+    // 탭 초기화
+    $NC.setInitTab("#divMasterView", {
+        tabIndex: 0,
+        onActivate: tabOnActivate
+    });
+
+    // 그리드 초기화
+    grdT1MasterInitialize();
+    grdT1DetailInitialize();
+    grdT2MasterInitialize();
+
+    $NC.setValue("#edtQBu_Cd", $NC.G_USERINFO.BU_CD);
+    $NC.setValue("#edtQBu_Nm", $NC.G_USERINFO.BU_NM);
+    $NC.setValue("#edtQCust_Cd", $NC.G_USERINFO.CUST_CD);
+
+    $("#btnQBu_Cd").click(showUserBuPopup);
+    $("#btnQBrand_Cd").click(showBuBrandPopup);
+
+    $NC.setInitDateRangePicker("#dtpQProcessing_Date1", "#dtpQProcessing_Date2", null, "W1");
+
+    // 조회조건 - 물류센터 초기화
+    $NC.setInitCombo("/WC/getDataSet.do", {
+        P_QUERY_ID: "WC.POP_CSUSERCENTER",
+        P_QUERY_PARAMS: {
+            P_USER_ID: $NC.G_USERINFO.USER_ID,
+            P_CENTER_CD: $ND.C_ALL,
+            P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+        }
+    }, {
+        selector: "#cboQCenter_Cd",
+        codeField: "CENTER_CD",
+        nameField: "CENTER_NM",
+        onComplete: function() {
+            $NC.setValue("#cboQCenter_Cd", $NC.G_USERINFO.CENTER_CD);
+            setPolicyValInfo();
+        }
+    });
+
+}
+
+/**
+ * 화면 초기화 - 화면 로드시 자동 호출 됨
+ */
+
+function _OnLoaded() {
+
+    $NC.setInitSplitter("#divT1TabSheetView", "h", 300);
+}
+
+/**
+ * 화면 리사이즈 Offset 세팅
+ */
+function _SetResizeOffset() {
+
+}
+
+/**
+ * Window Resize Event - Window Size 조정시 호출 됨
+ */
+function _OnResize(parent, viewWidth, viewHeight) {
+
+}
+
+/**
+ * Condition Change Event - Input, Select Change 시 호출 됨
+ */
+function _OnConditionChange(e, view, val) {
+
+    var id = view.prop("id").substr(4).toUpperCase();
+    switch (id) {
+        case "CENTER_CD":
+            setPolicyValInfo();
+            break;
+        case "BU_CD":
+            $NP.onUserBuChange(val, {
+                P_USER_ID: $NC.G_USERINFO.USER_ID,
+                P_BU_CD: val,
+                P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+            }, onUserBuPopup);
+            return;
+        case "BRAND_CD":
+            $NP.onBuBrandChange(val, {
+                P_BU_CD: $NC.getValue("#edtQBu_Cd"),
+                P_BRAND_CD: val
+            }, onBuBrandPopup);
+            return;
+        case "PROCESSING_DATE1":
+            $NC.setValueDatePicker(view, val, $NC.getDisplayMsg("JS.LCC02090E0.001", "검색 시작일자를 정확히 입력하십시오."));
+            break;
+        case "PROCESSING_DATE2":
+            $NC.setValueDatePicker(view, val, $NC.getDisplayMsg("JS.LCC02090E0.002", "검색 종료일자를 정확히 입력하십시오."));
+            break;
+    }
+
+    onChangingCondition();
+}
+
+/**
+ * Inquiry Button Event - 메인 상단 조회 버튼 클릭시 호출 됨
+ */
+function _Inquiry() {
+
+    var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+    if ($NC.isNull(CENTER_CD)) {
+        alert($NC.getDisplayMsg("JS.LCC02090E0.003", "물류센터를 선택하십시오."));
+        $NC.setFocus("#cboQCenter_Cd");
+        return;
+    }
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+    if ($NC.isNull(BU_CD)) {
+        alert($NC.getDisplayMsg("JS.LCC02090E0.004", "사업부를 입력하십시오."));
+        $NC.setFocus("#edtQBu_Cd");
+        return;
+    }
+    var PROCESSING_DATE1 = $NC.getValue("#dtpQProcessing_Date1");
+    if ($NC.isNull(PROCESSING_DATE1)) {
+        alert($NC.getDisplayMsg("JS.LCC02090E0.005", "검색 시작일자를 입력하십시오."));
+        $NC.setFocus("#dtpQProcessing_Date1");
+        return;
+    }
+    var PROCESSING_DATE2 = $NC.getValue("#dtpQProcessing_Date2");
+    if ($NC.isNull(PROCESSING_DATE2)) {
+        alert($NC.getDisplayMsg("JS.LCC02090E0.006", "검색 종료일자를 입력하십시오."));
+        $NC.setFocus("#dtpQProcessing_Date2");
+        return;
+    }
+    if (PROCESSING_DATE1 > PROCESSING_DATE2) {
+        alert($NC.getDisplayMsg("JS.LCC02090E0.007", "가공일자 검색 범위 오류입니다."));
+        $NC.setFocus("#dtpQProcessing_Date1");
+        return;
+    }
+
+    var BRAND_CD = $NC.getValue("#edtQBrand_Cd", true);
+    var ITEM_CD = $NC.getValue("#edtQItem_Cd");
+    var ITEM_NM = $NC.getValue("#edtQItem_Nm");
+    var MATERIAL_CD = $NC.getValue("#edtQMaterial_Cd");
+    var MATERIAL_NM = $NC.getValue("#edtQMaterial_Nm");
+
+    // 등록 화면
+    if ($NC.getTabActiveIndex("#divMasterView") == 0) {
+
+        // 조회시 전역 변수 값 초기화
+        $NC.setInitGridVar(G_GRDT1MASTER);
+
+        G_GRDT1MASTER.queryParams = {
+            P_CENTER_CD: CENTER_CD,
+            P_BU_CD: BU_CD,
+            P_PROCESSING_DATE1: PROCESSING_DATE1,
+            P_PROCESSING_DATE2: PROCESSING_DATE2,
+            P_BRAND_CD: BRAND_CD,
+            P_ITEM_CD: ITEM_CD,
+            P_ITEM_NM: ITEM_NM,
+            P_MATERIAL_CD: MATERIAL_CD,
+            P_MATERIAL_NM: MATERIAL_NM,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        };
+        // 데이터 조회
+        $NC.serviceCall("/LCC02090E0/getDataSet.do", $NC.getGridParams(G_GRDT1MASTER), onGetT1Master);
+    }
+    // 내역 조회
+    else {
+
+        // 조회시 전역 변수 값 초기화
+        $NC.setInitGridVar(G_GRDT2MASTER);
+
+        G_GRDT2MASTER.queryParams = {
+            P_CENTER_CD: CENTER_CD,
+            P_BU_CD: BU_CD,
+            P_PROCESSING_DATE1: PROCESSING_DATE1,
+            P_PROCESSING_DATE2: PROCESSING_DATE2,
+            P_BRAND_CD: BRAND_CD,
+            P_ITEM_CD: ITEM_CD,
+            P_ITEM_NM: ITEM_NM,
+            P_MATERIAL_CD: MATERIAL_CD,
+            P_MATERIAL_NM: MATERIAL_NM,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        };
+        // 데이터 조회
+        $NC.serviceCall("/LCC02090E0/getDataSet.do", $NC.getGridParams(G_GRDT2MASTER), onGetT2Master);
+    }
+}
+
+/**
+ * New Button Event - 메인 상단 신규 버튼 클릭시 호출 됨
+ */
+function _New() {
+
+    // 등록 화면
+    if ($NC.getTabActiveIndex("#divMasterView") == 0) {
+
+        var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+        var CENTER_CD_F = $NC.getValueCombo("#cboQCenter_Cd", "F");
+        var BU_CD = $NC.getValue("#edtQBu_Cd");
+        var BU_NM = $NC.getValue("#edtQBu_Nm");
+        var PROCESSING_DATE = $NC.getValue("#dtpQProcessing_Date2");
+
+        $NC.showProgramSubPopup({
+            PROGRAM_ID: "LCC02091P0",
+            PROGRAM_NM: $NC.getDisplayMsg("JS.LCC02090E0.008", "가공작업 등록"),
+            url: "lc/LCC02091P0.html",
+            width: 1024,
+            height: 600,
+            G_PARAMETER: {
+                P_PROCESS_CD: $ND.C_DV_CRUD_C,
+                P_CENTER_CD: CENTER_CD,
+                P_CENTER_CD_F: CENTER_CD_F,
+                P_BU_CD: BU_CD,
+                P_BU_NM: BU_NM,
+                P_PROCESSING_DATE: PROCESSING_DATE,
+                P_CUST_CD: $NC.getValue("#edtQCust_Cd"),
+                P_MASTER_DS: {},
+                P_DETAIL_DS: []
+            },
+            onOk: function() {
+                onSave();
+            }
+        });
+    }
+}
+
+/**
+ * Save Button Event - 메인 상단 저장 버튼 클릭시 호출 됨
+ */
+function _Save() {
+
+}
+
+/**
+ * Delete Button Event - 메인 상단 삭제 버튼 클릭시 호출 됨
+ */
+function _Delete() {
+
+    // 등록 화면
+    if ($NC.getTabActiveIndex("#divMasterView") == 0) {
+
+        if (G_GRDT1MASTER.data.getLength() == 0 || $NC.isNull(G_GRDT1MASTER.lastRow)) {
+            alert($NC.getDisplayMsg("JS.LCC02090E0.009", "삭제할 데이터가 없습니다."));
+            return;
+        }
+
+        var rowData = G_GRDT1MASTER.data.getItem(G_GRDT1MASTER.lastRow);
+        if (!confirm($NC.getDisplayMsg("JS.LCC02090E0.010", "삭제 하시겠습니까?"))) {
+            return;
+        }
+
+        var dsResult = [
+            {
+                P_CENTER_CD: rowData.CENTER_CD,
+                P_BU_CD: rowData.BU_CD,
+                P_PROCESSING_DATE: rowData.PROCESSING_DATE,
+                P_PROCESSING_NO: rowData.PROCESSING_NO
+            }
+        ];
+        $NC.serviceCall("/LCC02090E0/save.do", {
+            P_DS_DETAIL: dsResult,
+            P_PROCESS_CD: $ND.C_DV_CRUD_D,
+            P_USER_ID: $NC.G_USERINFO.USER_ID
+        }, onSave);
+    }
+}
+
+/**
+ * Cancel Button Event - 메인 상단 취소 버튼 클릭시 호출 됨
+ */
+function _Cancel() {
+
+    _Inquiry();
+}
+
+/**
+ * Print Button Event - 메인 상단 출력 버튼의 리스트 클릭시 호출 됨
+ * 
+ * @param {Object}
+ *        reportInfo 선택한 레포트 정보
+ * 
+ * <pre style="font-family: GulimChe; font-size: 12px;">
+ * PROGRAM_ID        : 프로그램ID         PROGRAM_SUB_CD    : 프로그램하위코드
+ * REPORT_CD         : 레포트코드         REPORT_NM         : 레포트명
+ * REPORT_TITLE_NM   : 레포트타이틀명
+ * REPORT_DOC_CD     : 레포트문서코드     REPORT_DOC_URL    : 레포트문서URL
+ * REPORT_QUERY_ID   : 레포트쿼리ID       INTERNAL_QUERY_YN : 내부쿼리사용여부
+ * USE_YN            : 사용여부           SORT_RANK         : 정렬순서
+ *        </pre>
+ */
+function _Print(reportInfo) {
+
+}
+
+/**
+ * 저장에 성공했을 경우의 처리
+ * 
+ * @param ajaxData
+ */
+function onSave(ajaxData) {
+
+    var lastKeyVal = $NC.getGridLastKeyVal(G_GRDT1MASTER, {
+        selectKey: [
+            "PROCESSING_DATE",
+            "PROCESSING_NO"
+        ]
+    });
+    _Inquiry();
+    G_GRDT1MASTER.lastKeyVal = lastKeyVal;
+}
+
+/**
+ * Tab Active Event
+ * 
+ * @param event
+ * @param ui
+ *        newTab: The tab that was just activated.<br>
+ *        oldTab: The tab that was just deactivated.<br>
+ *        newPanel: The panel that was just activated.<br>
+ *        oldPanel: The panel that was just deactivated
+ */
+function tabOnActivate(event, ui) {
+
+    if ($NC.getTabActiveIndex("#divMasterView") == 0) {
+        // 스플리터가 초기화가 되어 있으면 _OnResize 호출
+        if ($NC.isSplitter("#divT1TabSheetView")) {
+            // 스필리터를 통한 _OnResize 호출
+            $("#divT1TabSheetView").trigger("resize");
+        } else {
+            // 스플리터 초기화
+            $NC.setInitSplitter("#divT1TabSheetView", "h");
+        }
+    } else {
+        $NC.onGlobalResize();
+    }
+    // 화면상단의 공통 메뉴 버튼 이미지 표시 : true인 경우는 조회 버튼만 활성화 한다.
+    setTopButtons();
+}
+
+function grdT1MasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "PROCESSING_DATE",
+        field: "PROCESSING_DATE",
+        name: "가공작업일자",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROCESSING_NO",
+        field: "PROCESSING_NO",
+        name: "가공작업번호",
+        cssClass: "styCenter"
+    });
+    $NC.setGridColumn(columns, {
+        id: "BRAND_NM",
+        field: "BRAND_NM",
+        name: "브랜드명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_NM",
+        field: "ITEM_NM",
+        name: "상품명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROCESSING_QTY",
+        field: "PROCESSING_QTY",
+        name: "가공작업수량",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LAST_USER_ID",
+        field: "LAST_USER_ID",
+        name: "최종수정자ID"
+    });
+    $NC.setGridColumn(columns, {
+        id: "LAST_DATETIME",
+        field: "LAST_DATETIME",
+        name: "최종등록일시",
+        cssClass: "styCenter"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdT1MasterInitialize() {
+
+    var options = {
+        frozenColumn: 3,
+        specialRow: {
+            compareFn: function(specialRow, rowData, column, row, cell, colspan) {
+                if (rowData.PROTECT_YN == $ND.C_NO) {
+                    return;
+                }
+                return "styDone";
+            }
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdT1Master", {
+        columns: grdT1MasterOnGetColumns(),
+        queryId: "LCC02090E0.RS_T1_MASTER",
+        sortCol: "PROCESSING_DATE",
+        gridOptions: options,
+        canDblClick: true
+    });
+
+    G_GRDT1MASTER.view.onSelectedRowsChanged.subscribe(grdT1MasterOnAfterScroll);
+    G_GRDT1MASTER.view.onDblClick.subscribe(grdT1MasterOnDblClick);
+}
+
+/**
+ * 등록 탭의 그리드 행 클릭시 처리
+ * 
+ * @param e
+ * @param args
+ */
+function grdT1MasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDT1MASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+    var rowData = G_GRDT1MASTER.data.getItem(row);
+
+    // 조회시 전역 변수 값 초기화
+    $NC.clearGridData(G_GRDT1DETAIL);
+    G_GRDT1DETAIL.queryParams = {
+        P_CENTER_CD: rowData.CENTER_CD,
+        P_BU_CD: rowData.BU_CD,
+        P_PROCESSING_DATE: rowData.PROCESSING_DATE,
+        P_PROCESSING_NO: rowData.PROCESSING_NO,
+        P_MATERIAL_CD: rowData.MATERIAL_CD,
+        P_MATERIAL_NM: rowData._MATERIAL_NM
+    };
+    // 데이터 조회
+    $NC.serviceCall("/LCC02090E0/getDataSet.do", $NC.getGridParams(G_GRDT1DETAIL), onGetT1Detail);
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDT1MASTER, row + 1);
+}
+
+/**
+ * 가공작업등록 - 마스터 그리드 더블 클릭 : 팝업 표시
+ */
+function grdT1MasterOnDblClick(e, args) {
+
+    var permission = $NC.getProgramPermission();
+    if (!permission.canSave) {
+        alert($NC.getDisplayMsg("JS.MAIN.001", "해당 프로그램의 저장권한이 없습니다."));
+        return;
+    }
+
+    var refRowData = G_GRDT1MASTER.data.getItem(args.row);
+    if ($NC.isNull(refRowData)) {
+        return;
+    }
+
+    $NC.serviceCallAndWait("/LCC02090E0/getDataSet.do", {
+        P_QUERY_ID: "WC.GET_PROTECT",
+        P_QUERY_PARAMS: {
+            P_CENTER_CD: refRowData.CENTER_CD,
+            P_BU_CD: refRowData.BU_CD,
+            P_PROTECT_DATE: refRowData.PROCESSING_DATE
+        }
+    },
+    // ServiceCall SuccessCallback
+    function(ajaxData) {
+        var dsResult = $NC.toArray(ajaxData);
+        if (dsResult.length > 0) {
+            var rowData = dsResult[0];
+            if (rowData.PROTECT_YN == $ND.C_YES) {
+                alert($NC.getDisplayMsg("JS.LCC02090E0.011", "자료 보안설정이 되어 있어 수정할 수 없습니다."));
+                $NC.setFocusGrid(G_GRDT1MASTER, G_GRDT1MASTER.lastRow, "PROCESSING_DATE", true);
+                return;
+            }
+        }
+
+        var dsDetail = [];
+        var serviceCallError = false;
+        // 데이터 조회 - 하단그리드
+        $NC.serviceCallAndWait("/LCC02090E0/getDataSet.do", {
+            P_QUERY_ID: "LCC02090E0.RS_T1_DETAIL",
+            P_QUERY_PARAMS: {
+                P_CENTER_CD: refRowData.CENTER_CD,
+                P_BU_CD: refRowData.BU_CD,
+                P_PROCESSING_DATE: refRowData.PROCESSING_DATE,
+                P_PROCESSING_NO: refRowData.PROCESSING_NO,
+                P_MATERIAL_CD: refRowData.MATERIAL_CD,
+                P_MATERIAL_NM: refRowData._MATERIAL_NM
+            }
+        }, function(subAjaxData) {
+            dsDetail = $NC.toArray(subAjaxData);
+        }, function(subAjaxData) {
+            $NC.onError(subAjaxData);
+            serviceCallError = true;
+        });
+        if (serviceCallError) {
+            return;
+        }
+        if (dsDetail.length == 0) {
+            alert($NC.getDisplayMsg("JS.LCC02090E0.012", "수정할 데이터가 존재하지 않습니다. 다시 조회 후 데이터를 확인하십시오."));
+            return;
+        }
+
+        var CENTER_CD = $NC.getValue("#cboQCenter_Cd");
+        var CENTER_CD_F = $NC.getValueCombo("#cboQCenter_Cd", "F");
+        var BU_CD = $NC.getValue("#edtQBu_Cd");
+        var BU_NM = $NC.getValue("#edtQBu_Nm");
+
+        $NC.showProgramSubPopup({
+            PROGRAM_ID: "LCC02091P0",
+            PROGRAM_NM: $NC.getDisplayMsg("JS.LCC02090E0.008", "가공작업 등록"),
+            url: "lc/LCC02091P0.html",
+            width: 1024,
+            height: 600,
+            G_PARAMETER: {
+                P_PROCESS_CD: $ND.C_DV_CRUD_U,
+                P_CENTER_CD: CENTER_CD,
+                P_CENTER_CD_F: CENTER_CD_F,
+                P_BU_CD: BU_CD,
+                P_BU_NM: BU_NM,
+                P_PROCESSING_DATE: refRowData.PROCESSING_DATE,
+                P_PROCESSING_NO: refRowData.PROCESSING_NO,
+                P_PROCESSING_QTY: refRowData.PROCESSING_QTY,
+                P_CUST_CD: $NC.getValue("#edtQCust_Cd"),
+                P_MASTER_DS: refRowData,
+                P_DETAIL_DS: dsDetail
+            },
+            onOk: function() {
+                onSave();
+            }
+        });
+    });
+}
+
+function grdT1DetailOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "LINE_NO",
+        field: "LINE_NO",
+        name: "순번",
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MATERIAL_CD",
+        field: "MATERIAL_CD",
+        name: "자재코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MATERIAL_NM",
+        field: "MATERIAL_NM",
+        name: "자재명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MATERIAL_QTY",
+        field: "MATERIAL_QTY",
+        name: "자재수량",
+        formatter: Slick.Formatters.Number,
+        cssClass: "styRight"
+    });
+    $NC.setGridColumn(columns, {
+        id: "CUST_CD_F",
+        field: "CUST_CD_F",
+        name: "고객사"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+function grdT1DetailInitialize() {
+
+    var options = {
+        frozenColumn: 2
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdT1Detail", {
+        columns: grdT1DetailOnGetColumns(),
+        queryId: "LCC02090E0.RS_T1_DETAIL",
+        sortCol: "LINE_NO",
+        gridOptions: options
+    });
+
+    G_GRDT1DETAIL.view.onSelectedRowsChanged.subscribe(grdT1DetailOnAfterScroll);
+}
+
+/**
+ * 등록 탭의 하단그리드 행 클릭시 처리
+ * 
+ * @param e
+ * @param args
+ */
+function grdT1DetailOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDT1DETAIL, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDT1DETAIL, row + 1);
+}
+
+function grdT2MasterOnGetColumns() {
+
+    var columns = [];
+    $NC.setGridColumn(columns, {
+        id: "PROCESSING_DATE",
+        field: "PROCESSING_DATE",
+        name: "가공작업일자",
+        cssClass: "styCenter",
+        groupDisplay: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROCESSING_NO",
+        field: "PROCESSING_NO",
+        name: "가공작업번호",
+        cssClass: "styCenter",
+        groupDisplay: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_CD",
+        field: "ITEM_CD",
+        name: "상품코드",
+        groupDisplay: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "ITEM_NM",
+        field: "ITEM_NM",
+        name: "상품명",
+        groupDisplay: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "PROCESSING_QTY",
+        field: "PROCESSING_QTY",
+        name: "가공작업수량",
+        cssClass: "styRight",
+        groupDisplay: true
+    });
+    $NC.setGridColumn(columns, {
+        id: "MATERIAL_CD",
+        field: "MATERIAL_CD",
+        name: "자재코드"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MATERIAL_NM",
+        field: "MATERIAL_NM",
+        name: "자재명"
+    });
+    $NC.setGridColumn(columns, {
+        id: "MATERIAL_QTY",
+        field: "MATERIAL_QTY",
+        name: "자재수량",
+        formatter: Slick.Formatters.Number,
+        cssClass: "styRight",
+        aggregator: "SUM"
+    });
+    $NC.setGridColumn(columns, {
+        id: "REMARK1",
+        field: "REMARK1",
+        name: "비고"
+    });
+
+    return $NC.setGridColumnDefaultFormatter(columns);
+}
+
+/**
+ * 내역탭의 그리드 초기값 설정
+ */
+function grdT2MasterInitialize() {
+
+    var options = {
+        frozenColumn: 4
+    };
+
+    // Data Grouping
+    var dataGroupOptions = {
+        getter: function(rowData) {
+            return rowData.PROCESSING_DATE //
+                + "|" + rowData.PROCESSING_NO //
+                + "|" + rowData.BRAND_CD //
+                + "|" + rowData.ITEM_CD //
+                + "|" + rowData.PROCESSING_QTY;
+        }
+    };
+
+    // Grid Object, DataView 생성 및 초기화
+    $NC.setInitGridObject("#grdT2Master", {
+        columns: grdT2MasterOnGetColumns(),
+        queryId: "LCC02090E0.RS_T2_MASTER",
+        sortCol: "PROCESSING_DATE",
+        gridOptions: options,
+        dataGroupOptions: dataGroupOptions
+    });
+
+    G_GRDT2MASTER.view.onSelectedRowsChanged.subscribe(grdT2MasterOnAfterScroll);
+}
+
+/**
+ * 내역 탭의 그리드 행 클릭시 처리
+ * 
+ * @param e
+ * @param args
+ */
+function grdT2MasterOnAfterScroll(e, args) {
+
+    if (!$NC.isGridValidLastRow(G_GRDT2MASTER, args.rows, e)) {
+        return;
+    }
+    var row = args.rows[0];
+
+    // 상단 현재로우/총건수 업데이트
+    $NC.setGridDisplayRows(G_GRDT2MASTER, row + 1);
+}
+
+/**
+ * 등록 탭 조회 버튼 클릭후 처리
+ * 
+ * @param ajaxData
+ */
+function onGetT1Master(ajaxData) {
+
+    $NC.setInitGridData(G_GRDT1MASTER, ajaxData);
+    if (!$NC.setInitGridAfterOpen(G_GRDT1MASTER, [
+        "PROCESSING_DATE",
+        "PROCESSING_NO"
+    ])) {
+        $NC.clearGridData(G_GRDT1DETAIL);
+    }
+
+    setTopButtons();
+}
+
+/**
+ * 상단그리드 행 클릭후 하단 그리드에 데이터 표시처리
+ */
+function onGetT1Detail(ajaxData) {
+
+    $NC.setInitGridData(G_GRDT1DETAIL, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDT1DETAIL, "LINE_NO");
+}
+
+/**
+ * 내역 탭 조회 버튼 클릭후 처리
+ * 
+ * @param ajaxData
+ */
+function onGetT2Master(ajaxData) {
+
+    $NC.setInitGridData(G_GRDT2MASTER, ajaxData);
+    $NC.setInitGridAfterOpen(G_GRDT2MASTER);
+
+    setTopButtons();
+}
+
+/**
+ * 검색조건 값 변경 되었을 경우의 처리
+ */
+function onChangingCondition() {
+
+    // 등록 화면
+    $NC.clearGridData(G_GRDT1MASTER, [
+        "queryParams"
+    ]);
+    // 등록 화면
+    $NC.clearGridData(G_GRDT1DETAIL);
+    // 내역 화면
+    $NC.clearGridData(G_GRDT2MASTER);
+
+    // 공통 버튼 초기화 - 조회 버튼만 활성
+    $NC.setInitTopButtons();
+}
+
+/**
+ * 검색조건의 사업부 검색 이미지 클릭
+ */
+function showUserBuPopup() {
+
+    $NP.showUserBuPopup({
+        P_USER_ID: $NC.G_USERINFO.USER_ID,
+        P_BU_CD: $ND.C_ALL,
+        P_VIEW_DIV: "2" // 1:등록팝업, 2:조회팝업
+    }, onUserBuPopup, function() {
+        $NC.setFocus("#edtQBu_Cd", true);
+    });
+}
+
+/**
+ * 검색조건의 브랜드 검색 팝업 클릭
+ */
+function showBuBrandPopup() {
+
+    var BU_CD = $NC.getValue("#edtQBu_Cd");
+
+    $NP.showBuBrandPopup({
+        P_BU_CD: BU_CD,
+        P_BRAND_CD: $ND.C_ALL
+    }, onBuBrandPopup, function() {
+        $NC.setFocus("#edtQBrand_Cd", true);
+    });
+}
+
+/**
+ * 사업부 검색 결과
+ * 
+ * @param resultInfo
+ */
+function onUserBuPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQBu_Cd", resultInfo.BU_CD);
+        $NC.setValue("#edtQBu_Nm", resultInfo.BU_NM);
+        $NC.setValue("#edtQCust_Cd", resultInfo.CUST_CD);
+        $NC.setFocus("#dtpQProcessing_Date1", true);
+    } else {
+        $NC.setValue("#edtQBu_Cd");
+        $NC.setValue("#edtQBu_Nm");
+        $NC.setValue("#edtQCust_Cd");
+        $NC.setFocus("#edtQBu_Cd", true);
+    }
+    onChangingCondition();
+    setPolicyValInfo();
+    // 프로그램 레포트 정보 세팅
+    $NC.setProgramReportInfo({
+        P_BU_CD: $NC.getValue("#edtQBu_Cd")
+    });
+}
+
+/**
+ * 브랜드 검색 결과
+ * 
+ * @param resultInfo
+ */
+function onBuBrandPopup(resultInfo) {
+
+    if ($NC.isNotNull(resultInfo)) {
+        $NC.setValue("#edtQBrand_Cd", resultInfo.BRAND_CD);
+        $NC.setValue("#edtQBrand_Nm", resultInfo.BRAND_NM);
+    } else {
+        $NC.setValue("#edtQBrand_Cd");
+        $NC.setValue("#edtQBrand_Nm");
+        $NC.setFocus("#edtQBrand_Cd", true);
+    }
+    onChangingCondition();
+}
+
+/**
+ * 상단 공통 버튼 제어
+ */
+function setTopButtons() {
+
+    $NC.G_VAR.buttons._inquiry = "1";
+    $NC.G_VAR.buttons._new = "0";
+    $NC.G_VAR.buttons._save = "0";
+    $NC.G_VAR.buttons._cancel = "0";
+    $NC.G_VAR.buttons._delete = "0";
+    $NC.G_VAR.buttons._print = "0";
+
+    // 등록 탭
+    if ($NC.getTabActiveIndex("#divMasterView") == 0) {
+        if ($NC.isNotNull(G_GRDT1MASTER.queryParams)) {
+            $NC.G_VAR.buttons._new = "1";
+            $NC.G_VAR.buttons._delete = "1";
+        }
+    }
+    $NC.setInitTopButtons($NC.G_VAR.buttons);
+}
+
+/**
+ * 전역 변수에 정책 값 정보 세팅
+ */
+function setPolicyValInfo() {
+
+}

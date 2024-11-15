@@ -1,0 +1,35 @@
+.btnIcoPopup4Stock:hover:enabled {
+    background-color: #ededed;
+    text-decoration: none;
+}
+
+.btnIcoPopup4Stock:disabled {
+    background-color: #eaeaea;
+    border-color: silver;
+    cursor: default;
+}
+
+.btnIcoPopup4Stock {
+    margin: 0 0px;
+    padding: 2px 2px;
+    background: url("/nexos/framework/css/image/btnDefault.png") no-repeat;
+    border-width: 0px;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    outline: 0;
+    overflow: hidden;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 14px;
+    width: 24px;
+    height: 20px;
+}
+
+.btnIcoPopup4Stock {
+    background-position: 1px -21px;
+}
+
+.btnIcoPopup:disabled {
+    background-position: 1px -41px;
+}

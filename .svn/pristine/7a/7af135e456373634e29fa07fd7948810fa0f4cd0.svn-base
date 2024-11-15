@@ -1,0 +1,16 @@
+package nexos.dao.lc;
+
+import java.util.Map;
+
+public interface LCC07020E0DAO {
+
+    /**
+     * 매장변경 저장
+     * 
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    void save(Map<String, Object> params) throws Exception;
+
+}

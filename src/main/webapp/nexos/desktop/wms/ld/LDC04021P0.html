@@ -1,0 +1,47 @@
+<!--
+    ==================================================================================================================================================
+    프로그램ID         : LDC04021P0
+    프로그램명         : 유류단가 일괄적용 팝업
+    프로그램설명       : 유류단가 일괄적용 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LDC04021P0.css" /> -->
+<script src="js/LDC04021P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblOutbound_Week" class="lblKey">적용기간</div>
+                <input id="dtpOutbound_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                <span class="lblTerm">▶</span>
+                <input id="dtpOutbound_Date2" class="dtpKey" type="text" style="width: 100px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblFuel_Price" class="lblKey">유류단가</div>
+                <input id="edtFuel_Price" class="edtKey" type="text" style="width: 100px;" />
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnOk" class="btnNormal" type="button" value="적용" style="width: 60px;" />
+        <input id="btnCancel" class="btnNormal" type="button" value="취소" style="width: 60px;" />
+    </div>
+</body>
+</html>

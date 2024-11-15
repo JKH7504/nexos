@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 마스터관리 관련 Procedure
+  // Author : ASETEC
+  // Date : 2022-11-30
+  // Description
+  // 마스터관리 관련 Procedure Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROCEDURE_MAPPER('CM') AS SQLMAP_TEXT
+    FROM DUAL;
+  //====================================================================================================================
+  // ※ Procedure 호출 관련 Mapper의 Namespace는 "SP" 로 처리
+  //====================================================================================================================
+  -->
+<mapper namespace="SP">
+  <!--
+  //====================================================================================================================
+  // PROCEDURE SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="CM_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - CM_AREA_COPY -->
+  <select id="CM_AREA_COPY" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_AREA_COPY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_AREA_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_AREA_NM                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TO_CENTER_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_AREA_COPY -->
+
+
+  <!-- [S] - CM_BASIC_MASTER_CREATE -->
+  <select id="CM_BASIC_MASTER_CREATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_BASIC_MASTER_CREATE
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_BASIC_MASTER_CREATE -->
+
+
+  <!-- [S] - CM_BOX_COPY -->
+  <select id="CM_BOX_COPY" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_BOX_COPY
+      (#{P_FROM_BU_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_BOX_COPY -->
+
+
+  <!-- [S] - CM_CARREF_COPY -->
+  <select id="CM_CARREF_COPY" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_CARREF_COPY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_AREA_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_TO_CENTER_CD            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_CARREF_COPY -->
+
+
+  <!-- [S] - CM_CENTERITEM_ALLOCATE -->
+  <select id="CM_CENTERITEM_ALLOCATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_CENTERITEM_ALLOCATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_CENTERITEM_ALLOCATE -->
+
+
+  <!-- [S] - CM_CENTERITEM_CHECK_ALLOCATE -->
+  <select id="CM_CENTERITEM_CHECK_ALLOCATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_CENTERITEM_CHECK_ALLOCATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_CENTERITEM_CHECK_ALLOCATE -->
+
+
+  <!-- [S] - CM_CENTERITEM_SET_SAFETY_QTY -->
+  <select id="CM_CENTERITEM_SET_SAFETY_QTY" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_CENTERITEM_SET_SAFETY_QTY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STD_DATE                ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_CENTERITEM_SET_SAFETY_QTY -->
+
+
+  <!-- [S] - CM_CENTER_MASTER_CREATE -->
+  <select id="CM_CENTER_MASTER_CREATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_CENTER_MASTER_CREATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_CENTER_MASTER_CREATE -->
+
+
+  <!-- [S] - CM_ITEMBARCD_SAVE -->
+  <select id="CM_ITEMBARCD_SAVE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_ITEMBARCD_SAVE
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_BAR_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_BAR_CD              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CASE_BAR_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CRUD                    ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_ITEMBARCD_SAVE -->
+
+
+  <!-- [S] - CM_ITEM_DELETE -->
+  <select id="CM_ITEM_DELETE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_ITEM_DELETE
+      (#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_ITEM_DELETE -->
+
+
+  <!-- [S] - CM_LOCATIONFIX_CHECK -->
+  <select id="CM_LOCATIONFIX_CHECK" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_LOCATIONFIX_CHECK
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_LOCATIONFIX_CHECK -->
+
+
+  <!-- [S] - CM_LOCATIONFIX_ENTRY -->
+  <select id="CM_LOCATIONFIX_ENTRY" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_LOCATIONFIX_ENTRY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_STYLE_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_COLOR_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD                  ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOCATION_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_LOCATIONFIX_ENTRY -->
+
+
+  <!-- [S] - CM_LOCATIONFIX_RESET -->
+  <select id="CM_LOCATIONFIX_RESET" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_LOCATIONFIX_RESET
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_STATE              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OPERATION_DIV           ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_LOCATIONFIX_RESET -->
+
+
+  <!-- [S] - CM_LOCATION_CREATE -->
+  <select id="CM_LOCATION_CREATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_LOCATION_CREATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ZONE_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD1                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BANK_CD2                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD1                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BAY_CD2                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD1                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LEV_CD2                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOC_DIV                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_CELL_DIV                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_LOC_ORDER               ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_PLT_QTY                 ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CELL_WEIGHT             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CELL_WIDTH              ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CELL_LENGTH             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_CELL_HEIGHT             ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal}
+      ,#{P_POLICY_CM120            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_LOCATION_CREATE -->
+
+
+  <!-- [S] - CM_LOCATION_SET_LOC_ORDER -->
+  <select id="CM_LOCATION_SET_LOC_ORDER" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_LOCATION_SET_LOC_ORDER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_LOCATION_SET_LOC_ORDER -->
+
+
+  <!-- [S] - CM_VENDORITEM_ITEM_ALLOCATE -->
+  <select id="CM_VENDORITEM_ITEM_ALLOCATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_VENDORITEM_ITEM_ALLOCATE
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_VENDOR_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_VENDORITEM_ITEM_ALLOCATE -->
+
+
+  <!-- [S] - CM_VENDORITEM_VENDOR_ALLOCATE -->
+  <select id="CM_VENDORITEM_VENDOR_ALLOCATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_VENDORITEM_VENDOR_ALLOCATE
+      (#{P_CUST_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BRAND_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ITEM_CD                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_VENDORITEM_VENDOR_ALLOCATE -->
+
+
+  <!-- [S] - CM_WORKCALENDER_COPY -->
+  <select id="CM_WORKCALENDER_COPY" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_WORKCALENDER_COPY
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_MONTH             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_TO_BU_CD                ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_WORKCALENDER_COPY -->
+
+
+  <!-- [S] - CM_WORKCALENDER_CREATE -->
+  <select id="CM_WORKCALENDER_CREATE" statementType="CALLABLE" parameterType="hashmap">
+    {  call CM_WORKCALENDER_CREATE
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_INOUT_MONTH             ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_HOLIDAY_WEEK            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_USER_ID                 ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{O_MSG                     ,mode=OUT   ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - CM_WORKCALENDER_CREATE -->
+
+
+</mapper>

@@ -1,0 +1,19 @@
+.slick-cell.styHalf {
+    color: blue;
+    font-weight: bold;
+}
+
+.slick-cell.styThird {
+    color: green;
+    font-weight: bold;
+}
+
+.slick-cell.styQuarter {
+    color: #e17009 !important;
+    font-weight: bold;
+}
+
+.slick-cell.styNull {
+    color: #FF00FF;
+    font-weight: bold;
+}

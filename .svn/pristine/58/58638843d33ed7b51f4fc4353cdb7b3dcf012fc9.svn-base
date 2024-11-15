@@ -1,0 +1,80 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC06020E0
+    프로그램명         : 메시지속성관리
+    프로그램설명       : 메시지속성관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC06020E0.css" /> -->
+<script src="js/CSC06020E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQMsg_Grp" class="lblCondition">메시지그룹</div>
+                    <select id="cboQMsg_Grp" class="cboNormal" style="width: 150px;"></select>
+                </td>
+                <td>
+                    <div id="lblQMsg_Id" class="lblCondition">메시지ID</div>
+                    <input id="edtQMsg_Id" class="edtNormal" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQDisplay_Grp" class="lblCondition">화면표시그룹</div>
+                    <select id="cboQDisplay_Grp" class="cboNormal" style="width: 150px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <div id="ctrAdditionalT_grdMaster" class="ctrAdditional top">
+            <div id="dspTitle_Properties" class="lblGroupTitle">메시지속성 일괄수정</div>
+            <div class="ctrGroupContent">
+                <table class="ctrInner">
+                    <tr>
+                        <td>
+                            <div id="lblDisplay_Grp" class="lblNormal">화면표시그룹</div>
+                            <select id="cboDisplay_Grp" class="cboNormal" style="width: 110px;"></select>
+                            <input id="btnDisplay_Grp" class="btnNormal" type="button" value="수정" style="width: 60px;" />
+                        </td>
+                        <td>
+                            <div id="lblRemark1" class="lblNormal">비고</div>
+                            <input id="edtRemark1" class="edtNormal" type="text" style="width: 295px" />
+                            <input id="btnRemark1" class="btnNormal" type="button" value="수정" style="width: 60px;" />
+                        </td>
+                        <td>
+                            <div id="lblColumn_Width" class="lblNormal">컬럼너비</div>
+                            <input id="edtColumn_Width" class="edtNormal" type="text" style="width: 80px" />
+                            <input id="btnColumn_Width" class="btnNormal" type="button" value="수정" style="width: 60px;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">메시지속성</td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+</body>
+</html>

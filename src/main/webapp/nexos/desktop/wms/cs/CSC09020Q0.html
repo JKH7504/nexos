@@ -1,0 +1,74 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC09020Q0
+    프로그램명         : DB처리로그조회
+    프로그램설명       : DB처리로그조회 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC09020Q0.css" /> -->
+<script src="js/CSC09020Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQLog_Date" class="lblCondition">로그일자</div>
+                    <input id="dtpQLog_Date1" class="dtpKey" type="text" style="width: 100px;" />
+                    <span class="lblTerm">▶</span>
+                    <input id="dtpQLog_Date2" class="dtpKey" type="text" style="width: 100px;" />
+                </td>
+                <td>
+                    <div id="lblQLog_Div" class="lblCondition">로그구분</div>
+                    <select id="cboQLog_Div" class="cboNormal" style="width: 150px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="lblQLog_Cd" class="lblCondition">로그코드</div>
+                    <input id="edtQLog_Cd" class="edtNormal" type="text" style="width: 220px;" />
+                </td>
+                <td>
+                    <div id="lblQLog_Comment" class="lblCondition">로그내역</div>
+                    <input id="edtQLog_Comment" class="edtNormal" type="text" style="width: 220px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMasterView" class="ctrNormal">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">DB처리로그내역</td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspDetailInfo" class="lblTitle">로그 상세내역</td>
+                </tr>
+            </table>
+            <textarea id="edtLog_Comment" class="edtNormal" readonly="readonly" style="white-space: pre; word-wrap: normal; resize: none; overflow: auto; border-width: 0;"></textarea>
+        </div>
+    </div>
+</body>
+</html>

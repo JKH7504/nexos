@@ -1,0 +1,69 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : LOB02012P0
+    프로그램명         : 택배라벨출력 팝업
+    프로그램설명       : 택배라벨출력 팝업 화면 HTML
+                         출력매수 입력가능
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2021-04-22
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2021-04-22    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/LOB02012P0.css" /> -->
+<script src="js/LOB02012P0.js"></script>
+</head>
+<body>
+    <div id="ctrPopupView" class="ctrPopup">
+        <div class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblCenter_Cd" class="lblNormal">물류센터</div>
+                <input id="edtCenter_Cd" class="edtDisplay" type="text" style="width: 70px;" />
+                <input id="edtCenter_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblBu_Cd" class="lblNormal">사업부</div>
+                <input id="edtBu_Cd" class="edtDisplay" type="text" style="width: 70px;" />
+                <input id="edtBu_Nm" class="edtDisplay" type="text" disabled="disabled" style="width: 120px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblOutbound_Date" class="lblNormal">출고일자</div>
+                <input id="dtpOutbound_Date" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblDelivery_Nm" class="lblNormal">배송처명</div>
+                <input id="edtDelivery_Nm" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblBu_Date" class="lblNormal">전표일자</div>
+                <input id="dtpBu_Date" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblBu_No" class="lblNormal">전표번호</div>
+                <input id="edtBu_No" class="edtDisplay" type="text" style="width: 195px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblPrint_Cnt" class="lblKey">출력매수</div>
+                <input id="edtPrint_Cnt" class="edtKey" type="text" maxlength="10" style="width: 110px;" />
+                <div class="lblDisplay">매</div>
+            </div>
+        </div>
+    </div>
+    <div id="ctrPopupActionBar" class="ctrPopupActionBar">
+        <input id="btnConfirm" class="btnNormal" type="button" value="확인" style="width: 100px;" />
+        <input id="btnClose" class="btnNormal" type="button" value="취소" style="width: 75px;" />
+    </div>
+</body>
+</html>

@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!--
+  //====================================================================================================================
+  // 운송장내역 화면
+  // Author : ASETEC
+  // Date : 2016-06-30
+  // Description
+  // 운송장내역 화면 CRUD Mapper
+  //
+  // ※ 작성은 반드시 알파벳 순서로 작성
+  // ※ Mapper 파일은 [destination name]_sqlmap.xml 으로 생성
+  // ※ Mapper namespace는 destination name 으로 설정
+  //====================================================================================================================
+  -->
+  <!--
+  cache         - 해당 네임스페이스을 위한 캐시 설정
+  cache-ref     - 다른 네임스페이스의 캐시 설정에 대한 참조
+  resultMap     - 데이터베이스 결과데이터를 객체에 로드하는 방법을 정의하는 엘리먼트
+  parameterMap  - 비권장됨! 예전에 파라미터를 매핑하기 위해 사용되었으나 현재는 사용하지 않음
+  sql           - 다른 구문에서 재사용하기 위한 SQL 조각
+  insert        - 매핑된 INSERT 구문.
+  update        - 매핑된 UPDATE 구문.
+  delete        - 매핑된 DELEETE 구문.
+  select        - 매핑된 SELECT 구문.
+  //====================================================================================================================
+  // ※ neXos Framework는 Vo를 사용하지 않음, HashMap만 사용 함
+  //====================================================================================================================
+  SELECT WS.GET_PROGRAM_MAPPER('LOB07020E0' ,'LO050NM') AS SQLMAP_TEXT
+    FROM DUAL;
+  -->
+<mapper namespace="LOB07020E0">
+  <!--
+  //====================================================================================================================
+  // SELECT SQLMAP
+  //====================================================================================================================
+  -->
+  <!-- myBatis로 처리시 CURSOR를 리턴 받기 위해 resultMap 정의(컬럼 정의는 하지 않음) -->
+  <!-- 네이스페이스(namespace) + _VIRTUALMAP 으로 resultMap 정의 -->
+  <resultMap id="LOB07020E0_VIRTUALMAP" type="hashmap"></resultMap>
+
+  <!-- [S] - LOB07020E0.RS_T1_MASTER -->
+  <select id="RS_T1_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=LOB07020E0_VIRTUALMAP} = call LOB07020E0.RS_T1_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE1          ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_DATE2          ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_WB_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_TEL             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_HP              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_ZIP_CD          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_ADDR            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOB07020E0.RS_T1_MASTER -->
+
+  <!-- [S] - LOB07020E0.RS_T2_MASTER -->
+  <select id="RS_T2_MASTER" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=LOB07020E0_VIRTUALMAP} = call LOB07020E0.RS_T2_MASTER
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE1          ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_DATE2          ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_BATCH          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_ORDERER_NM              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_WB_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_NO                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_TEL             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_HP              ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_ZIP_CD          ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_SHIPPER_ADDR            ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_DELIVERY_CD             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOB07020E0.RS_T2_MASTER -->
+
+  <!-- [S] - LOB07020E0.RS_SUB1 -->
+  <select id="RS_SUB1" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=LOB07020E0_VIRTUALMAP} = call LOB07020E0.RS_SUB1
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    })
+    }
+  </select>
+  <!-- [E] - LOB07020E0.RS_SUB1 -->
+
+
+  <!-- [S] - LOB07020E0.RS_SUB2 -->
+  <select id="RS_SUB2" statementType="CALLABLE" parameterType="hashmap">
+    {  #{O_RESULT_DS               ,mode=OUT   ,jdbcType=CURSOR     ,javaType=ResultSet ,resultMap=LOB07020E0_VIRTUALMAP} = call LOB07020E0.RS_SUB2
+      (#{P_CENTER_CD               ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BU_CD                   ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_OUTBOUND_DATE           ,mode=IN    ,jdbcType=TIMESTAMP  ,javaType=Date      }
+      ,#{P_OUTBOUND_NO             ,mode=IN    ,jdbcType=VARCHAR    ,javaType=String    }
+      ,#{P_BOX_NO                  ,mode=IN    ,jdbcType=NUMERIC    ,javaType=BigDecimal})
+    }
+  </select>
+  <!-- [E] - LOB07020E0.RS_SUB2 -->
+
+
+  <!--
+  //====================================================================================================================
+  // INSERT/UPDATE/DELETE SQLMAP
+  //====================================================================================================================
+  -->
+
+  <!-- [S] - DELETE_LO050NM [송장내역 삭제] -->
+  <delete id="DELETE_LO050NM" parameterType="hashmap">
+    DELETE 
+      FROM LO050NM
+     WHERE CENTER_CD                = #{P_CENTER_CD}
+     <!--<if test="P_BU_CD                   != null and P_BU_CD                   != ''">-->
+       AND BU_CD                    = #{P_BU_CD}
+     <!--</if>-->
+     <!--<if test="P_OUTBOUND_DATE           != null and P_OUTBOUND_DATE           != ''">-->
+       AND OUTBOUND_DATE            = #{P_OUTBOUND_DATE}
+     <!--</if>-->
+     <!--<if test="P_OUTBOUND_NO             != null and P_OUTBOUND_NO             != ''">-->
+       AND OUTBOUND_NO              = #{P_OUTBOUND_NO}
+     <!--</if>-->
+     <!--<if test="P_BOX_NO                  != null and P_BOX_NO                  != ''">-->
+       AND BOX_NO                   = #{P_BOX_NO}
+     <!--</if>-->
+       AND ADD_YN                   = WD.C_YES
+       AND SEND_STATE               = '00'
+  </delete>
+  <!-- [E] - DELETE_LO050NM [송장내역 삭제] -->
+
+
+  <!-- [S] - INSERT_RI010NM [반입예정마스터] -->
+  <insert id="INSERT_RI010NM" parameterType="hashmap">
+    INSERT INTO RI010NM
+               (
+                CENTER_CD
+               ,BU_CD
+               ,ORDER_DATE
+               ,ORDER_NO
+               <if test="P_INOUT_CD                != null and P_INOUT_CD                != ''">,INOUT_CD                    </if>
+               <if test="P_INBOUND_STATE           != null and P_INBOUND_STATE           != ''">,INBOUND_STATE               </if>
+               <if test="P_CUST_CD                 != null and P_CUST_CD                 != ''">,CUST_CD                     </if>
+               <if test="P_DELIVERY_CD             != null and P_DELIVERY_CD             != ''">,DELIVERY_CD                 </if>
+               <if test="P_RDELIVERY_CD            != null and P_RDELIVERY_CD            != ''">,RDELIVERY_CD                </if>
+               <if test="P_RETURN_TYPE             != null and P_RETURN_TYPE             != ''">,RETURN_TYPE                 </if>
+               <if test="P_BOX_SEQ                 != null and P_BOX_SEQ                 != ''">,BOX_SEQ                     </if>
+               <if test="P_RHDC_DIV                != null and P_RHDC_DIV                != ''">,RHDC_DIV                    </if>
+               <if test="P_CAR_CD                  != null and P_CAR_CD                  != ''">,CAR_CD                      </if>
+               <if test="P_PLANED_DATETIME         != null and P_PLANED_DATETIME         != ''">,PLANED_DATETIME             </if>
+               <if test="P_BU_DATE                 != null and P_BU_DATE                 != ''">,BU_DATE                     </if>
+               <if test="P_BU_NO                   != null and P_BU_NO                   != ''">,BU_NO                       </if>
+               <if test="P_ORG_BU_NO               != null and P_ORG_BU_NO               != ''">,ORG_BU_NO                   </if>
+               <if test="P_RETRIEVE_YN             != null and P_RETRIEVE_YN             != ''">,RETRIEVE_YN                 </if>
+               <if test="P_RETRIEVE_USER_ID        != null and P_RETRIEVE_USER_ID        != ''">,RETRIEVE_USER_ID            </if>
+               <if test="P_RETRIEVE_DATETIME       != null and P_RETRIEVE_DATETIME       != ''">,RETRIEVE_DATETIME           </if>
+               <if test="P_ARRIVAL_YN              != null and P_ARRIVAL_YN              != ''">,ARRIVAL_YN                  </if>
+               <if test="P_ARRIVAL_DATE            != null and P_ARRIVAL_DATE            != ''">,ARRIVAL_DATE                </if>
+               <if test="P_ARRIVAL_USER_ID         != null and P_ARRIVAL_USER_ID         != ''">,ARRIVAL_USER_ID             </if>
+               <if test="P_ARRIVAL_DATETIME        != null and P_ARRIVAL_DATETIME        != ''">,ARRIVAL_DATETIME            </if>
+               <if test="P_DATA_DIV                != null and P_DATA_DIV                != ''">,DATA_DIV                    </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_SEND_DATE               != null and P_SEND_DATE               != ''">,SEND_DATE                   </if>
+               <if test="P_SEND_NO                 != null and P_SEND_NO                 != ''">,SEND_NO                     </if>
+               <if test="P_SEND_STATE              != null and P_SEND_STATE              != ''">,SEND_STATE                  </if>
+               ,SEND_USER_ID
+               ,SEND_DATETIME
+               <if test="P_ORDER_USER_ID           != null and P_ORDER_USER_ID           != ''">,ORDER_USER_ID               </if>
+               <if test="P_ORDER_DATETIME          != null and P_ORDER_DATETIME          != ''">,ORDER_DATETIME              </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_CENTER_CD}
+               ,#{P_BU_CD}
+               ,#{P_ORDER_DATE}
+               ,#{P_ORDER_NO}
+               <if test="P_INOUT_CD                != null and P_INOUT_CD                != ''">,#{P_INOUT_CD}               </if>
+               <if test="P_INBOUND_STATE           != null and P_INBOUND_STATE           != ''">,#{P_INBOUND_STATE}          </if>
+               <if test="P_CUST_CD                 != null and P_CUST_CD                 != ''">,#{P_CUST_CD}                </if>
+               <if test="P_DELIVERY_CD             != null and P_DELIVERY_CD             != ''">,#{P_DELIVERY_CD}            </if>
+               <if test="P_RDELIVERY_CD            != null and P_RDELIVERY_CD            != ''">,#{P_RDELIVERY_CD}           </if>
+               <if test="P_RETURN_TYPE             != null and P_RETURN_TYPE             != ''">,#{P_RETURN_TYPE}            </if>
+               <if test="P_BOX_SEQ                 != null and P_BOX_SEQ                 != ''">,#{P_BOX_SEQ}                </if>
+               <if test="P_RHDC_DIV                != null and P_RHDC_DIV                != ''">,#{P_RHDC_DIV}               </if>
+               <if test="P_CAR_CD                  != null and P_CAR_CD                  != ''">,#{P_CAR_CD}                 </if>
+               <if test="P_PLANED_DATETIME         != null and P_PLANED_DATETIME         != ''">
+               ,DECODE(#{P_PLANED_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_PLANED_DATETIME}))
+               </if>
+               <if test="P_BU_DATE                 != null and P_BU_DATE                 != ''">,#{P_BU_DATE}                </if>
+               <if test="P_BU_NO                   != null and P_BU_NO                   != ''">,#{P_BU_NO}                  </if>
+               <if test="P_ORG_BU_NO               != null and P_ORG_BU_NO               != ''">,#{P_ORG_BU_NO}              </if>
+               <if test="P_RETRIEVE_YN             != null and P_RETRIEVE_YN             != ''">,#{P_RETRIEVE_YN}            </if>
+               <if test="P_RETRIEVE_USER_ID        != null and P_RETRIEVE_USER_ID        != ''">,#{P_RETRIEVE_USER_ID}       </if>
+               <if test="P_RETRIEVE_DATETIME       != null and P_RETRIEVE_DATETIME       != ''">
+               ,DECODE(#{P_RETRIEVE_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_RETRIEVE_DATETIME}))
+               </if>
+               <if test="P_ARRIVAL_YN              != null and P_ARRIVAL_YN              != ''">,#{P_ARRIVAL_YN}             </if>
+               <if test="P_ARRIVAL_DATE            != null and P_ARRIVAL_DATE            != ''">,#{P_ARRIVAL_DATE}           </if>
+               <if test="P_ARRIVAL_USER_ID         != null and P_ARRIVAL_USER_ID         != ''">,#{P_ARRIVAL_USER_ID}        </if>
+               <if test="P_ARRIVAL_DATETIME        != null and P_ARRIVAL_DATETIME        != ''">
+               ,DECODE(#{P_ARRIVAL_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_ARRIVAL_DATETIME}))
+               </if>
+               <if test="P_DATA_DIV                != null and P_DATA_DIV                != ''">,#{P_DATA_DIV}               </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_SEND_DATE               != null and P_SEND_DATE               != ''">,#{P_SEND_DATE}              </if>
+               <if test="P_SEND_NO                 != null and P_SEND_NO                 != ''">,#{P_SEND_NO}                </if>
+               <if test="P_SEND_STATE              != null and P_SEND_STATE              != ''">,#{P_SEND_STATE}             </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               <if test="P_ORDER_USER_ID           != null and P_ORDER_USER_ID           != ''">,#{P_ORDER_USER_ID}          </if>
+               <if test="P_ORDER_DATETIME          != null and P_ORDER_DATETIME          != ''">
+               ,DECODE(#{P_ORDER_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_ORDER_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_RI010NM [반입예정마스터] -->
+
+
+  <!-- [S] - INSERT_RI010ND [반입예정디테일] -->
+  <insert id="INSERT_RI010ND" parameterType="hashmap">
+    INSERT INTO RI010ND
+               (
+                CENTER_CD
+               ,BU_CD
+               ,ORDER_DATE
+               ,ORDER_NO
+               ,LINE_NO
+               <if test="P_INBOUND_STATE           != null and P_INBOUND_STATE           != ''">,INBOUND_STATE               </if>
+               <if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">,BRAND_CD                    </if>
+               <if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">,ITEM_CD                     </if>
+               <if test="P_ITEM_STATE              != null and P_ITEM_STATE              != ''">,ITEM_STATE                  </if>
+               <if test="P_ITEM_LOT                != null and P_ITEM_LOT                != ''">,ITEM_LOT                    </if>
+               <if test="P_VALID_DATE              != null and P_VALID_DATE              != ''">,VALID_DATE                  </if>
+               <if test="P_BATCH_NO                != null and P_BATCH_NO                != ''">,BATCH_NO                    </if>
+               <if test="P_ORDER_QTY               != null and P_ORDER_QTY               != ''">,ORDER_QTY                   </if>
+               <if test="P_RETRIEVE_QTY            != null and P_RETRIEVE_QTY            != ''">,RETRIEVE_QTY                </if>
+               <if test="P_ENTRY_QTY               != null and P_ENTRY_QTY               != ''">,ENTRY_QTY                   </if>
+               <if test="P_SUPPLY_PRICE            != null and P_SUPPLY_PRICE            != ''">,SUPPLY_PRICE                </if>
+               <if test="P_DC_PRICE                != null and P_DC_PRICE                != ''">,DC_PRICE                    </if>
+               <if test="P_APPLY_PRICE             != null and P_APPLY_PRICE             != ''">,APPLY_PRICE                 </if>
+               <if test="P_SUPPLY_AMT              != null and P_SUPPLY_AMT              != ''">,SUPPLY_AMT                  </if>
+               <if test="P_VAT_YN                  != null and P_VAT_YN                  != ''">,VAT_YN                      </if>
+               <if test="P_VAT_AMT                 != null and P_VAT_AMT                 != ''">,VAT_AMT                     </if>
+               <if test="P_DC_AMT                  != null and P_DC_AMT                  != ''">,DC_AMT                      </if>
+               <if test="P_TOTAL_AMT               != null and P_TOTAL_AMT               != ''">,TOTAL_AMT                   </if>
+               <if test="P_BU_LINE_NO              != null and P_BU_LINE_NO              != ''">,BU_LINE_NO                  </if>
+               <if test="P_BU_KEY                  != null and P_BU_KEY                  != ''">,BU_KEY                      </if>
+               <if test="P_RETURN_DIV              != null and P_RETURN_DIV              != ''">,RETURN_DIV                  </if>
+               <if test="P_RETURN_COMMENT          != null and P_RETURN_COMMENT          != ''">,RETURN_COMMENT              </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,REMARK1                     </if>
+               <if test="P_SPARE1_NOTE             != null and P_SPARE1_NOTE             != ''">,SPARE1_NOTE                 </if>
+               <if test="P_SPARE2_NOTE             != null and P_SPARE2_NOTE             != ''">,SPARE2_NOTE                 </if>
+               <if test="P_SPARE3_NOTE             != null and P_SPARE3_NOTE             != ''">,SPARE3_NOTE                 </if>
+               <if test="P_SPARE4_NOTE             != null and P_SPARE4_NOTE             != ''">,SPARE4_NOTE                 </if>
+               <if test="P_SPARE5_NOTE             != null and P_SPARE5_NOTE             != ''">,SPARE5_NOTE                 </if>
+               <if test="P_ORDER_USER_ID           != null and P_ORDER_USER_ID           != ''">,ORDER_USER_ID               </if>
+               <if test="P_ORDER_DATETIME          != null and P_ORDER_DATETIME          != ''">,ORDER_DATETIME              </if>
+               <if test="P_ENTRY_DATETIME          != null and P_ENTRY_DATETIME          != ''">,ENTRY_DATETIME              </if>
+               ,LAST_USER_ID
+               ,LAST_DATETIME
+               )
+         VALUES
+               (
+                #{P_CENTER_CD}
+               ,#{P_BU_CD}
+               ,#{P_ORDER_DATE}
+               ,#{P_ORDER_NO}
+               ,#{P_LINE_NO}
+               <if test="P_INBOUND_STATE           != null and P_INBOUND_STATE           != ''">,#{P_INBOUND_STATE}          </if>
+               <if test="P_BRAND_CD                != null and P_BRAND_CD                != ''">,#{P_BRAND_CD}               </if>
+               <if test="P_ITEM_CD                 != null and P_ITEM_CD                 != ''">,#{P_ITEM_CD}                </if>
+               <if test="P_ITEM_STATE              != null and P_ITEM_STATE              != ''">,#{P_ITEM_STATE}             </if>
+               <if test="P_ITEM_LOT                != null and P_ITEM_LOT                != ''">,#{P_ITEM_LOT}               </if>
+               <if test="P_VALID_DATE              != null and P_VALID_DATE              != ''">,#{P_VALID_DATE}             </if>
+               <if test="P_BATCH_NO                != null and P_BATCH_NO                != ''">,#{P_BATCH_NO}               </if>
+               <if test="P_ORDER_QTY               != null and P_ORDER_QTY               != ''">,#{P_ORDER_QTY}              </if>
+               <if test="P_RETRIEVE_QTY            != null and P_RETRIEVE_QTY            != ''">,#{P_RETRIEVE_QTY}           </if>
+               <if test="P_ENTRY_QTY               != null and P_ENTRY_QTY               != ''">,#{P_ENTRY_QTY}              </if>
+               <if test="P_SUPPLY_PRICE            != null and P_SUPPLY_PRICE            != ''">,#{P_SUPPLY_PRICE}           </if>
+               <if test="P_DC_PRICE                != null and P_DC_PRICE                != ''">,#{P_DC_PRICE}               </if>
+               <if test="P_APPLY_PRICE             != null and P_APPLY_PRICE             != ''">,#{P_APPLY_PRICE}            </if>
+               <if test="P_SUPPLY_AMT              != null and P_SUPPLY_AMT              != ''">,#{P_SUPPLY_AMT}             </if>
+               <if test="P_VAT_YN                  != null and P_VAT_YN                  != ''">,#{P_VAT_YN}                 </if>
+               <if test="P_VAT_AMT                 != null and P_VAT_AMT                 != ''">,#{P_VAT_AMT}                </if>
+               <if test="P_DC_AMT                  != null and P_DC_AMT                  != ''">,#{P_DC_AMT}                 </if>
+               <if test="P_TOTAL_AMT               != null and P_TOTAL_AMT               != ''">,#{P_TOTAL_AMT}              </if>
+               <if test="P_BU_LINE_NO              != null and P_BU_LINE_NO              != ''">,#{P_BU_LINE_NO}             </if>
+               <if test="P_BU_KEY                  != null and P_BU_KEY                  != ''">,#{P_BU_KEY}                 </if>
+               <if test="P_RETURN_DIV              != null and P_RETURN_DIV              != ''">,#{P_RETURN_DIV}             </if>
+               <if test="P_RETURN_COMMENT          != null and P_RETURN_COMMENT          != ''">,#{P_RETURN_COMMENT}         </if>
+               <if test="P_REMARK1                 != null and P_REMARK1                 != ''">,#{P_REMARK1}                </if>
+               <if test="P_SPARE1_NOTE             != null and P_SPARE1_NOTE             != ''">,#{P_SPARE1_NOTE}            </if>
+               <if test="P_SPARE2_NOTE             != null and P_SPARE2_NOTE             != ''">,#{P_SPARE2_NOTE}            </if>
+               <if test="P_SPARE3_NOTE             != null and P_SPARE3_NOTE             != ''">,#{P_SPARE3_NOTE}            </if>
+               <if test="P_SPARE4_NOTE             != null and P_SPARE4_NOTE             != ''">,#{P_SPARE4_NOTE}            </if>
+               <if test="P_SPARE5_NOTE             != null and P_SPARE5_NOTE             != ''">,#{P_SPARE5_NOTE}            </if>
+               <if test="P_ORDER_USER_ID           != null and P_ORDER_USER_ID           != ''">,#{P_ORDER_USER_ID}          </if>
+               <if test="P_ORDER_DATETIME          != null and P_ORDER_DATETIME          != ''">
+               ,DECODE(#{P_ORDER_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_ORDER_DATETIME}))
+               </if>
+               <if test="P_ENTRY_DATETIME          != null and P_ENTRY_DATETIME          != ''">
+               ,DECODE(#{P_ENTRY_DATETIME} ,'SYSDATE' ,SYSDATE ,WF.C_TO_DATETIME(#{P_ENTRY_DATETIME}))
+               </if>
+               ,#{P_USER_ID}
+               ,SYSDATE
+               )
+  </insert>
+  <!-- [E] - INSERT_RI010ND [반입예정디테일] -->
+  
+  
+</mapper>

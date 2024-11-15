@@ -1,0 +1,129 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC01040E0
+    프로그램명         : 메뉴관리
+    프로그램설명       : 메뉴관리 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC01040E0.css" /> -->
+<script src="js/CSC01040E0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQMenu_Grp" class="lblCondition">메뉴그룹</div>
+                    <select id="cboQMenu_Grp" class="cboKey" style="width: 180px;"></select>
+                </td>
+                <td class="styFillArea styRight">
+                    <input id="btnCopy" class="btnImgPopup" type="button" value="메뉴복사" style="width: 80px;" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divLeftView" class="ctrLeft">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdMaster" class="lblTitle">메뉴</td>
+                <td>
+                    <input id="btnMoveUpMenu" class="btnImgNormal" type="button" value="위로" style="width: 60px;" />
+                    <input id="btnMoveDownMenu" class="btnImgNormal" type="button" value="아래로" style="width: 70px;" />
+                    <input id="btnSetMenuLevel" class="btnImgNormal" type="button" value="메뉴단계재설정" style="width: 120px;" />
+                    <input id="btnEntryUser" class="btnImgPopup" type="button" value="사용자등록" style="width: 95px;" />
+                </td>
+                <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="grdMaster"></div>
+    </div>
+    <div id="divRightView" class="ctrRight">
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="dspMasterInfo" class="lblTitle">기본정보</td>
+            </tr>
+        </table>
+        <div id="divMasterInfoView" class="ctrInner">
+            <div class="ctrGroupRow">
+                <div id="lblMenu_Id" class="lblKey alignInContent">메뉴ID</div>
+                <input id="edtMenu_Id" class="edtKey" type="text" maxlength="30" style="width: 150px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblMenu_Nm" class="lblKey alignInContent">메뉴명</div>
+                <input id="edtMenu_Nm" class="edtKey" type="text" maxlength="200" style="width: 300px;" />
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblApplication_Div" class="lblKey alignInContent">애플리케이션구분</div>
+                <select id="cboApplication_Div" class="cboKey" style="width: 150px;"></select>
+            </div>
+            <div class="ctrGroupRow">
+                <div id="lblRemark1" class="lblNormal alignInContent">비고</div>
+                <input id="edtRemark1" class="edtNormal" type="text" style="width: 300px;" />
+            </div>
+            <div class="ctrGroupRow inContent">
+                <div id="dspTitle_MenuLevel" class="lblGroupTitle">메뉴단계 정보</div>
+                <div class="ctrGroupContent">
+                    <div id="lblMenu_Level1" class="lblNormal">메뉴단계</div>
+                    <div id="lblMenu_Level1" class="lblDisplay">1단계</div>
+                    <input id="edtMenu_Level1" class="edtDisplay" type="text" disabled="disabled" style="width: 50px;" />
+                    <div id="lblMenu_Level2" class="lblDisplay">2단계</div>
+                    <input id="edtMenu_Level2" class="edtDisplay" type="text" disabled="disabled" style="width: 50px;" />
+                    <div id="lblMenu_Level3" class="lblDisplay">3단계</div>
+                    <input id="edtMenu_Level3" class="edtDisplay" type="text" disabled="disabled" style="width: 50px;" />
+                    <div id="lblMenu_Level4" class="lblDisplay">4단계</div>
+                    <input id="edtMenu_Level4" class="edtDisplay" type="text" disabled="disabled" style="width: 50px;" />
+                </div>
+            </div>
+        </div>
+        <table class="ctrTitleBar">
+            <tr>
+                <td id="ctrTitle_grdDetail" class="lblTitle">프로그램</td>
+                <td>
+                    <input id="btnAddMenu" class="btnImgNormal" type="button" value="메뉴등록" style="width: 80px;" />
+                </td>
+                <td id="ctrRows_grdDetail" class="lblRows">0/0 Rows</td>
+            </tr>
+        </table>
+        <div id="ctrAdditionalB_grdDetail" class="ctrAdditional bottom">
+            <table class="ctrInner">
+                <tr>
+                    <td>
+                        <div id="lblQEntry_Div" class="lblCondition alignInContent">데이터구분</div>
+                        <div class="ctrGroupBox" style="width: 230px;">
+                            <input id="rgbQEntry_Div0" name="rgbQEntry_Div" class="rgbNormal" type="radio" value="0" checked="checked" />
+                            전체 프로그램
+                            <input id="rgbQEntry_Div1" name="rgbQEntry_Div" class="rgbNormal" type="radio" value="1" />
+                            미등록 프로그램
+                        </div>
+                        <div id="lblQApplication_Div" class="lblCondition" style="width: 100px;">애플리케이션구분</div>
+                        <select id="cboQApplication_Div" class="cboNormal" style="width: 150px;"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="lblQProgram_Id" class="lblCondition alignInContent">프로그램ID</div>
+                        <input id="edtQProgram_Id" class="edtNormal" type="text" style="width: 230px;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="grdDetail"></div>
+    </div>
+</body>
+</html>

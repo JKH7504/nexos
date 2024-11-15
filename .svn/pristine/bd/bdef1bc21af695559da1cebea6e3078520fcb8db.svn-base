@@ -1,0 +1,9 @@
+table.ctrInner input, /*
+*/ table.ctrInner textarea {
+    width: 100%;
+}
+
+.lblNormal, /*
+*/ .lblKey {
+    width: auto;
+}

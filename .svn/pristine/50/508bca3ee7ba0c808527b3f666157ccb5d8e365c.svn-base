@@ -1,0 +1,63 @@
+﻿<!--
+    ==================================================================================================================================================
+    프로그램ID         : CSC09040Q0
+    프로그램명         : 웹서버로그조회
+    프로그램설명       : 웹서버로그조회 화면 HTML
+    작성자             : Copyright (c) 2013 ASETEC Corporation. All rights reserved.
+    작성일자           : 2016-12-13
+    버전               : 1.0
+
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+    버전       작성일자      작성자           설명
+    ---------  ------------  ---------------  --------------------------------------------------------------------------------------------------------
+    1.0        2016-12-13    ASETEC           신규작성
+    --------------------------------------------------------------------------------------------------------------------------------------------------
+
+    ==================================================================================================================================================
+-->
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+<!-- ${NEXOS_META} -->
+<!-- ${NEXOS_LIBRARY} ${} ${../../../} -->
+<!-- PROGRAM CSS/JS -->
+<!-- <link rel="stylesheet" href="css/CSC09040Q0.css" /> -->
+<script src="js/CSC09040Q0.js"></script>
+</head>
+<body>
+    <div id="ctrConditionView" class="ctrCondition">
+        <table class="ctrInner">
+            <tr>
+                <td>
+                    <div id="lblQLog_Charset" class="lblCondition">로그캐릭터셋</div>
+                    <select id="cboQLog_Charset" class="cboNormal" style="width: 150px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="ctrMasterView" class="ctrNormal">
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="dspTitle_Web_Server_Log" class="lblTitle">서버로그</td>
+                    <td class="styFillArea"></td>
+                    <td id="dspTitle_Max_Web_Server_Log" class="lblRows">최대 5000라인</td>
+                </tr>
+            </table>
+            <textarea id="edtQWeb_Server_Log" class="edtNormal" readonly="readonly" style="white-space: pre; word-wrap: normal; resize: none; overflow: scroll;"></textarea>
+        </div>
+        <div>
+            <table class="ctrTitleBar">
+                <tr>
+                    <td id="ctrTitle_grdMaster" class="lblTitle">서버로그파일목록</td>
+                    <td>
+                        <input id="btnLogDownload" class="btnImgFile" type="button" value="다운로드" style="width: 80px;" />
+                    </td>
+                    <td id="ctrRows_grdMaster" class="lblRows">0/0 Rows</td>
+                </tr>
+            </table>
+            <div id="grdMaster"></div>
+        </div>
+    </div>
+</body>
+</html>

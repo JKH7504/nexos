@@ -1,0 +1,74 @@
+<!--
+    ==================================================================================================================================================
+    main include
+      <div id="ctrLoginLayer" class="ctrLogin" tabindex="1">
+    ==================================================================================================================================================
+ -->
+<div class="ctrLoginOverlay">
+    <form>
+        <table id="ctrLoginForm" class="ctrInner">
+            <tr>
+                <td></td>
+                <td colspan="2" class="ctrServerVersion">
+                    <div class="lblDisplay">neXos WMS Solution &nbsp;ver</div>
+                    <div id="lblServerVersion" class="lblDisplay version">0.0.0</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">ID</td>
+                <td>
+                    <input id="edtUser_Id" class="edtNormal" type="text" autocomplete="username" tabindex="1" maxlength="50" />
+                </td>
+                <td rowspan="2">
+                    <input id="btnLogin" class="btnNormal" type="button" value="로그인" tabindex="3" style="width: 100px; height: 52px;" />
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">PW</td>
+                <td>
+                    <input id="edtUser_Pwd" class="edtNormal" type="password" autocomplete="current-password" tabindex="2" style="padding-right: 24px;" />
+                    <input id="btnResetForm" class="btnIcoPopup" type="button" tabindex="6" style="margin-left: -30px; border-width: 0; height: 18px;" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input id="chkSave_User_Id" name="chkSave_User_Id" class="chkNormal" type="checkbox" tabindex="5" />
+                    <span id="dspSaveUserId" style="color: white; line-height: 22px; vertical-align: middle;">사용자ID 저장</span>
+                </td>
+            </tr>
+        </table>
+        <table id="ctrResetForm" class="ctrInner" style="display: none;">
+            <tr>
+                <td></td>
+                <td colspan="2" class="ctrServerVersion">
+                    <div class="lblDisplay">사용자 비밀번호를 초기화합니다.</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">ID</td>
+                <td>
+                    <input id="edtReset_User_Id" class="edtNormal" type="text" autocomplete="username" tabindex="7" maxlength="50" />
+                </td>
+                <td rowspan="2">
+                    <input id="btnResetUserPwd" class="btnNormal" type="button" value="초기화" tabindex="10" style="width: 100px; height: 52px;" />
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">NAME</td>
+                <td>
+                    <input id="edtReset_User_Nm" class="edtNormal" type="text" autocomplete="name" tabindex="8" />
+                </td>
+            </tr>
+            <tr>
+                <td style="color: white;">EMAIL</td>
+                <td>
+                    <input id="edtReset_User_Email" class="edtNormal" type="text" autocomplete="email" tabindex="9" />
+                </td>
+                <td>
+                    <input id="btnLoginForm" class="btnNormal" type="button" value="취소" tabindex="11" style="width: 100px;" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

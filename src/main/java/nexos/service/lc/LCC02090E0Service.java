@@ -1,0 +1,270 @@
+package nexos.service.lc;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+
+import nexos.dao.lc.LCC02090E0DAO;
+import nexos.framework.Consts;
+import nexos.framework.Util;
+import nexos.framework.message.NexosMessage;
+import nexos.framework.support.ServiceSupport;
+
+/**
+ * Class: LCC02090E0Service<br>
+ * Description: 가공작업관리(LCC02090E0) 서비스를 담당하는 Class(트랜잭션처리 담당)<br>
+ * Copyright: Copyright (c) 2013 ASETEC Corporation. All rights reserved.<br>
+ * Company : ASETEC<br>
+ *
+ * @author ASETEC
+ * @version 1.0
+ *          <pre style="font-family: GulimChe; font-size: 12px;">
+ * ---------------------------------------------------------------------------------------------------------------------
+ *  Version    Date          Author           Description
+ * ---------  ------------  ---------------  ---------------------------------------------------------------------------
+ *  1.0        2013-01-01    ASETEC           신규작성
+ * ---------------------------------------------------------------------------------------------------------------------
+ *          </pre>
+ */
+@Service
+public class LCC02090E0Service extends ServiceSupport {
+
+    final String          SP_ID_GET_LC_CONFIRM_YN = "WF.GET_LC_CONFIRM_YN";
+    final String          SP_ID_GET_PROTECT_DATE  = "LCC02090E0.GET_PROTECT_DATE";
+
+    @Autowired
+    private LCC02090E0DAO dao;
+
+    /**
+     * 가공작업관리 - 가공작업 저장/수정 처리
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    @SuppressWarnings("unchecked")
+    public String save(Map<String, Object> params) throws Exception {
+
+        // 테이블구분([A]기타입출고, [B]재고이동, [C]재고실사, [E]가공작업)
+        final String TABLE_DIV = "E";
+
+        // 파라메터 처리
+        List<Map<String, Object>> dsMaster = (List<Map<String, Object>>)params.get(Consts.PK_DS_MASTER);
+        List<Map<String, Object>> dsDetail = (List<Map<String, Object>>)params.get(Consts.PK_DS_DETAIL);
+        List<Map<String, Object>> dsSave = (List<Map<String, Object>>)params.get(Consts.PK_DS_SUB);
+
+        // 문자열 변수 선언
+        String processCd = (String)params.get(Consts.PK_PROCESS_CD);
+        String centerCd = (String)params.get("P_CENTER_CD");
+        String buCd = (String)params.get("P_BU_CD");
+        String oMsg = null;
+
+        // Map 변수 선언
+        Map<String, Object> resultMap = null;
+        Map<String, Object> callParams = new HashMap<String, Object>();
+
+        // 결과값 변수 선언
+        StringBuffer sbResult = new StringBuffer();
+
+        // DATE 형식 변수 선언
+        SimpleDateFormat stringDateFormat = new SimpleDateFormat(Consts.DATE_FORMAT);
+
+        // ROW 수 체크
+        int dsMasterCnt = dsMaster.size();
+        int dsDetailCnt = dsDetail.size();
+        int dsSaveCnt = dsSave.size();
+
+        // 보안일자 가져오기
+        callParams.put("P_CENTER_CD", centerCd);
+        callParams.put("P_BU_CD", buCd);
+        resultMap = callProcedure(SP_ID_GET_PROTECT_DATE, callParams);
+        oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            throw new RuntimeException(oMsg);
+        }
+
+        /*
+         * 보안일자 체크
+         */
+        if (resultMap.get("O_PROTECT_DATE") != null) {
+            Date protectDate = stringDateFormat.parse((String)resultMap.get("O_PROTECT_DATE"));
+
+            // (MasterGrid)가공작업 보안일자 체크
+            for (int i = 0; i < dsMasterCnt; i++) {
+                Map<String, Object> rowData = dsMaster.get(i);
+
+                Date rowProtectDate = stringDateFormat.parse((String)rowData.get("P_PROCESSING_DATE"));
+                if (protectDate.after(rowProtectDate) || protectDate.equals(rowProtectDate)) {
+                    dsMaster.remove(i);
+                    dsMasterCnt--;
+                    i--;
+                }
+            }
+
+            // (DetailGrid)가공작업상세 보안일자 체크
+            for (int i = 0; i < dsDetailCnt; i++) {
+                Map<String, Object> rowData = dsDetail.get(i);
+
+                Date rowProtectDate = stringDateFormat.parse((String)rowData.get("P_PROCESSING_DATE"));
+                if (protectDate.after(rowProtectDate) || protectDate.equals(rowProtectDate)) {
+                    dsDetail.remove(i);
+                    dsDetailCnt--;
+                    i--;
+                }
+            }
+
+            // 보안일자 체크 (보안일자 >= 가공일자 경우, 결과 변수에 담기)
+            for (int i = 0; i < dsSaveCnt; i++) {
+                Map<String, Object> rowData = dsSave.get(i);
+
+                Date rowProtectDate = stringDateFormat.parse((String)rowData.get("P_PROCESSING_DATE"));
+                if (protectDate.after(rowProtectDate) || protectDate.equals(rowProtectDate)) {
+                    oMsg = "[가공작업일자 : " + (String)rowData.get("P_PROCESSING_DATE") //
+                        + ", 가공작업번호 : " + (String)rowData.get("P_PROCESSING_NO") + "] 자료 보안설정이 되어 있어 처리할 수 없습니다.";
+                    sbResult.append(oMsg).append(Consts.CRLF);
+                    continue;
+                }
+            }
+        }
+
+        /*
+         * 전표 상태 체크
+         */
+        for (int i = 0; i < dsSaveCnt; i++) {
+            Map<String, Object> rowData = dsSave.get(i);
+
+            if (!Consts.PROCESS_ENTRY_CREATE.equals(processCd)) {
+                Map<String, Object> checkParams = new HashMap<String, Object>();
+
+                checkParams.put("P_CENTER_CD", centerCd);
+                checkParams.put("P_BU_CD", buCd);
+                checkParams.put("P_ETC_DATE", rowData.get("P_PROCESSING_DATE"));
+                checkParams.put("P_ETC_NO", rowData.get("P_PROCESSING_NO"));
+                checkParams.put("P_TABLE_DIV", TABLE_DIV);
+
+                oMsg = getConfirmYn(checkParams);
+                if (!Consts.OK.equals(oMsg)) {
+                    throw new RuntimeException(oMsg);
+                }
+            }
+        }
+
+        TransactionStatus ts = beginTrans();
+        try {
+            // 확정내역이 있는 경우 or 보안일자 체크로인해 저장 할 데이터가 없을경우 return
+            if (Consts.OK.equals(oMsg) && (dsMasterCnt != 0 || dsDetailCnt != 0)) {
+                dao.save(params);
+            }
+
+            commitTrans(ts);
+            // 결과값 변수에 값이 없을 경우 OK 추가
+            if (sbResult.length() == 0) {
+                sbResult.append(Consts.OK);
+            }
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return sbResult.toString();
+    }
+
+    /**
+     * 저장 처리 (REMARK1)
+     *
+     * @param params
+     *        신규, 수정된 데이터
+     */
+    public String updateRemark(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.updateRemark(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 가공작업관리 - 확정/확정취소
+     *
+     * @param params
+     *        수정된 데이터
+     */
+    public String callLCProcessing(Map<String, Object> params) throws Exception {
+
+        String result = Consts.ERROR;
+        TransactionStatus ts = beginTrans();
+        try {
+            dao.callLCProcessing(params);
+            commitTrans(ts);
+            result = Consts.OK;
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+        return result;
+    }
+
+    /**
+     * 저장/삭제시 확정된 전표일 경우 저장/삭제 불가
+     *
+     * @param params
+     * @param checkState
+     * @return
+     */
+    public String getConfirmYn(Map<String, Object> params) {
+
+        String result = Consts.OK;
+        Map<String, Object> resultMap = callProcedure(SP_ID_GET_LC_CONFIRM_YN, params);
+
+        String oMsg = Util.getOutMessage(resultMap);
+        if (!Consts.OK.equals(oMsg)) {
+            result = oMsg;
+        } else {
+            String oConfirmYn = (String)resultMap.get("O_CONFIRM_YN");
+            if (Consts.YES.equals(oConfirmYn)) {
+                result = NexosMessage.getDisplayMsg("JAVA.LCC.001", "이미 확정 처리된 데이터입니다.");
+            } else {
+                result = oMsg;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 가공작업관리 내역 삭제
+     *
+     * @param params
+     */
+    public Map<String, Object> callLCBwProcessingEntry(Map<String, Object> params) throws Exception {
+
+        Map<String, Object> result;
+
+        TransactionStatus ts = beginTrans();
+        try {
+            result = dao.callLCBwProcessingEntry(params);
+            String oMsg = Util.getOutMessage(result);
+            // 오류면 Rollback
+            if (!Consts.OK.equals(oMsg)) {
+                throw new RuntimeException(oMsg);
+            }
+            commitTrans(ts);
+        } catch (Exception e) {
+            rollbackTrans(ts);
+            throw new RuntimeException(Util.getErrorMessage(e));
+        }
+
+        return result;
+    }
+}

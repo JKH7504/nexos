@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="pda-resource-deployment" basedir=".">
+    <!-- =========================================================================================================== -->
+    <!-- PDA 리소스 버전은 nexos/mobile/pda/config/config-globals.properties에 기록, 자동 업데이트용                 -->
+    <!-- WC.GET_LOGIN - PDA_RESOURCE_VERSION의 값과 일치해야 함                                                      -->
+    <!-- PDA_RESOURCE_VERSION, CLIENT_VERSION 값 동시 변경 처리                                                      -->
+    <!-- =========================================================================================================== -->
+    <!-- build 호출시 src/main/webapp/REF-FILES/deploy/pda/nexos_pda_html.zip 파일 생성 됨                                      -->
+    <!-- =========================================================================================================== -->
+    <property name="src.dir" value="src/main/webapp" />
+    <property name="generated.dir" value="target/ant-generated-pda-sources" />
+    <property name="outputs.dir" value="src/main/webapp/REF-FILES/deploy/pda" />
+    <property name="output.file" value="nexos_pda_html.zip" />
+    <property file="src/main/webapp/nexos/mobile/pda/main/config/config-globals.properties" prefix="globals" />
+    <!-- Compressed ant library Dir -->
+    <property name="nexos.ref.ant.dir" value="reference/library/ant" />
+
+    <taskdef name="yuicompress" classname="net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask">
+        <classpath>
+            <pathelement path="${nexos.ref.ant.dir}/yuicompressor-2.4.8.jar" />
+            <pathelement path="${nexos.ref.ant.dir}/yui-compressor-ant-task-0.5.jar" />
+        </classpath>
+    </taskdef>
+
+    <taskdef name="yuicompress" classname="net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask">
+        <classpath>
+            <pathelement path="${nexos.ref.ant.dir}/yuicompressor-2.4.8.jar" />
+            <pathelement path="${nexos.ref.ant.dir}/yui-compressor-ant-task-0.5.jar" />
+        </classpath>
+    </taskdef>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement path="${nexos.ref.ant.dir}/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+
+    <target name="init" description="Target 폴더 초기화">
+        <echo level="info">Initialize...</echo>
+        <if>
+            <available file="${generated.dir}" type="dir" />
+            <then>
+                <delete includeemptydirs="true">
+                    <fileset dir="${generated.dir}" includes="**/*" />
+                </delete>
+                <delete dir="${generated.dir}" />
+                <delete file="${outputs.dir}/${output.file}" />
+            </then>
+        </if>
+
+        <antcall target="create-dirs" />
+    </target>
+
+    <target name="create-dirs">
+        <mkdir dir="${generated.dir}" />
+        <mkdir dir="${outputs.dir}" />
+    </target>
+
+    <target name="compress-resources" description="HTML/JS/CSS 파일 압축">
+        <echo level="info">Compressing JS and CSS files</echo>
+        <yuicompress warn="false" munge="yes" charset="UTF-8" lineBreakPosition="1000" preserveallsemicolons="yes" toDir="${generated.dir}" fromDir="${src.dir}" csssuffix=".css" jssuffix=".js">
+            <include name="nexos/framework/**" />
+            <include name="nexos/mobile/pda/**" />
+            <include name="nexos/mobile/popup/**" />
+            <exclude name="**/*.min.js" />
+            <exclude name="**/*.min.css" />
+        </yuicompress>
+
+        <echo level="info">Compressing HTML files</echo>
+        <apply executable="java" parallel="false" verbose="true" dest="${generated.dir}">
+            <fileset dir="${src.dir}">
+                <include name="nexos/framework/**/*.html" />
+                <include name="nexos/mobile/pda/**/*.html" />
+                <include name="nexos/mobile/popup/**/*.html" />
+            </fileset>
+            <arg value="-jar" />
+            <arg path="${nexos.ref.ant.dir}/htmlcompressor-1.5.3.jar" />
+            <arg line="--type html" />
+            <arg line="--charset UTF-8" />
+            <arg line="--preserve-comments" />
+            <arg line="--remove-surrounding-spaces min" />
+            <arg line="--compress-js" />
+            <arg line="--compress-css" />
+            <srcfile />
+            <arg value="-o" />
+            <mapper type="identity" />
+            <targetfile />
+        </apply>
+    </target>
+
+    <target name="copy-resources" description="HTML/JS/CSS 파일 복사">
+        <copy todir="${generated.dir}">
+            <fileset dir="${src.dir}">
+                <include name="nexos/framework/**" />
+                <include name="nexos/mobile/pda/**" />
+                <include name="nexos/mobile/popup/**" />
+                <exclude name="**/*.min.js" />
+                <exclude name="**/*.min.css" />
+                <exclude name="**/000/**" />
+                <exclude name="**/037/**" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-other-resources" description="기타 리소스 파일 복사">
+        <copy todir="${generated.dir}">
+            <fileset dir="${src.dir}">
+                <include name="nexos/framework/**" />
+                <include name="nexos/mobile/pda/**" />
+                <include name="nexos/mobile/popup/**" />
+                <exclude name="**/*.html" />
+                <exclude name="**/*.js" />
+                <exclude name="**/*.css" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy-site-resources" description="사이트 리소스 파일 복사">
+        <copy todir="${generated.dir}/nexos/mobile/pda/main/css/image" flatten="true" overwrite="true">
+            <fileset dir="${src.dir}/nexos/mobile/pda/main/css/image/${spring.profiles.active}" />
+        </copy>
+    </target>
+
+    <target name="generate-version" description="버전정보 생성">
+        <scriptdef name="ctmillis" language="javascript">
+            <attribute name="tm" />
+            <attribute name="dt" />
+            <![CDATA[
+                var lp = function(value, len) {
+                    value = (value || "") + "";
+                    var result = "", lenValue = value.length;
+                    if (lenValue < len) {
+                        for (var i = lenValue; i < len; i++) result += "0";
+                    }
+                    return result + value;
+                };
+                var now = new Date();
+                project.setProperty(attributes.get("tm"), now.getTime());
+                project.setProperty(attributes.get("dt"),
+                                    now.getFullYear()
+                                  + lp(now.getMonth() + 1, 2)
+                                  + lp(now.getDate(), 2)
+                                  + lp(now.getHours(), 2)
+                                  + lp(now.getMinutes(), 2)
+                                  + lp(now.getSeconds(), 2)
+                                  + lp(now.getMilliseconds(), 3));
+            ]]>
+        </scriptdef>
+        <ctmillis tm="BUILD_TIMEMILLIS" dt="BUILD_DATETIME" />
+        <echo file="${generated.dir}/nexos_pda_html.version" append="false">BUILD_TIMEMILLIS=${BUILD_DATETIME}${line.separator}</echo>
+        <echo file="${generated.dir}/nexos_pda_html.version" append="true">BUILD_DATETIME=${BUILD_DATETIME}${line.separator}</echo>
+        <echo file="${generated.dir}/nexos_pda_html.version" append="true">BUILD_VERSION=${globals.CLIENT_VERSION}</echo>
+    </target>
+
+    <target name="zip-resources" description=" zip 파일로 리소스 압축">
+        <zip destfile="${outputs.dir}/${spring.profiles.active}/${output.file}" basedir="${generated.dir}" />
+    </target>
+    <target name="package" depends="init, copy-resources, copy-site-resources, generate-version, zip-resources" />
+</project>
